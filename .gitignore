@@ -1,1 +1,3 @@
 library/siga.config.php
+cache/
+report/tmp/

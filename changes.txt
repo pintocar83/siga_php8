@@ -1,10 +1,16 @@
 library/phpexcel/
 library/fpdf/1.84/
 library/siga.class.php
+library/siga.select.js
+
 module/estructura_presupuestaria/
 module/nomina/
+module/usuario/main.js
+
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
+class/usuario.class.php
+
 report/nomina_listado_banco_xls_formato_a.php
 report/nomina_listado_banco_xls_formato_b.php
 report/nomina_listado_banco_xls_formato_c.php

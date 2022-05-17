@@ -6,10 +6,10 @@ Ext.define('siga.select', {
     },
     layout: 'fit',
     fieldLabel: '',
-    labelAlign: 'top',    
+    labelAlign: 'top',
     width: 500,
     widthButton: 80,
-    
+
     valueField: null,
     displayField: null,
 
@@ -17,7 +17,7 @@ Ext.define('siga.select', {
         render: function(c) {
             var me=this;
             Ext.destroy(me.getCmp("title"));
-            Ext.create('Ext.tip.ToolTip', {                
+            Ext.create('Ext.tip.ToolTip', {
                 target: c.getEl(),
                 id: me._("title"),
                 autoDestroy: true,
@@ -25,7 +25,7 @@ Ext.define('siga.select', {
             });
         }
     },
-    
+
     internal:{
         text: null,
         page: 1,
@@ -49,22 +49,22 @@ Ext.define('siga.select', {
         result: null,
         onGetFn: null,
     },
-    
+
     _: function(id){
         var me=this;
         return me.id+"-"+id;
     },
-    
+
     getCmp: function(id){
         var me=this;
         return Ext.getCmp(me._(String(id)));
     },
-    
+
     initComponent: function(){
         var me = this;
-        
+
         me.items = me.items || [];
-        
+
         me.valueField = Ext.create('Ext.form.field.Hidden', Ext.apply({
             isFormField:true,
             submitValue:false,
@@ -77,13 +77,13 @@ Ext.define('siga.select', {
                     }
             }
         }));
-        
+
         me.items.push(me.valueField);
-        
+
         var _width100p=me.width-me.widthButton-(me.labelAlign=='top'?0:(me.labelWidth+me.labelPad));
         var _widthCol="";
         me.displayField=new Array();
-        
+
         var button={
             xtype: 'button',
             text: 'Buscar',
@@ -94,11 +94,11 @@ Ext.define('siga.select', {
                     var _opt={};
                     _opt.internal={};
                     _opt.internal.parent=me;
-                    if(me.internal.width) 
+                    if(me.internal.width)
                         _opt.width=me.internal.width;
-                    if(me.internal.height) 
+                    if(me.internal.height)
                         _opt.height=me.internal.height;
-                    
+
                     //var selector=new Ext.form.eWindowSelect(_opt);
                     var selector=Ext.create("siga.windowSelect",_opt);
                     selector.show();
@@ -106,7 +106,7 @@ Ext.define('siga.select', {
                 }
             }
         };
-        
+
         var button_clear={
             xtype: 'button',
             text: 'Limpiar',
@@ -118,13 +118,13 @@ Ext.define('siga.select', {
                 }
             }
         };
-        
+
         var container={
-            xtype: 'container',            
+            xtype: 'container',
             layout: 'hbox',
             items:[]
         };
-        
+
         if(!me.internal.output) me.internal.output=0;
         if(!me.internal.clearBtn) me.internal.clearBtn=false;
 
@@ -136,25 +136,25 @@ Ext.define('siga.select', {
                     flex: 1,
                     items:[]
                     };
-                
+
                 for(var i=0;i<me.internal.columns.title.length;i++){
                     me.displayField[i] = Ext.create('Ext.form.field.Text', Ext.apply({
                         width: me.internal.columns.width[i],
                         isFormField:false,
                         submitValue:false,
-                        readOnly: true,                        
+                        readOnly: true,
                         //style: 'margin-top: 1px;'
                         }));
                     sub_container.items.push(me.displayField[i]);
                 }
-                
+
                 container.items.push(sub_container);
                 container.items.push(button);
                 if(me.internal.clearBtn)
                     container.items.push(button_clear);
                 me.items.push(container);
 
-            break; 
+            break;
             case 1:
             case 2:
             case 3:
@@ -167,17 +167,17 @@ Ext.define('siga.select', {
                     flex: 1,
                     //style: 'margin-top: 1px;'
                     }));
-                
+
                 container.items.push(me.displayField[0]);
                 container.items.push(button);
                 if(me.internal.clearBtn)
                     container.items.push(button_clear);
 
                 me.items.push(container);
-                
+
                 switch(me.internal.output){
                     case 1:
-                        for(var i=1;i<me.internal.columns.title.length;i++){      
+                        for(var i=1;i<me.internal.columns.title.length;i++){
                             me.displayField[i] = Ext.create('Ext.form.field.Text', Ext.apply({
                                 width: '100%',
                                 isFormField:false,
@@ -185,7 +185,7 @@ Ext.define('siga.select', {
                                 readOnly: true,
                                 style: 'margin-top: 2px;'
                                 }));
-                            me.items.push(me.displayField[i]);            
+                            me.items.push(me.displayField[i]);
                         }
                     break;
                     case 2:
@@ -200,7 +200,7 @@ Ext.define('siga.select', {
                                 id: me._('display'),
                                 text: ''
                             }]
-                        });                        
+                        });
                     break;
                     case 4:
                         me.items.push({
@@ -209,17 +209,17 @@ Ext.define('siga.select', {
                             flex: 1,
                             style: 'padding-left: 20px;',
                             text: ''
-                        });     
+                        });
                     break;
                     case 5:
                     break;
                 }
-                break;       
-            
-        }        
-     
+                break;
+
+        }
+
         me.callParent(arguments);
-        
+
         if(!me.internal.output)
             me.internal.output=0;
         me.internal.text='';
@@ -227,15 +227,15 @@ Ext.define('siga.select', {
         if(!me.internal.limit)
             me.internal.limit=100;
         me.setValue(me.value);
-    },    
-    
+    },
+
     getValue: function(){
         var me=this;
         return me.valueField.getValue();
     },
-    
+
     change: function( e, newValue, oldValue, eOpts ){
-        var me=e.parent;        
+        var me=e.parent;
         var v=newValue;
         switch(me.internal.output){
             case 3:
@@ -255,7 +255,7 @@ Ext.define('siga.select', {
                     _display+="<tr><td><b>"+me.internal.columns.title[i]+"</b></td><td style='padding-left:10px;'></td></tr>";
                 _display+="</table>";
                 me.getCmp("display").setText(_display,false);
-                break;            
+                break;
             case 1:
             case 0:
             default:
@@ -263,7 +263,7 @@ Ext.define('siga.select', {
                     me.displayField[i].setValue('');
                 break;
         }
-        
+
         if(v==null)
             return;
         if(Ext.String.trim(v)=="")
@@ -271,7 +271,7 @@ Ext.define('siga.select', {
 
         Ext.Ajax.request({
             url:me.internal.url,
-            params: Ext.JSON.decode("{action: '"+me.internal.actionOnGet+"', "+me.internal.valueField+": '"+v+"'}"),
+            params: Ext.JSON.decode('{"action": "'+me.internal.actionOnGet+'", "'+me.internal.valueField+'": "'+v+'"}'),
             success:function(resp){
                 var retorno=Ext.JSON.decode(resp.responseText);
                 me.internal.result=retorno;
@@ -293,7 +293,7 @@ Ext.define('siga.select', {
                             me.valueField.setValue('');
                             me.displayField[0].setValue("");
                         }
-                        me.displayField[0].setValue(retorno[0]["display"]);                        
+                        me.displayField[0].setValue(retorno[0]["display"]);
                         break;
                     case 2:
                         if(!retorno || retorno.length==0){
@@ -307,7 +307,7 @@ Ext.define('siga.select', {
                             _display+="<tr><td><b>"+me.internal.columns.title[i]+"</b></td><td style='padding-left:10px;'>"+retorno[0][me.internal.columns.field[i]]+"</td></tr>";
                         _display+="</table>";
                         me.getCmp("display").setText(_display,false);
-                        
+
                         break;
                     case 1:
                     case 0:
@@ -317,7 +317,7 @@ Ext.define('siga.select', {
                             for(var i=0;i<me.internal.columns.title.length;i++)
                                 me.displayField[i].setValue('');
                             return;
-                        }                        
+                        }
                         for(var i=0;i<me.internal.columns.title.length;i++)
                             me.displayField[i].setValue(retorno[0][me.internal.columns.field[i]]);
                         break;
@@ -342,7 +342,7 @@ Ext.define('siga.select', {
             }
         });
     },
-    
+
     setValue: function(v){
         var me=this;
         me.value=v;
@@ -361,10 +361,10 @@ Ext.define('siga.windowSelect', {
     gridList: null,
     pagingList: null,
     txtSearch: null,
-    
+
     listeners: {
         beforeclose: function(){
-            var me=this;            
+            var me=this;
             me.internal.parent.internal.page=me.gridList.store.currentPage;
             //me.getCmp("title").destroy();
         }
@@ -379,7 +379,7 @@ Ext.define('siga.windowSelect', {
         });
 
         me.title=me.internal.parent.fieldLabel;
-        
+
         me.pagingList = Ext.create('Ext.toolbar.Paging', Ext.apply({
             afterPageText: 'de {0}',
             beforePageText: 'P\u00e1gina',
@@ -393,7 +393,7 @@ Ext.define('siga.windowSelect', {
         if(me.internal.parent.internal.gridList)
             if(me.internal.parent.internal.gridList.features)
                 gridList_features=me.internal.parent.internal.gridList.features;
-        
+
         me.gridList = Ext.create('Ext.grid.Panel', Ext.apply({
             preventHeader: true,
             border: 0,
@@ -408,7 +408,7 @@ Ext.define('siga.windowSelect', {
                             return;
                     }
                     me.internal.parent.setValue(record.get(me.internal.parent.internal.valueField));
-                    
+
                     me.close();
                     if(me.internal.parent.internal.onAccept)
                         me.internal.parent.internal.onAccept();
@@ -416,22 +416,22 @@ Ext.define('siga.windowSelect', {
             },
             viewConfig: me.internal.parent.internal.viewConfig
         }));
-        
+
         //clearOtherSortStates
         me.items=[me.gridList];
-        
+
         me.txtSearch = Ext.create('Ext.form.field.Text', Ext.apply({
             hideLabel: false,
             flex: 1,
             emptyText: 'Escriba el texto y presione enter para buscar',
             listeners: {
                 specialkey: function(field, e){
-                    if (e.getKey() == e.ENTER) 
+                    if (e.getKey() == e.ENTER)
                         me.search();
                 }
             }
         }));
-        
+
         me.dockedItems=[{
             xtype: 'container',
             layout: {
@@ -470,50 +470,50 @@ Ext.define('siga.windowSelect', {
         }];
 
         me.callParent(arguments);
-        
+
         //me.internal.sort=[{property: 'fecha_inicio', direction: 'DESC'},{property: 'codigo', direction: 'DESC'}];
         me.internal.sort=me.sort();
 
-        me.configureList();        
+        me.configureList();
         me.txtSearch.setValue(me.internal.parent.internal.text);
         me.search();
     },
-    
+
     sort: function(){
         var me=this;
         var _sort=new Array();
-        
+
         if(me.internal.parent.internal.gridList)
             if(me.internal.parent.internal.gridList.groupField)
                 _sort.push({property: me.internal.parent.internal.gridList.groupField, direction: "ASC"});
-        
+
         for(var i=0;i<me.internal.parent.internal.columns.title.length;i++){
             //si es NULL no tomalo encuenta
-            if(String(me.internal.parent.internal.columns.sort[i]).toUpperCase()=="NULL") 
+            if(String(me.internal.parent.internal.columns.sort[i]).toUpperCase()=="NULL")
                 continue;
             _sort.push({property: me.internal.parent.internal.columns.field[i], direction: me.internal.parent.internal.columns.sort[i]});
         }
         return _sort;
     },
-    
+
     configureList: function(){
         var me=this;
-        
+
         var gridList_groupField=null;
         if(me.internal.parent.internal.gridList)
             if(me.internal.parent.internal.gridList.groupField)
                 gridList_groupField=me.internal.parent.internal.gridList.groupField;
-        
+
         var _extraParams={
           action: me.internal.parent.internal.actionOnList,
           text: ''
         };
-        
+
         if(me.internal.params)
           _extraParams=Ext.Object.merge(_extraParams,me.internal.params);
         if(me.internal.parent.internal.params)
           _extraParams=Ext.Object.merge(_extraParams,me.internal.parent.internal.params);
-          
+
         var store= new Ext.data.Store({
             pageSize: me.internal.parent.internal.limit,
             currentPage: me.internal.parent.internal.page,
@@ -544,26 +544,26 @@ Ext.define('siga.windowSelect', {
                         me.internal.parent.internal.extraParams.action=me.internal.parent.internal.actionOnList;
                         store.proxy.extraParams=me.internal.parent.internal.extraParams;
                     }
-                    else                    
+                    else
                         store.proxy.extraParams.text=me.txtSearch.getValue();
-                    
+
                 }
             }
         });
-        
+
         var columns=Array();
         for(var i=0;i<me.internal.parent.internal.columns.title.length;i++){
             var align="left";
             if(me.internal.parent.internal.columns.align)
                 if(me.internal.parent.internal.columns.align[i])
                     align=me.internal.parent.internal.columns.align[i];
-            
+
             var _cls="x-column-header-sort-"+String(me.internal.parent.internal.columns.sort[i]).toUpperCase();
-            if(String(me.internal.parent.internal.columns.sort[i]).toUpperCase()=="NULL") 
+            if(String(me.internal.parent.internal.columns.sort[i]).toUpperCase()=="NULL")
                 _cls="";
-            
+
             columns[i]={
-                xtype: 'gridcolumn',                
+                xtype: 'gridcolumn',
                 dataIndex: me.internal.parent.internal.columns.field[i],
                 text: "<b>"+me.internal.parent.internal.columns.title[i]+"</b>",
                 align: align,
@@ -579,7 +579,7 @@ Ext.define('siga.windowSelect', {
                                     return;
                                 }
                             }
-                        
+
                         for(var i=0;i<me.internal.sort.length;i++){
                             if(me.internal.sort[i].property==column.dataIndex){
                                 if(String(me.internal.sort[i].direction).toUpperCase()=="ASC"){
@@ -588,9 +588,9 @@ Ext.define('siga.windowSelect', {
                                     column.addCls('x-column-header-sort-DESC');
                                 }
                                 else if(String(me.internal.sort[i].direction).toUpperCase()=="DESC"){
-                                    column.removeCls('x-column-header-sort-DESC');                    
+                                    column.removeCls('x-column-header-sort-DESC');
                                     Ext.Array.erase(me.internal.sort,i,1);
-                                } 
+                                }
                                 else{
                                 }
                                 me.gridList.store.sort(me.internal.sort);
@@ -605,16 +605,16 @@ Ext.define('siga.windowSelect', {
             };
             if(me.internal.parent.internal.columns.width)
                 if(me.internal.parent.internal.columns.width[i])
-                    columns[i].width=me.internal.parent.internal.columns.width[i];            
+                    columns[i].width=me.internal.parent.internal.columns.width[i];
             if(i==me.internal.parent.internal.columns.title.length-1)
                 columns[i].flex=1;
         }
-        
+
         me.gridList.reconfigure(store,columns);
         //me.gridList.bindStore(store);
         me.pagingList.bindStore(store);
     },
-    
+
     search : function(){
         var me=this;
         me.internal.parent.internal.page=1;

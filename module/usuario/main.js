@@ -1,9 +1,9 @@
 siga.define('usuario', {
   extend: 'siga.window',
-  title: 'Administración - Usuarios',      
+  title: 'Administración - Usuarios',
   width: 800,
   height: 500,
-  
+
   initComponent: function(){
     var me = this;
 
@@ -31,7 +31,7 @@ siga.define('usuario', {
               {
                 xtype:'siga.select',
                 id: me._('id_persona_responsable'),
-                name: 'id_persona_responsable',                
+                name: 'id_persona_responsable',
                 fieldLabel: 'Responsable',
                 anchor: "100%",//width: 300,
                 //style:'margin: 0px 20px 0px 0px;',
@@ -45,11 +45,11 @@ siga.define('usuario', {
                   actionOnGet:'onGetSelect',
                   output:1,
                 }
-              },          
+              },
               {
                 xtype:'textfield',
                 id: me._('usuario'),
-                name: 'usuario',  
+                name: 'usuario',
                 fieldLabel: 'Usuario',
                 value: '',
                 anchor: "100%",
@@ -73,12 +73,12 @@ siga.define('usuario', {
                     {"id":"sha1",   "nombre":"SHA1"},
                     {"id":"sha256", "nombre":"SHA256"},
                     {"id":"sha512", "nombre":"SHA512"}
-                  ]                  
+                  ]
                 },
                 displayField: 'nombre',
                 valueField: 'id',
                 allowBlank: false,
-                forceSelection: true,                    
+                forceSelection: true,
                 value: 'ldap_fundacite',
                 editable: false,
                 listeners:{
@@ -86,8 +86,8 @@ siga.define('usuario', {
                     switch(me.getCmp('clave_type').getValue()){
                       case "plain":
                       case "md5":
-                      case "sha1":    
-                      case "sha256":  
+                      case "sha1":
+                      case "sha256":
                       case "sha512":
                         me.getCmp('clave_value').setDisabled(false);
                         me.getCmp('clave_value_re').setDisabled(false);
@@ -97,8 +97,8 @@ siga.define('usuario', {
                         me.getCmp('clave_value_re').setValue("");
                         me.getCmp('clave_value').setDisabled(true);
                         me.getCmp('clave_value_re').setDisabled(true);
-                      break;                
-                    }                
+                      break;
+                    }
                   }
                 }
               },
@@ -106,7 +106,7 @@ siga.define('usuario', {
                 xtype:'textfield',
                 inputType: 'password',
                 id: me._('clave_value'),
-                name: 'clave_value',       
+                name: 'clave_value',
                 fieldLabel: 'Contraseña',
                 value: '',
                 anchor: "100%",
@@ -117,7 +117,7 @@ siga.define('usuario', {
                 xtype:'textfield',
                 inputType: 'password',
                 id: me._('clave_value_re'),
-                name: 'clave_value_re',  
+                name: 'clave_value_re',
                 fieldLabel: 'Contraseña (confirmación)',
                 value: '',
                 anchor: "100%",
@@ -137,13 +137,13 @@ siga.define('usuario', {
                   data : [
                     {"id":"t", "nombre":"SI"},
                     {"id":"f", "nombre":"NO"}
-                  ]                  
+                  ]
                 },
                 editable: false,
                 displayField: 'nombre',
                 valueField: 'id',
                 allowBlank: false,
-                forceSelection: true,                    
+                forceSelection: true,
                 value: 't'
               },
             ]
@@ -152,9 +152,9 @@ siga.define('usuario', {
             xtype:'container',
             width: "50%",
             height: 310,
-            layout: "anchor", 
+            layout: "anchor",
             style : "padding: 0px; margin: 0px;",
-            defaults: me.getInternal("field_defaults"),  
+            defaults: me.getInternal("field_defaults"),
             items:[
               {
                 xtype: 'label',
@@ -186,7 +186,7 @@ siga.define('usuario', {
                     id: me._('data'),
                     flex: 1,
                     isFormField:false,
-                    fieldCls: 'login-input-base login-input-data',                    
+                    fieldCls: 'login-input-base login-input-data',
                     store: {
                       fields: ['id', 'nombre'],
                       data : siga.value("datos")
@@ -194,7 +194,7 @@ siga.define('usuario', {
                     displayField: 'nombre',
                     valueField: 'id',
                     allowBlank: false,
-                    forceSelection: true,                    
+                    forceSelection: true,
                     value: siga.value("anio"),
                     editable: false
                   },
@@ -207,7 +207,7 @@ siga.define('usuario', {
                       var nodo=arbol.childNodes;
                       //obtener el año seleccionado del select
                       var anio_select=me.getCmp('data').getValue();
-                      
+
                       //buscar el nodo del año seleccionado y guardarlo en i_nodo, sino es -1 no lo encontro
                       var i_nodo=-1;
                       for(var k=0;k<nodo.length;k++)
@@ -215,18 +215,19 @@ siga.define('usuario', {
                           i_nodo=k;
                           break;
                         }
-                        
+
                       //si no existe el nodo del año seleccionado, crearlo en la raiz
                       if(i_nodo==-1){
                         arbol.appendChild({
                           iconCls: 'perfil-data-nodo',
                           text: anio_select,
+                          name: anio_select,
                           leaf: false,
                           checked: true
                         });
                         //reordenar el arbol
                         me.getCmp('usuario_perfil').store.sort({property : 'text', direction: 'ASC'});
-                        
+
                         nodo=arbol.childNodes;
                         //buscar nuevamente la posición donde agrego el nuevo nodo
                         i_nodo=-1;
@@ -236,10 +237,10 @@ siga.define('usuario', {
                             break;
                           }
                       }//fin i_nodo==-1
-                      
+
                       //no deberia ocurrir nunca, pq se agrego el nodo que no existía
                       if(i_nodo==-1) return;
-                      
+
                       //crear la ventana para seleccionar los perfiles de acceso
                       var selector=Ext.create("siga.windowSelect", {
                         internal: {
@@ -264,7 +265,7 @@ siga.define('usuario', {
                               var hijos=nodo[i_nodo].childNodes;
                               for(var k=0;k<hijos.length;k++)
                                 if(v==hijos[k].data.text)
-                                  return;              
+                                  return;
                               var n = nodo[i_nodo].appendChild({
                                 iconCls: 'perfil-tipo-nuevo-nodo',
                                 text: v,
@@ -291,21 +292,21 @@ siga.define('usuario', {
                       nodo[0].removeAll();
                       nodo[0].remove(true);
                     }
-                  }              
+                  }
                 ]
-              },          
+              },
             ]
           }//fin container 2
         ]
       }
     ];
-    
-    
+
+
     me.callParent(arguments);
     me.setAccess(siga.getAccess("usuario"));
-    
+
     me.internal.sort=[{property: 'usuario', direction: 'ASC'},{property: 'responsable', direction: 'ASC'},{property: 'activo', direction: 'ASC'}];
-    
+
     var store= new Ext.data.Store({
       pageSize: 100,
       fields: ['id','usuario','responsable','activo'],
@@ -335,9 +336,9 @@ siga.define('usuario', {
           store.proxy.extraParams.text=me.getCmp('txtSearch').getValue();
         }
       }
-    });    
-    
-    var columns=[      
+    });
+
+    var columns=[
       {
         xtype: 'gridcolumn',
         dataIndex: 'usuario',
@@ -380,19 +381,19 @@ siga.define('usuario', {
           }
         }
       }
-      
+
     ];
-    
+
     me.getCmp('gridList').reconfigure(store,columns);
     me.getCmp('pagingList').bindStore(store);
   },
-  
+
   init: function(){
     var me=this;
     //activar el evento change, para actualizar los campos de contraseña, segun la seleccion
     me.getCmp('clave_type').fireEvent('change');
   },
-  
+
   onNew: function(){
     var me=this;
     me.getCmp('tabs').setActiveTab(0);
@@ -402,10 +403,10 @@ siga.define('usuario', {
     //recargar el listado
     me.onSearch();
   },
-  
+
   onGet: function(dataview, record, item, index, e){
     var me=this;
-    var _id=record.get("id"); 
+    var _id=record.get("id");
     me.getCmp('id').setValue(_id);
 
     Ext.Ajax.request({
@@ -425,13 +426,13 @@ siga.define('usuario', {
         me.getCmp('usuario').setValue(result[0]['usuario']);
         me.getCmp('id_persona_responsable').setValue(result[0]['id_persona_responsable']);
         me.getCmp('clave_type').setValue(result[0]['clave_type']);
-        me.getCmp('activo').setValue(result[0]['activo']);        
+        me.getCmp('activo').setValue(result[0]['activo']);
         me.getCmp('usuario_perfil').setRootNode({expanded: true, children: result[0]['perfil']});
         me.getCmp('usuario_perfil').expandAll();
       },
       failure:function(request){
         Ext.MessageBox.hide();
-        var result=Ext.JSON.decode(request.responseText);  
+        var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }
     });
@@ -440,26 +441,26 @@ siga.define('usuario', {
   onSave: function(){
     var me=this;
     var _id=Ext.String.trim(me.getCmp("id").getValue());
-    
-    var _id_persona_responsable=Ext.String.trim(me.getCmp("id_persona_responsable").getValue());    
+
+    var _id_persona_responsable=Ext.String.trim(me.getCmp("id_persona_responsable").getValue());
     if(!_id_persona_responsable){
       me.setMessage("Error. El campo responsable se encuentra vacío.","red");
       return;
     }
-    
-    var _usuario=Ext.String.trim(me.getCmp("usuario").getValue());    
+
+    var _usuario=Ext.String.trim(me.getCmp("usuario").getValue());
     if(!_usuario){
       me.setMessage("Debe llenar el campo usuario.","red");
       return;
     }
-    
-    var _clave_value=Ext.String.trim(me.getCmp("clave_value").getValue()); 
-    var _clave_value_re=Ext.String.trim(me.getCmp("clave_value_re").getValue()); 
+
+    var _clave_value=Ext.String.trim(me.getCmp("clave_value").getValue());
+    var _clave_value_re=Ext.String.trim(me.getCmp("clave_value_re").getValue());
     if(_clave_value!=_clave_value_re){
       me.setMessage("Las contraseñas no coinciden.","red");
       return;
     }
-    
+
     if(_id){
       Ext.MessageBox.confirm("Guardar",
                              "¿Desea modificar el registro actual?",
@@ -472,9 +473,9 @@ siga.define('usuario', {
       me.save();
     }
   },
-  
+
   save: function(){
-    var me=this;    
+    var me=this;
     //generar la estructura a guardar del perfil.
     var arbol=me.getCmp('usuario_perfil').getRootNode();
     var nodo=arbol.childNodes;
@@ -486,7 +487,7 @@ siga.define('usuario', {
         acceso+=hijos[j].data.text+((j<(hijos.length-1))?"\n":"");
       perfil_data[k]={anio: nodo[k].data.text, perfil: acceso, activo: (nodo[k].data.checked==true?'t':'f')};
     }
-    
+
     me.getCmp('tab_data').submit({
       method: 'POST',
       url:'module/usuario/',
@@ -510,12 +511,12 @@ siga.define('usuario', {
       }
     });
   },
-  
+
   onDelete: function(){
     var me=this;
     var _id=Ext.String.trim(me.getCmp("id").getValue());
     if(!_id) return;
-    
+
     Ext.MessageBox.wait('Eliminando... por favor espere!');
       Ext.Ajax.request({
         method: 'POST',
@@ -533,27 +534,27 @@ siga.define('usuario', {
           }
           else{
             me.setMessage(result.message,"red");
-          }          
+          }
         },
         failure:function(request){
           Ext.MessageBox.hide();
-          var result=Ext.JSON.decode(request.responseText);      
+          var result=Ext.JSON.decode(request.responseText);
           me.setMessage(result.message,"red");
         }
       });
   },
-  
+
   onCopy: function(){
-    var me=this;    
+    var me=this;
     me.internal.toCopy=[
       me.getCmp("nombre").getValue()
       ];
   },
-  
+
   onPaste: function(){
     var me=this;
     me.getCmp("nombre").setValue(me.internal.toCopy[0]);
   },
-  
+
 });
 
