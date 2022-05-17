@@ -1,0 +1,84 @@
+__**Movimiento Bancario**__
+
+Para ingresar al módulo de movimiento bancario, debemos seleccionar la opción Movimiento Bancario desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-26_10_39_39.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-26_10_38_57.png?nolink&600|}}
+
+**(1) realizar nuevos Movimientos Bancarios:**
+
+(a) Para ralizar nuevos movimientos bancarios, debemos llenar los campos que se presentan:
+
+- Fecha.
+
+- Tipo de Operación.
+
+- Nº de cuenta.
+
+- Documento de referencia.
+
+- Concepto.
+
+- Monto.
+
+-Contabilizar.
+
+(b) Agregar detalles presupuestario al Movimiento Bancario:
+
+Al hacer click en el botom agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}} se abrirá una ventana donde se podrá llenar los detalles presupuestarios. 
+  
+{{:captura_de_pantalla_de_2015-05-26_10_54_15.png?nolink&600|}}
+
+( c ) Opcionalmente si agregó un detalle presupuestario y no lo desea puede quitarlo de la siguiente manera.
+
+- Seleccionar el detalle presupuestario a eliminar del movimiento bancario.
+- Hacer click en el botom quitar {{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}} posteriormente se habrá eliminado de ésta.
+
+(d) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_10_55_37.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito', si no existen errores en la carga de información en el formulario. 
+
+{{:captura_de_pantalla_de_2015-05-26_10_57_27.png?nolink&600|}}
+
+**(2) Busqueda de Movimientos Bancarios:**
+
+(a) Seleccionar la pestaña "Movimiento" en la pantalla principal.
+
+(b) Elegir la cuenta y/o la fecha de comienzo a la fecha final del movimiento.
+
+{{:captura_de_pantalla_de_2015-05-26_10_46_14.png?nolink&600|}}
+
+( c ) Seleccionamos los movimientos del listado, automáticamente el formulario de datos se carga con la información de los movimientos registrados.
+
+{{:captura_de_pantalla_de_2015-05-26_10_59_31.png?nolink&600|}}
+
+**(3) Editar Movimiento Bancario:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de los movimientos bancarios a editar).
+
+( b ) Presionamos el botón Modificar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_11_00_45.png?nolink&600|}}
+
+( c ) Modificamos los campos necesarios.
+
+( d ) Presionamos el botón Guardar.
+
+
+**(4) Eliminar los Movimientos Bancarios:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de los movimientos bancarios a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_11_00_47.png?nolink&600|}}
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+NOTA: Esta opción se encuentra deshabilitada.

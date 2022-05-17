@@ -1,0 +1,44 @@
+__**Registro de Servicios**__
+
+Para ingresar al módulo de registros de Servicios, debemos seleccionar la opción "Servicios" desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-25_09_27_45.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-25_09_28_57.png?nolink&600|}}
+
+**(1) Registrar Nuevos Servicios:**
+
+(a) Para registrar nuevos Servicios, debemos llenar los campos que se presentan: Código, Denominación, Partida presupuestaria y seleccionar si aplica I.V.A o no.
+
+(b) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-25_09_31_08.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito', si no existen errores en la carga de información en el formulario. 
+
+{{:captura_de_pantalla_de_2015-05-25_09_33_43.png?nolink&600|}}
+
+**(2) Busqueda de Servicios:**
+
+(a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+(b) Escribir el nombre del servicio o Código en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-25_09_36_09.png?nolink&600|}}
+
+( c ) Seleccionamos los servicios del listado, automáticamente el formulario de datos se carga con la información de los Servicios registrado.
+
+{{:captura_de_pantalla_de_2015-05-25_09_37_50.png?nolink&600|}}
+
+**(3) Eliminar los Servicios:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de los Servicios a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+{{:captura_de_pantalla_de_2015-05-25_09_39_52.png?nolink&600|}}

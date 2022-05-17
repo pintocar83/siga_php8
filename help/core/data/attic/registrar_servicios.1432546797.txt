@@ -1,0 +1,45 @@
+__**Registro de Bienes**__
+
+Para ingresar al módulo de registros de Bienes, debemos seleccionar la opción bienes desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-25_09_27_45.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-25_09_28_57.png?nolink&600|}}
+
+**(1) Registrar Nuevos bienes:**
+
+(a) Para registrar nuevos bienes, debemos llenar los campos que se presentan: Código, Denominación, Partida presupuestaria y seleccionar si aplica I.V.A o no.
+
+(b) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-25_09_31_08.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito', si no existen errores en la carga de información en el formulario. 
+
+{{:captura_de_pantalla_de_2015-05-25_09_33_43.png?nolink&600|}}
+
+**(2) Busqueda de Bienes:**
+
+(a) Seleccionar la pestaña listado en la pantalla principal.
+
+(b) Escribir el nombre de los bienes o Código en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-25_09_36_09.png?nolink&600|}}
+
+( c ) Seleccionamos los bienes del listado, automáticamente el formalario de datos de carga con la información de los bienes registrado.
+
+{{:captura_de_pantalla_de_2015-05-25_09_37_50.png?nolink&600|}}
+
+**(3) Eliminar los Bienes:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de los bienes a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+{{:captura_de_pantalla_de_2015-05-25_09_39_52.png?nolink&600|}}
+

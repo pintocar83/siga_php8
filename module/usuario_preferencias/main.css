@@ -1,0 +1,13 @@
+.usuario_preferencias-thumb{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.usuario_preferencias-thumb img{
+    width: 150px;
+    height: 100px;
+}
+

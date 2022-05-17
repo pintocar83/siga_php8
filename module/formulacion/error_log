@@ -1,0 +1,14 @@
+[08-Mar-2022 21:04:15 America/Caracas] PHP Warning:  pg_query(): Query failed: ERROR:  invalid input syntax for integer: &quot;&quot;
+LINE 27:             F.anio='' AND
+                            ^ in /home/dspcom/public_html/siga/library/db.controller.php on line 37
+[08-Mar-2022 21:04:45 America/Caracas] PHP Warning:  pg_query(): Query failed: ERROR:  invalid input syntax for integer: &quot;&quot;
+LINE 27:             F.anio='' AND
+                            ^ in /home/dspcom/public_html/siga/library/db.controller.php on line 37
+[08-Mar-2022 21:05:19 America/Caracas] PHP Warning:  pg_query(): Query failed: ERROR:  invalid input syntax for integer: &quot;&quot;
+LINE 27:             F.anio='' AND
+                            ^ in /home/dspcom/public_html/siga/library/db.controller.php on line 37
+[08-Mar-2022 21:12:28 America/Caracas] PHP Warning:  pg_query(): Query failed: ERROR:  invalid input syntax for integer: &quot;&quot;
+LINE 27:             F.anio='' AND
+                            ^ in /home/dspcom/public_html/siga/library/db.controller.php on line 37
+[10-May-2022 16:51:04 America/Caracas] PHP Fatal error:  Array and string offset access syntax with curly braces is no longer supported in /home/dspcom/public_html/siga/class/formulacion.class.php on line 118
+[10-May-2022 16:51:05 America/Caracas] PHP Fatal error:  Array and string offset access syntax with curly braces is no longer supported in /home/dspcom/public_html/siga/class/formulacion.class.php on line 118

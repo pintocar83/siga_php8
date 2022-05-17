@@ -1,0 +1,32 @@
+.login-input-base{
+  background-repeat: no-repeat;
+  background-position: 2px center;
+  padding-left: 20px;  
+}
+
+.login-input-user{
+  background-image: url(../../image/icon/icon-user_16x16.png);        
+}
+
+.login-input-password{
+  background-image: url(../../image/icon/icon-password_16x16.png);
+}
+
+.login-input-data{
+  background-image: url(../../image/icon/icon-data_16x16.png);
+}
+
+.login-label-welcome{
+  color: #595959;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 120%;
+}
+
+.login-label-message{
+  text-align: center;
+  font-style: italic;
+  padding-top: 8px;
+  font-size: 11px;
+}

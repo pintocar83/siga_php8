@@ -1,0 +1,71 @@
+__**Cheque Orden de Pago**__
+
+Para ingresar al módulo de cheque con orden de pago, debemos seleccionar la opción Cheque Orden de Pago desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-26_07_51_07.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-26_07_52_57.png?nolink&600|}}
+
+**(1) realizar nuevos cheques con orden de pago:**
+
+(a) Para ralizar nuevos cheques por orden de pago, debemos llenar los campos que se presentan: Seleccionar si se efectuara el cheque a un Proveedor o un Beneficiario, seleccionar la cuenta, Fecha, Nº de Cheque, Concepto, Monto y seleccionar si la retenciòn es de primer o último pago.
+
+(b) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_08_18_07.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito',
+
+{{:captura_de_pantalla_de_2015-05-26_09_25_17.png?nolink&600|}}
+
+De lo contrario se mostrará un mensaje en color **ROJO** con la descripción del error. 
+
+{{:captura_de_pantalla_de_2015-05-26_08_20_11.png?nolink&600|}}
+
+**(2) Información Referente al Cheque:**
+
+Muestra la afectación presupuestaria y contable del cheque.
+
+(a) Seleccionar la pestaña "Destalles" en la pantalla principal.
+
+{{:captura_de_pantalla_de_2015-05-26_09_25_26.png?nolink&600|}}
+
+**(3) Busqueda de cheque orden de pago:**
+
+(a) Seleccionar la pestaña "listado" en la pantalla principal.
+
+(b) Escribir el nombre del proveedor, beneficiario y Número en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-26_09_27_27.png?nolink&600|}}
+
+( c ) Seleccionamos los servicios del listado, automáticamente el formulario de datos se carga con la información de los cheques con orden de pago registradas.
+
+{{:captura_de_pantalla_de_2015-05-26_09_28_27.png?nolink&600|}}
+
+**(4) Editar cheque orden de pago:**
+
+( a ) Debemos realizar el paso 3 (Busqueda de cheque con orden de pago a editar).
+
+( b ) Presionamos el botón Modificar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_09_32_48.png?nolink&600|}}
+
+( c ) Modificamos los campos necesarios.
+
+( d ) Presionamos el botón Guardar.
+
+
+**(5) Eliminar los cheques orden de pago:**
+
+( a ) Debemos realizar el paso e (Busqueda de los cheques orden de pago a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_09_31_25.png?nolink&600|}}
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+NOTA: Esta opción se encuentra deshabilitada.

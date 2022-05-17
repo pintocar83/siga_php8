@@ -1,0 +1,31 @@
+__**Registro de Proveedores y Beneficiarios**__
+
+**Proveedores**
+
+(1) Para ingresar al módulo para la creación y edición de los proveedores, debemos seleccionar la opción proveedores desde el menú principal del sistema administrativo.
+
+
+
+{{:captura_el_2015-05-22_a_las_10.08.10.png?600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_el_2015-05-22_a_las_10.20.14.png?600|}}
+
+
+
+
+
+(2) Para registrar un nuevo proveedor, debemos llenar los campos que se presentan: RIF, Denominación, Telefono, Correo y Dirección.
+
+
+(3) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+
+{{:captura_el_2015-05-22_a_las_10.26.50.png?600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito.', si no existen errores en la carga de información en el formulario. 
+
+
+{{:captura_el_2015-05-22_a_las_10.33.56.png?600|}}
+ 

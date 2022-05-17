@@ -1,0 +1,300 @@
+
+.icon-nomina_seleccionar{
+    background-image: url(image/icon-seleccionar.png);
+}
+
+.icon-nomina_concepto{
+    background-image: url(image/icon-concepto.png);
+}
+
+.icon-cerrar_periodo{
+    background-image: url(image/icon-cerrar_periodo.png);
+}
+
+.icon-nota{
+    background-image: url(image/icon-nota.png);
+}
+
+.icon-nomina_persona_carpeta{
+    background-image: url(image/icon-persona_carpeta.svg);
+}
+
+/*.icon-nomina_agregar_persona{
+    background-image: url(image/icon-agregar.png);
+}
+
+.icon-nomina_quitar_persona{
+    background-image: url(image/icon-quitar.png);
+}*/
+
+.nomina_cargo{
+    /*vertical-align: middle;*/
+    /*vertical-align: text-bottom;*/
+    font-size: 9px;
+    font-style: italic;
+}
+
+.nomina_estructura_presupuestaria{
+    font-size: 9px;
+}
+
+.columna_editar{
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    margin-left: -9px;
+    display: none;
+}
+
+
+
+.text_vertical{
+    /*border: 1px solid black;*/
+      white-space: nowrap;
+      text-align: left;
+      width: 0px;
+      margin-left: 50%;
+      /*margin-bottom: -15px;*/
+      margin-top: -25px;
+      line-height: 120%;
+      font-weight: bold;
+      -moz-transform: rotate(270deg);  /* FF3.5+ */        
+      -o-transform: rotate(270deg);  /* Opera 10.5 */   
+      -webkit-transform: rotate(270deg);  /* Saf3.1+, Chrome */              
+      filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=3);  /* IE6,IE7 */          
+      -ms-filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); /* IE8 */
+      cursor: default;      
+    }
+    
+    .text_indeficador{
+      color: #A3ACBA;
+      font-size: 8pt;
+      font-weight: normal;
+    }
+    
+    .text_formula{
+      color: #A3ACBA;
+      font-size: 7pt;
+      font-weight: normal;
+      cursor: pointer;
+    }
+    .text_formula:hover{
+      /*color: #848484;*/
+    }
+    
+    .error_formula{
+      color: #FF6060;
+      text-decoration: blink;
+    }
+    
+    .error_formula:hover{
+      color: #FF8989;
+    }
+    
+    .formula_tipo_asignacion{
+      color:#000;
+      /*color:#007C25;*/
+      font-size: 6.5px;
+      vertical-align: bottom;
+      font-weight: normal;
+      
+    }
+    
+    .formula_tipo_deduccion{
+      color:#000;
+      /*color:#A80000;*/
+      vertical-align: bottom;
+      font-size: 6.5px;
+      font-weight: normal;
+      /*xpcom.cix*/
+
+    }
+    
+.hoja_trabajo_header .x-column-header-inner .x-column-header-text {
+    display: block;
+    /*margin-top: 120px;*/
+}
+
+.hoja_trabajo_header_fijo .x-column-header-inner .x-column-header-text {
+      display: block;
+      margin-top: 115px;
+}
+/*Para evitar mostrar el espacio del grupo de columna de los conceptos*/
+/*.hoja_trabajo_header_group:first-child > .x-column-header-inner{*/
+/*      display: none;*/
+/*}*/
+.hoja_trabajo_header_group_none > .x-column-header-inner{
+      display: none;
+}
+
+.hoja_trabajo_header_group > .x-column-header-inner{
+      font-size: 8.5px;
+      font-weight: bold;
+      height: 15px;
+      padding: 0px;      
+}
+
+.nomina_columna_seleccionada{
+    background-color: #FFFF89;
+    /*animation: parpadeo 1s;*/
+    /*-webkit-animation: parpadeo 1s;*/
+    /*-moz-animation: parpadeo 1s;*/
+    /*animation-iteration-count:infinite;*/
+    /*-webkit-animation-iteration-count:infinite;*/
+    /*-moz-animation-iteration-count:infinite;*/
+}
+
+.nomina_columna_seleccionada > .x-column-header-over{
+    background: transparent;
+    background-color: #FFFF89;
+    animation: parpadeo 1s;
+    -webkit-animation: parpadeo 1s;
+    -moz-animation: parpadeo 1s;
+    animation-iteration-count:infinite;
+    -webkit-animation-iteration-count:infinite;
+    -moz-animation-iteration-count:infinite;
+}
+
+@keyframes parpadeo {
+    0% {background-color: #FFFFC1}
+    50% {background-color: #FFFF89}
+    100%{background-color: #FFFFC1}
+}
+
+@-webkit-keyframes parpadeo {
+    0% {background-color: #FFFFC1}
+    50% {background-color: #FFFF89}
+    100%{background-color: #FFFFC1}
+}
+
+
+
+/*.nomina_columna_seleccionada:before, .nomina_columna_seleccionada > .x-column-header-over:before {*/
+    /*content: " ";*/
+    /*width: 100%;*/
+    /*height: 5px;*/
+    /*background: #FFF466;*/
+    /*position: absolute;*/
+    /*top: 0px;*/
+    /*left: 0px;*/
+    /*top: 2px;*/
+    /*left: 50%;*/
+    /*margin-left: -20px;*/    /*border-top: 4px solid yellow;*/
+    /*width: 0;*/
+    /*height: 0;*/
+    /*border-left: 20px solid transparent;*/
+    /*border-right: 20px solid transparent;*/
+    /*border-top: 10px solid #FFF466;*/
+/*}*/
+
+/*.nomina_columna_seleccionada > .x-column-header-over:before {*/
+/*    position: absolute;*/
+/*    top: 0px;*/
+/*    left: 0px;*/
+/*    border-top: 4px solid yellow;*/
+/*}*/
+
+
+
+.x-grid-row .hoja_trabajo_cell {
+      font-size: 9px;
+}
+
+
+.hoja_trabajo_cell .x-grid-cell-inner {
+      padding-right: 1px !important;
+      padding-left: 0px !important;
+}
+
+
+.x-grid-row .hoja_trabajo_cell.total_asignacion {
+      color: #545454;
+      background-color: #EDEDED;
+}
+
+.x-grid-row .hoja_trabajo_cell.total_deduccion {
+      color: #545454;
+      background-color: #EDEDED;
+}
+
+/*ESTILO PARA LA FILA DE LOS TOTALES*/
+.x-grid-row-summary .hoja_trabajo_cell,/*Celdas de los conceptos+totales*/
+.x-grid-row-summary .hoja_trabajo_cell_fijo { /*Celdas de N y Persona*/
+    font-size: 8px;
+    font-weight: bold !important;
+    background-color: #E5E5E5 !important;
+}
+
+.x-grid-row-summary .hoja_trabajo_cell.total_neto { /*Total general*/
+    font-size: 8.5px !important;
+}
+/*FIN ESTILO PARA LA FILA DE LOS TOTALES*/
+
+.x-grid-row .hoja_trabajo_cell.total_neto{
+    font-size: 8.5px;
+    font-weight: bold;
+    background-color: #E5E5E5;
+}
+
+.x-grid-row .hoja_trabajo_cell.formula {
+    background-color: #EDEDED;
+}
+
+
+.nomina_hoja_trabajo .x-grid-group-hd{
+    background: #282828 !important;
+    padding: 15px 4px 4px 4px;
+    border-width: 0 0 1px 0;
+    border-style: solid; 
+    border-color: #AFAFAF; 
+}
+
+.nomina_hoja_trabajo .x-grid-group-hd > .x-grid-group-title{
+    color: #FFF !important;
+    font-size: 12px !important;
+}
+
+.nomina_hoja_trabajo .x-grid-item-over,
+.nomina_hoja_trabajo .x-grid-item-over .x-unselectable{
+    background-color: #FFFFA5 !important;
+}
+
+
+.nomina_hoja_trabajo i.mdi {
+    font-size: 24px !important;
+    float: right !important;
+    margin-top: -10px;
+    margin-left: 5px;
+    cursor: pointer !important;
+    color: #E2E2E2 !important;
+}
+
+.nomina_hoja_trabajo i.mdi:hover {
+    color: #FFF !important;
+}
+
+.nomina_hoja_trabajo .x-grid-inner-locked {
+    border-right-color: #282828;
+}
+
+.nomina_hoja_trabajo .nomina_grupo {
+    /*position: relative;*/
+    height: 13px;
+    width: 100%;
+}
+
+.nomina_hoja_trabajo .nomina_grupo .text {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding-right: 55px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.nomina_hoja_trabajo .nomina_grupo .icons {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}

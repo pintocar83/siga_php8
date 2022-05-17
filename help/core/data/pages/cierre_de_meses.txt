@@ -1,0 +1,11 @@
+__**Cierre de Meses**__
+
+Para ingresar al módulo cierre de meses debemos seleccionar la opción "Cierre de Meses" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-03_08_22_54.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-03_08_22_46.png?nolink&600|}}
+
+En este módulo podrá cerrar los meses en el que se elaboran las acciones del SIGAFS.

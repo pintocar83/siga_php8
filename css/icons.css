@@ -1,0 +1,190 @@
+.siga-btn-base{
+    opacity: 0.80;
+    font-size: 9px;
+}
+
+
+.siga-btn-base:hover{
+    opacity: 1;
+}
+
+
+.siga-btn-base .x-btn-inner{
+    font-size: 9px !important;
+    position: absolute !important;
+    bottom: 2px  !important;
+    left: 0%  !important;
+    text-align: center !important;
+    width: 100% !important;
+    color: black !important;
+    line-height: 100% !important;
+}
+
+.siga-btn-base-icon{
+    /*margin-top: -10px !important;*/
+    background-repeat: no-repeat;
+    background-position: center;
+    /*margin-right: auto !important;*/
+    /*margin-left: auto !important;*/
+    background-size: contain;
+    position: absolute;
+    top: 0px !important;
+    left: 50% !important;
+    margin-left: -12px !important;
+    opacity: 1;
+    width:22px !important;
+    height:22px !important;
+}
+
+.siga-icon-16{
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+
+.siga-btn-disabled{
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+}
+
+
+
+.icon-new{
+    background-image: url(../image/icon/icon-new.png);
+}
+
+.icon-save{
+    background-image: url(../image/icon/icon-save.png);
+}
+
+.icon-delete{
+    background-image: url(../image/icon/icon-delete.png);
+}
+
+.icon-copy{
+    background-image: url(../image/icon/icon-copy.png);
+}
+
+.icon-paste{
+    background-image: url(../image/icon/icon-paste.png);
+}
+
+.icon-copypaste{
+    background-image: url(../image/icon/icon-duplicate.png);    
+}
+
+.icon-pdf{
+    background-image: url(../image/icon/icon-pdf.png);
+}
+
+.icon-txt{
+    background-image: url(../image/icon/icon-txt.svg);
+}
+
+.icon-previous{
+    background-image: url(../image/icon/icon-previous.svg);
+}
+
+.icon-next{
+    background-image: url(../image/icon/icon-next.svg);
+}
+
+.icon-reload{
+    background-image: url(../image/icon/icon-reload.png);
+}
+
+.icon-documentsend{
+    background-image: url(../image/icon/icon-documentsend.png);
+}
+
+.icon-view{
+    background-image: url(../image/icon/icon-view.png);
+}
+
+.icon-add{
+    background-image: url(../image/icon/icon-listadd.png);
+}
+
+.icon-remove{
+    background-image: url(../image/icon/icon-listremove.png);
+}
+
+.icon-accept{
+    background-image: url(../image/icon/icon-accept.png);
+}
+
+.icon-clear{
+    background-image: url(../image/icon/icon-clear.png);
+}
+
+.icon-find{
+    background-image: url(../image/icon/icon-find.png);
+}
+
+.icon-find-all{
+    background-image: url(../image/icon/icon-find-all.png);
+}
+
+.icon-edit{
+    background-image: url(../image/icon/icon-edit.png);
+}
+
+.icon-display{
+    background-image: url(../image/icon/icon-display.png);
+}
+
+.icon-persona{
+    background-image: url(../image/icon/icon-persona.png);
+}
+
+.icon-persona_agregar{
+    background-image: url(../image/icon/icon-persona_agregar.svg);
+}
+
+.icon-persona_quitar{
+    background-image: url(../image/icon/icon-persona_quitar.svg);
+}
+
+.icon-persona_salida{
+    background-image: url(../image/icon/icon-persona_salida.png);
+}
+
+.icon-contabilizar{
+    background-image: url(../image/icon/icon-contabilizar.png);
+}
+
+.icon-aprobar{
+    background-image: url(../image/icon/icon-aprobar.svg);
+}
+
+.icon-reprobar{
+    background-image: url(../image/icon/icon-reprobar.svg);
+}
+
+.icon-restaurar{
+    background-image: url(../image/icon/icon-restaurar.svg);
+}
+
+
+
+.icon-close{
+    background-image: url(../image/icon/icon-close_16x16.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.icon-close-white{
+    background-image: url(../image/icon/icon-close-white_16x16.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.icon-close-red{
+    background-image: url(../image/icon/icon-close-red_16x16.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+

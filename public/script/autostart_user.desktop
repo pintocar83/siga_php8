@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=python /opt/fundacite/autostart_user.py
+Hidden=false
+X-MATE-Autostart-enabled=true
+Name[es_VE]=autostart_user.desktop
+Name=Autostart User FUNDACITE Sucre
+Comment[es_VE]=Autostart User FUNDACITE Sucre
+Comment=Autostart User FUNDACITE Sucre

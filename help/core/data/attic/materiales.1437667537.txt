@@ -1,0 +1,53 @@
+==== MATERIALES Y/O SUMINISTROS ====
+
+Para ingresar al módulo debemos seleccionar la opción "Materiales y/o Suministros" desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-25_08_24_19.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-25_08_27_15.png?nolink&600|}}
+
+=== Registrar Nuevo ===
+
+a) Para registrar un nuevo material y/o suministro, debemos llenar los campos que se presentan en el formulario: Código, Denominación, Partida Presupuestaria e indicar si el mismo aplica o no el I.V.A.
+
+b) Se procede a pulsar el botón guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-25_08_34_09.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos guardados con éxito.', si no existen errores en la carga de información. \\
+
+{{:captura_de_pantalla_de_2015-05-25_08_40_52.png?nolink&600|}}
+
+=== Búsqueda ===
+
+a) Seleccionar la pestaña "Listado" en la pantalla principal. \\
+{{:captura_de_pantalla_de_2015-05-25_08_44_42.png?nolink&600|}}
+
+b) Escribir el código o nombre del material/suministro en el campo buscar. \\
+{{:captura_de_pantalla_de_2015-05-25_08_50_06.png?nolink&600|}}
+
+c) Seleccionamos el material y/o suministro del listado, automáticamente el formulario de datos se carga con la información del registro seleccionado.
+
+=== Edición ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Ingresamos al tab o pestaña entrada de datos. \\
+
+c) Modificamos los campos necesarios. \\
+
+d) Presionamos el botón Guardar. \\ 
+{{:materiales:editar_confirmar.png?nolink&600|}}
+
+=== Eliminar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Eliminar en la barra superior. \\
+
+c) El sistema nos consulta: ¿Está seguro que desea eliminarlo? \\
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación. \\ 
+
+{{:captura_de_pantalla_de_2015-05-25_08_57_47.png?nolink&600|}}

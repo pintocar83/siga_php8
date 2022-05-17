@@ -1,0 +1,31 @@
+__**Formulación**__
+
+Para ingresar al módulo de formulación del presupuesto de gastos debemos seleccionar la opción "Formulación" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-02_08_56_21.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-02_08_56_29.png?nolink&600|}}
+
+**1) Agregar Nuevos Presupuestos de Gastos**
+
+a) Seleccionar el tipo y la estructura presupuestaria.
+
+b) Con el botón agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}}
+podemos agregar las cuentas presupuestarias al formulario.
+
+c) Opcionalmente si agregó una cuenta presupuestaria y no la desea puede eliminarla de la suiguiente manera:
+
+- Selecciona la cuenta presupuestaria que desea eliminar.
+
+- Darle click al botón quitar
+{{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}}
+posteriormente se habrá eliminado.
+
+d) Con el botón asignar {{:asignar.png?nolink&80|}}
+crea un comprobante con la asignación de presupuesto para la estructura presupuestaria y las partidas presupuestarias seleccionadas.
+
+e) por último se procede a guardar con el botón guardar.
+
+{{:captura_de_pantalla_de_2015-06-02_08_56_26.png?nolink&600|}}

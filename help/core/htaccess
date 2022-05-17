@@ -1,0 +1,8 @@
+<files *.js>
+order allow,deny
+allow from all
+</files>
+<files *.js.gz>
+  AddType "text/javascript" .gz
+  AddEncoding gzip .gz
+</files>

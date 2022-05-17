@@ -1,0 +1,52 @@
+==== PLAN DE CUENTAS PRESUPUESTARIAS ====
+
+Para ingresar al módulo debemos seleccionar la opción "Plan de Cuentas Presupuestarias" desde el menú principal del sistema administrativo.
+
+**Menú Principal:** \\
+<html><object type='image/svg+xml' data='images/menu_principal_administrativo.svg' style='max-width: 100%;'></object></html> \\
+**Opción:** Plan de Cuentas Presupuestarias. \\
+{{:plan_de_cuentas_presupuestarias:opcion_menu.png?nolink|}} \\
+
+A continuación se despliega la ventana referente al módulo. \\
+{{:plan_de_cuentas_presupuestarias:principal.png?nolink&600|}}
+
+=== Registrar Nuevo ===
+
+a) Para registrar una nueva cuenta, debemos llenar los campos que se presentan en el formulario: Código, Denominación y seleccionar si la cuenta es padre.
+
+b) Se procede a pulsar el botón guardar, ubicado en la barra superior. \\
+{{:plan_de_cuentas_presupuestarias:guardar.png?nolink&600|}}
+
+=== Búsqueda ===
+
+a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+b) Escribir el Código o Denominación en el campo buscar. \\
+{{:plan_de_cuentas_presupuestarias:buscar.png?nolink&600|}}
+
+c) Seleccionamos la cuenta del listado, automáticamente el formulario de datos se carga con la información del registro. \\ 
+
+=== Editar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Modificar en la barra superior. \\
+{{:plan_de_cuentas_presupuestarias:editar.png?nolink&600|}}
+
+c) Modificamos los campos necesarios. \\
+
+d) Presionamos el botón Guardar. \\ 
+
+=== Eliminar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Eliminar en la barra superior. \\
+{{:plan_de_cuentas_presupuestarias:eliminar.png?nolink&600|}}
+
+c) El sistema nos consulta: ¿Está seguro que desea eliminarlo? \\
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación. \\ 
+{{:plan_de_cuentas_presupuestarias:eliminar_confirmar.png?nolink&600|}}
+
+
+

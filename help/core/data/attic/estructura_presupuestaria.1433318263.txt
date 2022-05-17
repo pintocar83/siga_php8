@@ -1,0 +1,52 @@
+__**Estructura Presupuestaria**__
+
+Para ingresar al módulo de estructura presupuestaria debemos seleccionar la opción "Estructura Presupuestaria" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-02_09_24_07.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-02_09_24_21.png?nolink&600|}}
+
+**1) Registro de Estructura Presupuestaria**
+
+a) LLenar los campos que se presentan: Seleccionar el tipo de Código (ACC o PRO), luego escribir el código y Denominación.
+
+b) Hacer click en el botón guardar.
+
+{{:aliwhfpoaw.png?nolink&600|}}
+
+**2) Búsqueda de Estructuras Presupuestarias**
+
+a) Escribir el Código del Comprobante, Fecha o Nombre de la Denominación en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-06-03_07_51_28.png?nolink&600|}}
+
+b) Darle click a la estructura que desea seleccionar, luego de haber hecho esto, se cargarán los datos en el formulario.
+
+{{:captura_de_pantalla_de_2015-06-03_07_53_54.png?nolink&600|}}
+
+c) Posterior a esto podrá visualizar la acciones específicas y acciones subespecíficas en las pestañas "Acciones Específicas" y "Acciones Subespecíficas".
+
+{{:captura_de_pantalla_de_2015-06-03_07_55_15.png?nolink&600|}}
+
+{{:captura_de_pantalla_de_2015-06-03_07_55_22.png?nolink&600|}}
+
+**3) Editar Estructura Presupuestaria**
+
+a) Seguir el paso nº 2 (Búsqueda de estructuras a editar)
+
+b) Antes de guardar el formulario, hacemos click en el botón "Modificar".
+
+
+
+cambiamos los campos que vamos a editar y por último guardamos.
+
+**4) Eliminar Estructura presupuestaria**
+
+a) Seguir el paso nº 2 (Busqueda de estructuras a eliminar)
+
+b) Darle click en el botón "Eliminar".
+
+c) El sistema nos consultará" Esta seguro de eliminarlo", si está de acuerdo darle click en el botón "aceptar" de lo contrario "cancelar".
+

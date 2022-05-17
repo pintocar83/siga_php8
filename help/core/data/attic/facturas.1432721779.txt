@@ -1,0 +1,46 @@
+__**Facturas**__
+
+Para ingresar al módulo facturas, debemos seleccionar la opción "Facturas" desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-27_10_06_13.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-27_10_07_59.png?nolink&600|}}
+
+**(1) Registrar Nuevas Facturas:**
+
+(a) Para registrar una nueva Factura, debemos llenar los campos que se presentan: Seleccionar si se le registrará a un proveedor o a un beneficiario, Fecha, Número, Número de control, Monto total,tambien se deberá llenar en la informacion de I.V.A : Monto, &IVA, IVA y Retención. En la Información de I.S.L.R se deberá llenar los campos: Monto, %ISLR, ISLR, Retención.
+
+(b) Se procede a pulsar el botón guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-27_10_11_35.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito.', si no existen errores en la carga de información en el formulario. 
+
+{{:captura_de_pantalla_de_2015-05-27_10_08_19.png?nolink&600|}}
+
+**(2) Búsqueda de Facturas Registradas:**
+
+(a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+(b) Escribir el nombre, RIF, Fecha o Nº de Factura en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-27_10_09_46.png?nolink&600|}}
+
+( c ) Seleccionamos la factura del listado, automáticamente el formulario de datos se carga con la información de las facturas registradas.
+
+{{:captura_de_pantalla_de_2015-05-27_10_14_59.png?nolink&600|}}
+
+**( 3 ) Eliminar Facturas:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de la factura a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-27_10_15_45.png?nolink&600|}}
+
+( c ) El sistema nos consulta: ¿Está seguro que desea eliminarlo?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+NOTA: Esta opción se encuentra deshabilitada por los momentos.

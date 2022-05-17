@@ -1,0 +1,12 @@
+__**Disponibilidad Presupuestaria**__
+
+Para ingresar al módulo disponibilidad presupuestaria debemos seleccionar la opción "Disponibilidad Presupuestaria" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-02_08_21_35.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-02_08_22_18.png?nolink&600|}}
+
+**1) Búsqueda de Traspasos**
+

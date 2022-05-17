@@ -1,0 +1,32 @@
+__**Convertidor**__
+
+Para ingresar al módulo de corversión debemos seleccionar la opción "Convertidor" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-05_08_03_49.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-05_08_02_32.png?nolink&600|}}
+
+**1) Nueva Conversión**
+
+a) Agregar una cuenta presupuestaria con el botón "Listar". 
+
+{{:captura_de_pantalla_de_2015-06-05_08_22_05.png?nolink&600|}}
+
+b) Agregar una cuenta contable con el botón "Listar".
+
+{{:captura_de_pantalla_de_2015-06-05_08_23_03.png?nolink&600|}}
+
+c) Hacer click en el botón guardar.
+
+{{:pro.png?nolink&600|}}
+
+**2) Eliminar Conversiones**
+
+a) Si agregó una conversión y no la desea, puede quitarla de la siguiente manera.
+
+- Seleccionar la conversión que desea eliminar.
+
+- Hacer click en el botón quitar{{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}}
+posteriormente esta se habrá eliminado.

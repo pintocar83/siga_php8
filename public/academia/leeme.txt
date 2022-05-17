@@ -1,0 +1,17 @@
+
+
+codigo para agregar en la pagina web en la sección preinscribirse en cursos de la Academia
+http://aplicaciones.fundacite-sucre.gob.ve/public/academia/preinscribir.php es la ruta en el servidor de aplicaciones,
+el cual no es visible desde afuera, pero se puede acceder desde el servidor de la página web.
+
+<?php
+$options = array(
+    'http'=>array(
+      'method'=>"POST",
+      'header'=> "Content-type: application/x-www-form-urlencoded\r\n",
+      'content'=>http_build_query($_POST)
+  ));
+  $contexto = stream_context_create($options);  
+  print file_get_contents('http://aplicaciones.fundacite-sucre.gob.ve/public/academia/preinscribir.php', false, $contexto);
+?>
+

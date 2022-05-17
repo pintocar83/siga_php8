@@ -1,0 +1,552 @@
+@font-face {
+    font-family: sigafs;
+    src: url('../library/fonts/arial-webfont.eot');
+    src: url('../library/fonts/arial-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../library/fonts/arial-webfont.woff2') format('woff2'),
+         url('../library/fonts/arial-webfont.woff') format('woff'),
+         url('../library/fonts/arial-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#SIGAFS{
+  font-family: Arial, sigafs;
+  color:#344360;
+  margin: 0px;
+  padding: 20px 20px 0px 20px;
+  line-height: 15px;
+  display: none;
+}
+
+#SIGAFS select,
+#SIGAFS input,
+#SIGAFS textarea,
+#SIGAFS button {
+  font:99% arial, verdana, sans-serif, tahoma;
+  margin: 0px;
+  box-sizing:border-box;
+  -ms-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box; 
+}
+
+#SIGAFS input[type="text"]{
+  height: 20px;
+}
+
+
+#SIGAFS .boton_campo{
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin: 0px;
+  padding: 0px;  
+  vertical-align: top;
+  cursor: pointer;
+  border-radius: 0px 3px 3px 0px;
+  border: 1px solid #A5A5A5;
+  background-image: linear-gradient(to bottom, #F4F4F4, #DBDBDB);
+  opacity: 0.75;
+  overflow: hidden;
+}
+
+#SIGAFS .boton_campo.centro{  
+  border-radius: 0px;
+  text-align: center;
+}
+
+#SIGAFS .boton_campo:active{
+  background-image: linear-gradient(to top, #F4F4F4, #DBDBDB); 
+}
+
+#SIGAFS .boton_campo:disabled::after{  
+  content: "";
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background: rgba(191, 191, 191, 0.6);
+}
+
+#SIGAFS .boton_campo:disabled:hover{
+  border: 1px solid #A5A5A5;
+  opacity: 0.75;  
+}
+
+#SIGAFS .boton_campo:hover{
+  border: 1px solid #848484;
+  opacity: 1;
+}
+
+#SIGAFS .boton_campo img {
+  display: table-cell;
+  margin: auto;
+  width: 16px;
+  height: 16px;
+}
+
+/*#SIGAFS .boton_campo img::before{
+  content: "";
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  border: 1px solid yellow;
+}*/
+
+#SIGAFS .valign > *{
+  vertical-align: middle;
+}
+
+
+
+#SIGAFS .TitulosCampos {
+    /*font-family : 'sans-serif';*/
+    font-size : 13px;
+    text-align : right;
+    vertical-align : top;    
+    /*font-weight: bold;*/
+  }
+
+
+#SIGAFS .TextCampos {
+    /*font-family : 'sans-serif';*/
+    font-size : 13px;
+    text-align : left;
+    vertical-align : top;
+    /*vertical-align: middle;*/
+  }
+
+
+#SIGAFS .TextoCampoInputObligatorios {
+    background-color : #F7FFFE;
+    border: 1px solid #777777;
+    font-size : 13px;
+    text-transform : uppercase;
+    color : #000000;
+    margin: 0px;
+    box-sizing:border-box;
+    -ms-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box; 
+    /*height: 18px;*/
+  }
+  
+#SIGAFS .TextoCampoInputObligatorios:focus {    
+    border: 1px solid #494949;
+    outline: none;
+  }
+
+
+#SIGAFS .TextoCampoInput {
+    background-color : #FFFFFF;
+    border: 1px solid #777777;
+    font-size : 13px;
+    text-transform : uppercase;
+    color : #000000;
+    margin: 0px;
+    box-sizing:border-box;
+    -ms-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box; 
+    /*height: 18px;*/
+  }
+  
+#SIGAFS .TextoCampoInput:focus {    
+    border: 1px solid #494949;
+    outline: none;
+  }
+
+#SIGAFS .TextoCampoInputTabla {
+    background-color : #EBEBEB;
+    border: none;
+    /*border-bottom-color : #EBEBEB;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+    border-left-color : #EBEBEB;
+    border-left-style : solid;
+    border-left-width : 1px;
+    border-right-color : #EBEBEB;
+    border-right-style : solid;
+    border-right-width : 1px;
+    border-top-color : #EBEBEB;
+    border-top-style : solid;
+    border-top-width : 1px;*/
+    /*border: 0px solid #000;*/
+    text-transform : uppercase;
+    /*font-family : 'sans-serif';*/
+    font-size: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0px;
+    
+   
+
+    /* color : #000000;
+    */
+  }
+
+#SIGAFS .TextoCampoInputTabla:focus,
+#SIGAFS .TextoCampoInputTabla:hover{
+    outline: 0;
+    background-color: #FFF;
+}
+
+#SIGAFS .TextoCampoInputDesactivado {
+    background-color : #F4F4F4;
+    border: 1px solid #777777;
+    font-size : 13px;
+    text-transform : uppercase;
+    color : #404040;
+    margin: 0px;
+    box-sizing:border-box;
+    -ms-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box; 
+    /*height: 18px;*/
+  }
+  
+#SIGAFS .TextoCampoInputDesactivado:focus {    
+    border: 1px solid #494949;
+    outline: none;
+  }
+  
+/*Estilos para los botones Nuevos, Guardar, Modificar, Eliminar, Limpiar*/
+
+
+
+
+
+
+#SIGAFS BUTTON.BotonesVentana {
+    cursor : pointer;
+    font-size : 9px;
+    height : 45px;
+    text-align : center;
+    vertical-align : middle;
+    width : 55px;
+    border-radius: 3px;
+    border: 0px solid #6B6B6B;
+    opacity: 0.75;
+    background: none;
+  }
+
+#SIGAFS BUTTON.BotonesVentana:hover{
+    opacity: 1;
+    border: 1px solid #9d9d9d;
+    background-image: none;
+    background-color: #f3f3f3;
+    background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#fbfbfb),color-stop(100%,#e9e9e9));
+    background-image: -webkit-linear-gradient(top,#fbfbfb,#e9e9e9);
+    background-image: -moz-linear-gradient(top,#fbfbfb,#e9e9e9);
+    background-image: -o-linear-gradient(top,#fbfbfb,#e9e9e9);
+    background-image: linear-gradient(top,#fbfbfb,#e9e9e9);    
+}
+
+#SIGAFS BUTTON.BotonesVentana:disabled{
+    background: none;
+    opacity: 0.75;
+    border: none;
+    -webkit-filter: grayscale(0.9);
+    filter: grayscale(0.9);
+}
+
+
+
+
+/*BORRAR*/
+#SIGAFS .BotonesParaCampos {
+    cursor : pointer;
+    vertical-align : top;
+    border-radius: 0px;
+    border: 1px solid #6B6B6B;
+    opacity: 0.75;
+    background-color: #EDEDED;
+    margin: 0px;
+  }
+
+/*BORRAR*/
+#SIGAFS .BotonesParaCampos:hover{
+    opacity: 1;
+}
+
+/*BORRAR*/
+#SIGAFS .BotonesParaCampos:disabled{
+    opacity: 0.75;
+}
+
+
+
+#SIGAFS DIV.MensajesPestanas {
+    /*font-family : 'sans-serif';*/
+    font-size : 13px;
+    font-style : italic;
+    text-align : center;
+  }
+
+
+#SIGAFS .FilaEstilo, #SIGAFS .FilaListado td {
+  border-bottom: 1px solid #E0E0E0;
+  border-right: 1px solid #E0E0E0;
+  border-left-color : #E0E0E0;
+  border-top-color : #E0E0E0;
+  empty-cells : show;
+  cursor : pointer;
+  font-size : 12px;
+  }
+  
+/*#SIGAFS .FilaListado:hover{
+    background-color: #FFF8A3; 
+}*/
+
+#SIGAFS .CeldaContinua{
+    max-width : 0px;
+    overflow : hidden;
+    white-space : nowrap;
+}
+
+#SIGAFS .FilaEstiloContinua{
+  border-bottom-color : #E0E0E0;
+  border-bottom-style : solid;
+  border-bottom-width : 1px;
+  border-left-color : #E0E0E0;
+  border-right-color : #E0E0E0;
+  border-right-style : solid;
+  border-right-width : 1px;
+  border-top-color : #E0E0E0;
+  empty-cells : show;
+  cursor : pointer;
+  font-size : 12px;
+	max-width : 0px;
+	overflow : hidden;
+	white-space : nowrap;
+  }
+
+#SIGAFS .FilaEstilo2 {
+    border-bottom-color : #E0E0E0;
+    /*#b6b6b6*/ border-bottom-style : solid;
+    border-bottom-width : 1px;
+    border-left-color : #E0E0E0;
+    border-right-color : #E0E0E0;
+    border-right-style : solid;
+    border-right-width : 1px;
+    border-top-color : #E0E0E0;
+    empty-cells : show;
+    cursor : pointer;
+    font-size : 10px;
+    /*font-family : 'sans-serif';*/
+  }
+
+
+/*.FilaEstiloCuentaAgregada {*/
+/*    background-image : url('fondo_cuenta_agregada.png');*/
+/*    border-bottom-color : #E0E0E0;*/
+/*    border-bottom-style : solid;*/
+/*    border-bottom-width : 1px;*/
+/*    border-left-color : #E0E0E0;*/
+/*    border-right-color : #E0E0E0;*/
+/*    border-right-style : solid;*/
+/*    border-right-width : 1px;*/
+/*    border-top-color : #E0E0E0;*/
+/*    empty-cells : show;*/
+/*    cursor : pointer;*/
+/*    font-size : 13px;*/
+/*    /*font-family : 'sans-serif';*/*/
+/*  }*/
+
+
+#SIGAFS .FilaEstiloBloqueado {
+    background-color : #CFCFCF;
+    border-bottom-color : #E0E0E0;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+    border-left-color : #E0E0E0;
+    border-right-color : #E0E0E0;
+    border-right-style : solid;
+    border-right-width : 1px;
+    border-top-color : #E0E0E0;
+    empty-cells : show;
+    cursor : pointer;
+    font-size : 13px;
+    /*font-family: sans-serif;*/
+    /*font-family : 'sans-serif';*/
+  }
+
+
+#SIGAFS .CabeceraTablaEstilo, #SIGAFS .titulo {
+    background-color : #666666;
+    /*#485E6F;
+    #1c1c34;
+    */color : #FFFFFF;
+    /*#d0f9f4;
+    */ font-size : 12px;
+    /*font-family: sans-serif;*/
+    font-weight : bold;
+    text-align : center;
+    /*font-family : 'sans-serif';*/
+  }
+
+
+#SIGAFS .listado {
+  background-color : #EBEBEB;
+  border: 1px solid #485E6F;
+  list-style-type : none;
+  overflow : auto;
+  }
+  
+/*Mostra icono de cargando al encontrase la tabla vacía dentro del listado*/
+#SIGAFS .listado table:empty{
+  width: 100%;
+  height: 100%;
+  background-image: url(../image/loading.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  }
+
+
+#SIGAFS .listado table tr[selected]{
+  background-color: #C7C7EB;
+}
+
+#SIGAFS .listado table tr:hover{
+  background-color: #FFF8A3;
+}
+
+#SIGAFS .listado table td {
+  border-bottom: 1px solid #E0E0E0;
+  border-right: 1px solid #E0E0E0;
+  border-left-color : #E0E0E0;
+  border-top-color : #E0E0E0;
+  empty-cells : show;
+  cursor : pointer;
+  font-size : 12px;
+}
+
+#SIGAFS .listado table td.continua {
+  font-size : 12px;
+	max-width : 0px;
+	overflow : hidden;
+	white-space : nowrap;
+}
+
+
+#SIGAFS .CampoTextoBlanco {
+    background-color : #ffffff;
+    border-bottom-color : #ffffff;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+    border-left-color : #ffffff;
+    border-left-style : solid;
+    border-left-width : 1px;
+    border-right-color : #ffffff;
+    border-right-style : solid;
+    border-right-width : 1px;
+    border-top-color : #ffffff;
+    border-top-style : solid;
+    border-top-width : 1px;
+    color : #404040;
+    /*font-family : 'sans-serif';*/
+    font-size : 12px;
+    text-transform : uppercase;
+  }
+
+
+/*BUTTON.BotonesVentanaPrincipal {*/
+/*    background-image : url('fondo_botonesA.png');*/
+/*    border-bottom-style : ridge;*/
+/*    border-left-style : ridge;*/
+/*    border-right-style : ridge;*/
+/*    border-top-style : ridge;*/
+/*    cursor : pointer;*/
+/*    /*font-family : 'sans-serif';*/*/
+/*    font-size : 12px;*/
+/*    height : 90px;*/
+/*    text-align : center;*/
+/*    vertical-align : middle;*/
+/*    width : 160px;*/
+/*  }*/
+
+
+#SIGAFS .bordes_ventana {
+    border-bottom-color : #659fc2;
+    border-left-color : #659fc2;
+    border-right-color : #659fc2;
+    border-top-color : #659fc2;
+  }
+
+
+#SIGAFS .fondo_centro_barra_inferior_ventana {
+    background-color : #659fc2;
+  }
+
+
+#SIGAFS .bordes_barra_tarea_ventana {
+    border-left-color : #659fc2;
+    border-right-color : #344360;
+    border-top-color : #659fc2;
+    border-bottom-color : #344360;
+  }
+
+
+#SIGAFS .titulo_ventana {
+    color: #344360;
+  }
+
+
+
+
+
+/*
+#SIGAFS body {
+    font-family: Arial, sigafs;
+    color:#344360;
+    margin-left:0px;
+    margin-top:0px;
+    margin-right:0px;
+    margin-bottom:0px;
+    padding-left:0px;
+    padding-top:0px;
+    padding-right:0px;
+    padding-bottom:0px;
+    background-color: #D6D6D6;
+  }*/
+
+
+#SIGAFS table {
+    font-size:12px;
+  }
+
+
+#SIGAFS .BordesCabeceraTabla {
+    border-bottom-color : #303f48;
+    border-bottom-style : solid;
+    border-bottom-width : 1px;
+    border-left-color : #303f48;
+    border-left-style : solid;
+    border-left-width : 1px;
+    border-right-color : #303f48;
+    border-right-style : solid;
+    border-right-width : 1px;
+    border-top-color : #303f48;
+    border-top-style : solid;
+    border-top-width : 1px;
+    empty-cells : show;
+  }
+  
+#SIGAFS .acciones{
+    text-align: left;
+    background-color: #d8d8d8; */
+    background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#e6e6e6),color-stop(100%,#efefef)); 
+    background-image: -webkit-linear-gradient(top,#e6e6e6,#efefef); 
+    background-image: -moz-linear-gradient(top,#e6e6e6,#efefef);
+    background-image: -o-linear-gradient(top,#e6e6e6,#efefef);
+    background-image: linear-gradient(top,#e6e6e6,#efefef);
+    border-color: #bcb1b0;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
+    
+}
+
+

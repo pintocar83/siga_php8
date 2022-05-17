@@ -1,0 +1,30 @@
+.perfil-data-nodo, .x-grid-tree-node-expanded .perfil-data-nodo{
+  background-image: url(../../image/icon/icon-data_16x16.png) !important; 
+}
+
+.perfil-tipo-nodo, .x-grid-tree-node-expanded .perfil-tipo-nodo{
+  background-image: url(../../image/icon/icon-profile_16x16.png) !important; 
+}
+
+.perfil-tipo-nuevo-nodo, .x-grid-tree-node-expanded .perfil-tipo-nuevo-nodo{
+  background-image: url(../../image/icon/icon-profile-new_16x16.png) !important; 
+}
+
+
+.fila-expandida .x-grid-cell-inner{
+  white-space: pre-wrap;
+}
+
+.fila-expandida .x-grid-cell-first{
+  font-weight: bold;
+}
+/*
+.login-input-base{
+  background-repeat: no-repeat;
+  background-position: 2px center;
+  padding-left: 20px;  
+}
+
+.login-input-data{
+  background-image: url(images/icon-data_16x16.png);
+}*/

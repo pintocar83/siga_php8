@@ -1,0 +1,76 @@
+__**Registro Beneficiarios**__
+
+**Beneficiarios**
+
+Para ingresar al módulo para la creación y edición de los beneficiarios, debemos seleccionar la opción beneficiarios desde el menú principal del sistema administrativo.
+
+
+{{:captura_de_pantalla_de_2015-05-22_11_27_55.png?600|}}
+
+
+A continuación se despliega la ventana referente al módulo.
+
+
+{{:captura_de_pantalla_de_2015-05-22_11_31_03.png?600|}}
+
+
+
+**(1) Registra Nuevo Proveedor:**
+
+
+(a) Para registrar un nuevo proveedor, debemos llenar los campos que se presentan: RIF, Denominación, Telefono, Correo y Dirección.
+
+
+(b) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+
+
+A continuación se muestra el mensaje 'Datos Guardados con exito.', si no existen errores en la carga de información en el formulario. 
+
+
+
+
+
+**(2) Busqueda de proveedores registrados:**
+
+(a) Seleccionar la pestaña listado en la pantalla principal.
+
+
+
+(b) Escribir el nombre del proveedor o RIF en el campo buscar.
+
+(c) Seleccionamos el proveedor del listado, automáticamente el formalario de datos de carga con la información del proveedor registrado.
+
+
+
+
+
+
+
+**(3) Editar proveedor:**
+
+( a ) Debemos realizar el paso 2 (Busqueda del proveedor a editar).
+
+( b ) Presionamos el botón Modificar en la barra superior.
+
+( c ) Modificamos los campos necesarios.
+
+( d ) Presionamos el botón Guardar.
+
+
+
+
+
+**( 4 ) Eliminar proveedor:**
+
+( a ) Debemos realizar el paso 2 (Busqueda del proveedor a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+( c ) El sistema nos consulta: ¿Está seguro que desea eliminarlo?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+
+
+
+ 

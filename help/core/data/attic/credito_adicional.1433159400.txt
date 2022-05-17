@@ -1,0 +1,60 @@
+__**Crédito Adicional**__
+
+Para ingresar al módulo crédito adicional debemos seleccionar la opción "Crédito Adicional" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-01_11_27_58.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-01_11_41_38.png?nolink&600|}}
+
+**1) Nuevo Crédito Adicional**
+
+a) llenar los campos que se presentan: Fecha, Tipo, Fuente Financiera y Denominación.
+
+b) Opcionalmente con el botón agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}} puede añadir un detalle presupuestario.
+
+c) Si agregó un detalle presupuestario y no lo desea, puede quitarlo de la siguiente manera.
+
+- Seleccionar el dettalle que desea eliminar.
+
+- Hacer click en el botón quitar{{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}}
+posteriormente se habrá eliminado el detalle.
+
+d) Hacer click en el botón guardar.
+
+{{:captura_de_pantalla_de_2015-06-01_11_42_43.png?nolink&600|}}
+
+**2) Búsqueda de Crédito Adicional**
+
+a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+b) Escribir el Codigo del Comprobante, Fecha, o Nombre de la Denominación en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-06-01_11_44_11.png?nolink&600|}}
+
+c) Darle doble click al crédito adicional que desea seleccionar, luego de haber echo esto, se cargarán los datos en el formulario; por ultimo se procede a guardar.
+
+{{:captura_de_pantalla_de_2015-06-01_11_46_04.png?nolink&600|}}
+
+**3) Editar Crédito Adicional**
+
+a) Seguir el paso nº 2 (Búsqueda de créditos adicionales a editar)
+
+b) Antes de guardar el formulario, hacemos click en el botón "Modificar".
+
+{{:captura_de_pantalla_de_2015-06-01_11_47_20.png?nolink&600|}}
+
+cambiamos los campos que vamos a editar y por último guardamos.
+
+**4) Eliminar Crédito Adicional**
+
+a) Seguir el paso nº 2 (Busqueda de creditos adicionales a eliminar)
+
+b) Darle click en el botón "Eliminar".
+
+{{:captura_de_pantalla_de_2015-06-01_11_47_07.png?nolink&600|}}
+
+c) El sistema nos consultará" Esta seguro de eliminarlo", si está de acuerdo darle click en el botón "aceptar" de lo contrario "cancelar".
+
+{{:captura_de_pantalla_de_2015-06-01_11_47_11.png?nolink&600|}}

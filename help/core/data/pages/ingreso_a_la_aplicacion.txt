@@ -1,0 +1,38 @@
+__**Ingresar al Sistema**__
+
+Para ingresar al sitema es necesario tener instalado algunos de los siguientes navegadores web 
+en el computador cliente.
+
+**Navegador compatible:**
+
+-Firefox.
+
+-Iceweasel.
+
+-Epiphany.
+
+-Iceape.
+
+-Opera.
+
+1. Ingresar al navegador web de preferencia.
+
+
+2. Ingresar en la direccion web: http://aplicaciones.fundacite-sucre.gob.ve/
+
+3. Pulsar el botón "iniciar seccion" en la esquina superior izquierda.
+
+{{:captura_de_pantalla_de_2015-05-22_12_13_25.png?nolink&600|}}
+
+4. Introducir el usuario y contraseña y pulsar el botón "iniciar sección".
+
+{{:captura_de_pantalla_de_2015-05-22_12_16_20.png?nolink&600|}}
+
+5. Ingresamos al sistema administrativo haciendo click sobre el icono SIGAFS en la pantalla principal.
+
+{{:captura_de_pantalla_de_2015-05-22_12_20_27.png?nolink&600|}}
+
+6. Ingresar al modulo de preferencia.
+
+{{:captura_de_pantalla_de_2015-05-22_12_07_07.png?nolink&600|}}
+

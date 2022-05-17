@@ -1,0 +1,55 @@
+==== SERVICIOS ====
+
+Para ingresar al módulo debemos seleccionar la opción "Servicios" desde el menú principal del sistema administrativo.
+
+**Menú Principal:** \\
+{{:sigafs_menu_principal.png?nolink&600|}} \\
+**Opción:** Materiales y/o Suministros. \\
+{{:servicios:opcion_menu.png?nolink|}} \\
+
+A continuación se despliega la ventana referente al módulo. \\
+{{:servicios:principal.png?nolink&600|}}
+
+=== Registrar Nuevo ===
+
+a) Para registrar nuevos Servicios, debemos llenar los campos que se presentan en el formulario: Código, Denominación, Partida Presupuestaria e indicar si el mismo aplica o no el I.V.A.
+
+b) Se procede a pulsar el botón guardar, ubicado en la barra superior. \\
+{{:servicios:guardar.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con éxito', si no existen errores en la carga de información en el formulario. \\
+{{:servicios:guardar_mensaje.png?nolink&600|}}
+
+=== Búsqueda ===
+
+a) Seleccionar la pestaña "Listado" en la pantalla principal.
+
+b) Escribir el código o nombre del servicio en el campo buscar. \\
+{{:servicios:listado_buscar.png?nolink&600|}}
+
+c) Seleccionamos el servicio del listado, automáticamente el formulario de datos se carga con la información del registro seleccionado. \\
+{{:servicios:listado_seleccion.png?nolink&600|}}
+
+=== Edición ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Ingresamos al tab o pestaña entrada de datos. \\
+
+c) Modificamos los campos necesarios. \\
+
+d) Presionamos el botón Guardar. \\ 
+
+e) El sistema nos consulta: ¿Desea modificar el registro actual? 
+si aceptamos, el registro es modificado. Por el contrario, cancelamos la operación.  \\
+{{:servicios:editar_confirmar.png?nolink&600|}}
+
+=== Eliminar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Eliminar en la barra superior.
+
+c) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación. \\
+{{:servicios:eliminar_confirmar.png?nolink&600|}}

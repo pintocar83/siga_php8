@@ -1,0 +1,70 @@
+__**Orden de Compra**__
+
+Para ingresar al módulo de orden de compra, debemos seleccionar la opción Orden de Compra desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-25_10_53_44.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-25_10_55_13.png?nolink&600|}}
+
+**(1) Elaborar nuevas ordenes de compras:**
+
+(a) Para elaborar nuevas ordenes de compras, debemos llenar los campos que se presentan: número, fecha, proveedor, concepto, porciento de descuento.
+
+{{:captura_de_pantalla_de_2015-05-25_10_57_30.png?nolink&600|}}
+
+**(2) Agregar requisiciones:**
+
+Al hacer click en el botom requisiciones {{:requisicion.png?nolink&120|}} se abrirá una ventana donde se listaran las requisiciones pendientes. 
+  
+{{:captura_de_pantalla_de_2015-05-25_11_00_54.png?nolink&600|}}
+
+(a) opcionalmente si la compra posee cargos se le da click al botom cargos {{:captura_de_pantalla_de_2015-05-25_11_02_28.png?nolink&70|}} la cual despliega una ventana donde se eligirá el cargo necesario.
+
+{{:captura_de_pantalla_de_2015-05-25_11_05_42.png?nolink&600|}}
+
+(b) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-25_11_03_46.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito', si no existen errores en la carga de información en el formulario. 
+
+{{:captura_de_pantalla_de_2015-05-25_11_09_53.png?nolink&600|}}
+
+**(3) Busqueda de orden de compra:**
+
+(a) Seleccionar la pestaña listado en la pantalla principal.
+
+(b) Escribir el nombre del proveedor de la orden de compra o el numero en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-25_11_11_17.png?nolink&600|}}
+
+( c ) Seleccionamos los servicios del listado, automáticamente el formalario de datos se carga con la información de las ordenes de compras registradas.
+
+{{:captura_de_pantalla_de_2015-05-25_11_12_37.png?nolink&600|}}
+
+**(4) Editar Orden de Compra:**
+
+( a ) Debemos realizar el paso 3 (Busqueda de orden de compra a editar).
+
+( b ) Presionamos el botón Modificar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-25_11_14_44.png?nolink&600|}}
+
+( c ) Modificamos los campos necesarios.
+
+( d ) Presionamos el botón Guardar.
+
+
+
+**(5) Eliminar orden de compra:**
+
+( a ) Debemos realizar el paso 3 (Busqueda de orden de compra a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+NOTA: Esta opción se encuentra deshabilitada.

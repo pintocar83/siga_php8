@@ -1,0 +1,14 @@
+a:2:{s:7:"current";a:9:{s:4:"date";a:2:{s:7:"created";i:1437663868;s:8:"modified";i:1437680894;}s:4:"user";s:0:"";s:7:"creator";s:0:"";s:11:"last_change";b:0;s:11:"contributor";a:1:{s:4:"root";s:4:"root";}s:5:"title";s:11:"PROVEEDORES";s:11:"description";a:2:{s:15:"tableofcontents";a:1:{i:0;a:4:{s:3:"hid";s:11:"proveedores";s:5:"title";s:11:"PROVEEDORES";s:4:"type";s:2:"ul";s:5:"level";i:3;}}s:8:"abstract";s:252:"PROVEEDORES
+
+Para ingresar al módulo debemos seleccionar la opción “Proveedores” desde el menú principal del sistema administrativo.
+
+Menú Principal: 
+
+ 
+
+Opción: Proveedores. 
+
+ 
+
+
+A continuación se despliega la ventana referente al módulo.";}s:8:"relation";a:2:{s:5:"media";a:9:{s:27:"proveedores:opcion_menu.png";b:1;s:25:"proveedores:principal.png";b:1;s:23:"proveedores:guardar.png";b:1;s:31:"proveedores:guardar_mensaje.png";b:1;s:23:"proveedores:listado.png";b:1;s:30:"proveedores:listado_buscar.png";b:1;s:33:"proveedores:listado_seleccion.png";b:1;s:32:"proveedores:editar_confirmar.png";b:1;s:34:"proveedores:eliminar_confirmar.png";b:1;}s:10:"firstimage";s:27:"proveedores:opcion_menu.png";}s:8:"internal";a:2:{s:5:"cache";b:1;s:3:"toc";b:1;}}s:10:"persistent";a:5:{s:4:"date";a:2:{s:7:"created";i:1437663868;s:8:"modified";i:1437680894;}s:4:"user";s:0:"";s:7:"creator";s:0:"";s:11:"last_change";b:0;s:11:"contributor";a:1:{s:4:"root";s:4:"root";}}}

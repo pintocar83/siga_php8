@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+wget http://aplicaciones.fundacite-sucre.gob.ve/public/script/autostart_user.py -O /opt/fundacite/autostart_user.py
+wget http://aplicaciones.fundacite-sucre.gob.ve/public/script/autostart_user.desktop -O /opt/fundacite/autostart_user.desktop
+
+
+

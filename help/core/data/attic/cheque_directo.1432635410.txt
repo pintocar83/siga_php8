@@ -1,0 +1,69 @@
+__**Cheque Directo**__
+
+Para ingresar al módulo de Cheque Directo, debemos seleccionar la opción "Cheque Directo" desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-26_09_40_10.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-26_09_40_18.png?nolink&600|}}
+
+**(1) Realizar Nuevos Cheques Directos:**
+
+(a) Para ralizar nuevos cheques directos, debemos llenar los campos que se presentan: Seleccionar si se efectuara el cheque a un Proveedor o un Beneficiario, seleccionar la cuenta, Fecha, Nº de Cheque, Concepto y Monto.
+
+(b) Agregar afectacion presupuestaria:
+Al hacer click en el botom agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}} se abrirá una ventana donde se deberá llenar con una entrada de datos. 
+
+{{:captura_de_pantalla_de_2015-05-26_09_48_31.png?nolink&600|}}
+
+( c ) Opcionalmente si agregó una afectación y no lo desea puede quitarlo de la siguiente manera.
+
+- Seleccionar la afectación a eliminar del formulario.
+- Hacer click en el botom quitar {{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}} posteriormente se habrá eliminado de ésta.
+
+(d) Se procede a pulsar el boton guardar, ubicado en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_09_58_19.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito',De lo contrario se mostrará un mensaje en color **ROJO** con la descripción del error. 
+
+{{:captura_de_pantalla_de_2015-05-26_09_59_14.png?nolink&600|}}
+
+**(2) Busqueda de cheque directo:**
+
+(a) Seleccionar la pestaña "lista" en la pantalla principal.
+
+(b) Escribir el nombre del proveedor, beneficiario y/o Número en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-26_10_03_26.png?nolink&600|}}
+
+( c ) Seleccionamos el cheque del listado, automáticamente el formulario de datos se carga con la información de los cheques directos registrados.
+
+{{:captura_de_pantalla_de_2015-05-26_10_03_32.png?nolink&600|}}
+
+**(3) Editar cheque directo:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de cheque directo a editar).
+
+( b ) Presionamos el botón Modificar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_10_06_41.png?nolink&600|}}
+
+( c ) Modificamos los campos necesarios.
+
+( d ) Presionamos el botón Guardar.
+
+
+**(4) Eliminar los cheques directos:**
+
+( a ) Debemos realizar el paso 2 (Busqueda de los cheques directos a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-26_10_06_27.png?nolink&600|}}
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+NOTA: Esta opción se encuentra deshabilitada.

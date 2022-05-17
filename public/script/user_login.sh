@@ -1,0 +1,22 @@
+#!/bin/bash
+PATH="/usr/bin:$PATH"
+
+if [ ! -e /media/nfs/$USER ]; then mkdir /media/nfs/$USER; chmod 755 /media/nfs/$USER; chown $USER:vmail /home/$USER -R; fi
+
+ADD_FSTAB="galileo.fundacite-sucre.gob.ve:/home/nfs/$USER        /media/nfs/$USER nfs     rw,user,noauto  0       0"
+
+RESPUESTA=$(cat /etc/fstab | grep "$ADD_FSTAB")
+if [ -z "$RESPUESTA" ]
+then
+	echo $ADD_FSTAB >> /etc/fstab
+fi
+
+wget http://aplicaciones.fundacite-sucre.gob.ve/public/script/autostart_user.py -O /opt/fundacite/autostart_user.py
+chmod +x /opt/fundacite/autostart_user.py
+
+if [ ! -e /home/$USER/.config/autostart/autostart_user.desktop ]
+then
+	wget http://aplicaciones.fundacite-sucre.gob.ve/public/script/autostart_user.desktop -O /home/$USER/.config/autostart/autostart_user.desktop
+	chmod 755 /home/$USER/.config/autostart/autostart_user.desktop
+	chown $USER:vmail /home/$USER/.config/autostart/autostart_user.desktop
+fi

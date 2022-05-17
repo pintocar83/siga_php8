@@ -1,0 +1,139 @@
+/*margen de la pagina */
+  body{
+    font-family: sans-serif;
+    font-size: 16px;
+		padding-top: 50px;
+		padding-bottom: 50px;
+   }
+	 
+	.contenedor{
+		width: 900px;
+    border: 3px none #D88484;
+    /*position: absolute;*/
+		position: relative;
+    left: 50%;
+    margin-left: -450px;
+    /*margin-top: 10px;*/
+    /*margin-bottom: 10px;*/
+    box-shadow: 0 0 34px #8E8E8E;
+	}
+
+    /*Titulo de la pagina*/
+   .titulo_encuesta{
+    color: #444444;
+    font-size: 24px;
+    font-weight: bold;
+    
+    text-align: center;  
+  }
+
+	/* Encabezado de las tablas*/
+	.titulo_tabla1{
+		background-color: #5385D1;
+		color: white;
+    text-align: center;
+    font-weight: bold;
+		}
+		
+	 .titulo2_tabla1{
+		text-align: left;
+	 }
+ 
+
+  /*Tiulos secundarios de la pagina*/
+  .titulo_secundarios{
+	font-weight: bold;
+	/*font-style: italic;*/
+  }
+
+  .titulostabla1{
+    background-color: #5385D1;
+		color: white;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  /*Ultimo titulo*/
+  .tiulo_secundarios2{
+    text-align: right;
+    font-style: italic;
+    font-weight: bold;
+  }
+
+
+table {
+  /*border-spacing: 0;*/
+  border-collapse: collapse;
+	
+}
+td {
+  /*padding: 0;*/
+}
+
+table.borde_tabla td{
+	border: 2px solid #4472B9;
+}
+
+textarea {
+  overflow: auto;
+	border: none;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: inherit;
+  color: #333;
+  border: 0;
+  border-bottom: 1px solid #e5e5e5;
+
+}
+fieldset {
+  min-width: 0;
+  padding: 1;
+  margin: 5;
+  border: 0;
+}
+input:focus {
+  border: 2px solid #66afe9;
+}
+
+#mensaje{
+	color: red;
+  text-align: center;
+  font-style: italic;
+  font-size: 17px
+
+}
+
+.btn {
+        text-align: center;
+        text-decoration: none;
+        margin: 20px 50px 20px 50px;
+        cursor: pointer;
+        font-size: 24px;
+        /*display: block;*/
+        outline: 0;
+        color: white;
+        background: #4472B9;
+        white-space: nowrap;
+        border: 5px solid #4472B9 !important;
+        font-family: sans-serif;
+        font-weight: bold;
+        font-style: normal;
+        padding: 9px 16px !important;
+        line-height: 1.4;
+        position: relative;
+        border-radius: 10px;
+        -webkit-box-shadow: 5px 5px 0 0  rgba(0, 0, 0, 0.15);
+        box-shadow: 5px 5px 0 0  rgba(0, 0, 0, 0.15);
+        -webkit-transition: 0.1s;
+        transition: 0.1s;
+        }
+        
+      .btn:hover{
+        background: #5385D1;
+      }

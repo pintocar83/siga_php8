@@ -1,0 +1,61 @@
+==== PROVEEDORES ====
+
+Para ingresar al módulo debemos seleccionar la opción "Proveedores" desde el menú principal del sistema administrativo.
+
+**Menú Principal:** \\
+{{:sigafs_menu_principal.png?nolink&600|}} \\
+**Opción:** Materiales y/o Suministros. \\
+{{:proveedores:opcion_menu.png?nolink|}} \\
+
+
+A continuación se despliega la ventana referente al módulo. \\
+{{:captura_el_2015-05-22_a_las_10.20.14.png?nolink&600|}}
+
+=== Registrar Nuevo ===
+
+a) Para registrar un nuevo proveedor, debemos llenar los campos que se presentan en el formulario: RIF, Denominación, Teléfono, Correo y Dirección. \\
+
+b) Se procede a pulsar el botón guardar, ubicado en la barra superior. \\
+
+{{:captura_el_2015-05-22_a_las_10.26.50.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos guardados con éxito.', si no existen errores en la carga de información. \\
+
+{{:captura_el_2015-05-22_a_las_10.33.56.png?nolink&600|}}
+
+=== Búsqueda ===
+
+a) Seleccionar la pestaña "Lista" en la pantalla principal. \\ 
+
+{{:captura_el_2015-05-22_a_las_10.44.00.png?nolink&600|}}
+
+b) Escribir el nombre del proveedor o RIF en el campo buscar. \\ 
+
+c) Seleccionamos el proveedor del listado, automáticamente el formulario de datos se carga con la información del proveedor registrado. \\ 
+
+{{:captura_el_2015-05-22_a_las_10.49.06.png?nolink&600|}}
+
+{{:captura_el_2015-05-22_a_las_10.49.41.png?nolink&600|}}
+
+=== Editar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Modificar en la barra superior. \\
+
+c) Modificamos los campos necesarios. \\
+
+d) Presionamos el botón Guardar. \\ 
+{{:captura_de_pantalla_de_2015-05-22_11_15_06.png?nolink&600|}}
+
+=== Eliminar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Eliminar en la barra superior. \\
+
+c) El sistema nos consulta: ¿Está seguro que desea eliminarlo? \\
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación. \\ 
+
+{{:captura_de_pantalla_de_2015-05-22_11_18_00.png?nolink&600|}}
+ 

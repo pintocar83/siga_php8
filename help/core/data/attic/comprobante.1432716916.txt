@@ -1,0 +1,79 @@
+__**Comprobantes**__
+
+Para ingresar al módulo de comprobante, debemos seleccionar la opción "Comprobante" desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-27_08_08_49.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-27_08_24_04.png?nolink&600|}}
+
+**(1) Realizar Nuevos Comprobantes:**
+
+(a) Para realizar nuevos comprobantes, debemos llenar los campos que se presentan: Fecha, Denominación, seleccionar si se realizará la operación a un proveedor o a un beneficiario.
+
+(b) Agregar detalles presupuestarios:
+
+Al hacer click en el botón agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}} se abrirá una ventana donde se deberá llenar con una entrada de datos. 
+
+{{:captura_de_pantalla_de_2015-05-27_08_27_55.png?nolink&600|}}
+
+( c ) Agregar destalles contables:
+
+Seguir el paso  **(B)**.
+
+{{:captura_de_pantalla_de_2015-05-27_08_37_15.png?nolink&600|}}
+
+( d ) Opcionalmente si agregó un detalle y no lo desea puede quitarlo de la siguiente manera.
+
+- Seleccionar el detalle a eliminar del formulario.
+
+- Hacer click en el botón quitar {{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}} posteriormente se habrá eliminado de ésta.
+
+(e) Se procede a pulsar el botón guardar, ubicado en la barra superior.
+
+{{:1.png?nolink&600|}}
+
+A continuación se muestra el mensaje 'Datos Guardados con exito',De lo contrario se mostrará un mensaje en color **ROJO** con la descripción del error. 
+
+{{:captura_de_pantalla_de_2015-05-27_08_31_18.png?nolink&600|}}
+
+**(2) Búsqueda de Comprobantes:**
+
+(a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+(b) Escribir el Código del Comprobante, Fecha o Denominación en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-27_08_24_36.png?nolink&600|}}
+
+( c ) Seleccionamos el Comprobante del listado, automáticamente el formulario de datos se carga con la información de los Comprobantes registrados.
+
+{{:captura_de_pantalla_de_2015-05-27_08_34_05.png?nolink&600|}}
+
+(d) Por último se procede a guardar el formulario.
+
+**(3) Editar Comprobante:**
+
+( a ) Debemos realizar el paso 2 (Búsqueda de Comprobante a editar).
+
+( b ) Presionamos el botón Modificar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-27_08_24_51.png?nolink&600|}}
+
+( c ) Modificamos los campos necesarios.
+
+( d ) Presionamos el botón Guardar.
+
+
+**(4) Eliminar los Comprobantes:**
+
+( a ) Debemos realizar el paso 2 (Búsqueda de los Comprobantes a eliminar).
+
+( b ) Presionamos el botón Eliminar en la barra superior.
+
+{{:captura_de_pantalla_de_2015-05-27_08_24_42.png?nolink&600|}}
+
+( c ) El sistema nos consulta: ¿Está seguro de eliminar el registro?
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación.
+
+NOTA: Esta opción se encuentra deshabilitada.

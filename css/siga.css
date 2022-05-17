@@ -1,0 +1,436 @@
+@font-face {
+	font-family: sigafs;
+	src: url('../library/fonts/arial-webfont.eot');
+	src: url('../library/fonts/arial-webfont.eot?#iefix') format('embedded-opentype'),
+			 url('../library/fonts/arial-webfont.woff2') format('woff2'),
+			 url('../library/fonts/arial-webfont.woff') format('woff'),
+			 url('../library/fonts/arial-webfont.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+#siga-top {display:block; -moz-box-sizing: border-box; box-sizing: border-box;	height:27px; padding: 0px 0px 0px 1px; margin: 0px;  border-radius: 0px; border-bottom: solid 1px #1C1C1C;-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; background: #1C1C1C; color: #FFF; font:bold 13px/100% Arial, Helvetica, sans-serif;} 
+#siga-top .image{width: 24px; margin: -7px 0px -7px -20px;}
+#siga-top .info{ display: table; height: 27px; cursor: default; float: right; margin-right: 5px; font: 13px/100% Arial, Helvetica, sans-serif;}
+#siga-top .data{ display: table-cell; vertical-align: middle;}
+
+#siga-apps-button{
+	padding: 0px;
+	vertical-align: middle;
+	font: bold 13px sans-serif;
+	vertical-align: middle;	
+	width: 120px;
+	height: 27px;
+	line-height: 27px;
+	display: inline-block;
+	position: absolute;
+	top: 0px;	
+	left: 0px;
+	text-align: center;
+	text-decoration:none;
+	cursor: pointer;	
+	/*z-index: 20000;*/
+	user-select: none; 
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-ms-user-select: none;
+	z-index: 1;
+	color: #FFF;
+}
+
+#siga-apps-button.normal{
+	background: #141414;
+}
+
+#siga-apps-button.open, #siga-apps-button.normal:hover{
+	background: #262626;
+}
+
+#siga-apps-button.open:before{
+	border-top: 10px solid #262626;
+	border-left: 60px solid transparent;
+	border-right: 60px solid transparent;
+	content: "";
+	height: 0;
+	left: 0;
+	position: absolute;
+	top: 27px;
+	width: 0;	
+}
+
+#siga-apps-button.open:hover{
+	background: #262626;
+}
+
+#siga-apps{
+	display: none;
+	
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	
+	border-top: 28px solid rgba(0,0,0,0.5);
+	
+	text-align: center;
+	z-index: 0;
+}
+
+#siga-apps .left{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	
+	width: 120px;
+	height: 100%;
+	
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	
+	padding-top: 10px;
+	margin: 0px;	
+	
+	background: rgb(48, 48, 48);
+	/*background: #3B5A7F;*/
+}
+
+#siga-apps .center{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	
+	width: 100%;
+	height: 100%;
+	
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	
+	padding-left: 120px;
+	padding-right: 330px;
+	
+	/*border-right: solid 330px rgba(0,0,0,0);*/
+	
+	margin: 0px;
+
+	background: #ffffff; 
+	background: -moz-radial-gradient(center, ellipse cover, #ffffff 0%, #e5e5e5 100%); 
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(100%,#e5e5e5));
+	background: -webkit-radial-gradient(center, ellipse cover, #ffffff 0%,#e5e5e5 100%); 
+	background: -o-radial-gradient(center, ellipse cover, #ffffff 0%,#e5e5e5 100%); 
+	background: -ms-radial-gradient(center, ellipse cover, #ffffff 0%,#e5e5e5 100%); 
+	background: radial-gradient(ellipse at center, #ffffff 0%,#e5e5e5 100%); 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e5e5e5',GradientType=1 );
+
+	overflow-y: auto;
+}
+
+#siga-apps .right{
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	
+	width: 330px;
+	height: 100%;
+	
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	
+	padding-top: 10px;
+	margin: 0px;	
+	
+	background: #EDEDED;
+}
+
+#siga-apps .left .icon{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	opacity: 0.9;
+	color: #FFFFFF;
+	cursor: pointer;
+	border-right: 5px solid rgba(0, 0, 0, 0);
+	opacity: 0.7;
+}
+
+#siga-apps .left .icon:hover{
+	opacity: 1;
+}
+
+#siga-apps .left .icon.selected{
+	border-right: 5px solid rgb(0, 139, 226);
+	opacity: 1;
+}
+
+#siga-apps .left .icon span{
+	font-family: sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+#siga-apps .left .icon img{
+	width: 48px;
+	height: 48px;    
+}
+
+#siga-apps .left .icon.foco:hover{
+	opacity: 0.7;       
+	background: rgba(226, 226, 226,0.3);
+	border-radius: 0px;
+	font-weight: bold;
+	border-right: 5px solid rgba(0, 161, 241,0);
+}
+
+
+#siga-apps .center .icon{
+	text-align: center;
+	width: 120px;
+	/*width: 150px;*/
+	padding: 10px 0 10px 0;
+	display: inline-table;
+	margin-top: 10px;
+	opacity: 0.8;
+	color: #000;
+	cursor: pointer;
+}
+
+#siga-apps .center .icon:hover{
+	opacity: 1;
+	background: rgba(226, 226, 226,0.3);
+	border-radius: 10px;
+	font-weight: bold;
+}
+
+#siga-apps .center .icon img{
+	width: 42px;
+	/*width: 48px;*/
+	height: 42px;    
+	/*height: 48px;    */
+}
+
+#siga-apps .center .icon span{
+	font-family: sans-serif;
+	font-size: 12px;
+}
+
+#siga-apps .center .icon.disabled{
+	-webkit-filter: grayscale(1);
+	filter: grayscale(1);
+	opacity: 0.2;
+}
+
+#siga-apps .center .icon.disabled:hover{
+	opacity: 0.2;
+	font-weight: normal;
+	background: none;
+}
+
+#siga-apps .center .title {
+	margin-top: 15px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #262626;
+}
+
+
+
+
+
+#siga-apps-container, #siga-window-container{
+	height: 95%;	
+	/* Firefox */
+	height: -moz-calc(100% - 30px);
+	/* WebKit */
+	height: -webkit-calc(100% - 30px);
+	/* Opera */
+	height: -o-calc(100% - 30px);
+	/* Standard */
+	height: calc(100% - 30px);
+	width: 100%;
+	position: absolute;
+	overflow-y: auto;
+	overflow-x: hidden;	
+  }
+	
+#siga-apps-container::-webkit-scrollbar, #siga-window-container::-webkit-scrollbar { 
+	display: none; 
+}	
+
+
+.siga-apps-title{
+	opacity: 0.5;
+}
+
+.siga-apps-title:hover{
+	opacity: 1;
+}
+
+
+.siga-apps-title-close{
+	position: absolute;
+	top: 0px;
+	right: -9px;
+	width: 18px;
+	height: 18px;
+	background-color:#333333;
+	border-radius: 9px;
+	cursor: pointer;
+	/*z-index: 1;*/
+	opacity: 0.85;
+}
+
+
+.siga-apps-title-text{
+	display: inline-block;
+	position:relative;
+	/*border: solid 1px white;*/
+	
+	padding: 4px 25px 4px 25px;	
+	
+	color: #FFFFFF;
+	background:#222222;
+	background:-moz-linear-gradient(top, #222222 0%, #141414 100%);
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#222222), color-stop(100%,#141414));
+	background:-webkit-linear-gradient(top, #222222 0%,#141414 100%);
+	background:-o-linear-gradient(top, #222222 0%,#141414 100%);
+	background:-ms-linear-gradient(top, #222222 0%,#141414 100%);
+	background:linear-gradient(top, #222222 0%,#141414 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient( startColorstr='#222222', endColorstr='#141414',GradientType=0 );
+	
+	font: 10px/100% Arial, Helvetica, sans-serif;/*font-size: 14px;*/
+	font-weight: normal;
+	text-align: center;
+	
+	border-radius: 8px;
+	
+	/*z-index: 50000;*/
+	opacity: 0.90;
+	cursor: pointer;
+}
+
+
+	
+.siga-field-label{
+	font-weight: bold;
+}
+
+.siga-field-label .x-form-item-label-inner{
+	padding-bottom: 0px !important;
+}
+
+
+
+
+.siga-pie_aplicaciones{
+  font-size: 9px;
+  color: #421C1C;
+  text-align: right;
+  padding-right: 10px;
+  padding-bottom: 5px;
+}
+
+
+.fila-padre .x-grid-cell{
+	background-color: #3E4449 !important;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+.fila-hija .x-grid-cell{
+	background-color: #E2F2FF !important;
+	color: #000000;	
+}
+
+.fila-hija:hover .x-grid-cell{
+	background-color: #FFFDE0 !important;
+}
+
+.fila-hija.x-grid-row-selected .x-grid-cell-inner{
+	background-color: #FFFABF !important;
+}
+
+.estilo-campo{
+	text-transform: uppercase;
+}
+
+
+
+
+/*.wlist-item-mask {
+	opacity: 0.7 !important;	
+	background-color: rgba(0,0,0,0.7) !important;
+}
+
+.wlist-item-mask:hover {
+	opacity: 0.3 !important;	
+	background-color: rgba(0,0,0,0.3) !important;
+	border: 5px solid yellow;
+}*/
+
+
+.x-mask.siga-window-list-item {
+	/*border: none;*/
+	background-color: rgba(0,0,0,0.7) !important;
+	/*opacity: 0.3;*/
+}
+
+.x-mask.siga-window-list-item:hover{	
+	/*opacity: 0.5;	*/
+	background-color: rgba(0,0,0,0.3) !important;
+}
+
+.x-mask.siga-window-list-item-focus{	
+	/*opacity: 0.5;	*/
+	background-color: rgba(0,0,0,0.3) !important;
+}
+
+.x-mask.siga-window-list-item-focus:hover{	
+	/*opacity: 0.5;	*/
+	background-color: rgba(0,0,0,0) !important;
+}
+
+.siga-window-item{
+	opacity: 1 !important;
+}
+
+.siga-window-item:hover{
+	opacity: 0.3 !important;
+}
+
+
+
+.icon-desktop{
+	margin-top: 10px;
+	text-align: center;
+	width: 100px;
+	padding: 10px;
+	border: solid 0px black;
+	color: #ADADAD;
+	/*font-weight: bold;*/
+	/*text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;*/
+	text-shadow: 0 0 1px #ADADAD;
+	font: 12px/100% sans-serif;
+	-webkit-transition: color .2s ease-in-out;-moz-transition: color .2s ease-in-out;-o-transition: color .2s ease-in-out;-ms-transition: color .2s ease-in-out;transition: color .2s ease-in-out;
+}
+
+.icon-desktop:hover{
+	color: #FFFFFF;
+}
+
+.icon-desktop img, .icon-desktop span{
+	cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+

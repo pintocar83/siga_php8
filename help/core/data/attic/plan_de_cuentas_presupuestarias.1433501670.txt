@@ -1,0 +1,49 @@
+__**Plan de Cuentas Presupuestarias**__
+
+Para ingresar al módulo plan de cuentas presupuestarias debemos seleccionar la opción "Plan de Cuentas Presupuestarias" en el menú principal del sistema.
+
+{{:captura_de_pantalla_de_2015-06-05_08_31_24.png?nolink&600|}}
+
+a continuación se mostrará la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-06-05_08_31_28.png?nolink&600|}}
+
+**1) Nuevo Plan de Cuentas Presupestarias**
+
+a) LLenar los campos que se presentan: Código, Denominación y seleccionar si la cuenta es padre o no.
+
+b) Hacer click en el botón guardar.
+
+{{:captura_de_pantalla_de_2015-06-05_08_32_02.png?nolink&600|}}
+
+**2) Búsqueda Planes de Cuentas Presupuestarias**
+
+a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+b) Escribir el Código o Denominación en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-06-05_08_31_48.png?nolink&600|}}
+
+c) Darle doble click al plan de cuentas que desea seleccionar, luego de haber hecho esto, se cargarán los datos en el formulario; por ultimo se procede a guardar.
+
+**3) Editar Planes de Cuentas Presupuestarias**
+
+a) Seguir el paso nº 2 (Búsqueda Planes de Cuentas Presupuestarias a editar)
+
+b) Antes de guardar el formulario, hacemos click en el botón "Modificar".
+
+{{:captura_de_pantalla_de_2015-06-05_08_32_04.png?nolink&600|}}
+
+cambiamos los campos que vamos a editar y por último guardamos.
+
+**4) Eliminar Planes de Cuentas Presupuestarias**
+
+a) Seguir el paso nº 2 (Busqueda de Planes de Cuentas Presupuestarias a eliminar)
+
+b) Darle click en el botón "Eliminar".
+
+{{:captura_de_pantalla_de_2015-06-05_10_37_53.png?nolink&600|}}
+
+c) El sistema nos consultará" Esta seguro de eliminarlo", si está de acuerdo darle click en el botón "aceptar" de lo contrario "cancelar".
+
+{{:captura_de_pantalla_de_2015-06-05_10_38_06.png?nolink&600|}}

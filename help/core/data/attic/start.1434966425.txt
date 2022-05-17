@@ -1,0 +1,61 @@
+**[[Ingreso a la Aplicación|Ingreso a la Aplicación]]**
+
+**__Menú Favoritos__**
+
+{{:captura_de_pantalla_de_2015-06-05_10_57_33.png?nolink&700|}}
+
+**[[Registrar Beneficiario|Registrar Beneficiario]]**
+
+**[[Registrar Proveedores|Registrar Proveedores]]**
+
+**[[Registrar Materiales y/o Suministros|Registrar Materiales y/o Suministros]]**
+
+**[[Registrar Bienes|Registrar Bienes]]**
+
+**[[Registrar Servicios|Registrar Servicios]]**
+
+**[[Movimiento Bancario|Movimiento Bancario]]**
+
+**[[Requisición Externa|Requisición Externa]]**
+
+**[[Orden de de Compra|Orden de de Compra]]**
+
+**[[Orden de Servicio|Orden de Servicio]]**
+
+**[[Orden de Pago|Orden de Pago]]**
+
+**[[Cheque con Orden de Pago|Cheque con Orden de Pago]]**
+
+**[[Cheque Directo|Cheque Directo]]**
+
+**[[Comprobante|Comprobante]]**
+
+**[[Comprobantes de Retención|Comprobantes de Retención]]**
+
+**[[Facturas|Facturas]]**
+
+-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
+{{ :captura_de_pantalla_de_2015-06-05_10_57_37.png?nolink&700 |}}
+
+**__Precesos__**
+
+**[[Traspaso|Traspaso]]**
+
+**[[Credito Adicional|Credito Adicional]]**
+
+**[[Reducción|Reducción]]**
+
+**[[Disponibilidad Presupuestaria|Disponibilidad Presupuestaria]]**
+
+**[[Formulación|Formulación]]**
+
+**[[Estructura Presupuestaria|Estructura Presupuestaria]]**
+
+**[[Cierre de Meses|Cierre de Meses]]**
+
+**[[Convertidor|Convertidor]]**
+
+**[[Plan de Cuentas Presupuestarias|Plan de Cuentas Presupuestarias]]**
+
+**[[Plan de Cuentas Contables|Plan de Cuentas Contables]]**

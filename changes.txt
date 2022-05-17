@@ -1,0 +1,12 @@
+library/phpexcel/
+library/fpdf/1.84/
+library/siga.class.php
+module/estructura_presupuestaria/
+module/nomina/
+class/estructura_presupuestaria.class.php
+class/nomina.class.php
+report/nomina_listado_banco_xls_formato_a.php
+report/nomina_listado_banco_xls_formato_b.php
+report/nomina_listado_banco_xls_formato_c.php
+report/nomina_recibo_pago.php
+

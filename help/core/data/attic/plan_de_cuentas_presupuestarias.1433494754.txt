@@ -1,0 +1,58 @@
+__**Plan de Cuentas Presupuestarias**__
+
+Para ingresar al módulo plan de cuentas presupuestarias debemos seleccionar la opción "Plan de Cuentas Presupuestarias" en el menú principal del sistema.
+
+
+
+a continuación se mostrará la ventana referente al módulo.
+
+
+
+**1) Nuevo Plan de Cuentas Presupestarias**
+
+a) LLenar los campos que se presentan: Código, Denominación y seleccionar .
+
+b) Opcionalmente con el botón agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}} puede añadir un detalle presupuestario en la pestaña "cuentas a disminuir" y/o "cuentas a aumentar".
+
+c) Si agregó un detalle presupuestario y no lo desea, puede quitarlo de la siguiente manera.
+
+- Seleccionar el dettalle que desea eliminar.
+
+- Hacer click en el botón quitar{{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}}
+posteriormente se habrá eliminado el detalle.
+
+d) Hacer click en el botón guardar.
+
+{{:captura_de_pantalla_de_2015-06-01_11_11_41.png?nolink&600|}}
+
+**2) Búsqueda de Traspasos**
+
+a) Seleccionar la pestaña "Lista" en la pantalla principal.
+
+b) Escribir el Código del Comprobante, Fecha, o Nombre de la Denominación en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-06-01_11_13_19.png?nolink&600|}}
+
+c) Darle doble click al traspaso que desea seleccionar, luego de haber hecho esto, se cargarán los datos en el formulario; por ultimo se procede a guardar.
+
+{{:captura_de_pantalla_de_2015-06-01_11_15_18.png?nolink&600|}}
+
+**3) Editar Traspasos**
+
+a) Seguir el paso nº 2 (Búsqueda de traspasos a editar)
+
+b) Antes de guardar el formulario, hacemos click en el botón "Modificar".
+
+{{:captura_de_pantalla_de_2015-06-01_11_18_52.png?nolink&600|}}
+
+cambiamos los campos que vamos a editar y por último guardamos.
+
+**4) Eliminar Traspasos**
+
+a) Seguir el paso nº 2 (Busqueda de traspasos a eliminar)
+
+b) Darle click en el botón "Eliminar".
+
+c) El sistema nos consultará" Esta seguro de eliminarlo", si está de acuerdo darle click en el botón "aceptar" de lo contrario "cancelar".
+
+{{:captura_de_pantalla_de_2015-06-01_11_25_55.png?nolink&600|}}

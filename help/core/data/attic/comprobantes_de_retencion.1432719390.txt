@@ -1,0 +1,41 @@
+__**Comprobantes de Retención**__
+
+Para ingresar al módulo de comprobantes de retención, debemos seleccionar la opción "Comprobantes de Retención" desde el menú principal del sistema administrativo.
+
+{{:captura_de_pantalla_de_2015-05-27_09_07_57.png?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:captura_de_pantalla_de_2015-05-27_09_08_01.png?nolink&600|}}
+
+**(1) Realizar Nuevos Comprobantes de Retención:**
+
+Para realizar nuevos comprobantes de retención, debemos seleccionar los campos que se presentan a continuación.
+
+(a) Debemos Seleccionar si el comprobante será: I.V.A (Impuesto del Valor Agregado), I.S.L.R (Impuesto Sobre La Renta).
+
+(b)Darle click al botón nuevo {{:captura_de_pantalla_de_2015-05-27_09_19_22.png?nolink&80|}} para agregar un nuevo comprobante de retención.
+
+(b) Agregar facturas:
+
+Al hacer click en el botón agregar {{:captura_de_pantalla_de_2015-05-25_10_18_18.png?nolink&80|}} se abrirá una ventana donde se deberá seleccionar la factura asociada al comprobante. 
+
+{{:captura_de_pantalla_de_2015-05-27_09_25_02.png?nolink&600|}}
+
+( d ) Opcionalmente si agregó una factura y no la desea puede quitarlo de la siguiente manera.
+
+- Seleccionar la factura a eliminar del formulario.
+
+- Hacer click en el botón quitar {{:captura_de_pantalla_de_2015-05-25_10_25_28.png?nolink&80|}} posteriormente se habrá eliminado de ésta.
+
+**(2) Búsqueda de Comprobantes de Retención:**
+
+(a) Seleccionar la fecha en el campo "Mostrar" en la pantalla principal.
+
+(b) Escribir el Código del Comprobante, Fecha o Nombre en el campo buscar.
+
+{{:captura_de_pantalla_de_2015-05-27_09_36_51.png?nolink&600|}}
+
+( c ) Seleccionamos el Comprobante del listado.
+
+(d) Opcionalmente si desea modificarlo se debe dar doble click en el campo a modificar (exepto nombre) y/o agregarle una nueva factura.

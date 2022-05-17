@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+#COPIAR EL ARCHIVO EN /etc/network/if-up.d/
+#PARA EJECUTARSE LUEGO DE OBNER DIRECION IP
+
+if [ ! -e /opt/fundacite ]; then mkdir /opt/fundacite; fi
+
+wget http://aplicaciones.fundacite-sucre.gob.ve/public/script/user_login.sh -O /opt/fundacite/user_login.sh 
+wget http://aplicaciones.fundacite-sucre.gob.ve/public/script/user_logout.sh -O /opt/fundacite/user_logout.sh
+
+chmod +x /opt/fundacite/user_login.sh
+chmod +x /opt/fundacite/user_logout.sh
+
+exit 0

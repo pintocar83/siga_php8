@@ -1,0 +1,123 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: #212121;
+  background-color: #FFF;
+  font-size: 22px;
+  margin: 0 auto;
+  max-width: 800px;
+  min-height: 600px;
+}
+
+header {
+  padding-bottom: 8px;
+}
+
+img {
+  width: 800px;
+}
+
+#titulo1 {
+  font-weight: bold;
+  padding-bottom: 8px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.titulo2 {
+  font-weight: bold;
+  padding-bottom: 8px;
+  text-align: justify;
+  text-transform: capitalize;
+}
+
+.fech {
+  text-align: right;
+}
+
+div {
+  display: inline-block;
+  vertical-align: top;
+}
+section#user {
+  width: 800px;
+}
+section#nombre {
+  border-bottom: 1px solid #212121;
+  display: inline-block;
+  height: 30px;
+  width: 400px;
+}
+
+input[type="text"] {
+  border-bottom: 8px solid #212121 outline;
+}
+
+#uni {
+  color: #001085;
+  background-color: #FFF;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+/*
+textarea {
+  color: #001085;
+  font-size: 18px;
+  font-weight: bold;
+}*/
+
+/*input {
+  display: none;
+}*/
+
+input, textarea {
+  color: #001085;
+  font-size: 18px;
+  font-weight: bold;
+  
+  border: 1px solid #000;
+  background: #FFF;
+  display: inline-block;
+  outline: none;
+  vertical-align: middle;
+  
+}
+
+.tex {
+  text-transform: capitalize;
+  margin-left: 15px;
+}
+
+footer {
+  margin-top: 100px;
+  text-align: center;
+  vertical-align: top;
+  font-size: 16px;
+  /*border: solid 1px black;*/
+  margin-bottom: 25px;
+  white-space:nowrap;
+}
+
+
+
+
+.firma {
+  /*border-top: 1px solid #212121;*/
+  /*display: inline-block;*/
+  height: 20px;
+  /*margin-left: 50px;*/  
+  text-align: center;
+  top: 20px;
+}
+
+article {
+  color: #001085;
+  font-weight: bold;
+  font-style: italic;
+  text-align: right;
+}

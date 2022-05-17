@@ -1,0 +1,54 @@
+==== BENEFICIARIOS ====
+
+Para ingresar al módulo debemos seleccionar la opción "Beneficiarios" desde el menú principal del sistema administrativo.
+
+**Menú Principal:** \\
+{{:sigafs_menu_principal.png?nolink&600|}} \\
+**Opción:** Materiales y/o Suministros. \\
+{{:beneficiarios:opcion_menu.png?nolink|}} \\
+
+A continuación se despliega la ventana referente al módulo.
+
+{{:beneficiarios:principal.png?nolink&600|}}
+
+=== Registrar Nuevo ===
+
+a) Para registrar un nuevo beneficiario, debemos llenar los campos que se presentan en el formulario: Cédula, Primer Nombre, Segundo nombre, Primer apellido, Segundo Apellido, Teléfono y Correo.  \\
+
+b) Se procede a pulsar el botón guardar, ubicado en la barra superior. \\
+{{:beneficiarios:guardar.png?nolink&600|}} \\
+
+A continuación se muestra el mensaje 'Datos guardados con éxito.', si no existen errores en la carga de información. \\
+{{:beneficiarios:guardar_mensaje.png?nolink&600|}} \\
+
+=== Búsqueda ===
+
+a) Seleccionar la pestaña "Lista" en la pantalla principal. \\ 
+{{:beneficiarios:listado.png?nolink&600|}} \\
+
+b) Escribir el nombre del beneficiario o cédula en el campo buscar. \\ 
+{{:beneficiarios:listado_buscar.png?nolink&600|}}\\
+
+c) Seleccionamos el beneficiario del listado, automáticamente el formulario de datos se carga con la información del beneficiario registrado. \\ 
+{{:beneficiarios:listado_seleccion.png?nolink&600|}} \\
+
+=== Editar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Modificar en la barra superior. \\
+
+c) Modificamos los campos necesarios. \\
+
+d) Presionamos el botón Guardar. \\ 
+{{:beneficiarios:editar_confirmar.png?nolink&600|}} \\
+
+=== Eliminar ===
+
+a) Debemos realizar los pasos de 'Búsqueda'. \\
+
+b) Presionamos el botón Eliminar en la barra superior. \\
+
+c) El sistema nos consulta: ¿Está seguro que desea eliminarlo? \\
+si aceptamos, el registro es eliminado. Por el contrario, cancelamos la operación. \\ 
+{{:beneficiarios:eliminar_confirmar.png?600|}} \\

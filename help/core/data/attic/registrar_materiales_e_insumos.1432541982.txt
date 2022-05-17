@@ -1,0 +1,5 @@
+__**Registro de Materiales y/o Suministros**__
+
+**Materiales**
+
+Para ingresar al módulo para la creación y edición de los beneficiarios, debemos seleccionar la opción beneficiarios desde el menú principal del sistema administrativo.

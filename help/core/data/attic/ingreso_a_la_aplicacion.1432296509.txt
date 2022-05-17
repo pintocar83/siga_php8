@@ -1,0 +1,24 @@
+__**Ingresar al Sistema**__
+
+Para ingresar al sitema es necesario tener instalado algunos de los siguientes navegadores web 
+en el computador cliente.
+
+**Navegador compatible:**
+
+-Firefox.
+
+-Iceweasel.
+
+-Epiphany.
+
+-Iceape.
+
+-Opera.
+
+1. Ingresar al navegador web de preferencia.
+
+2. Ingresar en la direccion web: http://172.17.2.103/dokuwiki/
+
+{{:captura_de_pantalla_de_2015-05-22_12_07_07.png?nolink&600|}}
+
+3. Ingresar al modulo de preferencia.

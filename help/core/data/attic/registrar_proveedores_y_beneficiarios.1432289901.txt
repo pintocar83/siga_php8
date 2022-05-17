@@ -1,0 +1,9 @@
+__**Registro de Proveedores y Beneficiarios**__
+
+**Proveedores**
+
+(1) Para ingresar al módulo para la creación y edición de los proveedores, debemos seleccionar la opción proveedores desde el menú principal del sistema administrativo.
+
+
+
+{{:captura_el_2015-05-22_a_las_10.08.10.png?200|}}
