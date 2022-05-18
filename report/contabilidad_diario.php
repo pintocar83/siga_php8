@@ -62,7 +62,7 @@ class PDF_P extends FPDF{
 	function Header(){
 		global $organismo, $tam_ancho;
 		$this->SetFont('helvetica','',10);
-    
+
     if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
       $this->Image(SIGA::databasePath()."/config/cintillo_actual.jpg",$GLOBALS['MARGEN_LEFT'],$GLOBALS['MARGEN_TOP']-8,$tam_ancho);
     elseif(SIGA::databasePath()."/config/logo_02.jpg")
@@ -138,32 +138,32 @@ $pdf->AddPage();
 
 for(;$k<count($COMPROBANTE);$k++){
     if(count($COMPROBANTE[$k]["detalle_contable"])==0) continue;
-  
+
 		$SUMA_D_COMPROBANTE=0;
 		$SUMA_H_COMPROBANTE=0;
 		//if(!$COMPROBANTE[$k]["detalle_contable"]) continue;
 
-		
-    //if($pdf->GetY()<250-5){      
+
+    //if($pdf->GetY()<250-5){
       $pdf->CabeceraTabla();
     //}
 
 
 
-    
+
 		for(;$y<count($COMPROBANTE[$k]["detalle_contable"]);$y++){
       //if($pdf->GetY()>250){
       //  $pdf->Cell($tam_ancho,1,utf8_decode(""),'T',1,'C',1);
       //  $pdf->AddPage();
       //  $pdf->CabeceraTabla();
       //}
-      
+
 			$FECHA_ASIENTO="";
 			if($y==0)
 				$FECHA_ASIENTO=$COMPROBANTE[$k]["fecha"];
 			$MONTO_DEBE=0;
 			$MONTO_HABER=0;
-			
+
 			if($COMPROBANTE[$k]["detalle_contable"][$y]["operacion"]=="D"){
 				$MONTO_DEBE=$COMPROBANTE[$k]["detalle_contable"][$y]["monto"];
 				$SUMA_D+=$COMPROBANTE[$k]["detalle_contable"][$y]["monto"];
@@ -185,21 +185,21 @@ for(;$k<count($COMPROBANTE);$k++){
 
 			$Contador++;
 		}//for($y=0;$y<count($COMPROBANTE[$k]["detalle_contable"]);$y++)
-    
-    
-    
-    
+
+
+
+
 		if($Contador==0){
 			break;
 			}
-      
+
     //if($pdf->GetY()>250){
     //  $pdf->Cell($tam_ancho,1,utf8_decode(""),'T',1,'C',1);
     //  $pdf->AddPage();
     //  //$pdf->CabeceraTabla();
     //}
-    
-    
+
+
 		$y=0;
 
 		$pdf->SetFont('helvetica','B',$GLOBALS['font_size_base']);
@@ -209,7 +209,7 @@ for(;$k<count($COMPROBANTE);$k++){
 		$pdf->SetX($pdf->lMargin);
 		$pdf->MultiCell($tam_ancho,4,utf8_decode($COMPROBANTE[$k]["concepto"]),0,'L',0);
 		$pdf->SetFont('helvetica','',$GLOBALS['font_size_base']);
-		
+
 		$pdf->SetFillColor(0,0,0);
 		$pdf->Cell($tam_ancho,0.5,utf8_decode(''),1,1,'',1);
 		$pdf->SetFillColor(255,255,255);
