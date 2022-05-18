@@ -53,7 +53,7 @@ class PDF_P extends FPDF{
 		$this->SetFont('helvetica','B',13);
 		//$this->Image("../../images/logo_institucional_01.jpg",$this->lMargin+10,$Y3+40,40);
 		$this->Image(SIGA::databasePath()."/config/logo_01.jpg",$this->lMargin+10,$Y3+40,40);
-		
+
 		$this->Text($this->lMargin+150,$Y3+48,utf8_decode($CHEQUE[0]["tipo"]."-".$CHEQUE[0]["correlativo"]));
 
 		$this->SetY($Y3);
@@ -89,7 +89,7 @@ class PDF_P extends FPDF{
 
 		//ordenes de pago involucradas
 		if($ORDEN_PAGO){
-			for($m=0;$m<count($ORDEN_PAGO);$m++){				
+			for($m=0;$m<count($ORDEN_PAGO);$m++){
 				$this->Cell(23,4,"",'',0,'',1);
 				$this->Cell(30,4,utf8_decode($ORDEN_PAGO[$m]["tipo"]."-".$ORDEN_PAGO[$m]["correlativo"]),'',0,'L',1);
 				$this->Cell(35,4,utf8_decode("FECHA: ".$ORDEN_PAGO[$m]["fecha"]),'',0,'L',1);
@@ -121,9 +121,9 @@ $pdf->SetTopMargin($MARGEN_TOP);
 
 for($i=0;$i<count($id);$i++){
 		$_id=$id[$i];
-		
-		$CHEQUE=$db->Execute("SELECT														
-														C.tipo,														
+
+		$CHEQUE=$db->Execute("SELECT
+														C.tipo,
 														lpad(text(C.correlativo),10,'0') as correlativo,
 														to_char(C.fecha,'DD/MM/YYYY') as fecha,
 														C.concepto,
@@ -163,23 +163,23 @@ for($i=0;$i<count($id);$i++){
 																WHERE
 																		CP.id_comprobante='$_id' AND
 																		C.id=CP.id_comprobante_previo");
-		
-		
-		
+
+
+
 		$DETALLE_PRESUPUESTARIO=$db->Execute("SELECT
 																						*,
 																						_formatear_estructura_presupuestaria(DP.id_accion_subespecifica) as estructura_presupuestaria,
 																						_formatear_cuenta_presupuestaria(DP.id_cuenta_presupuestaria) as cuenta_presupuestaria
 																					FROM modulo_base.detalle_presupuestario AS DP, modulo_base.cuenta_presupuestaria as CP
 																					WHERE DP.id_comprobante='$_id' AND DP.id_cuenta_presupuestaria=CP.id_cuenta_presupuestaria order by cuenta_presupuestaria");
-      
+
     $DETALLE_CONTABLE=$db->Execute("SELECT
 																				*,
 																				_formatear_cuenta_contable(DC.id_cuenta_contable) as cuenta_contable
 																			FROM modulo_base.detalle_contable AS DC, modulo_base.cuenta_contable as CC
 																			WHERE DC.id_comprobante='$_id' AND DC.id_cuenta_contable=CC.id_cuenta_contable order by operacion, cuenta_contable");
-		
-		
+
+
 
 	$pdf->SetFillColor(255,255,255);
 	$pdf->AddPage();
@@ -191,7 +191,7 @@ for($i=0;$i<count($id);$i++){
 	$tam_montos2=27;
 	$tam_montos3=27;
 	$tam_denominacion=$tam_ancho-($tam_cuenta+$tam_montos1+$tam_montos2+$tam_montos3);
-	
+
 	for($j=0;$j<count($DETALLE_PRESUPUESTARIO);$j++){
 		$pdf->Ln(2);
 		$pdf->SetFont('helvetica','',9);
@@ -211,7 +211,7 @@ for($i=0;$i<count($id);$i++){
 		$pdf->Cell($tam_montos3,4,utf8_decode(""),'',1,'R',1);
 		$pdf->SetY($Y2);
 	}
-	
+
 	for($j=0;$j<count($DETALLE_CONTABLE);$j++){
 		$pdf->Ln(2);
 		$pdf->SetFont('helvetica','',9);
@@ -228,16 +228,16 @@ for($i=0;$i<count($id);$i++){
 		$monto_haber="";
 		if($DETALLE_CONTABLE[$j]["operacion"]=="D") $monto_debe=number_format($DETALLE_CONTABLE[$j]["monto"],2,",",".");
 		else                                        $monto_haber=number_format($DETALLE_CONTABLE[$j]["monto"],2,",",".");
-		
+
 		$pdf->Cell($tam_montos2,4,utf8_decode("$monto_debe"),'',0,'R',1);
 		$pdf->Cell($tam_montos3,4,utf8_decode("$monto_haber"),'',1,'R',1);
-		
+
 		$pdf->SetFont('helvetica','',9);
 		$pdf->SetXY($X,$Y);
 		$pdf->MultiCell($tam_denominacion,4,utf8_decode($DETALLE_CONTABLE[$j]["denominacion"]."."),'','',1);
 
 	}
-	
+
 }//for($i=0;$i<count($IDCheque);$i++)
 
 
