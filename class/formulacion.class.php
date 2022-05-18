@@ -4,7 +4,7 @@ class formulacion{
                                 $tipo,
                                 $id_accion_subespecifica){
     $db=SIGA::DBController();
-    
+
     $sql="SELECT
             F.*,
             FD.*,
@@ -39,13 +39,13 @@ class formulacion{
     $return=$db->Execute($sql);
     if(isset($return[0]["id_comprobante_apertura"])){
       $tmp=$db->Execute("select tipo||lpad(text(correlativo),10,'0') from modulo_base.comprobante where id=".$return[0]["id_comprobante_apertura"]);
-      $return[0]["comprobante_apertura"]=$tmp[0][0];      
-    }    
+      $return[0]["comprobante_apertura"]=$tmp[0][0];
+    }
     return $return;
   }
-  
-  
-  
+
+
+
   public static function onSave($access,
                                 $anio,
                                 $tipo,
@@ -53,10 +53,10 @@ class formulacion{
                                 $data,
                                 $asignar){
     $db=SIGA::DBController();
-    
+
     if(!($access=="rw"))
       return array("success"=>false,"message"=>"Error. El usuario no tiene permiso para modificar datos.");
-        
+
     //buscar si existe la formulacion
     $formulacion=$db->Execute( "SELECT id, id_comprobante_apertura
                                 FROM modulo_base.formulacion
@@ -72,9 +72,9 @@ class formulacion{
         return array("success"=>false,"message"=>"Error. No pudo obtener el identificador de la formulación.");
     }
     $id_formulacion=$formulacion[0][0];
-    
+
     $db->Execute("BEGIN WORK");
-    
+
     //borrar el detalle anterior
     $result=$db->Delete("modulo_base.formulacion_detalle","id_formulacion=$id_formulacion");
     if(!$result){
@@ -99,24 +99,24 @@ class formulacion{
         return array("success"=>false,"message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
       }
     }
-    
+
     $db->Execute("COMMIT WORK");
-    
+
     //si asignar
     if($asignar){
       include_once("../../class/estructura_presupuestaria.class.php");
-      include_once("../../class/comprobante.class.php");      
-      
+      include_once("../../class/comprobante.class.php");
+
       //buscar el codigo del proyecto
       $estructura_presupuestaria=estructura_presupuestaria::onGet_Codigo($id_accion_subespecifica);
       if(isset($estructura_presupuestaria[0][0]))
         $estructura_presupuestaria=$estructura_presupuestaria[0][0];
-      
-      
-      
+
+
+
       //segun el tipo F=formulacion R=reformulacion
-      $tipo_nombre=($tipo{0}=="F"?"FORMULACIÓN":"REFORMULACIÓN");
-      
+      $tipo_nombre=($tipo[0]=="F"?"FORMULACIÓN":"REFORMULACIÓN");
+
       $comprobante_id="";
       if(isset($formulacion[0]["id_comprobante_apertura"]))
         $comprobante_id=$formulacion[0]["id_comprobante_apertura"];
@@ -126,7 +126,7 @@ class formulacion{
       $comprobante_concepto="ASIGNACIÓN DE $tipo_nombre DE PRESUPUESTO DE GASTOS $estructura_presupuestaria.";
       $comprobante_contabilizado="t";
       $comprobante_id_persona="null";
-      
+
       $comprobante_detalle=array();
       $comprobante_detalle["presupuestario"]=array();
       for($i=0;$i<count($data);$i++){
@@ -136,8 +136,8 @@ class formulacion{
                                               "operacion"=>"AP",
                                               "monto"=>"(SELECT SUM(valores) FROM UNNEST(".str_clear($data[$i]["monto"]).") valores)"
                                             );
-      }      
-      
+      }
+
       $result=comprobante::onSave($access,
                                   $comprobante_id,
                                   $comprobante_tipo,
@@ -155,11 +155,11 @@ class formulacion{
       }
       else{
         return array("success"=>false,"message"=>$result["message"]);
-      }      
+      }
     }
-    
+
     return array("success"=>true,"message"=>"Datos guardados con exito.");
   }
 }
-  
+
 ?>

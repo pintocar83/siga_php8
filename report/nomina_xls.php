@@ -37,7 +37,7 @@ include_once("../library/functions/formatDate.php");
 include_once("../library/functions/str_clear.php");
 include_once("../library/functions/sql_query_total.php");
 include_once("../library/functions/column_hash.php");
-include_once("../library/fpdf/1.7/rotation.php");
+include_once("../library/fpdf/1.84/rotation.php");
 include_once("../library/phpexcel/PHPExcel.php");
 include_once("../class/nomina.class.php");
 

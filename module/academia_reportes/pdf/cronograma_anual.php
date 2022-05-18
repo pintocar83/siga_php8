@@ -7,7 +7,7 @@ include_once("../../../library/siga.class.php");
 include_once("../../../library/functions/formatDate.php");
 include_once("../../../library/functions/str_clear.php");
 include_once("../../../library/functions/letra_mes.php");
-include_once("../../../library/fpdf/1.7/fpdf.php");
+include_once("../../../library/fpdf/1.84/fpdf.php");
 
   
 $anio=SIGA::paramRequest("anio");

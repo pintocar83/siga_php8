@@ -7,7 +7,7 @@ include_once("../library/siga.class.php");
 include_once("../library/functions/formatDate.php");
 include_once("../library/functions/unformatDate.php");
 
-include_once("../library/fpdf/1.7/fpdf.php");
+include_once("../library/fpdf/1.84/fpdf.php");
 
 $db=SIGA::DBController();
 
@@ -54,7 +54,7 @@ if($ID_EP[0]=="*"){//buscar todos los proyectos y acc aperturados
 		echo "No existen proyectos aperturados";
 		exit;
 		}
-	$ID_EP="";
+	$ID_EP=[];
 	for($i=0;$i<count($RETORNO_EP);$i++)
 		$ID_EP[$i]=$RETORNO_EP[$i][0];
 	}
@@ -95,7 +95,7 @@ class PDF_P extends FPDF{
 		$this->Cell($this->ANCHO,5,utf8_decode("DEL ".formatDate($GLOBALS["FECHA_I"])." AL ".formatDate($GLOBALS["FECHA_F"])),'',1,'C');
 
 		$this->Ln(2);
-		
+
 		//codigo
 		$this->SetFont('helvetica','B',9);
 		$this->Cell(28,4,utf8_decode('CÓDIGO'),'',0,'L');
@@ -117,7 +117,7 @@ class PDF_P extends FPDF{
 		$this->SetFillColor(216,216,216);
 		$this->SetFont('helvetica','B',9);
 		$this->MultiCell($this->ANCHO,4,utf8_decode($CUENTA[0]["cuenta_presupuestaria"]."  ".$CUENTA[0]["denominacion"]."."),'LRT','L',1);
-		
+
 		$this->SetFont('helvetica','',7.5);
 		$this->Cell($this->t_fecha,4,utf8_decode('FECHA'),'LB',0,'C',1);
 		$this->Cell($this->t_comprobante,4,utf8_decode('COMPROBANTE'),'B',0,'C',1);
@@ -170,18 +170,18 @@ for($p=0;$p<count($ID_EP);$p++){
 																ASE.id=$id_accion_subespecifica and
 																ASE.id_accion_especifica=AE.id and
 																AE.id_accion_centralizada=AC.id
-																");	
+																");
 
 		if(count($PROACC)==0 or !$PROACC)
 				continue;
 
-		//$FUENTE=$db->Execute("select * from modulo_base.fuente_recursos where id=$id_fuente_recursos");	
+		//$FUENTE=$db->Execute("select * from modulo_base.fuente_recursos where id=$id_fuente_recursos");
 		//if(count($FUENTE)==0 or !$FUENTE)
 		//		continue;
 
 
-	
-	
+
+
 		if($SW_PARTIDAS){//buscar partidas existentes en ese proyecto
 				$PARTIDAS_RETORNO=$db->Execute("SELECT DISTINCT
 																						DP.id_cuenta_presupuestaria
@@ -214,13 +214,13 @@ for($p=0;$p<count($ID_EP);$p++){
 				$CUENTA=$db->Execute("select denominacion, _formatear_cuenta_presupuestaria(id_cuenta_presupuestaria) as cuenta_presupuestaria from modulo_base.cuenta_presupuestaria where id_cuenta_presupuestaria ='".$PARTIDAS[$c]."'");
 				if(count($CUENTA)==0)
 						continue;
-				
+
 				if($pdf->GetY()>=250){
 						$pdf->AddPage();
 				}
-	
+
 				$pdf->CabeceraTabla();
-	
+
 				//mostrar saldo anterior
 				$DISMINUCIONES_ANTERIOR=$db->Execute("SELECT
 						SUM(DP.monto) as monto
@@ -235,7 +235,7 @@ for($p=0;$p<count($ID_EP);$p++){
 						C.fecha < '$FECHA_I' AND
 						DP.id_accion_subespecifica=$id_accion_subespecifica AND
 						(DP.operacion='C' OR DP.operacion='CC' OR DP.operacion='CCP' OR DP.operacion='DI')");
-	
+
 				$AUMENTOS_ANTERIOR=$db->Execute("SELECT
 						SUM(DP.monto) as monto
 					FROM
@@ -249,13 +249,13 @@ for($p=0;$p<count($ID_EP);$p++){
 						C.fecha < '$FECHA_I' AND
 						DP.id_accion_subespecifica=$id_accion_subespecifica AND
 						(DP.operacion='AP' OR DP.operacion='AU')");
-	
+
 				$SALDO_INICIAL=$AUMENTOS_ANTERIOR[0]["monto"]-$DISMINUCIONES_ANTERIOR[0]["monto"];
-	
+
 				$pdf->Cell($pdf->ANCHO-$pdf->t_saldo,4,utf8_decode("SALDO ANTERIOR"),'',0,'L',1);
 				$pdf->Cell($pdf->t_saldo,4,utf8_decode(number_format($SALDO_INICIAL,2,",",".")),'',1,'R',1);
-	
-	
+
+
 				//mostrar las cuentas encontradas
 				$MOVIMIENTOS=$db->Execute("SELECT
 						C.fecha,
@@ -290,9 +290,9 @@ for($p=0;$p<count($ID_EP);$p++){
 					ORDER BY
 						C.fecha,
 						DP.operacion,
-						prioridad,					
+						prioridad,
 						C.id");
-			
+
 				if(count($MOVIMIENTOS)==0 or !$MOVIMIENTOS){
 						if($pdf->GetY()>=250){
 								$pdf->AddPage();
@@ -301,8 +301,8 @@ for($p=0;$p<count($ID_EP);$p++){
 						$pdf->Ln(5);
 						continue;
 				}
-	
-	
+
+
 				$SALDO=$SALDO_INICIAL;
 				for($i=0;$i<count($MOVIMIENTOS);$i++){
 						$aux="";
@@ -332,21 +332,21 @@ for($p=0;$p<count($ID_EP);$p++){
 										$aux="CAUSADO";
 										break;
 						}
-	
+
 						if($aux=="")
 								continue;
-	
+
 						if($MOVIMIENTOS[$i]['operacion']=="AP" or $MOVIMIENTOS[$i]['operacion']=="AU")
 								$SALDO+=$MOVIMIENTOS[$i]["monto"];
 						else if($MOVIMIENTOS[$i]['operacion']=="DI" or $MOVIMIENTOS[$i]['operacion']=="C" or $MOVIMIENTOS[$i]['operacion']=="CC" or $MOVIMIENTOS[$i]['operacion']=="CCP")//el causado y el pagado no afecta la disponibilidad
 								$SALDO-=$MOVIMIENTOS[$i]["monto"];
-	
-	
-	
+
+
+
 						$pdf->SetFont('helvetica','',8);
-			
+
 						$pdf->SetDrawColor(200,200,200);
-			
+
 						$pdf->Cell($pdf->t_fecha,4,utf8_decode(formatDate($MOVIMIENTOS[$i]["fecha"])),'T',0,'C',1);
 						$pdf->Cell($pdf->t_comprobante,4,utf8_decode($MOVIMIENTOS[$i]["tipo"]."-".$MOVIMIENTOS[$i]["correlativo"]),'T',0,'C',1);
 						$y=$pdf->GetY();
@@ -356,28 +356,28 @@ for($p=0;$p<count($ID_EP);$p++){
 						$pdf->Cell($pdf->t_operacion,4,'','T',0,'C',1);
 						$pdf->Cell($pdf->t_monto,4,utf8_decode(number_format($MOVIMIENTOS[$i]["monto"],2,",",".")),'T',0,'R',1);
 						$pdf->Cell($pdf->t_saldo,4,utf8_decode(number_format($SALDO,2,",",".")),'T',1,'R',1);
-			
-			
+
+
 						$pdf->SetDrawColor(0,0,0);
-			
+
 						$pdf->SetXY($x1,$y+0.5);
 						$pdf->SetFont('helvetica','',7);
 						$pdf->MultiCell($pdf->t_denominacion,3,utf8_decode(trim($MOVIMIENTOS[$i]["concepto"],".")."."),'','L',0);
 						$yfin_1=$pdf->GetY();
-	
-	
-	
+
+
+
 						$pdf->SetXY($x2,$y+0.5);
 						$pdf->SetFont('helvetica','',7);
 						$pdf->MultiCell($pdf->t_operacion,3,utf8_decode(trim($aux)),'','C',0);
 						$yfin_2=$pdf->GetY();
-			
-			
+
+
 						$mayor=max($yfin_1,$yfin_2);
 						$pdf->SetY($mayor+1);
-				
-				
-		
+
+
+
 						if($mayor>=250){
 								$swP=false;
 								if($c!=(count($PARTIDAS)-1)){
@@ -390,8 +390,8 @@ for($p=0;$p<count($ID_EP);$p++){
 										$pdf->CabeceraTabla();
 								}
 						}
-			
-				}			
+
+				}
 				$pdf->Ln(5);
 		}//for($c=0;$c<count($PARTIDAS);$c++)
 }

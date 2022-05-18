@@ -6,7 +6,7 @@ include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
 include_once("../library/functions/letra_numero.php");
 
-include_once("../library/fpdf/1.7/fpdf.php");
+include_once("../library/fpdf/1.84/fpdf.php");
 
 $db=SIGA::DBController();
 

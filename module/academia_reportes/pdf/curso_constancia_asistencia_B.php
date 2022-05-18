@@ -9,7 +9,7 @@ include_once("../../../library/functions/formatDate.php");
 include_once("../../../library/functions/str_clear.php");
 include_once("../../../library/functions/letra_mes.php");
 include_once("../../../library/functions/letra_numero.php");
-include_once("../../../library/fpdf/1.7/WriteTag.php");
+include_once("../../../library/fpdf/1.84/WriteTag.php");
 
 $db=SIGA::DBController();
 

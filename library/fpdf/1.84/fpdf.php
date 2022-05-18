@@ -28,10 +28,10 @@ protected $CurRotation;        // current page rotation
 protected $PageInfo;           // page-related data
 protected $wPt, $hPt;          // dimensions of current page in points
 protected $w, $h;              // dimensions of current page in user unit
-protected $lMargin;            // left margin
-protected $tMargin;            // top margin
-protected $rMargin;            // right margin
-protected $bMargin;            // page break margin
+public $lMargin;            // left margin
+public $tMargin;            // top margin
+public $rMargin;            // right margin
+public $bMargin;            // page break margin
 protected $cMargin;            // cell margin
 protected $x, $y;              // current position in user unit
 protected $lasth;              // height of last printed cell

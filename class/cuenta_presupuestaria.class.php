@@ -1,7 +1,7 @@
 <?php
-class cuenta_presupuestaria{  
+class cuenta_presupuestaria{
   public static function onGet($id_cuenta_presupuestaria){
-    $db=SIGA::DBController(); 
+    $db=SIGA::DBController();
     $sql="SELECT
             CP.id_cuenta_presupuestaria,
             CP.denominacion,
@@ -12,10 +12,10 @@ class cuenta_presupuestaria{
     $return=$db->Execute($sql);
     return $return;
   }
-  
-  public static function onList($text,$start,$limit,$sort='',$filtro){
+
+  public static function onList($text,$start,$limit,$sort='',$filtro=''){
     $db=SIGA::DBController();
-    
+
     $filtro=explode("|",$filtro);
     $add="";
     for($i=0;$i<count($filtro);$i++)
@@ -28,11 +28,11 @@ class cuenta_presupuestaria{
             _formatear_cuenta_presupuestaria(id_cuenta_presupuestaria) as cuenta_presupuestaria
           FROM
             modulo_base.cuenta_presupuestaria
-          WHERE            
+          WHERE
             $add
             (
-              denominacion ILIKE '%$text%' OR              
-              id_cuenta_presupuestaria ILIKE '%$text%' OR              
+              denominacion ILIKE '%$text%' OR
+              id_cuenta_presupuestaria ILIKE '%$text%' OR
               _formatear_cuenta_presupuestaria(id_cuenta_presupuestaria) ILIKE '$text%'
             )";
     $return["result"]=$db->Execute($sql." ".sql_sort($sort)." LIMIT $limit OFFSET $start");
@@ -40,9 +40,9 @@ class cuenta_presupuestaria{
     $return["total"]=$return["total"][0][0];
     return $return;
   }
-  
+
   public static function onList_AP($text,$start,$limit,$sort=''){
-    $db=SIGA::DBController(); 
+    $db=SIGA::DBController();
     $sql="SELECT DISTINCT
             DP.id_cuenta_presupuestaria,
             _formatear_cuenta_presupuestaria(DP.id_cuenta_presupuestaria) as cuenta_presupuestaria,
@@ -61,12 +61,12 @@ class cuenta_presupuestaria{
     $return["total"]=$return["total"][0][0];
     return $return;
   }
-  
+
   public static function onSave($access,$id_cuenta_presupuestaria,$id_cuenta_presupuestaria_seleccion,$denominacion,$padre){
-    $db=SIGA::DBController(); 
-    
+    $db=SIGA::DBController();
+
     $data=array("id_cuenta_presupuestaria"=>"'$id_cuenta_presupuestaria'", "denominacion"=>"'$denominacion'", "padre"=>"'$padre'");
-    
+
     if($id_cuenta_presupuestaria_seleccion!=""){//si es modificar un registro
       if(!($access=="rw"))//solo el acceso 'rw' es permitido
         return array("success"=>false, "message"=>"Error. El usuario no tiene permiso para modificar datos.");
@@ -82,11 +82,11 @@ class cuenta_presupuestaria{
       $result=$db->Insert("modulo_base.cuenta_presupuestaria",$data);
     }
     //Si hay error al modificar o insertar
-    if(!$result)                   
+    if(!$result)
       return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_base.cuenta_presupuestaria", "messageDB"=>$db->GetMsgErrorClear());
     return array("success"=>true, "message"=>"Datos guardados con exito.");
   }
-  
+
   public static function onDelete($access,$id_cuenta_presupuestaria){
     $db=SIGA::DBController();
     if(!($access=="rw"))//solo el acceso 'rw' es permitido
@@ -96,12 +96,12 @@ class cuenta_presupuestaria{
       return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_base.cuenta_presupuestaria", "messageDB"=>$db->GetMsgErrorClear());
     return array("success"=>true, "message"=>"Registro eliminado con éxito.");
   }
-  
+
   public static function onExist($id_cuenta_presupuestaria){
-    $db=SIGA::DBController();    
+    $db=SIGA::DBController();
     $sql="SELECT count(*) FROM modulo_base.cuenta_presupuestaria WHERE id_cuenta_presupuestaria LIKE '$id_cuenta_presupuestaria'";
     $return=$db->Execute($sql);
     return $return;
-  }  
-}  
+  }
+}
 ?>

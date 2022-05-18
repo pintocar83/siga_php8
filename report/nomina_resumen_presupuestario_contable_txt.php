@@ -7,7 +7,7 @@ include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
 include_once("../library/functions/formatDate.php");
 include_once("../library/functions/sql_query_total.php");
-include_once("../library/fpdf/1.7/fpdf.php");
+include_once("../library/fpdf/1.84/fpdf.php");
 include_once("../class/nomina.class.php");
 
 

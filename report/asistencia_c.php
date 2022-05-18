@@ -8,7 +8,7 @@ include_once("../library/functions/dias_meses.php");
 include_once("../library/functions/letra_dia_semana.php");
 include_once("../library/functions/letra_mes.php");
 
-include_once("../library/fpdf/1.7/fpdf.php");
+include_once("../library/fpdf/1.84/fpdf.php");
 
 $db=SIGA::DBController();
 

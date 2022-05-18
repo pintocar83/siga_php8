@@ -1,6 +1,6 @@
 <?php
 class SIGA_CONFIG {
-  
+
   public static $data= array(
                               array("id"=>"2007","nombre"=>"Año 2007"),
                               array("id"=>"2008","nombre"=>"Año 2008"),
@@ -20,9 +20,9 @@ class SIGA_CONFIG {
                               array("id"=>"2022","nombre"=>"Año 2022")
                             );
 
-  
+
   public static $database_default=NULL;
-  
+
   public static $database= array(
     "fundacite_sucre"=> array(//identificador de la base de datos
           "display"=>"t",
@@ -31,29 +31,9 @@ class SIGA_CONFIG {
           "driver"=>"postgres", //driver
           "server"=>"localhost", //servidor
           "name"=>"siga_fundacitesucre", //nombre de la base de datos
-          "user"=>"dspcom_siga", //usuario
-          "password"=>"9!!q+m_PCYM6", //contraseña
-          "port"=>"15432"
-          ),
-    "concejo_mejia"=> array(//identificador de la base de datos
-          "display"=>"t",
-          "description"=>"Concejo Municipio Mejía", //descripcion de la base de datos
-          "data"=>array("2021"), //años disponibles para la base de datos
-          "driver"=>"postgres", //driver
-          "server"=>"localhost", //servidor
-          "name"=>"dspcom_siga_concejo_mejia", //nombre de la base de datos
-          "user"=>"dspcom_siga", //usuario
-          "password"=>"9!!q+m_PCYM6" //contraseña
-          ),
-    "fundacite_anzoategui"=> array(//identificador de la base de datos
-          "display"=>"t",
-          "description"=>"Fundacite Anzoátegui", //descripcion de la base de datos
-          "data"=>array("2021"), //años disponibles para la base de datos
-          "driver"=>"postgres", //driver
-          "server"=>"localhost", //servidor
-          "name"=>"dspcom_fundacite_anzoategui_siga_20210904", //nombre de la base de datos
-          "user"=>"dspcom_siga", //usuario
-          "password"=>"9!!q+m_PCYM6" //contraseña
+          "user"=>"siga", //usuario
+          "password"=>"siga", //contraseña
+          "port"=>"5432"
           ),
     "siga_online"=> array(//identificador de la base de datos
           "display"=>"f",
@@ -63,8 +43,8 @@ class SIGA_CONFIG {
           "server"=>"localhost", //servidor
           "name"=>"siga", //nombre de la base de datos
           "user"=>"siga_online", //usuario
-          "password"=>"%pg0n1in3%" //contraseña
-          ),    
+          "password"=>"siga_online" //contraseña
+          ),
     "base"=> array(//identificador de la base de datos
           "display"=>"f",
           "description"=>"Base de datos del Registro Público - CNE", //descripcion de la base de datos
@@ -73,10 +53,10 @@ class SIGA_CONFIG {
           "server"=>"localhost", //servidor
           "name"=>"base", //nombre de la base de datos
           "user"=>"root", //usuario
-          "password"=>"%51g4fs%" //contraseña
+          "password"=>"root" //contraseña
           )
   );
-  
+
 }
 
 //definir la base de datos por defecto (la primera del arreglo $database)

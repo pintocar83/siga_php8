@@ -7,7 +7,7 @@ include_once("../library/siga.class.php");
 include_once("../library/functions/formatDate.php");
 include_once("../library/functions/unformatDate.php");
 
-include_once("../library/fpdf/1.7/fpdf.php");
+include_once("../library/fpdf/1.84/fpdf.php");
 
 $db=SIGA::DBController();
 
@@ -67,7 +67,7 @@ function RetornarPadres($cuenta){
 						$a[0][0].$a[0][1]."0"."00"."00"."00"."000");
 		}
 	}
-	
+
 function EsPadreHijo($padre,$hijo){
 	$padres=RetornarPadres($hijo);
 	for($k=0;$k<count($padres);$k++)
@@ -87,7 +87,7 @@ function AumentaCuentaContable($id_codigo_contable){
 				return true;
 		}
 	return false;
-	}	
+	}
 
 
 
@@ -207,7 +207,7 @@ foreach($cuenta_contable_depreciacion_amortizacion as $clave => $valor){
 			  $CC[$N]["denominacion_cta_contable"]=$AUX[0]["denominacion"];
 				$CC[$N]["total_debe"]=0;
 				$CC[$N]["total_haber"]=0;
-				$N++;				
+				$N++;
 				}
 		}
 
@@ -310,7 +310,7 @@ for($i=0;$i<$N;$i++){
 	else if(substr($CC[$i]["id_codigo_contable"],0,1)=="5"){//ingresos
 		if(!$CC[$i]["es_padre"])
 			$TOTAL_INGRESOS+=$CuentaContable["total"];
-			
+
 		}
 	else if(substr($CC[$i]["id_codigo_contable"],0,1)=="6"){//egresos
 		if(!$CC[$i]["es_padre"])
@@ -319,7 +319,7 @@ for($i=0;$i<$N;$i++){
 	}
 
 //print_r($TOTAL_EGRESOS);exit;
-	
+
 $UTILIDAD=$TOTAL_INGRESOS-$TOTAL_EGRESOS;
 if($UTILIDAD!=0){
 	$CAPITAL[$CAPITAL_TAM]["id_codigo_contable"]="";
@@ -341,12 +341,12 @@ class PDF_P extends FPDF{
 	function Header(){
 		global $organismo, $tam_ancho;
 		$this->SetFont('helvetica','',10);
-		
+
 		if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
       $this->Image(SIGA::databasePath()."/config/cintillo_actual.jpg",$GLOBALS['MARGEN_LEFT'],$GLOBALS['MARGEN_TOP']-4,$tam_ancho);
     elseif(SIGA::databasePath()."/config/logo_02.jpg")
       $this->Image(SIGA::databasePath()."/config/logo_02.jpg",$GLOBALS['MARGEN_LEFT'],$GLOBALS['MARGEN_TOP']-4,40);
-		
+
 		$this->SetY(18);
  		$this->Cell(180,10,utf8_decode('Página: '.$this->PageNo().' de {nb}'),'',1,'R');
 
@@ -454,13 +454,13 @@ $TOTAL_ACTIVOS_1N=0;
 $TOTAL_ACTIVOS_2N=0;
 $es_padre_anterior=1;
 for($i=0;$i<$ACTIVO_TAM;$i++){
-    
-    
-    /*if($ocultar){	
+
+
+    /*if($ocultar){
 	if($MONTO==0)
-    continue;}*/ 
-    
-    
+    continue;}*/
+
+
 	if(!$ACTIVO[$i]["es_padre"]){
 		$MONTO=number_format($ACTIVO[$i]["total"],2,",",".");
 		$pdf->SetFont('helvetica','',$font_size_base2);
@@ -470,26 +470,26 @@ for($i=0;$i<$ACTIVO_TAM;$i++){
 		$pdf->SetFont('helvetica','B',$font_size_base2);
 		}
 	if(!$es_padre_anterior and $ACTIVO[$i]["es_padre"]){
-		if($ACTIVO[$i-1]["id_codigo_contable"][2]!=$ACTIVO[$i]["id_codigo_contable"][2]){
+		if(isset($ACTIVO[$i-1]["id_codigo_contable"][2]) && isset($ACTIVO[$i]["id_codigo_contable"][2]) && $ACTIVO[$i-1]["id_codigo_contable"][2]!=$ACTIVO[$i]["id_codigo_contable"][2]){
 			//buscar xxx000000000
 			$cabeza_cuenta=substr($ACTIVO[$i-1]["id_codigo_contable"],0,3);
 			$cuenta_mostrar=$cabeza_cuenta."000000000";
 			for($j=0;$j<$ACTIVO_TAM;$j++)
 				if($cuenta_mostrar==$ACTIVO[$j]["id_codigo_contable"])
 					break;
-		  
+
 			//EscribirFila($pdf,'',"TOTAL ".$ACTIVO[$j]["denominacion_cta_contable"],'',number_format($ACTIVO[$j]["total"],2,",","."),'','');
 			//if($cabeza_cuenta=="123000000000"){
 				$ACTIVO[$j]["total"]=$ACTIVO[$j]["total"]-$TOTAL_D_A;
 				$TOTAL_D_A=0;
 				EscribirFila($pdf,'',"TOTAL ".$ACTIVO[$j]["denominacion_cta_contable"],'',number_format($ACTIVO[$j]["total"],2,",","."),'','');
-				
+
 				$TOTAL_ACTIVOS_3N+=$ACTIVO[$j]["total"];
-				
-				
+
+
 			//  }
 			}
-		if($ACTIVO[$i-1]["id_codigo_contable"][1]!=$ACTIVO[$i]["id_codigo_contable"][1]){
+		if(isset($ACTIVO[$i-1]["id_codigo_contable"][1]) && isset($ACTIVO[$i]["id_codigo_contable"][1]) && $ACTIVO[$i-1]["id_codigo_contable"][1]!=$ACTIVO[$i]["id_codigo_contable"][1]){
 			//buscar xx0000000000
 			$cabeza_cuenta=substr($ACTIVO[$i-1]["id_codigo_contable"],0,2);
 			$cuenta_mostrar=$cabeza_cuenta."0000000000";
@@ -497,25 +497,25 @@ for($i=0;$i<$ACTIVO_TAM;$i++){
 				if($cuenta_mostrar==$ACTIVO[$j]["id_codigo_contable"])
 					break;
 			//EscribirFila($pdf,'',"TOTAL ".$ACTIVO[$j]["denominacion_cta_contable"],'','',number_format($ACTIVO[$j]["total"],2,",","."),'');
-			
-			EscribirFila($pdf,'',"TOTAL ".$ACTIVO[$j]["denominacion_cta_contable"],'','',number_format($TOTAL_ACTIVOS_3N,2,",","."),'');			
+
+			EscribirFila($pdf,'',"TOTAL ".$ACTIVO[$j]["denominacion_cta_contable"],'','',number_format($TOTAL_ACTIVOS_3N,2,",","."),'');
 			$TOTAL_ACTIVOS_2N+=$TOTAL_ACTIVOS_3N;
 			$TOTAL_ACTIVOS_3N=0;
 			}
 		}
-		
+
 		/*
 	if($ocultar){
-	  if(($MONTO)=="") 	
+	  if(($MONTO)=="")
 	    EscribirFila($pdf,$ACTIVO[$i]["id_codigo_contable"],$ACTIVO[$i]["denominacion_cta_contable"],$MONTO,'','','');
 	    $es_padre_anterior=$ACTIVO[$i]["es_padre"];
 			}*/
 	/*
-	if($ocultar){	
+	if($ocultar){
 	  if(($MONTO)==0)
 	    continue;
 			}
-  
+
 	EscribirFila($pdf,"".$ACTIVO[$i]["id_codigo_contable"],$ACTIVO[$i]["denominacion_cta_contable"],$MONTO,'','','');
 	$es_padre_anterior=$ACTIVO[$i]["es_padre"];
 	*/
@@ -568,7 +568,7 @@ for($i=0;$i<$ACTIVO_TAM;$i++){
 		//	ORDER BY
 		//		MC.id_codigo_contable";
 	  $retorno=$db->Execute($sql);
-		
+
 		if(!$retorno){
 				$sql="select id_cuenta_contable as id_codigo_contable, denominacion as denominacion_cta_contable from modulo_base.cuenta_contable where id_cuenta_contable like '$cuenta_d_a'";
 				//$sql="SELECT
@@ -583,42 +583,42 @@ for($i=0;$i<$ACTIVO_TAM;$i++){
 		$retorno[0]["total_debe"]=0;
 		$retorno[0]["total_haber"]=0;
 		}
-		
+
 		if(AumentaCuentaContable($retorno[0]["id_codigo_contable"]))
-				$retorno[0]["total"]=$retorno[0]["total_debe"]-$retorno[0]["total_haber"];				
+				$retorno[0]["total"]=$retorno[0]["total_debe"]-$retorno[0]["total_haber"];
 		else
-				$retorno[0]["total"]=$retorno[0]["total_haber"]-$retorno[0]["total_debe"];				
+				$retorno[0]["total"]=$retorno[0]["total_haber"]-$retorno[0]["total_debe"];
 		$sw_da=true;
 		$MONTO_DEP_AMO=$retorno[0]["total"];
 		$MONTO_NETO=$ACTIVO[$i]["total"]-$retorno[0]["total"];
 		$TOTAL_D_A+=$retorno[0]["total"];
-		
-		
+
+
 	  }
-	
-	
-	if($ocultar){	
+
+
+	if($ocultar){
 	  if($MONTO_NETO=="0,00")
 	    continue;
 			}
-	
+
 	EscribirFila($pdf,"".$ACTIVO[$i]["id_codigo_contable"],$ACTIVO[$i]["denominacion_cta_contable"],$MONTO,'','','');
 	$es_padre_anterior=$ACTIVO[$i]["es_padre"];
-	
+
 	if($sw_da==true){
 		//$pdf->SetFont('helvetica','',7);
 		//mostrar la fila depreciacion/amortizacion corresponciente a la cuenta
-		EscribirFila($pdf,$cuenta_contable_depreciacion_amortizacion[$ACTIVO[$i]["id_codigo_contable"]],"MENOS: ".$retorno[0]["denominacion_cta_contable"],FormatearPasivo($MONTO_DEP_AMO),'','','');		
+		EscribirFila($pdf,$cuenta_contable_depreciacion_amortizacion[$ACTIVO[$i]["id_codigo_contable"]],"MENOS: ".$retorno[0]["denominacion_cta_contable"],FormatearPasivo($MONTO_DEP_AMO),'','','');
 		$pdf->SetFont('helvetica','I',$font_size_base2);
 		//mostrar el neto
 		EscribirFila($pdf,"","".$ACTIVO[$i]["denominacion_cta_contable"]." NETO",'',number_format($MONTO_NETO,2,',','.'),'','',1);
-		
-		
+
+
 		}
-	
-	
-	
-	
+
+
+
+
 	}
 
 
@@ -742,22 +742,22 @@ for($i=0;$i<$PASIVO_TAM;$i++){
 			EscribirFila($pdf,'',"TOTAL ".$PASIVO[$j]["denominacion_cta_contable"],'','',FormatearPasivo($PASIVO[$j]["total"]),'');
 			}
 		}
-	       
-	if($ocultar){	
-	if(($MONTO)=="" and !$es_padre_anterior )	    
+
+	if($ocultar){
+	if(($MONTO)=="" and !$es_padre_anterior )
 	continue;}
-    
+
 	EscribirFila($pdf,$PASIVO[$i]["id_codigo_contable"],$PASIVO[$i]["denominacion_cta_contable"],$MONTO,'','','');
 	$es_padre_anterior=$PASIVO[$i]["es_padre"];
-	
-	/*if($ocultar){	
-	if(($MONTO)==0)	    
+
+	/*if($ocultar){
+	if(($MONTO)==0)
 	continue;}
-    
-	
+
+
 	EscribirFila($pdf,$PASIVO[$i]["id_codigo_contable"],$PASIVO[$i]["denominacion_cta_contable"],$MONTO,'','','');
 	$es_padre_anterior=$PASIVO[$i]["es_padre"];*/
-	
+
 	}
 
 //buscar xxx000000000
@@ -848,9 +848,9 @@ for($i=0;$i<$CAPITAL_TAM;$i++){
 		}
 	if(!$es_padre_anterior and $CAPITAL[$i]["es_padre"]){
 		//print $CAPITAL[$i-1]["id_codigo_contable"]."  ".$CAPITAL[$i]["id_codigo_contable"]."<br>";
-		
+
 		if($i-1>=0 and $CAPITAL[$i]["id_codigo_contable"]!="")
-		if($CAPITAL[$i-1]["id_codigo_contable"]{2}!=$CAPITAL[$i]["id_codigo_contable"]{2}){
+		if($CAPITAL[$i-1]["id_codigo_contable"][2]!=$CAPITAL[$i]["id_codigo_contable"][2]){
 			//buscar xxx000000000
 			$cabeza_cuenta=substr($CAPITAL[$i-1]["id_codigo_contable"],0,3);
 			$cuenta_mostrar=$cabeza_cuenta."000000000";
