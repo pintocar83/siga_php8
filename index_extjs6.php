@@ -13,16 +13,16 @@ include_once(SIGA::databasePath()."/config/config.php");
 ?>
 <!doctype html>
 <html>
-  <head>     
+  <head>
     <title><?php print $siga_title;?></title>
     <style type="text/css">
       html{
         height: 100%;
         font: 13px/100% Arial, Helvetica, sans-serif;
       }
-      
+
       body{
-        padding: 0px; margin: 0px;	
+        padding: 0px; margin: 0px;
         overflow: hidden;
         background-image: url(<?php print isset(SIGA::userPreferences()["background"])?SIGA::userPreferences()["background"]:"image/background/1.jpg"?>);
         background-position: center;
@@ -31,7 +31,7 @@ include_once(SIGA::databasePath()."/config/config.php");
         width: 100%;
         height: 100%;
       }
-  
+
       #siga-loading-mask{
         position: absolute;
         top: 0;
@@ -41,7 +41,7 @@ include_once(SIGA::databasePath()."/config/config.php");
         background: #FFFFFF;
         z-index: 30000;
       }
-      
+
       #siga-loading-message{
         display: block;
         color: #000000;
@@ -50,7 +50,7 @@ include_once(SIGA::databasePath()."/config/config.php");
         right: 10px;
         font: 10px sans-serif;
       }
-      
+
       #siga-progressbar{
         position: absolute;
         width: 300px;
@@ -65,41 +65,41 @@ include_once(SIGA::databasePath()."/config/config.php");
         padding: 1px;
         background-color: #FFF;
       }
-      
+
       #siga-progressbar::-webkit-progress-value{
         background-color: #F46161;
         background-repeat: repeat-x;
         background-position: 0px 0px;
         background-size: 16px 10px;
         background-image: linear-gradient(315deg, transparent, transparent 33%, rgba(0, 0, 0, 0.12) 33%, rgba(0, 0, 0, 0.12) 66%, transparent 66%, transparent);
-      }      
-      
-      #siga-progressbar::-webkit-progress-bar{  
+      }
+
+      #siga-progressbar::-webkit-progress-bar{
         background-color: #FFF;
       }
-      
+
       #siga-progressbar::-moz-progress-bar{
         background-color: #F46161;
         background-repeat: repeat-x;
         background-position: 0px 0px;
         background-size: 16px 10px;
-        background-image: linear-gradient(315deg, transparent, transparent 33%, rgba(0, 0, 0, 0.12) 33%, rgba(0, 0, 0, 0.12) 66%, transparent 66%, transparent); 
+        background-image: linear-gradient(315deg, transparent, transparent 33%, rgba(0, 0, 0, 0.12) 33%, rgba(0, 0, 0, 0.12) 66%, transparent 66%, transparent);
       }
-      
+
       #siga-loading-module{
         width: 27px;
         position: absolute;
-        top: 0px;        
+        top: 0px;
         left: 50%;
-        margin-left: -14px;        
+        margin-left: -14px;
         vertical-align: middle;
         display: none;
       }
-    </style>	
+    </style>
   </head>
   <body>
-    <div id="siga-loading-mask"><progress id="siga-progressbar" value="0" max="100"></progress><span id="siga-loading-message">Cargando. Por favor espere...</span></div>    
-    
+    <div id="siga-loading-mask"><progress id="siga-progressbar" value="0" max="100"></progress><span id="siga-loading-message">Cargando. Por favor espere...</span></div>
+
     <!-- BARRA SUPERIOR -->
     <div id='siga-top'>
       <div class="info">
@@ -108,7 +108,7 @@ include_once(SIGA::databasePath()."/config/config.php");
           <span><b>Usuario:</b> <?php echo SIGA::userName();?></span>
           <span><b>Datos:</b> <?php echo SIGA::dataName();?></span>
           <?php endif;?>
-          <span id="siga-infotime" style="padding-left: 10px; cursor: pointer;" onclick="siga.calendar.open()">&nbsp;</span>          
+          <span id="siga-infotime" style="padding-left: 10px; cursor: pointer;" onclick="siga.calendar.open()">&nbsp;</span>
         </span>
       </div>
     </div>
@@ -116,7 +116,7 @@ include_once(SIGA::databasePath()."/config/config.php");
     <div id="siga-apps-button" class="normal" onclick="siga.menu.show(true)">Aplicaciones</div>
     <img id="siga-loading-module" src='image/loading-bubbles.svg' />
     <!-- CONTENEDOR DE LAS APLICACIONES -->
-    <DIV id="siga-window-container">   
+    <DIV id="siga-window-container">
       <div id="siga-apps-title"></div>
       <div class="icon-desktop" onclick="window.location.href='index.php'">
         <img src='image/menu/icon-sistema-recarga.png' width="48" /><br>
@@ -128,22 +128,22 @@ include_once(SIGA::databasePath()."/config/config.php");
       <div id="siga-apps-center" class="center">
         <?php
         for($i=0;$i<count($siga_apps);$i++):
-          print "<div id='siga-apps-center-".$siga_apps[$i]["id"]."' style='display: ".($i==0?"block":"none")."'>";          
+          print "<div id='siga-apps-center-".$siga_apps[$i]["id"]."' style='display: ".($i==0?"block":"none")."'>";
           foreach($siga_apps[$i]["option"] as $clave => $valor):
             print "<div class='title'>$clave</div>";
             for($j=0;$j<count($valor);$j++){
               if(!isset($valor[$j]["id"])) continue;
-              
+
               $add_class="disabled";
               $onclick="";
               if(SIGA::access($valor[$j]["id"])!="" or (isset($valor[$j]["public"])?$valor[$j]["public"]:false)){
                 $add_class="";
                 $onclick="siga.open('".$valor[$j]["id"]."')";
               }
-              
+
               print "<div class='icon $add_class' onclick=\"$onclick\"><span><img src='".$valor[$j]["icon"]."' /><br>".$valor[$j]["name"]."</span></div>";
             }
-          endforeach;          
+          endforeach;
           print "</div>";
         endfor;
         ?>
@@ -151,7 +151,7 @@ include_once(SIGA::databasePath()."/config/config.php");
       <div id="siga-apps-left" class="left">
         <?php
         for($i=0;$i<count($siga_apps);$i++)
-          print "<div id='siga-apps-left-".$siga_apps[$i]["id"]."' class='icon ".($i==0?"selected":"")."' onclick=\"siga.menu.option('".$siga_apps[$i]["id"]."')\"><span><img src='".$siga_apps[$i]["icon"]."'/><br />".$siga_apps[$i]["name"]."</span></div>";          
+          print "<div id='siga-apps-left-".$siga_apps[$i]["id"]."' class='icon ".($i==0?"selected":"")."' onclick=\"siga.menu.option('".$siga_apps[$i]["id"]."')\"><span><img src='".$siga_apps[$i]["icon"]."'/><br />".$siga_apps[$i]["name"]."</span></div>";
         ?>
         <!--<div id='siga-apps-left-logout' class='icon' onclick="siga.menu.hide(); siga.open('modulo_base/logout')"><span><img src='image/menu/icon-cerrar_sesion.png'/><br />Cerrar Sesión</span></div>-->
       </div>
@@ -167,7 +167,7 @@ include_once(SIGA::databasePath()."/config/config.php");
     if(typeof(value)!=="undefined") siga._value[key]=value;
     return siga._value[key];
   };
-  
+
   siga.value("pie_aplicaciones","");
   siga.value("title_login","<?php print $siga_title_login;?>");
   siga.value("title_logout","<?php print $siga_title_logout;?>");
@@ -177,8 +177,8 @@ include_once(SIGA::databasePath()."/config/config.php");
   siga.value("sesion_abierta",<?php print SIGA::user()?'true':'false';?>);
   siga.value("meses",<?php print json_encode(meses());?>);
   siga.value("mes_actual","<?php print date("m");?>");
-  
-  
+
+
   siga.css=function(o){
     //o.url, o.onLoad
     var css = document.createElement('link');
@@ -192,7 +192,7 @@ include_once(SIGA::databasePath()."/config/config.php");
     else{
       document.getElementsByTagName('head')[0].appendChild(css);
       o.onLoad();
-    }      
+    }
   };
 
   siga.js=function(o){
@@ -211,7 +211,7 @@ include_once(SIGA::databasePath()."/config/config.php");
     script.src = o.url;
     document.getElementsByTagName('head')[0].appendChild(script);
   };
-  
+
   siga.boot=function(o){
     if(typeof o.file!=='object' || o.file.length==0){
       o.onLoad();
@@ -219,14 +219,14 @@ include_once(SIGA::databasePath()."/config/config.php");
     }
     var _file=o.file.shift();
     document.getElementById('siga-progressbar').value=_file.progress;
-    document.getElementById('siga-loading-message').innerHTML = _file.msg;	
+    document.getElementById('siga-loading-message').innerHTML = _file.msg;
     var _o={url: _file.url, onLoad: function(){siga.boot({file: o.file, onLoad: o.onLoad});}};
     switch(_file.type){
       case "js":  siga.js(_o);  break;
       case "css": siga.css(_o); break;
     }
   };
-  
+
   siga.ajax=function(url,params){
 		var request = ((window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"));
     request.open("POST", url, false); //<-- false makes it a synchonous request!
@@ -234,7 +234,7 @@ include_once(SIGA::databasePath()."/config/config.php");
     request.send(params);
 		return request.responseText;
   }
-  
+
   window.onload=function(){
     var version="2.0.6";//para que el navegardor actualice los js y tome los cambios realizados
     siga.boot({
@@ -255,18 +255,18 @@ include_once(SIGA::databasePath()."/config/config.php");
         {url: "library/siga.js?version="+version, type: 'js', progress: 100, msg: "Gestor de Módulos..."}
       ],
       onLoad: function(){
-        
+
         Ext.application({
-          name   : 'SIGA',    
+          name   : 'SIGA',
           launch : function(){
             siga.timer.init();
             //siga.desktopIcon.add("Registro de Asistencia","image/menu/icon-asistencia.png","siga.open('modulo_asistencia/asistencia_clasico')");
             //siga.menu.show(true);
-            
+
             if(siga.value("sesion_abierta")){
-              siga.jappix();
+              //siga.jappix();
             }
-            
+
             Ext.get('siga-loading-mask').remove();
             //
 			//var response = Ext.Ajax.request({async: false,url: "library/extjs/6.0.0/ext-all.js"});
@@ -277,6 +277,6 @@ include_once(SIGA::databasePath()."/config/config.php");
       }
     });
   };
-  
-  
+
+
 </script>
