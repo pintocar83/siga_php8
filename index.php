@@ -118,10 +118,6 @@ include_once(SIGA::databasePath()."/config/config.php");
     <!-- CONTENEDOR DE LAS APLICACIONES -->
     <DIV id="siga-window-container">
       <div id="siga-apps-title"></div>
-      <div class="icon-desktop" onclick="window.location.href='index_extjs6.php'">
-        <img src='image/menu/icon-sistema-recarga.png' width="48" /><br>
-        <span>Versión Anterior<br><small>ExtJS 6</small></span>
-      </div>
     </DIV>
     <!-- MENU LOGICA (CONTENIDO)-->
     <div id="siga-apps">
@@ -261,6 +257,7 @@ include_once(SIGA::databasePath()."/config/config.php");
           name   : 'SIGA',
           launch : function(){
             siga.timer.init();
+            siga.desktopIcon.add("Versión Anterior<br><small>ExtJS 6</small>","image/menu/icon-sistema-recarga.png","window.location.href='index_extjs6.php'");
             //siga.desktopIcon.add("Registro de Asistencia","image/menu/icon-asistencia.png","siga.open('modulo_asistencia/asistencia_clasico')");
             //siga.menu.show(true);
 

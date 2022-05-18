@@ -1,3 +1,6 @@
+index.php
+index_extjs6.php
+
 library/phpexcel/
 library/fpdf/1.84/
 library/siga.class.php
