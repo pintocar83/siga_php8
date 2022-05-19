@@ -16,9 +16,11 @@ insert into modulo_nomina.escala_salarial_configuracion(campo, definicion) VALUE
 
 alter table modulo_nomina.ficha add column cuenta_nomina varchar(20);
 alter table modulo_nomina.ficha add column id_escala_salarial integer;
-
 ALTER TABLE modulo_nomina.ficha ADD FOREIGN KEY (id_escala_salarial) REFERENCES modulo_nomina.escala_salarial(id);
 
+ALTER TABLE modulo_nomina.periodo ADD COLUMN contabilizado_ap bigint;
+
 alter table modulo_base.banco add column codigo varchar(4);
+alter table modulo_base.banco alter column banco TYPE varchar(100);
 
 INSERT INTO modulo_base.retencion_tipo VALUES (3, '1X1000');
