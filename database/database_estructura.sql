@@ -6,13 +6,13 @@ ALTER [a-zA-Z0-9 _(),.:;-]*OWNER TO (siga|dspcom_siga);
 
 
 SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
+-- SET lock_timeout = 0;
+-- SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET row_security = off;
+-- SET row_security = off;
 
 
 CREATE SCHEMA modulo_asistencia;
@@ -61,7 +61,7 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+-- COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 SET search_path = modulo_base, pg_catalog;
@@ -3810,7 +3810,6 @@ CREATE TABLE escala_salarial_configuracion (
 
 
 CREATE SEQUENCE escala_salarial_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
