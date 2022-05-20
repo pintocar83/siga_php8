@@ -15,6 +15,9 @@ include_once(SIGA::databasePath()."/config/config.php");
 <html>
   <head>
     <title><?php print $siga_title;?></title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <style type="text/css">
       html{
         height: 100%;
