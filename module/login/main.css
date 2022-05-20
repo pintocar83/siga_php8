@@ -1,11 +1,12 @@
+/*
 .login-input-base{
   background-repeat: no-repeat;
   background-position: 2px center;
-  padding-left: 20px;  
+  padding-left: 20px;
 }
 
 .login-input-user{
-  background-image: url(../../image/icon/icon-user_16x16.png);        
+  background-image: url(../../image/icon/icon-user_16x16.png);
 }
 
 .login-input-password{
@@ -13,6 +14,38 @@
 }
 
 .login-input-data{
+  background-image: url(../../image/icon/icon-data_16x16.png);
+}
+*/
+
+.login-input-base input{
+  padding-left: 24px;
+}
+
+.login-input-base .x-form-text-wrap {
+  position: relative;
+}
+
+.login-input-base .x-form-text-wrap::after{
+  background-repeat: no-repeat;
+  background-position: center;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 2px;
+  width: 16px;
+  height: 100%;
+}
+
+.login-input-user .x-form-text-wrap::after{
+  background-image: url(../../image/icon/icon-user_16x16.png);
+}
+
+.login-input-password  .x-form-text-wrap::after{
+  background-image: url(../../image/icon/icon-password_16x16.png);
+}
+
+.login-input-data  .x-form-text-wrap::after{
   background-image: url(../../image/icon/icon-data_16x16.png);
 }
 

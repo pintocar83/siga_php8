@@ -41,7 +41,8 @@ siga.define('login', {
                 id: me._('username'),
                 fieldLabel: 'Usuario',
                 value: '',
-                fieldCls: 'login-input-base login-input-user',
+                cls: 'login-input-base login-input-user',
+                //fieldCls: 'login-input-base login-input-user',
                 width: 300,
                 listeners:{
                     specialkey: function(field, e){
@@ -59,7 +60,8 @@ siga.define('login', {
                 value: '',
                 inputType: 'password' ,
                 width: 300,
-                fieldCls: 'login-input-base login-input-password',
+                cls: 'login-input-base login-input-password',
+                //fieldCls: 'login-input-base login-input-password',
                 listeners:{
                     specialkey: function(field, e){
                         if (e.getKey() == e.ENTER)
@@ -79,7 +81,8 @@ siga.define('login', {
                         xtype: 'combobox',
                         id: me._('database'),
                         width: 205,
-                        fieldCls: 'login-input-base login-input-data',
+                        cls: 'login-input-base login-input-data',
+                        //fieldCls: 'login-input-base login-input-data',
                         queryMode: "local",
                         store: {
                           fields: ['id','description','data'],
