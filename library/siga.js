@@ -68,7 +68,7 @@ siga.loader=function(module,onLoad){
     onLoad: function(){
       siga.js({
         url: "module/"+module+"/?action=javascript",
-        onLoad: function(){onLoad();}
+        onLoad: function(){if(onLoad)onLoad();}
       })
     }
   });

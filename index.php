@@ -24,7 +24,7 @@ include_once(SIGA::databasePath()."/config/config.php");
       body{
         padding: 0px; margin: 0px;
         overflow: hidden;
-        background-image: url(<?php print isset(SIGA::userPreferences()["background"])?SIGA::userPreferences()["background"]:"image/background/1.jpg"?>);
+        background-image: url(<?php print isset(SIGA::userPreferences()["background"])?SIGA::userPreferences()["background"]:"image/background/3.jpg"?>);
         background-position: center;
         background-repeat: no-repeat;
         position: fixed !important;
@@ -264,8 +264,13 @@ include_once(SIGA::databasePath()."/config/config.php");
             if(siga.value("sesion_abierta")){
               //siga.jappix();
             }
+            else{
+              siga.open("login");
+            }
 
             Ext.get('siga-loading-mask').remove();
+
+
             //
 			//var response = Ext.Ajax.request({async: false,url: "library/extjs/6.0.0/ext-all.js"});
 			//localStorage.setItem("SIGA::extjs", response.responseText);

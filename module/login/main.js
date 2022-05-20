@@ -1,6 +1,6 @@
 siga.define('login', {
     extend: 'siga.windowBase',
-    title: 'Inicio de Sesión',
+    title: '<img src="favicon.svg" style="position: absolute; top:-3px; left:3px; width: 24px; height: 24px;" /><div style="padding-left:30px;">Inicio de Sesión</div>',
     width: 600,
     height: 350,
     modal: true,
@@ -11,15 +11,16 @@ siga.define('login', {
       "background-image": "url("+siga.value('folder')+"/login-bg.png)",
       "padding": "20px 20px 0px 200px",
       "background-repeat": "no-repeat",
-      "background-position": "left top"
+      "background-position": "left top",
+      "border-color": "#e8e8e8"
     },
-    
+
     initComponent: function(){
         var me = this;
-        
+
         me.defaults=me.getInternal("field_defaults");
-        
-        me.items=[            
+
+        me.items=[
             {
                 xtype: 'label',
                 html: siga.value('title_login'),
@@ -38,7 +39,7 @@ siga.define('login', {
             {
                 xtype: 'textfield',
                 id: me._('username'),
-                fieldLabel: 'Usuario',                
+                fieldLabel: 'Usuario',
                 value: '',
                 fieldCls: 'login-input-base login-input-user',
                 width: 300,
@@ -61,7 +62,7 @@ siga.define('login', {
                 fieldCls: 'login-input-base login-input-password',
                 listeners:{
                     specialkey: function(field, e){
-                        if (e.getKey() == e.ENTER) 
+                        if (e.getKey() == e.ENTER)
                             me.login();
                     }
               }
@@ -71,14 +72,14 @@ siga.define('login', {
                 width: 300,
                 fieldLabel: 'Base de Datos',
                 layout: 'hbox',
-                
-                
+
+
                 items:[
                     {
                         xtype: 'combobox',
                         id: me._('database'),
                         width: 205,
-                        fieldCls: 'login-input-base login-input-data',                    
+                        fieldCls: 'login-input-base login-input-data',
                         queryMode: "local",
                         store: {
                           fields: ['id','description','data'],
@@ -98,7 +99,7 @@ siga.define('login', {
                             }
                           },
                           listeners: {
-                            load: function(store, records, successful){                                
+                            load: function(store, records, successful){
                                 if(records.length>0){
                                     me.getCmp("database").setValue(records[0].get("id"));
                                 }
@@ -109,15 +110,17 @@ siga.define('login', {
                         displayField: 'description',
                         valueField: 'id',
                         allowBlank: false,
-                        forceSelection: true,                    
+                        forceSelection: true,
                         value: '',
                         listeners: {
                             change: function(e, The, eOpts ){
                                 me.getCmp('data').setValue("");
                                 var data=me.getCmp("database").getStore().getById(me.getCmp("database").getValue()).get("data");
                                 me.getCmp('data').setStore({fields: ['id', 'nombre'], data: data});
-                                if (data.length>0) 
+                                if (data.length>0)
                                     me.getCmp('data').setValue(data[data.length-1]["id"]);
+
+                                me.body.applyStyles({"background-image": "url(data/"+me.getCmp("database").getValue()+"/config/login-bg.png)"});
                             }
                         }
                     },
@@ -133,14 +136,14 @@ siga.define('login', {
                         displayField: 'nombre',
                         valueField: 'id',
                         allowBlank: false,
-                        forceSelection: true,                    
+                        forceSelection: true,
                         value: ''
                     },
                 ]
-                
-                
+
+
             },
-            
+
             {
                 xtype: 'container',
                 width: 300,
@@ -150,13 +153,13 @@ siga.define('login', {
                     {
                         xtype:'tbspacer',
                         flex:1
-                    },                   
+                    },
                     {
                         xtype: 'button',
                         text: 'Limpiar',
                         tooltip: 'Limpiar',
                         iconCls: 'siga-icon-16 icon-clear',
-                        width: 100,                        
+                        width: 100,
                         listeners: {
                             click: function(){
                                 me.clear();
@@ -184,37 +187,37 @@ siga.define('login', {
                         xtype:'tbspacer',
                         flex:1
                     }
-                ]                
-            }              
-        ];        
-        
-        me.callParent(arguments);      
+                ]
+            }
+        ];
+
+        me.callParent(arguments);
     },
-    
+
     init: function(){
         var me=this;
         me.getCmp('username').focus();
         me.getCmp('username').selectText();
     },
-    
+
     login: function(){
         var me=this;
-    
+
         var _username=me.getCmp('username').getValue();
         var _password=me.getCmp('password').getValue();
         var _database=me.getCmp('database').getValue();
         var _data=me.getCmp('data').getValue();
-        
+
         if(!_username){
             me.setMessage("Introduzca el nombre de usuario.",'red');
             return;
         }
-        
+
         if(!_password){
             me.setMessage("Introduzca la contraseña de usuario.",'red');
             return;
         }
-        
+
         Ext.Ajax.request({
             url: 'module/login/',
             method : 'POST',
@@ -226,23 +229,23 @@ siga.define('login', {
               data: _data
             },
             success: function(response){
-              var result=Ext.JSON.decode(response.responseText);                
-              if(result.success){                
+              var result=Ext.JSON.decode(response.responseText);
+              if(result.success){
                 window.location.reload();
               }
-              
+
               me.getCmp('username').focus();
               me.getCmp('username').selectText();
               me.setMessage(result.message,'red');
             }
         });
     },
-    
+
     clear: function(){
         var me=this;
         me.setMessage("");
         me.getCmp('username').setValue("");
         me.getCmp('password').setValue("");
         me.getCmp('username').focus();
-    }    
+    }
 });

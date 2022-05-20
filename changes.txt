@@ -1,15 +1,20 @@
 index.php
 index_extjs6.php
+favicon.ico
+favicon.png
+favicon.svg
 
 library/phpexcel/
 library/fpdf/1.84/
 library/siga.class.php
+library/siga.js
 library/siga.select.js
 library/siga.config.example.php
 
 module/estructura_presupuestaria/
 module/nomina/
 module/usuario/main.js
+module/login/main.js
 
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
