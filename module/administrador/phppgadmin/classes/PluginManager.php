@@ -30,6 +30,8 @@ class PluginManager {
 	function __construct($language) {
 		global $conf, $lang;
 
+		if (! isset($conf['plugins'])) return;
+
 		// Get the activated plugins
 		$plugins = $conf['plugins'];
 
@@ -116,7 +118,7 @@ class PluginManager {
 
 		if (!isset($this->plugins_list[$plugin_name])) {
 			// Show an error and stop the application
-			printf($lang['strpluginnotfound']."\t\n", $name);
+			printf($lang['strpluginnotfound']."\t\n", $plugin_name);
 			exit;
 		}
 		$plugin = $this->plugins_list[$plugin_name];

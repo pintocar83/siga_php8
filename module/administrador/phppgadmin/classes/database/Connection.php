@@ -19,7 +19,7 @@ class Connection {
 	 * Creates a new connection.  Will actually make a database connection.
 	 * @param $fetchMode Defaults to associative.  Override for different behaviour
 	 */
-	function Connection($host, $port, $sslmode, $user, $password, $database, $fetchMode = ADODB_FETCH_ASSOC) {
+	function __construct($host, $port, $sslmode, $user, $password, $database, $fetchMode = ADODB_FETCH_ASSOC) {
 		$this->conn = ADONewConnection('postgres7');
 		$this->conn->setFetchMode($fetchMode);
 
@@ -75,8 +75,20 @@ class Connection {
 		$description = "PostgreSQL {$version}";
 
 		// Detect version and choose appropriate database driver
+        switch (substr($version,0,2)) {
+            case '14': return 'Postgres';break;
+            case '13': return 'Postgres13';break;
+            case '12': return 'Postgres12';break;
+            case '11': return 'Postgres11';break;
+            case '10': return 'Postgres10';break;
+        }    
+
 		switch (substr($version,0,3)) {
-			case '9.2': return 'Postgres'; break;
+            case '9.6': return 'Postgres96'; break;
+            case '9.5': return 'Postgres95'; break;
+			case '9.4': return 'Postgres94'; break;
+			case '9.3': return 'Postgres93'; break;
+			case '9.2': return 'Postgres92'; break;
 			case '9.1': return 'Postgres91'; break;
 			case '9.0': return 'Postgres90'; break;
 			case '8.4': return 'Postgres84'; break;

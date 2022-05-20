@@ -50,8 +50,8 @@ class Postgres80 extends Postgres81 {
 	 * Constructor
 	 * @param $conn The database connection
 	 */
-	function Postgres80($conn) {
-		$this->Postgres81($conn);
+	function __construct($conn) {
+		parent::__construct($conn);
 	}
 
 	// Help functions
@@ -240,7 +240,7 @@ class Postgres80 extends Postgres81 {
 	 * @param $restartvalue The starting value
 	 * @param $cachevalue The cache value
 	 * @param $cycledvalue True if cycled, false otherwise
-	 * @param $startvalue The sequence start value when issueing a restart
+	 * @param $startvalue The sequence start value when issuing a restart
 	 * @return 0 success
 	 * @return -3 rename error
 	 * @return -4 comment error

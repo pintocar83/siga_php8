@@ -124,7 +124,7 @@
 				echo " FROM stdin;\n";
 				while (!$rs->EOF) {
 					$first = true;
-					while(list($k, $v) = each($rs->fields)) {
+					foreach ($rs->fields as $k => $v) {
 						// Escape value
 						$v = $data->escapeBytea($v);
 						
@@ -298,6 +298,9 @@
 		// Include application functions
 		include_once('./libraries/lib.inc.php');
 
+		if ( !isset($_REQUEST['query']) or empty($_REQUEST['query']) )
+			$_REQUEST['query'] = $_SESSION['sqlquery'];
+
 		$misc->printHeader($lang['strexport']);
 		$misc->printBody();
 		$misc->printTrail(isset($_REQUEST['subject']) ? $_REQUEST['subject'] : 'database');
@@ -337,6 +340,6 @@
 		echo "</form>\n";
 		
 		$misc->printFooter();
-	}	
+	}
 
 ?>

@@ -89,8 +89,8 @@
 						if ($_REQUEST['action'] == 'confeditrow' && $rs->fields[$attrs->fields['attname']] === null) {
 							$_REQUEST['nulls'][$attrs->fields['attname']] = 'on';
 						}
-						echo "<input type=\"checkbox\" name=\"nulls[{$attrs->fields['attname']}]\"",
-							isset($_REQUEST['nulls'][$attrs->fields['attname']]) ? ' checked="checked"' : '', " /></td>\n";
+						echo "<label><span><input type=\"checkbox\" name=\"nulls[{$attrs->fields['attname']}]\"",
+							isset($_REQUEST['nulls'][$attrs->fields['attname']]) ? ' checked="checked"' : '', " /></span></label></td>\n";
 						$elements++;
 					}
 					else
@@ -150,7 +150,7 @@
 			echo "<input type=\"hidden\" name=\"strings\" value=\"", htmlspecialchars($_REQUEST['strings']), "\" />\n";
 			echo "<input type=\"hidden\" name=\"key\" value=\"", htmlspecialchars(urlencode(serialize($key))), "\" />\n";
 			echo "<p>";
-			if (!$error) echo "<input type=\"submit\" name=\"save\" value=\"{$lang['strsave']}\" />\n";
+			if (!$error) echo "<input type=\"submit\" name=\"save\" accesskey=\"r\" value=\"{$lang['strsave']}\" />\n";
 			echo "<input type=\"submit\" name=\"cancel\" value=\"{$lang['strcancel']}\" />\n";
 
 			if($fksprops !== false) {
@@ -320,9 +320,14 @@
 
 				$sortLink = http_build_query($args);
 
-				echo "<th class=\"data\"><a href=\"?{$sortLink}\">"
-					, $misc->printVal($finfo->name)
-					, "</a></th>\n";
+				echo "<th class=\"data\"><a href=\"display.php?{$sortLink}\">"
+					, $misc->printVal($finfo->name);
+				if($_REQUEST['sortkey'] == ($j + 1)) {
+					if($_REQUEST['sortdir'] == 'asc')
+						echo '<img src="'. $misc->icon('RaiseArgument') .'" alt="asc">';
+					else	echo '<img src="'. $misc->icon('LowerArgument') .'" alt="desc">';
+				}
+				echo "</a></th>\n";
 			}
 			$j++;
 		}
@@ -397,8 +402,8 @@
 		if (is_object($rs) && $rs->recordCount() > 0) {
 			/* we are browsing a referenced table here
 			 * we should show OID if show_oids is true
-			 * so we give true to withOid in functions bellow
-			 * as 3rd paramter */
+			 * so we give true to withOid in functions below
+			 * as 3rd parameter */
 		
 			echo "<table><tr>";
 				printTableHeaderCells($rs, false, true);
@@ -438,6 +443,7 @@
 		}
 
 		$misc->printTrail(isset($subject) ? $subject : 'database');
+		$misc->printTabs($subject,'browse');
 
 		/* This code is used when browsing FK in pure-xHTML (without js) */
 		if (isset($_REQUEST['fkey'])) {
@@ -456,7 +462,6 @@
 				$type = 'SELECT';
 			}
 			else {
-				$misc->printTitle($lang['strbrowse']);
 				$type = 'TABLE';
 			}
 		} else {
@@ -519,6 +524,21 @@
 
 		if ($save_history && is_object($rs) && ($type == 'QUERY')) //{
 			$misc->saveScriptHistory($_REQUEST['query']);
+
+		echo '<form method="POST" action="'.$_SERVER['REQUEST_URI'].'"><textarea width="90%" name="query" rows="5" cols="100" resizable="true">';
+		if (isset($_REQUEST['query'])) {
+			$query = $_REQUEST['query'];
+		} else {
+			$query = "SELECT * FROM ".pg_escape_identifier($_REQUEST['schema']);
+			if ($_REQUEST['subject'] == 'view') {
+				$query = "{$query}.".pg_escape_identifier($_REQUEST['view']).";";
+			} else {
+				$query = "{$query}.".pg_escape_identifier($_REQUEST['table']).";";
+			}
+		}
+		//$query = isset($_REQUEST['query'])? $_REQUEST['query'] : "select * from {$_REQUEST['schema']}.{$_REQUEST['table']};";
+		echo htmlspecialchars($query);
+		echo '</textarea><br><input type="submit"/></form>';
 
 		if (is_object($rs) && $rs->recordCount() > 0) {
 			// Show page navigation
@@ -746,7 +766,7 @@
 				);
 			}
 
-			$urlvars = array('query' => $_REQUEST['query']);
+			$urlvars = array();
 			if (isset($_REQUEST['search_path']))
 				$urlvars['search_path'] = $_REQUEST['search_path'];
 
@@ -809,9 +829,27 @@
 	$scripts .= "};\n";
 	$scripts .= "</script>\n";
 
-	// If a table is specified, then set the title differently
-	if (isset($_REQUEST['subject']) && isset($_REQUEST[$_REQUEST['subject']]))
-		$misc->printHeader($lang['strtables'], $scripts);
+	// Set the title based on the subject of the request 
+	if (isset($_REQUEST['subject']) && isset($_REQUEST[$_REQUEST['subject']])) {
+		if ($_REQUEST['subject'] == 'table') {
+			$misc->printHeader(
+				$lang['strtables'].': '.$_REQUEST[$_REQUEST['subject']],
+				$scripts
+			);
+		}
+		else if ($_REQUEST['subject'] == 'view') {
+			$misc->printHeader(
+				$lang['strviews'].': '.$_REQUEST[$_REQUEST['subject']],
+				$scripts
+			);
+		} 
+        else if ($_REQUEST['subject'] == 'column') {
+            $misc->printHeader(
+                $lang['strcolumn'].': '.$_REQUEST[$_REQUEST['subject']],
+                $scripts
+            );
+        }
+	}
 	else	
 		$misc->printHeader($lang['strqueryresults']);
 

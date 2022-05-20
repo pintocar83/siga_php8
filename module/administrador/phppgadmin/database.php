@@ -23,7 +23,7 @@
 	function doSignal() {
 		global $data, $lang;
 
-		$status = $data->sendSignal($_REQUEST['procpid'], $_REQUEST['signal']);
+		$status = $data->sendSignal($_REQUEST['pid'], $_REQUEST['signal']);
 		if ($status == 0)
 			doProcesses($lang['strsignalsent']);
 		else
@@ -313,19 +313,21 @@
 		echo "<table>\n";
 		echo "<tr><th class=\"data\">{$lang['strformat']}</th><th class=\"data\" colspan=\"2\">{$lang['stroptions']}</th></tr>\n";
 		// Data only
-		echo "<tr><th class=\"data left\" rowspan=\"2\">";
+		echo "<tr><th class=\"data left\" rowspan=\"". ($data->hasServerOids() ? 2 : 1) ."\">";
 		echo "<input type=\"radio\" id=\"what1\" name=\"what\" value=\"dataonly\" checked=\"checked\" /><label for=\"what1\">{$lang['strdataonly']}</label></th>\n";
 		echo "<td>{$lang['strformat']}</td>\n";
 		echo "<td><select name=\"d_format\">\n";
 		echo "<option value=\"copy\">COPY</option>\n";
 		echo "<option value=\"sql\">SQL</option>\n";
 		echo "</select>\n</td>\n</tr>\n";
-		echo "<tr><td><label for=\"d_oids\">{$lang['stroids']}</label></td><td><input type=\"checkbox\" id=\"d_oids\" name=\"d_oids\" /></td>\n</tr>\n";
+		if ($data->hasServerOids()) {
+			echo "<tr><td><label for=\"d_oids\">{$lang['stroids']}</label></td><td><input type=\"checkbox\" id=\"d_oids\" name=\"d_oids\" /></td>\n</tr>\n";
+		}
 		// Structure only
 		echo "<tr><th class=\"data left\"><input type=\"radio\" id=\"what2\" name=\"what\" value=\"structureonly\" /><label for=\"what2\">{$lang['strstructureonly']}</label></th>\n";
 		echo "<td><label for=\"s_clean\">{$lang['strdrop']}</label></td><td><input type=\"checkbox\" id=\"s_clean\" name=\"s_clean\" /></td>\n</tr>\n";
 		// Structure and data
-		echo "<tr><th class=\"data left\" rowspan=\"3\">";
+		echo "<tr><th class=\"data left\" rowspan=\"". ($data->hasServerOids() ? 3 : 2) ."\">";
 		echo "<input type=\"radio\" id=\"what3\" name=\"what\" value=\"structureanddata\" /><label for=\"what3\">{$lang['strstructureanddata']}</label></th>\n";
 		echo "<td>{$lang['strformat']}</td>\n";
 		echo "<td><select name=\"sd_format\">\n";
@@ -333,7 +335,9 @@
 		echo "<option value=\"sql\">SQL</option>\n";
 		echo "</select>\n</td>\n</tr>\n";
 		echo "<tr><td><label for=\"sd_clean\">{$lang['strdrop']}</label></td><td><input type=\"checkbox\" id=\"sd_clean\" name=\"sd_clean\" /></td>\n</tr>\n";
-		echo "<tr><td><label for=\"sd_oids\">{$lang['stroids']}</label></td><td><input type=\"checkbox\" id=\"sd_oids\" name=\"sd_oids\" /></td>\n</tr>\n";
+		if ($data->hasServerOids()) {
+			echo "<tr><td><label for=\"sd_oids\">{$lang['stroids']}</label></td><td><input type=\"checkbox\" id=\"sd_oids\" name=\"sd_oids\" /></td>\n</tr>\n";
+		}
 		echo "</table>\n";
 		
 		echo "<h3>{$lang['stroptions']}</h3>\n";
@@ -445,6 +449,10 @@
 				'title' => $lang['strprocess'],
 				'field' => field('pid'),
 			),
+            'blocked' => array(
+                'title' => $lang['strblocked'],
+                'field' => field('waiting'),
+            ),
 			'query' => array(
 				'title' => $lang['strsql'],
 				'field' => field('query'),
@@ -459,7 +467,7 @@
 		$columns['actions'] = array('title' => $lang['stractions']);
 
 		$actions = array();
-		if ($data->isSuperUser()) {
+		if ($data->hasUserSignals() || $data->isSuperUser()) {
 			$actions = array(
 				'cancel' => array(
 					'content' => $lang['strcancel'],
@@ -469,7 +477,7 @@
 							'urlvars' => array (
 								'action' => 'signal',
 								'signal' => 'CANCEL',
-								'procpid' => field('procpid')
+								'pid' => field('pid')
 							)
 						)
 					)
@@ -482,7 +490,7 @@
 							'urlvars' => array (
 								'action' => 'signal',
 								'signal' => 'KILL',
-								'procpid' => field('procpid')
+								'pid' => field('pid')
 							)
 						)
 					)
@@ -595,9 +603,9 @@
 		}
 
 		echo "<p><input type=\"checkbox\" id=\"paginate\" name=\"paginate\"", (isset($_REQUEST['paginate']) ? ' checked="checked"' : ''), " /><label for=\"paginate\">{$lang['strpaginate']}</label></p>\n";
-		echo "<p><input type=\"submit\" name=\"execute\" value=\"{$lang['strexecute']}\" />\n";
+		echo "<p><input type=\"submit\" name=\"execute\" accesskey=\"r\" value=\"{$lang['strexecute']}\" />\n";
 		echo $misc->form;
-		echo "<input type=\"reset\" value=\"{$lang['strreset']}\" /></p>\n";
+		echo "<input type=\"reset\" accesskey=\"q\" value=\"{$lang['strreset']}\" /></p>\n";
 		echo "</form>\n";
 
 		// Default focus

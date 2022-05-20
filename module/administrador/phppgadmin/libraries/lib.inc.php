@@ -16,11 +16,11 @@
 	$appName = 'phpPgAdmin';
 
 	// Application version
-	$appVersion = '5.1';
+	$appVersion = '7.13.0';
 
 	// PostgreSQL and PHP minimum version
 	$postgresqlMinVer = '7.4';
-	$phpMinVer = '5.0';
+	$phpMinVer = '7.2';
 
 	// Check the version of PHP
 	if (version_compare(phpversion(), $phpMinVer, '<'))
@@ -115,6 +115,35 @@
 		$conf['theme']  = $_COOKIE['ppaTheme'];
 	}
 
+	// 4. Check for theme by server/db/user
+	$info = $misc->getServerInfo();
+
+	if (!is_null($info)) {
+		$_theme = '';
+
+		if ( (isset($info['theme']['default']))
+			and is_file("./themes/{$info['theme']['default']}/global.css")
+		)
+			$_theme = $info['theme']['default'];
+
+		if ( isset($_REQUEST['database'])
+			and isset($info['theme']['db'][$_REQUEST['database']])
+			and is_file("./themes/{$info['theme']['db'][$_REQUEST['database']]}/global.css")
+		)
+			$_theme = $info['theme']['db'][$_REQUEST['database']];
+
+		if ( isset($info['username'])
+			and isset($info['theme']['user'][$info['username']])
+			and is_file("./themes/{$info['theme']['user'][$info['username']]}/global.css")
+		)
+			$_theme = $info['theme']['user'][$info['username']];
+
+		if ($_theme !== '') {
+			setcookie('ppaTheme', $_theme, time()+31536000);
+			$conf['theme'] = $_theme;
+		}
+	}
+
 	// Determine language file to import:
 	unset($_language);
 
@@ -179,9 +208,19 @@
 		exit;
 	}
 
-	// Check database support is properly compiled in
-	if (!function_exists('pg_connect')) {
-		echo $lang['strnotloaded'];
+	// Check php libraries
+	$php_libraries_requirements = [
+		// required_function => name_of_the_php_library
+		'pg_connect' => 'pgsql',
+		'mb_strlen' => 'mbstring'];
+	$missing_libraries = [];
+	foreach($php_libraries_requirements as $funcname => $lib)
+		if (!function_exists($funcname))
+			$missing_libraries[] = $lib;
+	if ($missing_libraries) {
+		$missing_list = implode(', ', $missing_libraries);
+		$error_missing_template_string = count($missing_libraries) <= 1 ? $lang['strlibnotfound'] : $lang['strlibnotfound_plural'];
+		printf($error_missing_template_string, $missing_list);
 		exit;
 	}
 

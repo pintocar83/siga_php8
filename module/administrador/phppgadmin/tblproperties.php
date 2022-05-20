@@ -139,7 +139,7 @@
 		global $data, $misc;
 		global $lang;
 
-		// Determine whether or not the table has an object ID
+		// Determine whether or not the table has an object ID (Always false if version>=12)
 		$hasID = $data->hasObjectID($_REQUEST['table']);
 
 		$misc->printTrail('table');
@@ -491,6 +491,7 @@
 			),
 			'keyprop' => array(
 				'title' => $lang['strconstraints'],
+				'class' => 'constraint_cell',
 				'field' => field('attname'),
 				'type'  => 'callback',
 				'params'=> array(
@@ -503,7 +504,7 @@
 			),
 			'comment' => array(
 				'title' => $lang['strcomment'],
-				'field' => field('comment'),
+				'field' => field('comment')
 			),
 		);
 

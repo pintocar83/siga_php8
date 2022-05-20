@@ -72,8 +72,8 @@
 			putenv('PGPORT=' . $port);
 		}
 
-		// Build command for executing pg_dump.  '-i' means ignore version differences.
-		$cmd = $exe . " -i";
+		// Build command for executing pg_dump.
+		$cmd = $exe;
 		
 		// we are PG 7.4+, so we always have a schema
 		if (isset($_REQUEST['schema'])) {
@@ -92,7 +92,7 @@
 			$f_object = $_REQUEST[$_REQUEST['subject']];
 			$data->fieldClean($f_object);
 
-			// Starting in 8.2, -n and -t are orthagonal, so we now schema qualify
+			// Starting in 8.2, -n and -t are orthogonal, so we now schema qualify
 			// the table name in the -t argument and quote both identifiers
 			if ( ((float) $version[1]) >= 8.2 ) {
 				$cmd .= " -t " . $misc->escapeShellArg("\"{$f_schema}\".\"{$f_object}\"");

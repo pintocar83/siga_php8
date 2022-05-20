@@ -1,6 +1,88 @@
 phpPgAdmin History
 ------------------
 
+Version 7.13.0
+--------------
+
+Released: November 7th, 2020
+
+Features:
+* Add support for Postgres 13
+* Add provisional support for Postgres 14
+* Upgrade Jquery library to 3.4.1 (Nirgal)
+* Allow users to see group owned databases when using "owned only"
+
+Bugs:
+* Fix bug where sorting on selects dumped you to the table screen (MichaMEG)
+
+Incompatibilities:
+* This release drops support for PHP 7.1
+* This will be the last release to support PHP 7.2
+
+
+Version 7.12.1
+--------------
+
+Released: December 10th, 2019
+
+Features:
+* Add support for granting USAGE on sequences
+* Update French translation 
+
+Bugs: 
+* Fix issues with OID removal in Postgres 12+
+* Remove broken tree branch from table/view browse option
+* Properly escape identifiers when browsing tables/views/schemas
+* Fix truncation of long multibyte strings 
+* Clean up a number of misspellings and typos from codespell report
+
+Incompatabilities:
+* Require mbstring module support in PHP
+
+
+Version 7.12.0 
+--------------
+
+Released: September 28, 2019 
+
+Features
+* Add Support for PHP 7.x 
+* Add Support for Postgres 12
+* Update Bootstrap to version 3.3.7 (wisekeep)
+
+Bugs:
+* Fix several issues with CSS files (wisekeep)
+* Clean up file permissions (nirgal) 
+* Fixed Reflected XSS vulnerability (om3rcitak)
+* Fixes with sequence visbility and permission handling.
+
+Incompatabilities:
+* We no longer support php5  
+* Change in version numbering system
+
+Version 5.6
+-----------
+
+Released: 12th November, 2018 
+
+Features
+* Add support for PostgreSQL 9.3, 9.4, 9.5, 9.6, 10, 11
+* Development support for PostgreSQL 12
+* Add support for brows/select navigation tabs (firzen)
+* Add new theme, "bootstrap" (amenadiel)
+* Improved support for json/jsonb
+
+Bugs
+* Fix bug in Turkish translation which caused failed ajax responses 
+* Account for Blocked field in admin processes Selenium test
+* Properly handle column comments 
+* Fix background css issue
+* Additional language updates
+
+Incompatabilities
+* Dropped testing of pre-9.3 versions of Postgres, which are now EOL
+
+
 Version 5.1
 -----------
 
@@ -8,23 +90,20 @@ Released: 14th April 2013
 
 Features
 * Full support for PostgreSQL 9.1 and 9.2
-* New plugin architecture, including addition of several new hooks (ioguix)
+* New plugin architecture, including addition of several new hooks (asleonardo, ioguix)
 * Support nested groups of servers (Julien Rouhaud & ioguix)
 * Expanded test coverage in Selenium test suite 
 * Highlight referencing fields on hovering Foriegn Key values when browsing tables (asleonardo) 
-* Simplified translation system implementation
+* Simplified translation system implementation (ioguix)
 * Don't show cancel/kill options in process page to non-superusers
-* Add download ability from the History window
+* Add download ability from the History window (ioguix)
 * User queries now paginate by default
 
 Bugs
 * Fix several bugs with bytea support, including possible data corruption bugs when updating rows that have bytea fields
 * Numeruous fixes for running under PHP Strict Standards 
-* Fix navigation links when browsing results from a report
-* Fix multiple bugs related to GPC parameters pollution from code
 * Fix an issue with autocompletion of text based Foreign Keys
 * Fix a bug when browsing tables with no unique key
-* Fix a bug with nested groups when no server was set (rjuju) 
 
 Translations
 * Lithuanian (artvras) 

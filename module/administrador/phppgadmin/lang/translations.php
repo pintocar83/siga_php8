@@ -12,10 +12,8 @@
 		'afrikaans' => 'Afrikaans',
 		'arabic' => '&#1593;&#1585;&#1576;&#1610;',
 		'catalan' => 'Catal&#224;',
-		'chinese-tr' => '&#32321;&#39636;&#20013;&#25991;',
-		'chinese-sim' => '&#31616;&#20307;&#20013;&#25991;',
-		'chinese-utf8-zh_TW' => '&#27491;&#39636;&#20013;&#25991;&#65288;UTF-8&#65289;', 
-		'chinese-utf8-zh_CN' => '&#31616;&#20307;&#20013;&#25991;&#65288;UTF-8&#65289;', 
+		'chinese-zh-CN' => '&#31616;&#20307;&#20013;&#25991;&#65288;UTF-8&#65289;', 
+		'chinese-zh-TW' => '&#27491;&#39636;&#20013;&#25991;&#65288;UTF-8&#65289;', 
 		'czech' => '&#268;esky',
 		'danish' => 'Danish',
 		'dutch' => 'Nederlands',
@@ -39,7 +37,7 @@
 		'swedish' => 'Svenska',
 		'spanish' => 'Espa&ntilde;ol',
 		'turkish' => 'T&uuml;rk&ccedil;e',
-		'ukrainian' => '&#1059;&#1082;&#1088;&#1072;&#9558;&#1085;&#1089;&#1100;&#1082;&#1072;'
+		'ukrainian' => '&#1059;&#1082;&#1088;&#1072;&#1111;&#1085;&#1089;&#1100;&#1082;&#1072;'
 	);
 	
 	
@@ -54,10 +52,8 @@
 		'af' => 'afrikaans',
 		'ar' => 'arabic',
 		'ca' => 'catalan',
-		'zh' => 'chinese-tr',
-		'zh-cn' => 'chinese-sim',
-		'utf8-zh-cn' => 'chinese-utf8-cn',
-		'utf8-zh-tw' => 'chinese-utf8-tw',
+		'zh-cn' => 'chinese-zh-CN',
+		'zh-tw' => 'chinese-zh-TW',
 		'cs' => 'czech',
 		'da' => 'danish',
 		'nl' => 'dutch',

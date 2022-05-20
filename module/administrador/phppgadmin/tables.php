@@ -46,8 +46,12 @@
 				echo "\t<tr>\n\t\t<th class=\"data left required\">{$lang['strnumcols']}</th>\n";
 				echo "\t\t<td class=\"data\"><input name=\"fields\" size=\"5\" maxlength=\"{$data->_maxNameLen}\" value=\"",
 					htmlspecialchars($_REQUEST['fields']), "\" /></td>\n\t</tr>\n";
-				echo "\t<tr>\n\t\t<th class=\"data left\">{$lang['stroptions']}</th>\n";
-				echo "\t\t<td class=\"data\"><label for=\"withoutoids\"><input type=\"checkbox\" id=\"withoutoids\" name=\"withoutoids\"", isset($_REQUEST['withoutoids']) ? ' checked="checked"' : '', " />WITHOUT OIDS</label></td>\n\t</tr>\n";
+				if ($data->hasServerOids()) {
+					echo "\t<tr>\n\t\t<th class=\"data left\">{$lang['stroptions']}</th>\n";
+					echo "\t\t<td class=\"data\"><label for=\"withoutoids\"><input type=\"checkbox\" id=\"withoutoids\" name=\"withoutoids\"", isset($_REQUEST['withoutoids']) ? ' checked="checked"' : '', " />WITHOUT OIDS</label></td>\n\t</tr>\n";
+				} else {
+					echo "\t\t<input type=\"hidden\" id=\"withoutoids\" name=\"withoutoids\" value=\"checked\"\n";
+				}
 
 				// Tablespace (if there are any)
 				if ($data->hasTablespaces() && $tablespaces->recordCount() > 0) {
@@ -349,7 +353,7 @@
 
 		if ($confirm) {
 			$misc->printTrail('table');
-			$misc->printTitle($lang['strselect'], 'pg.sql.select');
+			$misc->printTabs('table','select');
 			$misc->printMsg($msg);
 
 			$attrs = $data->getTableAttributes($_REQUEST['table']);
@@ -405,7 +409,7 @@
 					$attrs->moveNext();
 				}
 				// Select all checkbox
-				echo "<tr><td colspan=\"5\"><input type=\"checkbox\" id=\"selectall\" name=\"selectall\" onclick=\"javascript:selectAll()\" /><label for=\"selectall\">{$lang['strselectallfields']}</label></td>";
+				echo "<tr><td colspan=\"5\"><input type=\"checkbox\" id=\"selectall\" name=\"selectall\" accesskey=\"a\" onclick=\"javascript:selectAll()\" /><label for=\"selectall\">{$lang['strselectallfields']}</label></td>";
 				echo "</tr></table>\n";
 			}
 			else echo "<p>{$lang['strinvalidparam']}</p>\n";
@@ -414,7 +418,7 @@
 			echo "<input type=\"hidden\" name=\"table\" value=\"", htmlspecialchars($_REQUEST['table']), "\" />\n";
 			echo "<input type=\"hidden\" name=\"subject\" value=\"table\" />\n";
 			echo $misc->form;
-			echo "<input type=\"submit\" name=\"select\" value=\"{$lang['strselect']}\" />\n";
+			echo "<input type=\"submit\" name=\"select\" accesskey=\"r\" value=\"{$lang['strselect']}\" />\n";
 			echo "<input type=\"submit\" name=\"cancel\" value=\"{$lang['strcancel']}\" /></p>\n";
 			echo "</form>\n";
 		}
@@ -456,7 +460,8 @@
 
 		if ($confirm) {
 			$misc->printTrail('table');
-			$misc->printTitle($lang['strinsertrow'], 'pg.sql.insert');
+			$misc->printTabs('table','insert');
+			
 			$misc->printMsg($msg);
 
 			$attrs = $data->getTableAttributes($_REQUEST['table']);
@@ -505,8 +510,8 @@
 					echo "<td style=\"white-space:nowrap;\">";
 					// Output null box if the column allows nulls (doesn't look at CHECKs or ASSERTIONS)
 					if (!$attrs->fields['attnotnull']) {
-						echo "<input type=\"checkbox\" name=\"nulls[{$attrs->fields['attnum']}]\"",
-							isset($_REQUEST['nulls'][$attrs->fields['attnum']]) ? ' checked="checked"' : '', " /></td>";
+						echo "<label><span><input type=\"checkbox\" name=\"nulls[{$attrs->fields['attnum']}]\"",
+							isset($_REQUEST['nulls'][$attrs->fields['attnum']]) ? ' checked="checked"' : '', " /></span></label></td>";
 					}
 					else {
 						echo "&nbsp;</td>";
@@ -537,7 +542,7 @@
 				echo "<input type=\"hidden\" name=\"protection_counter\" value=\"".$_SESSION['counter']."\" />\n";
 				echo "<input type=\"hidden\" name=\"table\" value=\"", htmlspecialchars($_REQUEST['table']), "\" />\n";
 				echo "<p><input type=\"submit\" name=\"insert\" value=\"{$lang['strinsert']}\" />\n";
-				echo "<input type=\"submit\" name=\"insertandrepeat\" value=\"{$lang['strinsertandrepeat']}\" />\n";
+				echo "<input type=\"submit\" name=\"insertandrepeat\" accesskey=\"r\" value=\"{$lang['strinsertandrepeat']}\" />\n";
 				echo "<input type=\"submit\" name=\"cancel\" value=\"{$lang['strcancel']}\" />\n";
 				
 				if($fksprops !== false) {
@@ -603,7 +608,7 @@
 					echo "<p>", sprintf($lang['strconfemptytable'], $misc->printVal($a['table'])), "</p>\n";
 					printf('<input type="hidden" name="table[]" value="%s" />', htmlspecialchars($a['table']));
 				}
-			} // END mutli empty
+			} // END multi empty
 			else {
 				$misc->printTrail('table');
 				$misc->printTitle($lang['strempty'],'pg.table.empty');
@@ -612,7 +617,7 @@
 
 				echo "<form action=\"tables.php\" method=\"post\">\n";
 				echo "<input type=\"hidden\" name=\"table\" value=\"", htmlspecialchars($_REQUEST['table']), "\" />\n";
-			} // END not mutli empty
+			} // END not multi empty
 
 			echo "<input type=\"hidden\" name=\"action\" value=\"empty\" />\n";
 			echo $misc->form;
@@ -632,14 +637,14 @@
 					}
 				}
 				doDefault($msg);
-			} // END mutli empty
+			} // END multi empty
 			else {
 				$status = $data->emptyTable($_POST['table']);
 				if ($status == 0)
 					doDefault($lang['strtableemptied']);
 				else
 					doDefault($lang['strtableemptiedbad']);
-			} // END not mutli empty
+			} // END not multi empty
 		} // END do Empty
 	}
 
@@ -689,7 +694,7 @@
 		else {
 			//If multi drop
 			if (is_array($_REQUEST['table'])) {
-				$msg='';
+				$msg = '';
 				$status = $data->beginTransaction();
 				if ($status == 0) {
 					foreach($_REQUEST['table'] as $t) {
@@ -776,7 +781,7 @@
 						'url' => 'display.php',
 						'urlvars' => array (
 							'subject' => 'table',
-							'return' => 'schema',
+							'return' => 'table',
 							'table' => field('relname')
 						)
 					)
@@ -923,7 +928,6 @@
 				'content' => $lang['strcreatetablelike']
 			);
 		}
-
 		$misc->printNavLinks($navlinks, 'tables-tables', get_defined_vars());
 	}
 	
