@@ -27,7 +27,7 @@ include_once(SIGA::databasePath()."/config/config.php");
       body{
         padding: 0px; margin: 0px;
         overflow: hidden;
-        background-image: url(<?php print isset(SIGA::userPreferences()["background"])?SIGA::userPreferences()["background"]:"image/background/3.jpg"?>);
+        background-image: url(<?php print isset(SIGA::userPreferences()["background"])?SIGA::userPreferences()["background"]:"image/background/1.jpg"?>);
         background-position: center;
         background-repeat: no-repeat;
         position: fixed !important;
@@ -260,7 +260,7 @@ include_once(SIGA::databasePath()."/config/config.php");
           name   : 'SIGA',
           launch : function(){
             siga.timer.init();
-            siga.desktopIcon.add("Versión Anterior<br><small>ExtJS 6</small>","image/menu/icon-sistema-recarga.png","window.location.href='index_extjs6.php'");
+            //siga.desktopIcon.add("Versión Anterior<br><small>ExtJS 6</small>","image/menu/icon-sistema-recarga.png","window.location.href='index_extjs6.php'");
             //siga.desktopIcon.add("Registro de Asistencia","image/menu/icon-asistencia.png","siga.open('modulo_asistencia/asistencia_clasico')");
             //siga.menu.show(true);
 

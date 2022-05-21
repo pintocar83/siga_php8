@@ -1,8 +1,7 @@
 <?php
-
-$siga_title="Sistema Integrado para la Gestión Adminitrativa :: DSP";
-$siga_title_login="Bienvenido al Sistema Integrado para la<br>Gestión Administrativa";
-$siga_title_logout="Sistema Integrado para la<br>Gestión Administrativa";
+$siga_title="Sistema Integrado para la Gestión Administrativa - Sector Público";
+$siga_title_login="Bienvenido al Sistema Integrado para la<br>Gestión Administrativa - Sector Público";
+$siga_title_logout="Sistema Integrado para la<br>Gestión Administrativa - Sector Público";
 
 $siga_apps_common=array(
   //array("id"=>"asistencia_registro","icon"=>"image/menu/icon-asistencia_registro.png","name"=>"Registro de Asistencia","public"=>true),

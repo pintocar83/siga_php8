@@ -1,6 +1,6 @@
 siga.define('login', {
     extend: 'siga.windowBase',
-    title: '<img src="favicon.svg" style="position: absolute; top:-3px; left:3px; width: 24px; height: 24px;" /><div style="padding-left:30px;">Inicio de Sesión</div>',
+    title: '<img src="favicon.svg" style="position: absolute; top:-3px; left:3px; width: 24px; height: 24px; cursor: pointer;" data-qtip="<b>Autor:</b> Carlos Pinto - Diseños y Sistemsa Pinto F.C." onclick=\"siga.dsp_author()\" /><div style="padding-left:30px;">Inicio de Sesión</div>',
     width: 600,
     height: 350,
     modal: true,

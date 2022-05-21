@@ -670,3 +670,11 @@ siga.onGetComprobante=function(o){
   }
   return _comprobante;
 };
+
+siga.dsp_site=function(){
+  window.open("http://dsp.com.ve/")
+}
+
+siga.dsp_author=function(){
+  window.open("http://dsp.com.ve/profile.php")
+}
