@@ -34,10 +34,15 @@
 	// You can set these to '' if no dumper is available.
 	$conf['servers'][0]['pg_dump_path'] = '/usr/bin/pg_dump';
 	$conf['servers'][0]['pg_dumpall_path'] = '/usr/bin/pg_dumpall';
-	if(file_exists("C:/Bitnami/wappstack-8.0.13-0/postgresql/bin/pg_dump.exe")){
+	if(file_exists("C:/Bitnami/wappstack-8.1.6-0/postgresql/bin/pg_dump.exe")){
+		$conf['servers'][0]['pg_dump_path'] = "C:/Bitnami/wappstack-8.1.6-0/postgresql/bin/pg_dump.exe";
+		$conf['servers'][0]['pg_dumpall_path'] = "C:/Bitnami/wappstack-8.1.6-0/postgresql/bin/pg_dumpall.exe";
+	}
+	else if(file_exists("C:/Bitnami/wappstack-8.0.13-0/postgresql/bin/pg_dump.exe")){
 		$conf['servers'][0]['pg_dump_path'] = "C:/Bitnami/wappstack-8.0.13-0/postgresql/bin/pg_dump.exe";
 		$conf['servers'][0]['pg_dumpall_path'] = "C:/Bitnami/wappstack-8.0.13-0/postgresql/bin/pg_dumpall.exe";
 	}
+
 	// Example for a second server (PostgreSQL for Windows)
 	//$conf['servers'][1]['desc'] = 'Test Server';
 	//$conf['servers'][1]['host'] = '127.0.0.1';
