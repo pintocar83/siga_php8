@@ -1,22 +1,25 @@
 .logout-label-welcome{
   color: #353535;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
-  line-height: 120%;
+  line-height: 110%;
+  padding-bottom: 15px;
+  padding-top: 20px;
+  background: rgba(255,255,255,0.40);
 }
 
 .logout-label-question{
-  padding-top: 10px;
+  padding-top: 20px;
   color: #000000;
-  text-align: left;
+  text-align: center;
   font-size: 12px;
   line-height: 120%;
 }
 
 .logout-label-close{
   color: #727272;
-  text-align: left;
+  text-align: center;
   font-size: 10px;
   line-height: 120%;
 }

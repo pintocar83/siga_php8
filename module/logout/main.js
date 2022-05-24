@@ -1,27 +1,29 @@
 siga.define('logout', {
     extend: 'siga.windowBase',
-    title: 'Cerrar Sesión',
-    width: 580,
-    height: 200,
+    title: '<img src="favicon.svg" style="position: absolute; top:-3px; left:3px; width: 24px; height: 24px; cursor: pointer;" data-qtip="<b>Autor:</b> Carlos Pinto - Diseños y Sistemsa Pinto F.C." /><div style="padding-left:30px;">Cerrar Sesión</div>',
+    width: 440,
+    height: 210,
     modal: true,
     minimizable: false,
     renderTo: Ext.getBody(),
     layout: 'vbox',
     bodyStyle: {
-      "background-image": "url("+siga.value('folder')+"/logout-bg.png)",
-      "padding": "20px 20px 0px 260px",
+      "background-image": "url(module/logout/image/logout-bg.png)",
+      //"background-image": "url("+siga.value('folder')+"/logout-bg.png)",
+      "padding": "0px 0px 0px 0px",
       "background-repeat": "no-repeat",
-      "background-position": "left top"
+      "background-position": "left top",
+      "border-color": "#e8e8e8"
     },
 
     initComponent: function(){
         var me = this;
-        
+
         me.setInternal({
             timeOut: 0,
             timeOutHandler: null
         });
-        
+
         me.items=[
             {
                 xtype: 'label',
@@ -51,14 +53,14 @@ siga.define('logout', {
                     {
                         xtype:'tbspacer',
                         flex:1
-                    },                   
+                    },
                     {
                         xtype: 'button',
                         text: 'Cancelar',
                         tooltip: 'Cancelar',
                         iconCls: 'icon-close',
                         disabledCls: 'icon-close-disabled',
-                        width: 100,                        
+                        width: 100,
                         listeners: {
                             click: function(){
                                 me.close();
@@ -86,15 +88,15 @@ siga.define('logout', {
                         xtype:'tbspacer',
                         flex:1
                     }
-                ]                
+                ]
             }
         ];
-        
+
         me.callParent(arguments);
         me.setInternal({ timeOut: 30 });
         me.autoCloseSession();
     },
-    
+
     listeners:{
         close:function(){
             var me=this;
@@ -102,16 +104,16 @@ siga.define('logout', {
             window.clearTimeout(me.getInternal("timeOutHandler"));
         }
     },
-    
+
     autoCloseSession: function(){
         var me=this;
         if(me.getInternal("timeOut")==-1) return;
         me.getCmp('message').setText('La sesión se cerrará automaticamente en '+me.getInternal("timeOut")+' segundos.',false);
-        
+
         me.setInternal({
             timeOutHandler: setTimeout(function(){
                 me.setInternal({ timeOut: me.getInternal("timeOut")-1 });
-                
+
                 if(me.getInternal("timeOut")<=0){
                     me.closeSession();
                     return;
@@ -120,9 +122,9 @@ siga.define('logout', {
             },1000)
         });
     },
-    
+
     closeSession: function(){
-        var me=this;        
+        var me=this;
         Ext.Ajax.request({
             url: 'module/logout/',
             method : 'POST',
