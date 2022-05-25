@@ -19,6 +19,9 @@ class DBController{
 					$this->Connection = mysqli_connect($server.($port?":".$port:""), $user, $password, $name) or die('Could not connect to server.' );
 					$this->Execute("SET NAMES 'UTF8'");
 					break;
+				case "sqlite3":
+					$this->Connection = new SQLite3($server);
+					break;
 			}					
 		  if(!$this->Connection){
 			  throw new Exception("Error al establecer conexión.");
@@ -70,6 +73,27 @@ class DBController{
 		ini_set("display_errors","On");
 		return $return;
   }
+
+  public function ExecuteSQLITE3($sql){
+    $this->Logs($sql);
+		$this->MsgError="";
+		ini_set("display_errors","On");
+		try{
+			$this->Result=$this->Connection->query($sql);
+			if(!$this->Result){
+				throw new Exception("No se pudo realizar la consulta.");
+			}
+		}
+		catch( Exception $e ){
+			$this->MsgError=$this->Connection->lastErrorMsg();
+			return NULL;
+		}
+		$return=array();
+		while($row = $this->Result->fetchArray())
+			$return[]=$row;
+		ini_set("display_errors","On");
+		return $return;
+  }
 	
 	public function Execute($sql){
 		switch($this->DBDriver){
@@ -78,6 +102,8 @@ class DBController{
 					return 	$this->ExecutePGSQL($sql);
 				case "mysql":
 					return 	$this->ExecuteMYSQL($sql);
+				case "sqlite3":
+					return 	$this->ExecuteSQLITE3($sql);
 			}
 			return NULL;
   }

@@ -27,9 +27,50 @@ class persona{
   }
   
   public static function onGet_PersonaCNE($identificacion_tipo,$identificacion_numero){
-    $db=SIGA::DBController();
+    //$db=SIGA::DBController();
     if($identificacion_tipo=="") $identificacion_tipo=" ";
-    
+
+    $return=array();
+    $return["id_persona"]="";
+    $return["nacionalidad"]="$identificacion_tipo";
+    $return["cedula"]="$identificacion_numero";
+    $return["primer_nombre"]="";
+    $return["segundo_nombre"]="";
+    $return["primer_apellido"]="";
+    $return["segundo_apellido"]="";
+    $return["fecha_nacimiento"]="";
+    $return["genero"]="";
+    $return["correo"]="";
+    $return["telefono"]="";
+
+    $db=SIGA::DBController("base");
+    $persona=$db->Execute("
+      SELECT
+        p.nacionalidad,
+        p.cedula,
+        p.primer_nombre,
+        p.segundo_nombre,
+        p.primer_apellido,
+        p.segundo_apellido
+      FROM
+        persona as p
+      WHERE
+        p.nacionalidad='$identificacion_tipo' and
+        p.cedula='$identificacion_numero'
+    ");
+
+    if(isset($persona[0])){
+      $return["nacionalidad"]=$persona[0]["nacionalidad"];
+      $return["cedula"]=$persona[0]["cedula"];
+      $return["primer_nombre"]=$persona[0]["primer_nombre"];
+      $return["segundo_nombre"]=$persona[0]["segundo_nombre"];
+      $return["primer_apellido"]=$persona[0]["primer_apellido"];
+      $return["segundo_apellido"]=$persona[0]["segundo_apellido"];
+    }
+
+    return [$return];
+
+    /*
     $xml=SIGA::xml("../persona/xml/?nacionalidad=$identificacion_tipo&cedula=$identificacion_numero");
       $personas = $xml->getElementsByTagName('persona');
       $return=array();
@@ -59,7 +100,7 @@ class persona{
         $return[0]["telefono"]=$persona->getAttribute('telefono');
       }
     
-    return $return;
+    return $return;*/
     /*exit;
     
     

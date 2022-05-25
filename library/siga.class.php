@@ -126,7 +126,7 @@ class SIGA extends SIGA_CONFIG {
   
   public static function init(){
     date_default_timezone_set('America/Caracas');
-    self::$path                       = dirname(dirname(__FILE__));
+    self::$path                       = str_replace("\\", "/",dirname(dirname(__FILE__)));
     self::$session_previous=array();
     self::$session_previous["name"]   = session_name("SIGA");
     session_start();
@@ -219,7 +219,7 @@ class SIGA extends SIGA_CONFIG {
   
   public static function xml($file){
     $xml = new DOMDocument();
-    $xml->load("http://".$_SERVER["SERVER_NAME"].dirname($_SERVER["PHP_SELF"])."/$file");
+    $xml->load("http://".$_SERVER["SERVER_NAME"].dirname($_SERVER["PHP_SELF"])."/$file", LIBXML_NOWARNING | LIBXML_NOENT | LIBXML_DTDLOAD);
     return $xml;
   }
   

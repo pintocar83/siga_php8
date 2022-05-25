@@ -17,7 +17,7 @@ $cedula=SIGA::paramRequest("cedula");
 
 
 
-$db=SIGA::DBController("siga");
+$db=SIGA::DBController();
 
 
 
@@ -57,7 +57,7 @@ $persona=$db->Execute("
         ");
 
 
-if(!$persona or !$persona[0]["fecha_nacimiento"] or !$persona[0]["genero"]){
+if(!$persona){
   $db=SIGA::DBController("base");
   $persona_tmp=$db->Execute("
         SELECT
@@ -66,9 +66,7 @@ if(!$persona or !$persona[0]["fecha_nacimiento"] or !$persona[0]["genero"]){
           p.primer_nombre,
           p.segundo_nombre,
           p.primer_apellido,
-          p.segundo_apellido,
-          p.fecha_nacimiento,
-          p.genero
+          p.segundo_apellido
         FROM
           persona as p
         WHERE
@@ -76,12 +74,7 @@ if(!$persona or !$persona[0]["fecha_nacimiento"] or !$persona[0]["genero"]){
           p.cedula='$cedula'
         ");
 
-  if(!$persona)
-    $persona=$persona_tmp;
-  if(!$persona[0]["fecha_nacimiento"])
-    $persona[0]["fecha_nacimiento"]=$persona_tmp[0]["fecha_nacimiento"];
-  if(!$persona[0]["genero"])
-    $persona[0]["genero"]=$persona_tmp[0]["genero"];
+  $persona=$persona_tmp;
 }
 
 
