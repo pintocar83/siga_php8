@@ -14,7 +14,7 @@ library/siga.config.example.php
 module/estructura_presupuestaria/
 module/nomina/
 module/usuario/main.js
-module/login/main.js
+module/login/
 
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
