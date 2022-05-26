@@ -49,11 +49,8 @@ class SIGA_CONFIG {
           "display"=>"f",
           "description"=>"Base de datos del Registro Público - CNE", //descripcion de la base de datos
           "data"=>array(), //años disponibles para la base de datos
-          "driver"=>"mysql", //driver
-          "server"=>"localhost", //servidor
-          "name"=>"base", //nombre de la base de datos
-          "user"=>"root", //usuario
-          "password"=>"root" //contraseña
+          "driver"=>"sqlite3", //driver
+          "server"=>"", //servidor
           )
   );
 
