@@ -25,6 +25,11 @@ class MODULO extends ficha{
                                         SIGA::param("limit"),
                                         SIGA::param("sort",false)));
         break;
+      case "onNominaPeriodo":
+        header('Content-Type: text/plain; charset=utf-8');        
+        print json_encode(self::onNominaPeriodo( SIGA::param("id_ficha"),
+                                                 SIGA::param("id_periodo")));
+        break;
       case "onGet":
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onGet(SIGA::param("nacionalidad"),SIGA::param("cedula"),SIGA::param("id")));
@@ -60,6 +65,8 @@ class MODULO extends ficha{
                                        SIGA::param("correo"),
                                        SIGA::param("fecha_ingreso",false),
                                        SIGA::param("fecha_egreso",false),
+                                       SIGA::param("cuenta_nomina"),
+                                       SIGA::param("id_escala_salarial"),
                                        SIGA::param("codigo"),
                                        SIGA::param("activo")));
         break;

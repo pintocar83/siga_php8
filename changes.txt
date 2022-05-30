@@ -15,12 +15,15 @@ module/estructura_presupuestaria/
 module/nomina/
 module/usuario/main.js
 module/login/
+module/logout/
+module/ficha/
 
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
 class/usuario.class.php
 class/formulacion.class.php
 class/cuenta_presupuestaria.class.php
+class/ficha.class.php
 
 report/nomina_listado_banco_xls_formato_a.php
 report/nomina_listado_banco_xls_formato_b.php
