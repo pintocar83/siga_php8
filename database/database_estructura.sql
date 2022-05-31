@@ -3833,7 +3833,9 @@ CREATE TABLE ficha (
     extension character varying(10),
     activo boolean DEFAULT true,
     cuenta_nomina character varying(20),
-    id_escala_salarial integer
+    id_escala_salarial integer,
+    antiguedad_apn integer default NULL,
+    profesionalizacion_porcentaje integer default NULL
 );
 
 

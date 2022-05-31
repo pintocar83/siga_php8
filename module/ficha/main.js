@@ -2,7 +2,7 @@ siga.define('ficha', {
   extend: 'siga.window',
   title: 'Nómina - Ficha',
   width: 750,
-  height: 690,
+  height: 720,
 
   initComponent: function(){
     var me = this;
@@ -79,11 +79,6 @@ siga.define('ficha', {
           type: 'hbox',
           align: 'stretch'
         },
-        /*layout: {
-          type: 'vbox',
-          align: 'stretch'
-        },*/
-
         items: [
           {
             xtype: 'container',
@@ -299,27 +294,6 @@ siga.define('ficha', {
                   }
                 ]
               },
-              //Antiguedad APN
-              {
-                xtype: 'container',
-                defaults: _defaults,
-                layout: 'anchor',
-                items: [
-                  {
-                    xtype:'numberfield',
-                    id: me._('antiguedad_apn'),
-                    name: 'antiguedad_apn',
-                    flex: 1,
-                    fieldLabel: 'Antiguedad Administración Pública <small>(Años)</small>',
-                    value: '',
-                    margin: '5px 0 0 0px',
-                    minValue: 0,
-                    allowDecimals: false,
-                    allowNegative: false
-                  }
-                ]
-              },
-
               {
                 xtype: 'container',
                 layout: 'fit',
@@ -345,73 +319,7 @@ siga.define('ficha', {
                 ]
               },
 
-              //escala de sueldo
-              {
-                xtype: 'container',
-                defaults: _defaults,
-                layout: 'anchor',
-                items: [
-                  {
-                      xtype: 'combobox',
-                      id: me._('id_escala_salarial'),
-                      name: 'id_escala_salarial',
-                      fieldLabel: 'Escala Salarial',
-                      margin: '5px 0 0 0px',
-                      editable: false,
-                      queryMode: "local",
-                      //rootProperty: "result",
-                      displayTpl: '<tpl for=".">{escala} - {sueldo_basico}</tpl>',
-                      tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{escala}</b> <small style="float: right;">{sueldo_basico}</small></li></tpl></ul>',
-                      store: {
-                          fields: ['id','escala_sueldo_basico'],
-                          autoLoad: true,
-                          pageSize: 100,
-                          proxy: {
-                              type:'ajax',
-                              url: 'module/nomina_escala_salarial/',
-                              actionMethods:  {read: "POST"},//actionMethods:'POST',actionMethods:'POST',
-                              timeout: 3600000,
-                              reader: {
-                                  type: 'json',
-                                  rootProperty: 'result',
-                                  totalProperty:'total'
-                              },
-                              extraParams: {
-                                  action: 'onList'
-                              }
-                          },
-                          listeners: {
-                              load: function(store, records, successful){
-                                  //me.internal.id_unidad_coordinacion=records[0].get("id");
-                                  //me.getCmp("id_unidad_coordinacion").setValue(records[0].get("id"));
-                              }
-                          }
-                      },
-                      //displayField: 'escala_sueldo_basico',
-                      valueField: 'id',
-                      allowBlank: true,
-                      forceSelection: true
-                  },
-                ]
-              },
 
-              //Cuenta Nomina
-              {
-                xtype: 'container',
-                defaults: _defaults,
-                layout: 'anchor',
-                items: [
-                  {
-                    xtype:'textfield',
-                    id: me._('cuenta_nomina'),
-                    name: 'cuenta_nomina',
-                    flex: 1,
-                    fieldLabel: 'Cuenta Nomina',
-                    value: '',
-                    margin: '5px 0 0 0px',
-                  }
-                ]
-              },
 
               {
                 xtype: 'container',
@@ -452,71 +360,7 @@ siga.define('ficha', {
                 ]
               },
 
-              {
-                xtype: 'combobox',
-                id: me._('id_periodo'),
-                name: 'id_periodo',
-                anchor: '100%',
-                fieldLabel: 'Nóminas del Periodo',
-                labelAlign: 'top',
-                labelSeparator: '',
-                labelStyle: 'font-weight: bold;',
-                editable: false,
-                queryMode: "local",
-                displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
-                tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
-                store: {
-                  fields: ['id','periodo'],
-                  autoLoad: true,
-                  pageSize: 1000,
-                  proxy: {
-                    type:'ajax',
-                    url: 'module/nomina_periodo/',
-                    actionMethods: {read: "POST"},//actionMethods:'POST',
-                    timeout: 3600000,
-                    reader: {
-                      type: 'json',
-                      rootProperty: 'result',
-                      totalProperty:'total'
-                    },
-                    extraParams: {
-                      action: 'onList',
-                      text: '',
-                      id: '',
-                      sort: '[{"property": "codigo", "direction": "ASC"}]'
-                    }
-                  },
-                  listeners: {
-                    load: function(store, records, successful){
-                      me.getCmp("id_periodo").reset();
-                      me.id_periodo_default="";
-                      if(records.length>0){
-                        me.id_periodo_default=records[records.length-1].get("id");
-                        me.getCmp("id_periodo").setValue(me.id_periodo_default);
-                      }
 
-                    },
-                    beforeload: function(store,operation,eOpts){
-                      store.proxy.extraParams.tipo='Q';
-                    }
-                  }
-                },
-                listeners: {
-                  change: function(){
-                    me.changePeriodo();
-                  }
-                },
-                displayField: 'periodo',
-                valueField: 'id',
-                allowBlank: false,
-                forceSelection: true,
-              },
-              {
-                xtype: 'container',
-                id: me._('nomina_periodo'),
-                style: "font-size:11px; color:gray;",
-                html: ""
-              }
 
             ]
           },
@@ -536,7 +380,7 @@ siga.define('ficha', {
                   type: 'vbox',
                   align: 'center'
                 },
-                height: 400,
+                height: 315,
                 items: [
                   {
                     xtype: "image",
@@ -799,7 +643,333 @@ siga.define('ficha', {
 
             ]
           },
+        ]
+      },
+      {
+        xtype: 'tabpanel',
+        id: me._('subtabs'),
+        margin: 20,
+        collapsed: false,
+        frameHeader: true,
+        activeTab: 0,
+        plain: false,
+        items: [
+          {
+            xtype: 'form',
+            frame: false,
+            id: me._('tab_extra'),
+            frameHeader: false,
+            autoScroll:true,
+            layout: 'anchor',
+            title: 'Información Extra',
+            defaults: me.getInternal("field_defaults"),
+            layout: 'anchor',
+            padding: '0 20px 20px 20px',
+            items: [
 
+              {
+                xtype: 'container',
+                defaults: _defaults,
+                layout: 'hbox',
+                items: [
+                  //Cuenta Nomina
+                  {
+                    xtype:'textfield',
+                    id: me._('cuenta_nomina'),
+                    name: 'cuenta_nomina',
+                    flex: 1,
+                    fieldLabel: 'Cuenta Nomina',
+                    value: '',
+                    margin: '5px 0 0 0px',
+                  },
+                  //Escala de Sueldo
+                  {
+                    xtype: 'combobox',
+                    id: me._('id_escala_salarial'),
+                    name: 'id_escala_salarial',
+                    fieldLabel: 'Escala Salarial',
+                    margin: '5px 0 0 40px',
+                    flex: 1,
+                    editable: false,
+                    queryMode: "local",
+                    //rootProperty: "result",
+                    displayTpl: '<tpl for=".">{escala} - {sueldo_basico}</tpl>',
+                    tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{escala}</b> <small style="float: right;">{sueldo_basico}</small></li></tpl></ul>',
+                    store: {
+                      fields: ['id','escala_sueldo_basico'],
+                      autoLoad: true,
+                      pageSize: 100,
+                      proxy: {
+                        type:'ajax',
+                        url: 'module/nomina_escala_salarial/',
+                        actionMethods:  {read: "POST"},//actionMethods:'POST',actionMethods:'POST',
+                        timeout: 3600000,
+                        reader: {
+                          type: 'json',
+                          rootProperty: 'result',
+                          totalProperty:'total'
+                        },
+                        extraParams: {
+                          action: 'onList'
+                        }
+                      },
+                      listeners: {
+                        load: function(store, records, successful){
+                          //me.internal.id_unidad_coordinacion=records[0].get("id");
+                          //me.getCmp("id_unidad_coordinacion").setValue(records[0].get("id"));
+                        }
+                      }
+                    },
+                    //displayField: 'escala_sueldo_basico',
+                    valueField: 'id',
+                    allowBlank: true,
+                    forceSelection: true
+                  },
+
+
+                ]
+              },
+
+              //Antiguedad APN
+              {
+                xtype: 'container',
+                defaults: _defaults,
+                layout: 'hbox',
+                items: [
+                  {
+                    xtype:'numberfield',
+                    id: me._('antiguedad_apn'),
+                    name: 'antiguedad_apn',
+                    flex: 1,
+                    fieldLabel: 'Antiguedad Administración Pública <small>(Años)</small>',
+                    value: '',
+                    margin: '5px 0 0 0px',
+                    minValue: 0,
+                    allowDecimals: false,
+                    allowNegative: false
+                  },
+                  {
+                    xtype:'numberfield',
+                    id: me._('profesionalizacion_porcentaje'),
+                    name: 'profesionalizacion_porcentaje',
+                    flex: 1,
+                    fieldLabel: 'Profesionalización <small>(%)</small>',
+                    value: '',
+                    margin: '5px 0 0 40px',
+                    minValue: 0,
+                    allowDecimals: false,
+                    allowNegative: false
+                  }
+                ]
+              },
+
+
+
+              {
+                xtype: 'combobox',
+                id: me._('id_periodo'),
+                name: 'id_periodo',
+                anchor: '100%',
+                margin: {bottom: '0px'},
+                fieldLabel: 'Periodo - Nóminas <small style="color:gray;">(Indica en que nóminas se encuentra la persona en un periodo específico)</small>',
+                labelAlign: 'top',
+                labelSeparator: '',
+                labelStyle: 'font-weight: bold;',
+                editable: false,
+                queryMode: "local",
+                displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
+                tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
+                store: {
+                  fields: ['id','periodo'],
+                  autoLoad: true,
+                  pageSize: 1000,
+                  proxy: {
+                    type:'ajax',
+                    url: 'module/nomina_periodo/',
+                    actionMethods: {read: "POST"},//actionMethods:'POST',
+                    timeout: 3600000,
+                    reader: {
+                      type: 'json',
+                      rootProperty: 'result',
+                      totalProperty:'total'
+                    },
+                    extraParams: {
+                      action: 'onList',
+                      text: '',
+                      id: '',
+                      sort: '[{"property": "codigo", "direction": "ASC"}]'
+                    }
+                  },
+                  listeners: {
+                    load: function(store, records, successful){
+                      me.getCmp("id_periodo").reset();
+                      me.id_periodo_default="";
+                      if(records.length>0){
+                        me.id_periodo_default=records[records.length-1].get("id");
+                        me.getCmp("id_periodo").setValue(me.id_periodo_default);
+                      }
+
+                    },
+                    beforeload: function(store,operation,eOpts){
+                      store.proxy.extraParams.tipo='Q';
+                    }
+                  }
+                },
+                listeners: {
+                  change: function(){
+                    me.changePeriodo();
+                  }
+                },
+                displayField: 'periodo',
+                valueField: 'id',
+                allowBlank: false,
+                forceSelection: true,
+              },
+              {
+                xtype: 'container',
+                id: me._('nomina_periodo'),
+                style: "font-size:11px; color:gray;background-color:#e7e7e7; padding:5px 8px; border: 1px #b5b8c8 solid; border-top: 0;",
+                html: "<b>N/A</b>"
+              }
+            ]
+          },
+          {
+            xtype: 'panel',
+            id: me._('tab_carga'),
+            title: 'Carga Familiar',
+            layout: 'fit',
+            height: 170,
+            dockedItems: [
+              {
+                xtype: 'container',
+                layout: {
+                  align: 'middle',
+                  type: 'hbox'
+                },
+                dock: 'bottom',
+                style: "background: #d0d0d0;",
+                items: [
+                  /*{
+                    xtype: 'textfield',
+                    //id: me._('txtSearch'),
+                    hideLabel: false,
+                    flex: 1,
+                    listeners: {
+                      specialkey: function(field, e){
+                        if (e.getKey() == e.ENTER)
+                          {}
+                      }
+                    }
+                  },*/
+
+                  {
+                    xtype: 'button',
+                    //id: me._('btnSearch'),
+                    text: 'Agregar',
+                    tooltip: 'Agregar',
+                    iconCls: 'siga-icon-16 icon-add',
+                    width: 80,
+                    listeners: {
+                      click: function(){
+
+                      }
+                    }
+                  },
+                  {
+                    xtype: 'button',
+                    //id: me._('btnSearch'),
+                    text: 'Quitar',
+                    tooltip: 'Quitar',
+                    iconCls: 'siga-icon-16 icon-remove',
+                    width: 80,
+                    listeners: {
+                      click: function(){
+
+                      }
+                    }
+                  },
+                  {
+                    xtype: "tbspacer",
+                    flex: 1
+                  },
+                  /*{
+                    xtype: 'button',
+                    //id: me._('btnClear'),
+                    text: 'Limpiar',
+                    tooltip: 'Limpiar',
+                    iconCls: 'siga-icon-16 icon-clear',
+                    width: 80,
+                    listeners: {
+                      click: function(){
+
+                      }
+                    }
+                  }*/
+                ]
+              }
+            ],
+            items: [
+              {
+                xtype: 'gridpanel',
+                id: me._('gridCargaFamiliar'),
+                border: 0,
+                preventHeader: true,
+                columns: [
+                  {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'identificacion',
+                    text: '<b>Cédula</b>',
+                    width: '15%',
+                    menuDisabled: true,
+                    sortable: false,
+                  },
+                  {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'nombres_apellidos',
+                    text: '<b>Nombres / Apellidos</b>',
+                    //width: '15%',
+                    flex: 1,
+                    menuDisabled: true,
+                    sortable: false,
+                  },
+                  {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'fecha_nacimiento',
+                    text: '<b>Fecha Nacimiento</b>',
+                    width: '20%',
+                    menuDisabled: true,
+                    sortable: false,
+                  },
+                  {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'edad',
+                    text: '<b>Edad</b>',
+                    width: '10%',
+                    menuDisabled: true,
+                    sortable: false,
+                  },
+                  {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'parentesco',
+                    text: '<b>Parentesco</b>',
+                    width: '15%',
+                    menuDisabled: true,
+                    sortable: false,
+                  },
+                ],
+                scroll: 'vertical',
+                listeners: {
+                  select: function(dataview, record, item, index, e){
+
+                  },
+                  itemdblclick: function(dataview, record, item, index, e){
+
+                  }
+                }
+              }
+
+            ]
+          }
         ]
       }
     ];
@@ -1023,6 +1193,8 @@ siga.define('ficha', {
       me.getCmp('codigo').setValue("");
       me.getCmp('cuenta_nomina').setValue("");
       me.getCmp('id_escala_salarial').setValue("");
+      me.getCmp('antiguedad_apn').setValue("0");
+      me.getCmp('profesionalizacion_porcentaje').setValue("0");
       me.getCmp('activo').setValue("");
 
       me.getCmp('archivos').setRootNode({expanded: true, children: []});
@@ -1050,6 +1222,8 @@ siga.define('ficha', {
     me.getCmp('correo').setValue(result[0]['correo']);
     me.getCmp('cuenta_nomina').setValue(result[0]['cuenta_nomina']);
     me.getCmp('id_escala_salarial').setValue(result[0]['id_escala_salarial']);
+    me.getCmp('antiguedad_apn').setValue(result[0]['antiguedad_apn']);
+    me.getCmp('profesionalizacion_porcentaje').setValue(result[0]['profesionalizacion_porcentaje']);
 
     var fecha_ingreso=result[0]['fecha_ingreso'];
     var fecha_egreso=result[0]['fecha_egreso'];
@@ -1220,7 +1394,7 @@ siga.define('ficha', {
 
   changePeriodo: function(){
     var me=this;
-    me.getCmp("nomina_periodo").setHtml("");
+    me.getCmp("nomina_periodo").setHtml("<b>N/A</b>");
 
     var id_ficha=me.getCmp('id').getValue();
     var id_periodo=me.getCmp('id_periodo').getValue();
@@ -1256,7 +1430,14 @@ siga.define('ficha', {
               <br>
             </div>
           `;
-
+        }
+        if(!tmp){
+          tmp=`
+            <div>
+              <b>N/A</b>
+              <br>
+            </div>
+          `;
         }
         me.getCmp("nomina_periodo").setHtml(tmp);
 

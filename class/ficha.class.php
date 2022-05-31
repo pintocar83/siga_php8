@@ -70,6 +70,8 @@ class ficha{
             F.activo,
             F.cuenta_nomina,
             F.id_escala_salarial,
+            F.antiguedad_apn,
+            F.profesionalizacion_porcentaje,
             P.identificacion_tipo as nacionalidad,
             P.identificacion_numero as cedula,
             (case when P.identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
@@ -281,6 +283,8 @@ class ficha{
                                 $fecha_egreso,
                                 $cuenta_nomina,
                                 $id_escala_salarial,
+                                $antiguedad_apn,
+                                $profesionalizacion_porcentaje,
                                 $codigo,
                                 $activo){
 
@@ -355,6 +359,8 @@ class ficha{
                   "fecha_egreso"=>"$fecha_egreso",
                   "cuenta_nomina"=>"'$cuenta_nomina'",
                   "id_escala_salarial"=>"".(!$id_escala_salarial?"null":"'$id_escala_salarial'")."",
+                  "antiguedad_apn"=>"".(!$antiguedad_apn?"0":"'$antiguedad_apn'")."",
+                  "profesionalizacion_porcentaje"=>"".(!$profesionalizacion_porcentaje?"0":"'$profesionalizacion_porcentaje'")."",
                   "codigo"=>"".(!$codigo?"null":"'$codigo'")."",
                   "extension"=>"'$extension'",
                   "activo"=>"'$activo'");
@@ -365,8 +371,8 @@ class ficha{
     }
     else{//si es nuevo
       //Insertar registro
-      $result=$db->Execute("INSERT INTO modulo_nomina.ficha(id_persona,fecha_ingreso,fecha_egreso,cuenta_nomina,id_escala_salarial,codigo,activo)
-                            VALUES('$id_persona',$fecha_ingreso,$fecha_egreso,'$cuenta_nomina',".(!$id_escala_salarial?"null":"'$id_escala_salarial'").",".(!$codigo?"null":"'$codigo'").",'$activo') RETURNING id");
+      $result=$db->Execute("INSERT INTO modulo_nomina.ficha(id_persona,fecha_ingreso,fecha_egreso,cuenta_nomina,id_escala_salarial,antiguedad_apn,profesionalizacion_porcentaje,codigo,activo)
+                            VALUES('$id_persona',$fecha_ingreso,$fecha_egreso,'$cuenta_nomina',".(!$id_escala_salarial?"null":"'$id_escala_salarial'").",".(!$antiguedad_apn?"0":"$antiguedad_apn").",".(!$profesionalizacion_porcentaje?"0":"$profesionalizacion_porcentaje").",".(!$codigo?"null":"'$codigo'").",'$activo') RETURNING id");
 
       //Si hay error al modificar o insertar
       if(!$result)
@@ -376,7 +382,7 @@ class ficha{
         return array("success"=>false, "message"=>"Error al obtener el identificador de la persona.");
       $id=$result[0][0];
     }
-    return array("success"=>true, "message"=>'Datos guardados con exito.');
+    return array("success"=>true, "message"=>'Datos guardados con exito.',"id"=>$id);
   }
 
   public static function onGet_Foto($carpeta){

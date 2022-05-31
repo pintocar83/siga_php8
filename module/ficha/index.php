@@ -67,6 +67,8 @@ class MODULO extends ficha{
                                        SIGA::param("fecha_egreso",false),
                                        SIGA::param("cuenta_nomina"),
                                        SIGA::param("id_escala_salarial"),
+                                       SIGA::param("antiguedad_apn"),
+                                       SIGA::param("profesionalizacion_porcentaje"),
                                        SIGA::param("codigo"),
                                        SIGA::param("activo")));
         break;

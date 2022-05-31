@@ -24,3 +24,6 @@ alter table modulo_base.banco add column codigo varchar(4);
 alter table modulo_base.banco alter column banco TYPE varchar(100);
 
 INSERT INTO modulo_base.retencion_tipo VALUES (3, '1X1000');
+
+alter table modulo_nomina.ficha add column antiguedad_apn integer default NULL;
+alter table modulo_nomina.ficha add column profesionalizacion_porcentaje integer default NULL;
