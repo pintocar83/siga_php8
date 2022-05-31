@@ -5124,6 +5124,16 @@ SELECT pg_catalog.setval('comprobante_id_seq', 1, true);
 
 SET search_path = modulo_nomina, pg_catalog, public;
 
+
+INSERT INTO grupo_familiar_parentesco VALUES (1, 'ESPOSO / ESPOSA / CONYUGUE', true);
+INSERT INTO grupo_familiar_parentesco VALUES (2, 'HERMANO / HERMANA', true);
+INSERT INTO grupo_familiar_parentesco VALUES (3, 'HIJO / HIJA', true);
+INSERT INTO grupo_familiar_parentesco VALUES (4, 'NIETO / NIETA', true);
+INSERT INTO grupo_familiar_parentesco VALUES (5, 'PADRE / MADRE', true);
+INSERT INTO grupo_familiar_parentesco VALUES (6, 'SUEGRO / SUEGRA', true);
+INSERT INTO grupo_familiar_parentesco VALUES (7, 'TÍO / TÍA', true);
+SELECT pg_catalog.setval('grupo_familiar_parentesco_id_seq', 7, true);
+
 INSERT INTO periodo_tipo VALUES ('Q', 'SUELDOS Y SALARIOS', true);
 INSERT INTO periodo_tipo VALUES ('M', 'CESTATICKET SOCIALISTA', true);
 
@@ -5146,3 +5156,4 @@ INSERT INTO concepto_formula VALUES (1, (current_setting('global_siga.anio')||'-
 INSERT INTO concepto_presupuesto_contabilidad VALUES (1, 1, (current_setting('global_siga.anio')||'-01-01')::date, '401010100', NULL, NULL, NULL);
 
 INSERT INTO escala_salarial_configuracion VALUES ('sueldo_basico', 'SUELDO_MENSUAL');
+

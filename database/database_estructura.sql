@@ -3681,6 +3681,43 @@ COMMENT ON COLUMN requisicion_tiene_item.cantidad IS 'siempre en unidades';
 SET search_path = modulo_nomina, pg_catalog;
 
 
+CREATE TABLE grupo_familiar (
+    id integer NOT NULL,
+    id_ficha integer NOT NULL,
+    id_parentesco integer NOT NULL,
+    id_persona bigint NULL,
+    nacionalidad character varying(1),
+    cedula bigint,
+    nombres_apellidos character varying(100),
+    genero character varying(1),
+    fecha_nacimiento date
+);
+
+CREATE SEQUENCE grupo_familiar_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+CREATE TABLE grupo_familiar_parentesco (
+    id integer NOT NULL,
+    parentesco character varying(30),
+    activo boolean DEFAULT true
+);
+
+
+CREATE SEQUENCE grupo_familiar_parentesco_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
 CREATE TABLE cargo (
     id integer NOT NULL,
     cargo character varying(20),
@@ -4346,6 +4383,14 @@ ALTER TABLE ONLY requisicion ALTER COLUMN id SET DEFAULT nextval('requisicion_id
 SET search_path = modulo_nomina, pg_catalog;
 
 
+ALTER TABLE ONLY grupo_familiar ALTER COLUMN id SET DEFAULT nextval('grupo_familiar_id_seq'::regclass);
+
+
+
+ALTER TABLE ONLY grupo_familiar_parentesco ALTER COLUMN id SET DEFAULT nextval('grupo_familiar_parentesco_id_seq'::regclass);
+
+
+
 ALTER TABLE ONLY cargo ALTER COLUMN id SET DEFAULT nextval('cargo_id_seq'::regclass);
 
 
@@ -4818,6 +4863,16 @@ ALTER TABLE ONLY requisicion
 
 
 SET search_path = modulo_nomina, pg_catalog;
+
+
+ALTER TABLE ONLY grupo_familiar_parentesco
+    ADD CONSTRAINT grupo_familiar_parentesco_pkey PRIMARY KEY (id);
+
+
+
+ALTER TABLE ONLY grupo_familiar
+    ADD CONSTRAINT grupo_familiar_pkey PRIMARY KEY (id_ficha);
+
 
 
 ALTER TABLE ONLY cargo
@@ -5455,6 +5510,21 @@ ALTER TABLE ONLY requisicion_tiene_item
 
 
 SET search_path = modulo_nomina, pg_catalog;
+
+
+ALTER TABLE ONLY grupo_familiar
+    ADD CONSTRAINT grupo_familiar_id_ficha_fkey FOREIGN KEY (id_ficha) REFERENCES ficha(id);
+
+
+
+ALTER TABLE ONLY grupo_familiar
+    ADD CONSTRAINT grupo_familiar_id_parentesco_fkey FOREIGN KEY (id_parentesco) REFERENCES grupo_familiar_parentesco(id);
+
+
+
+ALTER TABLE ONLY grupo_familiar
+    ADD CONSTRAINT grupo_familiar_id_persona_fkey FOREIGN KEY (id_persona) REFERENCES modulo_base.persona(id);
+
 
 
 ALTER TABLE ONLY concepto_cuenta
