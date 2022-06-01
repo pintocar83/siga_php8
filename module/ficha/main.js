@@ -1,7 +1,7 @@
 siga.define('ficha', {
   extend: 'siga.window',
   title: 'Nómina - Ficha',
-  width: 750,
+  width: 850,
   height: 720,
 
   initComponent: function(){
@@ -61,6 +61,32 @@ siga.define('ficha', {
 
       })
     });*/
+
+    me.storeParentesco = Ext.create('Ext.data.Store', {
+      fields: ['id','parentesco'],
+      autoLoad: true,
+      pageSize: 100,
+      proxy: {
+        type:'ajax',
+        url: 'module/grupo_familiar_parentesco/',
+        actionMethods:  {read: "POST"},//actionMethods:'POST',actionMethods:'POST',
+        timeout: 3600000,
+        reader: {
+          type: 'json',
+          rootProperty: 'result',
+          totalProperty:'total'
+        },
+        extraParams: {
+          action: 'onList'
+        }
+      },
+      listeners: {
+        load: function(store, records, successful){
+          //me.internal.id_unidad_coordinacion=records[0].get("id");
+          //me.getCmp("id_unidad_coordinacion").setValue(records[0].get("id"));
+        }
+      }
+    });
 
 
 
@@ -871,7 +897,8 @@ siga.define('ficha', {
                     width: 80,
                     listeners: {
                       click: function(){
-
+                        var _store=me.getCmp("gridCargaFamiliar").getStore();
+                        _store.insert(0,{identificacion: '', nombres_apellidos: '', genero: '', fecha_nacimiento: '', edad: '', parentesco: ''})
                       }
                     }
                   },
@@ -914,14 +941,26 @@ siga.define('ficha', {
                 id: me._('gridCargaFamiliar'),
                 border: 0,
                 preventHeader: true,
+                //plugins: [me.rowEditingCargaFamiliar],
+                plugins: {
+                  rowediting: {
+                    clicksToMoveEditor: 1,
+                    autoCancel: false
+                  }
+               },
+                store: {
+                  fields: ['identificacion','nombres_apellidos','genero','fecha_nacimiento','edad','parentesco'],
+                  data: []
+                },
                 columns: [
                   {
                     xtype: 'gridcolumn',
                     dataIndex: 'identificacion',
                     text: '<b>Cédula</b>',
-                    width: '15%',
+                    width: '12%',
                     menuDisabled: true,
                     sortable: false,
+                    editor: true
                   },
                   {
                     xtype: 'gridcolumn',
@@ -931,20 +970,54 @@ siga.define('ficha', {
                     flex: 1,
                     menuDisabled: true,
                     sortable: false,
+                    editor: true
+                  },
+                  {
+                    xtype: 'gridcolumn',
+                    dataIndex: 'genero',
+                    text: '<b>Genero</b>',
+                    width: '12%',
+                    menuDisabled: true,
+                    sortable: false,
+                    editor: {
+                      xtype:'combobox',
+                      store: {
+                        fields: ['id', 'nombre'],
+                        data : [
+                          {"id":"M", "nombre":"MASCULINO"},
+                          {"id":"F", "nombre":"FEMENINO"}
+                        ]
+                      },
+                      displayField: 'nombre',
+                      valueField: 'id',
+                      allowBlank: true,
+                      forceSelection: true,
+                      editable: false,
+                      value: 'M'
+                    },
+                    renderer: function(v) {
+                      if(v=="M") return "MASCULINO";
+                      if(v=="F") return "FEMENINO";
+                      return v;
+                    }
                   },
                   {
                     xtype: 'gridcolumn',
                     dataIndex: 'fecha_nacimiento',
                     text: '<b>Fecha Nacimiento</b>',
-                    width: '20%',
+                    width: '15%',
                     menuDisabled: true,
                     sortable: false,
+                    editor: {
+                      xtype:'datefield'
+                    },
+                    renderer: Ext.util.Format.dateRenderer('d/m/Y')
                   },
                   {
                     xtype: 'gridcolumn',
                     dataIndex: 'edad',
                     text: '<b>Edad</b>',
-                    width: '10%',
+                    width: '8%',
                     menuDisabled: true,
                     sortable: false,
                   },
@@ -952,9 +1025,28 @@ siga.define('ficha', {
                     xtype: 'gridcolumn',
                     dataIndex: 'parentesco',
                     text: '<b>Parentesco</b>',
-                    width: '15%',
+                    width: '20%',
                     menuDisabled: true,
                     sortable: false,
+                    editor: {
+                      xtype:'combobox',
+                      store: me.storeParentesco,
+                      displayField: 'parentesco',
+                      valueField: 'id',
+                      allowBlank: true,
+                      forceSelection: true,
+                      editable: false,
+                      value: ''
+                    },
+                    renderer: function(v){
+                      if(!v) return "";
+                      var idx = me.storeParentesco.find('id',v);
+                      console.log(idx);
+                      var rec = me.storeParentesco.getAt(idx);
+                      console.log(rec);
+
+                      return rec.get('parentesco');
+                    }
                   },
                 ],
                 scroll: 'vertical',
@@ -1060,6 +1152,9 @@ siga.define('ficha', {
 
     me.getCmp('gridList').reconfigure(store,columns);
     me.getCmp('pagingList').bindStore(store);
+
+
+
 
   },
 
