@@ -1,14 +1,14 @@
 siga.define('detalle_presupuestario', {
     extend: 'siga.windowBase',
-    title: 'Detalle Presupuestario',    
+    title: 'Detalle Presupuestario',
     renderTo: Ext.getBody(),
     modal: true,
     width: 700,
     height: 330,
-    
+
     initComponent: function(){
         var me = this;
-        
+
         me.setInternal({
             data: {
                 id_accion_subespecifica: "",
@@ -32,7 +32,7 @@ siga.define('detalle_presupuestario', {
                 frameHeader: false,
                 activeTab: 0,
                 plain: true,
-                items: [                        
+                items: [
                     {
                         xtype: 'form',
                         frame: false,
@@ -60,7 +60,7 @@ siga.define('detalle_presupuestario', {
                                         xtype: 'combobox',
                                         id: me._('id_accion_centralizada'),
                                         name: 'id_accion_centralizada',
-                                        tpl: '<tpl for="."><div class="x-boundlist-item" title="{denominacion_centralizada}">{tipo_codigo_centralizada}</div></tpl>', 
+                                        tpl: '<tpl for="."><div class="x-boundlist-item" title="{denominacion_centralizada}">{tipo_codigo_centralizada}</div></tpl>',
                                         fieldLabel: '',
                                         editable: false,
                                         width: 100,
@@ -118,7 +118,7 @@ siga.define('detalle_presupuestario', {
                                         xtype: 'combobox',
                                         id: me._('id_accion_especifica'),
                                         name: 'id_accion_especifica',
-                                        tpl: '<tpl for="."><div class="x-boundlist-item" title="{denominacion_especifica}">{codigo_especifica}</div></tpl>', 
+                                        tpl: '<tpl for="."><div class="x-boundlist-item" title="{denominacion_especifica}">{codigo_especifica}</div></tpl>',
                                         fieldLabel: '',
                                         editable: false,
                                         width: 50,
@@ -142,7 +142,7 @@ siga.define('detalle_presupuestario', {
                                                     action: 'onList_AccionEspecifica_AP',
                                                     text: '',
                                                     id: '',
-                                                    sort: '[{"property":"codigo_especifica","direction":"ASC"}]'                                                    
+                                                    sort: '[{"property":"codigo_especifica","direction":"ASC"}]'
                                                 }
                                             },
                                             listeners: {
@@ -178,7 +178,7 @@ siga.define('detalle_presupuestario', {
                                         xtype: 'combobox',
                                         id: me._('id_accion_subespecifica'),
                                         name: 'id_accion_subespecifica',
-                                        tpl: '<tpl for="."><div class="x-boundlist-item" title="{denominacion_subespecifica}">{codigo_subespecifica}</div></tpl>', 
+                                        tpl: '<tpl for="."><div class="x-boundlist-item" title="{denominacion_subespecifica}">{codigo_subespecifica}</div></tpl>',
                                         fieldLabel: '',
                                         editable: false,
                                         width: 50,
@@ -202,7 +202,7 @@ siga.define('detalle_presupuestario', {
                                                     action: 'onList_AccionSubEspecifica_AP',
                                                     text: '',
                                                     id: '',
-                                                    sort: '[{"property":"codigo_subespecifica","direction":"ASC"}]'                                                    
+                                                    sort: '[{"property":"codigo_subespecifica","direction":"ASC"}]'
                                                 }
                                             },
                                             listeners: {
@@ -229,11 +229,11 @@ siga.define('detalle_presupuestario', {
                                                 var r=e.getStore().getById(e.getValue());
                                                 if(!r) return;
                                                 e.getEl().set({title:r.data.denominacion_subespecifica});
-                                               
+
                                             }
                                         }
                                     }
-                                ]                                
+                                ]
                             },
                             {
                                 xtype: 'fieldcontainer',
@@ -250,7 +250,7 @@ siga.define('detalle_presupuestario', {
                                     {
                                         xtype: 'textfield',
                                         id: me._('denominacion_presupuestaria'),
-                                        name: 'denominacion_presupuestaria',                                        
+                                        name: 'denominacion_presupuestaria',
                                         flex: 1,
                                         readOnly: true
                                     },
@@ -280,7 +280,7 @@ siga.define('detalle_presupuestario', {
                                                 var selector=Ext.create("siga.windowSelect", {
                                                     internal:{
                                                         parent: {
-                                                            fieldLabel: 'Cuentas Presupuestarias',                                                        
+                                                            fieldLabel: 'Cuentas Presupuestarias',
                                                             internal:{
                                                                 page:1,
                                                                 limit: 100,
@@ -289,7 +289,7 @@ siga.define('detalle_presupuestario', {
                                                                 url: 'module/cuenta_presupuestaria/?filtro=4%',
                                                                 actionOnList: 'onList',
                                                                 viewConfig:{
-                                                                    getRowClass: function(rec, rowIdx, params, store) {                    
+                                                                    getRowClass: function(rec, rowIdx, params, store) {
                                                                         if(rec.get('padre')=='t')
                                                                             return 'fila-padre';
                                                                         return 'fila-hija';
@@ -297,11 +297,11 @@ siga.define('detalle_presupuestario', {
                                                                 },
                                                                 onBeforeAccept: function(dataview, record, item, index, e){
                                                                     if(record.get('padre')=='t')
-                                                                        return false;       
+                                                                        return false;
                                                                     return true;
                                                                 },
                                                                 onAccept: function(){}
-                                                                
+
                                                             },
                                                             setValue: function(v){
                                                                 me.onAceptarCuentaPresupuestaria(v);
@@ -319,13 +319,13 @@ siga.define('detalle_presupuestario', {
                                         tooltip: 'Limpiar',
                                         iconCls: 'siga-icon-16 icon-clear',
                                         listeners: {
-                                            click: function(){                                                
+                                            click: function(){
                                                 me.onLimpiar();
                                             }
                                         }
                                     }
-                                    
-                                    
+
+
                                 ]
                             },
                             {
@@ -360,7 +360,7 @@ siga.define('detalle_presupuestario', {
                                                 me.internal.data.operacion=me.parameter.operacion[0];
                                             else
                                                 me.internal.data.operacion=records[0].get("operacion");
-                                            me.getCmp("operacion").setValue(me.internal.data.operacion);                                            
+                                            me.getCmp("operacion").setValue(me.internal.data.operacion);
                                         },
                                         beforeload: function(store,operation,eOpts){
                                             if(me.parameter.operacion)
@@ -428,9 +428,9 @@ siga.define('detalle_presupuestario', {
                                                 me.internal.data.monto=me.getCmp("monto").getValue();
                                                 if(!me.internal.data.monto)
                                                     me.internal.data.monto=0;
-                                                
+
                                                 me.internal.data.operacion=me.getCmp("operacion").getValue();
-                                                
+
                                                 //buscar el formato de la estructura presupuestaria
                                                 var respuesta=Ext.Ajax.request({
                                                     async: false,
@@ -444,16 +444,16 @@ siga.define('detalle_presupuestario', {
                                                 me.internal.data.estructura_presupuestaria="";
                                                 if(respuesta.statusText=="OK")
                                                     me.internal.data.estructura_presupuestaria=Ext.decode(respuesta.responseText)[0][0];
-                                                
+
                                                 if(!me.internal.data.estructura_presupuestaria) {
                                                     me.setMessage("Error. No pudo obtener el código de la estructura presupuestaria.","red");
                                                     return;
                                                 }
-                                                
+
                                                 if(me.parameter)
                                                     if(me.parameter.onAdd){
                                                         me.parameter.onAdd(me);
-                                                        me.internal.data.monto=0;   
+                                                        me.internal.data.monto=0;
                                                         me.getCmp("monto").setValue("0");
                                                         me.onLimpiar();
                                                     }
@@ -467,40 +467,41 @@ siga.define('detalle_presupuestario', {
                 ]
             }
         ];
-    
-    
+
+
         me.callParent(arguments);
-      
+
     },
-    
+
     init: function(){
         var me=this;
         me.getCmp("id_accion_centralizada").getStore().load();
     },
-    
+
     onLimpiar: function(){
         var me=this;
         me.internal.data.id_cuenta_presupuestaria="";
         me.internal.data.denominacion_presupuestaria="";
         me.internal.data.cuenta_presupuestaria="";
-        
+
         me.internal.data.id_cuenta_contable="";
         me.internal.data.denominacion_contable="";
-        me.internal.data.cuenta_contable="";                                                
-        
+        me.internal.data.cuenta_contable="";
+
         me.getCmp("cuenta_presupuestaria").setValue("");
         me.getCmp("denominacion_presupuestaria").setValue("");
         me.setMessage();
     },
-    
+
     onAceptarCuentaPresupuestaria: function(v){
         var me=this;
         me.onLimpiar();
-        
+
         var resp=Ext.Ajax.request({
             async: false,
             url: "module/convertidor/",
-            params: Ext.JSON.decode("{action: 'onGet', id_cuenta_presupuestaria: '"+v+"'}")
+            //params: Ext.JSON.decode("{action: 'onGet', id_cuenta_presupuestaria: '"+v+"'}")
+            params: {action: 'onGet', id_cuenta_presupuestaria: v}
         });
         if(resp.statusText=="OK"){
             var retorno=Ext.JSON.decode(resp.responseText);
@@ -510,14 +511,14 @@ siga.define('detalle_presupuestario', {
             }
             me.getCmp("cuenta_presupuestaria").setValue(retorno[0]['cuenta_presupuestaria']);
             me.getCmp("denominacion_presupuestaria").setValue(retorno[0]['denominacion_presupuestaria']);
-            
+
             me.internal.data.id_cuenta_presupuestaria=retorno[0]['id_cuenta_presupuestaria'];
             me.internal.data.denominacion_presupuestaria=retorno[0]['denominacion_presupuestaria'];
             me.internal.data.cuenta_presupuestaria=retorno[0]['cuenta_presupuestaria'];
-            
-            
+
+
             if(!retorno[0]['id_cuenta_contable']) {
-                me.setMessage("Advertencia. La cuenta presupuestaria seleccionada no se encuentra asociada a la cuenta contable.","red",30000);                                                                    
+                me.setMessage("Advertencia. La cuenta presupuestaria seleccionada no se encuentra asociada a la cuenta contable.","red",30000);
             }
             else{
                 me.internal.data.id_cuenta_contable=retorno[0]['id_cuenta_contable'];

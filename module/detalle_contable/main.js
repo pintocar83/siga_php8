@@ -5,10 +5,10 @@ siga.define('detalle_contable', {
     modal: true,
     width: 700,
     height: 285,
-    
+
     initComponent: function(){
         var me = this;
-        
+
         var _tooltip="";
         if(me.parameter)
             if(me.parameter.tooltip)
@@ -17,7 +17,7 @@ siga.define('detalle_contable', {
         if(me.parameter)
             if(me.parameter.monto)
                 _monto=me.parameter.monto;
-        
+
         me.setInternal({
             data:{
                 id_cuenta_contable: "",
@@ -27,8 +27,8 @@ siga.define('detalle_contable', {
                 operacion: ""
             }
         });
-        
-        me.items=[            
+
+        me.items=[
             {
                 xtype: 'tabpanel',
                 id: me._('tabs'),
@@ -37,7 +37,7 @@ siga.define('detalle_contable', {
                 frameHeader: false,
                 activeTab: 0,
                 plain: true,
-                items: [                        
+                items: [
                     {
                         xtype: 'form',
                         frame: false,
@@ -71,7 +71,7 @@ siga.define('detalle_contable', {
                                     {
                                         xtype: 'textfield',
                                         id: me._('denominacion_contable'),
-                                        name: 'denominacion_contable',                                        
+                                        name: 'denominacion_contable',
                                         flex: 1,
                                         readOnly: true
                                     },
@@ -110,7 +110,7 @@ siga.define('detalle_contable', {
                                                 var selector=Ext.create("siga.windowSelect", {
                                                     internal: {
                                                         parent: {
-                                                            fieldLabel: 'Cuentas Contables',                                                        
+                                                            fieldLabel: 'Cuentas Contables',
                                                             internal:{
                                                                 page:1,
                                                                 limit: 300,
@@ -118,7 +118,7 @@ siga.define('detalle_contable', {
                                                                 columns: {field: ["cuenta_contable","denominacion"], title: ["Cuenta Contable","Denominación"], width: ['20%','80%'], sort: ["ASC",""]},
                                                                 url: 'module/cuenta_contable/',
                                                                 actionOnList: 'onList',
-                                                                onAccept: function(){}                                                            
+                                                                onAccept: function(){}
                                                             },
                                                             setValue: function(v){
                                                                 me.onSetCuentaContable(v);
@@ -136,13 +136,13 @@ siga.define('detalle_contable', {
                                         tooltip: 'Limpiar',
                                         iconCls: 'siga-icon-16 icon-clear',
                                         listeners: {
-                                            click: function(){                                                
+                                            click: function(){
                                                 me.onLimpiar();
                                             }
                                         }
                                     }
-                                    
-                                    
+
+
                                 ]
                             },
                             {
@@ -216,15 +216,15 @@ siga.define('detalle_contable', {
                                                 me.internal.data.monto=me.getCmp("monto").getValue();
                                                 if(!me.internal.data.monto)
                                                     me.internal.data.monto=0;
-                                                
+
                                                 me.internal.data.operacion=me.getCmp("operacion").getValue();
-                                                
+
                                                 if(me.parameter)
                                                     if(me.parameter.onAdd){
                                                         me.parameter.onAdd(me);
                                                         me.internal.data.monto=0;
                                                         me.getCmp("monto").setValue("0");
-                                                        me.onLimpiar();                                                        
+                                                        me.onLimpiar();
                                                     }
                                             }
                                         }
@@ -235,33 +235,34 @@ siga.define('detalle_contable', {
                     }
                 ]
             }
-        ];    
-    
-        me.callParent(arguments);      
+        ];
+
+        me.callParent(arguments);
     },
-    
+
     onLimpiar: function(){
         var me=this;
-        
+
         me.internal.data.id_cuenta_contable="";
         me.internal.data.denominacion_contable="";
-        me.internal.data.cuenta_contable="";                                                
-        
+        me.internal.data.cuenta_contable="";
+
         me.getCmp("cuenta_contable").setValue("");
         me.getCmp("denominacion_contable").setValue("");
         me.setMessage();
     },
-    
+
     onSetCuentaContable: function(v){
         var me=this;
         me.onLimpiar();
-        
+
         var resp=Ext.Ajax.request({
             async: false,
             url: "module/cuenta_contable/",
-            params: Ext.JSON.decode("{action: 'onGet', id_cuenta_contable: '"+v+"'}")
+            //params: Ext.JSON.decode("{action: 'onGet', id_cuenta_contable: '"+v+"'}")
+            params: {action: 'onGet', id_cuenta_contable: v}
         });
-        
+
         if(resp.statusText=="OK"){
             var retorno=Ext.JSON.decode(resp.responseText);
             if(!retorno || retorno.length==0) {
@@ -270,11 +271,11 @@ siga.define('detalle_contable', {
             }
             me.getCmp("cuenta_contable").setValue(retorno[0]['cuenta_contable']);
             me.getCmp("denominacion_contable").setValue(retorno[0]['denominacion']);
-            
+
 
             me.internal.data.id_cuenta_contable=retorno[0]['id_cuenta_contable'];
             me.internal.data.denominacion_contable=retorno[0]['denominacion'];
-            me.internal.data.cuenta_contable=retorno[0]['cuenta_contable'];            
+            me.internal.data.cuenta_contable=retorno[0]['cuenta_contable'];
         }
         else
             me.setMessage("Error. No pudo realizar la consulta.","red",30000);

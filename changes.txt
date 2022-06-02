@@ -17,6 +17,11 @@ module/usuario/
 module/login/
 module/logout/
 module/ficha/
+module/detalle_contable/
+module/detalle_presupuestario/
+module/sigafs/index.php
+module/sigafs/core/index.php
+module/sigafs/library/sigafs.js
 
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
