@@ -67,19 +67,19 @@ siga.define('usuario', {
                 store: {
                   fields: ['id', 'nombre'],
                   data : [
-                    {"id":"ldap_fundacite", "nombre":"LDAP - FUNDACITE SUCRE"},
                     {"id":"plain",  "nombre":"TEXTO PLANO"},
                     {"id":"md5",    "nombre":"MD5"},
                     {"id":"sha1",   "nombre":"SHA1"},
                     {"id":"sha256", "nombre":"SHA256"},
-                    {"id":"sha512", "nombre":"SHA512"}
+                    {"id":"sha512", "nombre":"SHA512"},
+                    {"id":"ldap_fundacite", "nombre":"LDAP - FUNDACITE SUCRE"},
                   ]
                 },
                 displayField: 'nombre',
                 valueField: 'id',
                 allowBlank: false,
                 forceSelection: true,
-                value: 'ldap_fundacite',
+                value: 'sha512',
                 editable: false,
                 listeners:{
                   change: function(){
@@ -248,7 +248,7 @@ siga.define('usuario', {
                             fieldLabel: "Perfiles de acceso",
                             internal:{
                               valueField: 'perfil',
-                              columns: {field: ["perfil","acceso"], title: ["Denominación","Acceso"], width: ['20%','80%'], sort: ["ASC"]},
+                              columns: {field: ["perfil","acceso"], title: ["Denominación","Acceso"], width: ['40%','60%'], sort: ["ASC"]},
                               url: 'module/usuario_perfil_acceso/',
                               actionOnList:'onListSelect',
                               actionOnGet:'onGetSelect',
