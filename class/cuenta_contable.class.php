@@ -7,7 +7,7 @@ class cuenta_contable{
     return $return;
   }
   
-  public static function onList($text,$start,$limit,$sort='',$filtro){
+  public static function onList($text,$start,$limit,$sort='',$filtro=''){
     $db=SIGA::DBController();     
     $sql="SELECT
             id_cuenta_contable,
