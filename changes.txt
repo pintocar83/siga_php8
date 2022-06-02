@@ -13,7 +13,7 @@ library/siga.config.example.php
 
 module/estructura_presupuestaria/
 module/nomina/
-module/usuario/main.js
+module/usuario/
 module/login/
 module/logout/
 module/ficha/
@@ -23,6 +23,7 @@ class/nomina.class.php
 class/usuario.class.php
 class/formulacion.class.php
 class/cuenta_presupuestaria.class.php
+class/cuenta_contable.class.php
 class/ficha.class.php
 
 report/nomina_listado_banco_xls_formato_a.php
