@@ -4971,7 +4971,8 @@ reporte_mayor=r
 cuenta_contable=rw
 detalle_contable=rw
 reporte_contabilidad=r
-cerrar_mes=rw');
+cerrar_mes=rw
+estructura_presupuestaria=rw');
 INSERT INTO usuario_perfil_acceso VALUES ('sigafs[nomina/contabilizar]', 'nomina_contabilizar=rw');
 INSERT INTO usuario_perfil_acceso VALUES ('sigafs[nomina/cerrar_periodo]', 'nomina_cerrar_periodo=rw');
 INSERT INTO usuario_perfil_acceso VALUES ('informatica', 'servicio_tecnico
