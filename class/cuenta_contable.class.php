@@ -58,8 +58,7 @@ class cuenta_contable{
     $result=$db->Delete("modulo_base.cuenta_contable","id_cuenta_contable='$id_cuenta_contable'");
     if(!$result)
       return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_base.cuenta_contable", "messageDB"=>$db->GetMsgErrorClear());
-    print "{success: true, message: 'Registro eliminado con éxito.'}";
-    return array("success"=>false, "message"=>"");
+    return array("success"=>true, "message"=>"Registro eliminado con éxito.");
   }
   
   public static function onExist($id_cuenta_contable){
