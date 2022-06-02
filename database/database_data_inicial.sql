@@ -28,6 +28,17 @@ SELECT pg_catalog.setval('institucion_id_seq', 1, true);
 
 SET search_path = modulo_base, pg_catalog, public;
 
+INSERT INTO detalle_presupuestario_operacion VALUES
+('NN','SIN AFECTACIÓN'),
+('AP','APERTURA DE CUENTA'),
+('AU','AUMENTO'),
+('DI','DISMINUYE'),
+('C','COMPROMETICO'),
+('CC','COMPROMETIDO, CAUSADO'),
+('CCP','COMPROMETIDO, CAUSADO, PAGADO'),
+('P','PAGADO'),
+('GC','CAUSADO');
+
 
 INSERT INTO cuenta_contable VALUES
 ('110000000000', 'ACTIVO CIRCULANTE'),
