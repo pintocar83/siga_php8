@@ -117,10 +117,53 @@
 										<FIELDSET>
 										<LEGEND><strong>Informaci&oacute;n IVA</strong></LEGEND>
 										<TABLE align="center">
-											<TR><TD class='TitulosCampos'>Monto base</TD><TD class='TextCampos'><INPUT id='BASE_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'BASE_IVA_FF')" style="text-align: right;"></TD></TR>
-											<TR><TD class='TitulosCampos'>% IVA</TD><TD class='TextCampos'><INPUT id='PORCENTAJE_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'PORCENTAJE_IVA_FF')" style="text-align: right;"></TD></TR>
-											<TR><TD class='TitulosCampos'>IVA</TD><TD class='TextCampos'><INPUT id='MONTO_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_IVA_FF')" style="text-align: right;"></TD></TR>
-											<TR><TD class='TitulosCampos'>Retenci&oacute;n</TD><TD class='TextCampos'><INPUT id='RETENCION_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_IVA_FF')" style="text-align: right;"></TD></TR>
+											<TR>
+												<TD class='TitulosCampos'>Monto base</TD>
+												<TD class='TextCampos' style="text-align: right;">
+													<INPUT id='BASE_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onchange='Form_FACTURA__SetIVA()' onkeypress="return AcceptNum(event,'BASE_IVA_FF')" style="text-align: right;">
+												</TD>
+											</TR>
+											<TR>
+												<TD class='TitulosCampos'>% IVA</TD>
+												<TD class='TextCampos' style="text-align: right;">
+													<select class='TextoCampoInput' id="PORCENTAJE_IVA2_FF" onchange="Form_FACTURA__SetIVA()">
+														<option value="16">16%</option>
+														<option value="12">12%</option>
+														<option value="10">10%</option>
+														<option value="9">9%</option>
+														<option value="8">8%</option>
+													</select>
+													<INPUT id='PORCENTAJE_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'PORCENTAJE_IVA_FF')" style="text-align: right;">
+												</TD>
+											</TR>
+											<TR>
+												<TD class='TitulosCampos'>IVA</TD>
+												<TD class='TextCampos' style="text-align: right;">
+													<INPUT id='MONTO_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_IVA_FF')" style="text-align: right;">
+												</TD>
+											</TR>
+											<TR>
+												<TD class='TitulosCampos'>Retenci&oacute;n</TD>
+												<TD class='TextCampos' style="text-align: right;">
+													<select class='TextoCampoInput' id="RETENCION_PIVA_FF" onchange="Form_FACTURA__CalcularIVA()">
+														<option value="0.75">75%</option>
+														<option value="1">100%</option>
+													</select>
+													<INPUT id='RETENCION_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_IVA_FF')" style="text-align: right;">
+												</TD>
+											</TR>
+											<TR>
+												<TD class='TitulosCampos'>Total Pago</TD>
+												<TD class='TextCampos' style="text-align: right;">													
+													<INPUT id='TOTAL_PAGO_FF' class='TextoCampoInput' type='text' size='10' value="" style="text-align: right;">
+												</TD>
+											</TR>
+											<TR>
+												<td></td>
+												<td style="text-align: right;">
+													<input type="BUTTON" value="Calcular" class="BotonesParaCampos" onclick='Form_FACTURA__CalcularIVA()'>
+												</td>
+											</TR>
 										</TABLE>
 										</FIELDSET>
 									</TD>

@@ -897,8 +897,10 @@ siga.define('ficha', {
                     width: 80,
                     listeners: {
                       click: function(){
-                        var _store=me.getCmp("gridCargaFamiliar").getStore();
-                        _store.insert(0,{identificacion: '', nombres_apellidos: '', genero: '', fecha_nacimiento: '', edad: '', parentesco: ''})
+                        var store=me.getCmp("gridCargaFamiliar").getStore();
+                        var index=store.getCount();
+
+                        store.insert(index,{id_grupo_familiar: '', cedula: '', nombres_apellidos: '', genero: '', fecha_nacimiento: '', edad: '', id_parentesco: ''})
                       }
                     }
                   },
@@ -949,13 +951,25 @@ siga.define('ficha', {
                   }
                },
                 store: {
-                  fields: ['identificacion','nombres_apellidos','genero','fecha_nacimiento','edad','parentesco'],
+                  fields: ['id_grupo_familiar','cedula','nombres_apellidos','genero','fecha_nacimiento','edad','id_parentesco'],
                   data: []
                 },
                 columns: [
+                {
+                  xtype: 'rownumberer',
+                  dataIndex: 'n',
+                  text: "<b>Nº</b>",
+                  width: 30,
+                  sortable: false,
+                  locked: true,
+                  lockable: true,
+                  draggable: false,
+                  resizable: false,
+                  align: "center"
+                  },
                   {
                     xtype: 'gridcolumn',
-                    dataIndex: 'identificacion',
+                    dataIndex: 'cedula',
                     text: '<b>Cédula</b>',
                     width: '12%',
                     menuDisabled: true,
@@ -1023,7 +1037,7 @@ siga.define('ficha', {
                   },
                   {
                     xtype: 'gridcolumn',
-                    dataIndex: 'parentesco',
+                    dataIndex: 'id_parentesco',
                     text: '<b>Parentesco</b>',
                     width: '20%',
                     menuDisabled: true,
@@ -1041,10 +1055,7 @@ siga.define('ficha', {
                     renderer: function(v){
                       if(!v) return "";
                       var idx = me.storeParentesco.find('id',v);
-                      console.log(idx);
                       var rec = me.storeParentesco.getAt(idx);
-                      console.log(rec);
-
                       return rec.get('parentesco');
                     }
                   },
@@ -1173,7 +1184,9 @@ siga.define('ficha', {
       buscar_nacionalidad: '',
       buscar_cedula: ''
     });
+
     me.getCmp("container_ingreso_egreso").removeAll();
+    me.getCmp("gridCargaFamiliar").getStore().removeAll();
     me.onAddFechaIngresoEgreso(0);
     me.getCmp('tabs').setActiveTab(0);
     me.getCmp('tab_data').getForm().reset();
@@ -1273,6 +1286,7 @@ siga.define('ficha', {
     var result=Ext.JSON.decode(request.responseText);
 
     me.getCmp("foto").setSrc("image/photo-default.png");
+    me.getCmp("gridCargaFamiliar").getStore().removeAll();
 
 
     if(!result || result.length==0){
@@ -1434,11 +1448,27 @@ siga.define('ficha', {
   onSave: function(){
     var me=this;
 
+    var grupo_familiar=[];
+    for (var i=0; i<me.getCmp("gridCargaFamiliar").getStore().getCount(); i++) {
+      var tmp=me.getCmp("gridCargaFamiliar").getStore().getAt(i).getData();
+      grupo_familiar.push({
+        id: tmp['id_grupo_familiar'],
+        id_parentesco: tmp['id_parentesco'],
+        nacionalidad: '',
+        cedula: tmp['cedula'],
+        nombres_apellidos: tmp['nombres_apellidos'],
+        genero: tmp['genero'],
+        fecha_nacimiento: Ext.util.Format.date(tmp['fecha_nacimiento'],'Y-m-d')
+      });
+    }
+
     me.getCmp('tab_data').submit({
       method: 'POST',
       url: 'module/ficha/',
+      //headers: {'Content-Type': 'application/json'},
       params:{
-        action: 'onSave'
+        action: 'onSave',
+        grupo_familiar: Ext.JSON.encode(grupo_familiar)
       },
       waitMsg: 'Guardando... por favor espere!',
       success: function(form,o){

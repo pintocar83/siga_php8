@@ -152,6 +152,7 @@ function Form_FACTURA__Nuevo(){
 	Form_FACTURA__BotonProveedor();
 	xGetElementById("FORMULARIO_FF").reset();
 	Form_FACTURA__BuscarListado();
+	Form_FACTURA__SetIVA();
 	}
 
 function Form_FACTURA__BotonProveedor(){
@@ -494,9 +495,23 @@ function Form_FACTURA__SeleccionarElementoTabla(IDSeleccion){
 						});
 	}
 
+function Form_FACTURA__CalcularIVA(){
+	var base_calculo=xGetElementById("BASE_IVA_FF").value;
+	var porcentaje_iva=xGetElementById("PORCENTAJE_IVA_FF").value;
+	var total_iva=(base_calculo*porcentaje_iva/100.00).toFixed(2);
+	var porcentaje_iva_retencion=xGetElementById("RETENCION_PIVA_FF").value;
 
+	xGetElementById("MONTO_IVA_FF").value=total_iva;
+	xGetElementById("RETENCION_IVA_FF").value=(porcentaje_iva_retencion*total_iva*1.00).toFixed(2);	
+	
+	xGetElementById("TOTAL_PAGO_FF").value=(xGetElementById("TOTAL_FF").value*1.00-xGetElementById("RETENCION_IVA_FF").value*1.00).toFixed(2);
+}
 
-
+function Form_FACTURA__SetIVA(){
+	var porcentaje_iva2=xGetElementById("PORCENTAJE_IVA2_FF").value;
+	xGetElementById("PORCENTAJE_IVA_FF").value=porcentaje_iva2;
+	Form_FACTURA__CalcularIVA();
+}
 
 
 
