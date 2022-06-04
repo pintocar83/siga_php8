@@ -100,6 +100,13 @@ class ficha{
     }
     if(!isset($return[0])) return array();
 
+    $return[0]["grupo_familiar"]=[];
+    if(isset($return[0]["id"]) and $return[0]["id"]){
+      //buscar grupo familiar
+      $sql="SELECT * FROM modulo_nomina.grupo_familiar WHERE id_ficha='".$return[0]["id"]."' ORDER BY id";
+      $return[0]["grupo_familiar"]=$db->Execute($sql);
+    }
+
     $carpeta=$nacionalidad.$cedula;
 
     //$return[0]["archivos"]=self::onList_Archivo($carpeta);
@@ -286,7 +293,8 @@ class ficha{
                                 $antiguedad_apn,
                                 $profesionalizacion_porcentaje,
                                 $codigo,
-                                $activo){
+                                $activo,
+                                $grupo_familiar=NULL){
 
     if($id!="" and !($access=="rw"))//solo el acceso 'rw' es permitido
       return array("success"=>false, "message"=>"Error. El usuario no tiene permiso para modificar datos.");
@@ -382,6 +390,41 @@ class ficha{
         return array("success"=>false, "message"=>"Error al obtener el identificador de la persona.");
       $id=$result[0][0];
     }
+
+    if($grupo_familiar!==NULL){
+      $tmp=[];
+      //guardar los ids viejos para omitirlos en en borrado, se deben hacer update sobre estos
+      for($i=0; $i<count($grupo_familiar); $i++){
+        if($grupo_familiar[$i]["id"]){
+          $tmp[]=$grupo_familiar[$i]["id"];
+        }
+      }
+      //borrado
+      if(count($tmp)>0){
+        $db->Delete("modulo_nomina.grupo_familiar","not id in ('".implode("','",$tmp)."') and id_ficha='$id'");
+      }
+
+      //hacer updates sobre id!='' e insert id=''
+      for($i=0; $i<count($grupo_familiar); $i++){
+        $data=[
+          "id_ficha"           => "'$id'",
+          "id_parentesco"      => "'".SIGA::clear($grupo_familiar[$i]["id_parentesco"])."'",
+          "nacionalidad"       => "'".SIGA::clear($grupo_familiar[$i]["nacionalidad"])."'",
+          "cedula"             => "'".SIGA::clear($grupo_familiar[$i]["cedula"])."'",
+          "nombres_apellidos"  => "'".SIGA::clear($grupo_familiar[$i]["nombres_apellidos"])."'",
+          "genero"             => "'".SIGA::clear($grupo_familiar[$i]["genero"])."'",
+          "fecha_nacimiento"   => "'".SIGA::clear($grupo_familiar[$i]["fecha_nacimiento"])."'"
+        ];
+        if($grupo_familiar[$i]["id"]){//update
+          $db->Update("modulo_nomina.grupo_familiar",$data,"id='$id'");
+        }
+        else{//insert
+          $db->Insert("modulo_nomina.grupo_familiar",$data);
+        }
+      }
+    }
+
+
     return array("success"=>true, "message"=>'Datos guardados con exito.',"id"=>$id);
   }
 

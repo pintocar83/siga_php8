@@ -154,6 +154,10 @@ class SIGA extends SIGA_CONFIG {
     return file_exists("$file")?file_get_contents("$file"):"";
   }
 
+  public static function clear($str){
+    return trim(str_replace(array("\"","'","/*","*/","--"),"",$str));
+  }
+
   public static function param($value,$clear=true){
     return self::paramPost($value,$clear);
   }

@@ -900,7 +900,7 @@ siga.define('ficha', {
                         var store=me.getCmp("gridCargaFamiliar").getStore();
                         var index=store.getCount();
 
-                        store.insert(index,{id_grupo_familiar: '', cedula: '', nombres_apellidos: '', genero: '', fecha_nacimiento: '', edad: '', id_parentesco: ''})
+                        store.insert(index,{id_grupo_familiar: '', nacionalidad:'' ,cedula: '', nombres_apellidos: '', genero: '', fecha_nacimiento: '', edad: '', id_parentesco: ''})
                       }
                     }
                   },
@@ -951,7 +951,7 @@ siga.define('ficha', {
                   }
                },
                 store: {
-                  fields: ['id_grupo_familiar','cedula','nombres_apellidos','genero','fecha_nacimiento','edad','id_parentesco'],
+                  fields: ['id_grupo_familiar','nacionalidad','cedula','nombres_apellidos','genero','fecha_nacimiento','edad','id_parentesco'],
                   data: []
                 },
                 columns: [
@@ -1391,6 +1391,28 @@ siga.define('ficha', {
 
     me.getCmp('archivos').setRootNode({expanded: true, children: result[0]['archivos']});
 
+    //carga familiar
+    if(result[0]['grupo_familiar'] && result[0]['grupo_familiar'].length>0){
+      var store=me.getCmp("gridCargaFamiliar").getStore();
+      for(var i = 0; i < result[0]['grupo_familiar'].length; i++) {
+        store.insert(i,{
+          id_grupo_familiar:   result[0]['grupo_familiar'][i]["id"],
+          nacionalidad:        result[0]['grupo_familiar'][i]["nacionalidad"],
+          cedula:              result[0]['grupo_familiar'][i]["cedula"],
+          nombres_apellidos:   result[0]['grupo_familiar'][i]["nombres_apellidos"],
+          genero:              result[0]['grupo_familiar'][i]["genero"],
+          fecha_nacimiento:    result[0]['grupo_familiar'][i]["fecha_nacimiento"],
+          edad:                result[0]['grupo_familiar'][i]["edad"],
+          id_parentesco:       result[0]['grupo_familiar'][i]["id_parentesco"]
+        });
+      }
+
+
+    }
+
+
+
+
     me.changePeriodo();
   },
 
@@ -1454,7 +1476,7 @@ siga.define('ficha', {
       grupo_familiar.push({
         id: tmp['id_grupo_familiar'],
         id_parentesco: tmp['id_parentesco'],
-        nacionalidad: '',
+        nacionalidad: tmp['nacionalidad'],
         cedula: tmp['cedula'],
         nombres_apellidos: tmp['nombres_apellidos'],
         genero: tmp['genero'],
@@ -1465,7 +1487,6 @@ siga.define('ficha', {
     me.getCmp('tab_data').submit({
       method: 'POST',
       url: 'module/ficha/',
-      //headers: {'Content-Type': 'application/json'},
       params:{
         action: 'onSave',
         grupo_familiar: Ext.JSON.encode(grupo_familiar)

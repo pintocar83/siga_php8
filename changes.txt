@@ -20,8 +20,10 @@ module/ficha/
 module/detalle_contable/
 module/detalle_presupuestario/
 module/sigafs/index.php
-module/sigafs/core/index.php
 module/sigafs/library/sigafs.js
+module/sigafs/core/index.php
+module/sigafs/core/factura.js
+module/sigafs/core/factura.php
 
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
