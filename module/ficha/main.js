@@ -89,7 +89,6 @@ siga.define('ficha', {
     });
 
 
-
     //fileUpload: true, formulario
     me.items=[
       {
@@ -337,16 +336,14 @@ siga.define('ficha', {
                     id: me._('antiguedad'),
                     name: 'antiguedad',
                     flex: 1,
-                    disabled: true,
-                    fieldLabel: 'Tiempo de Servicio / Antiguedad',
+                    //disabled: true,
+                    readOnly: true,
+                    fieldLabel: '<span style="color:gray;">Antiguedad en la Institución</span>',
                     value: '',
                     margin: '5px 0 0 0px',
                   }
                 ]
               },
-
-
-
               {
                 xtype: 'container',
                 defaults: _defaults,
@@ -703,7 +700,7 @@ siga.define('ficha', {
                     xtype:'textfield',
                     id: me._('cuenta_nomina'),
                     name: 'cuenta_nomina',
-                    flex: 1,
+                    flex: 0.70,
                     fieldLabel: 'Cuenta Nomina',
                     value: '',
                     margin: '5px 0 0 0px',
@@ -715,7 +712,7 @@ siga.define('ficha', {
                     name: 'id_escala_salarial',
                     fieldLabel: 'Escala Salarial',
                     margin: '5px 0 0 40px',
-                    flex: 1,
+                    flex: 0.30,
                     editable: false,
                     queryMode: "local",
                     //rootProperty: "result",
@@ -763,22 +760,48 @@ siga.define('ficha', {
                 layout: 'hbox',
                 items: [
                   {
-                    xtype:'numberfield',
-                    id: me._('antiguedad_apn'),
-                    name: 'antiguedad_apn',
-                    flex: 1,
-                    fieldLabel: 'Antiguedad Administración Pública <small>(Años)</small>',
-                    value: '',
+                    xtype: 'container',
+                    defaults: _defaults,
+                    layout: 'hbox',
                     margin: '5px 0 0 0px',
-                    minValue: 0,
-                    allowDecimals: false,
-                    allowNegative: false
+                    flex: 0.70,
+                    items: [
+                      {
+                        xtype:'numberfield',
+                        id: me._('antiguedad_apn'),
+                        name: 'antiguedad_apn',
+                        flex: 0.75,
+                        fieldLabel: 'Antiguedad Administración Pública <small>(Otros Años)</small>',
+                        value: '',
+                        margin: '0 0 0 0',
+                        minValue: 0,
+                        allowDecimals: false,
+                        allowNegative: false,
+                        listeners: {
+                          change: function(){
+                            me.updateAntiguedadTotal();
+                          }
+                        }
+                      },
+                      {
+                        xtype:'textfield',
+                        id: me._('antiguedad_total'),
+                        name: 'antiguedad_total',
+                        flex: 0.25,
+                        fieldLabel: '<span style="color:gray;">Total <small>(Años)</small></span>',
+                        value: '',
+                        margin: '0 0 0 10px',
+                        readOnly: true,
+                        allowDecimals: false,
+                        allowNegative: false
+                      },
+                    ]
                   },
                   {
                     xtype:'numberfield',
                     id: me._('profesionalizacion_porcentaje'),
                     name: 'profesionalizacion_porcentaje',
-                    flex: 1,
+                    flex: 0.30,
                     fieldLabel: 'Profesionalización <small>(%)</small>',
                     value: '',
                     margin: '5px 0 0 40px',
@@ -875,65 +898,44 @@ siga.define('ficha', {
                 dock: 'bottom',
                 style: "background: #d0d0d0;",
                 items: [
-                  /*{
-                    xtype: 'textfield',
-                    //id: me._('txtSearch'),
-                    hideLabel: false,
-                    flex: 1,
-                    listeners: {
-                      specialkey: function(field, e){
-                        if (e.getKey() == e.ENTER)
-                          {}
-                      }
-                    }
-                  },*/
-
                   {
                     xtype: 'button',
-                    //id: me._('btnSearch'),
                     text: 'Agregar',
                     tooltip: 'Agregar',
                     iconCls: 'siga-icon-16 icon-add',
                     width: 80,
                     listeners: {
                       click: function(){
-                        var store=me.getCmp("gridCargaFamiliar").getStore();
-                        var index=store.getCount();
+                        var grid  = me.getCmp("gridCargaFamiliar");
+                        var store = grid.getStore();
+                        var index = store.getCount();
 
                         store.insert(index,{id_grupo_familiar: '', nacionalidad:'' ,cedula: '', nombres_apellidos: '', genero: '', fecha_nacimiento: '', edad: '', id_parentesco: ''})
+
+                        grid.getPlugin('rowediting').startEdit(index);
                       }
                     }
                   },
                   {
                     xtype: 'button',
-                    //id: me._('btnSearch'),
                     text: 'Quitar',
                     tooltip: 'Quitar',
                     iconCls: 'siga-icon-16 icon-remove',
                     width: 80,
                     listeners: {
                       click: function(){
-
+                        var grid = me.getCmp("gridCargaFamiliar");
+                        var selModel = grid.getSelectionModel();
+                        var record = selModel.getSelection();
+                        var store = grid.getStore();
+                        store.remove(record);
                       }
                     }
                   },
                   {
                     xtype: "tbspacer",
                     flex: 1
-                  },
-                  /*{
-                    xtype: 'button',
-                    //id: me._('btnClear'),
-                    text: 'Limpiar',
-                    tooltip: 'Limpiar',
-                    iconCls: 'siga-icon-16 icon-clear',
-                    width: 80,
-                    listeners: {
-                      click: function(){
-
-                      }
-                    }
-                  }*/
+                  }
                 ]
               }
             ],
@@ -943,13 +945,13 @@ siga.define('ficha', {
                 id: me._('gridCargaFamiliar'),
                 border: 0,
                 preventHeader: true,
-                //plugins: [me.rowEditingCargaFamiliar],
                 plugins: {
                   rowediting: {
                     clicksToMoveEditor: 1,
-                    autoCancel: false
+                    autoCancel: false,
+                    pluginId: 'rowediting'
                   }
-               },
+                },
                 store: {
                   fields: ['id_grupo_familiar','nacionalidad','cedula','nombres_apellidos','genero','fecha_nacimiento','edad','id_parentesco'],
                   data: []
@@ -1019,7 +1021,7 @@ siga.define('ficha', {
                     xtype: 'gridcolumn',
                     dataIndex: 'fecha_nacimiento',
                     text: '<b>Fecha Nacimiento</b>',
-                    width: '15%',
+                    width: '18%',
                     menuDisabled: true,
                     sortable: false,
                     editor: {
@@ -1031,9 +1033,39 @@ siga.define('ficha', {
                     xtype: 'gridcolumn',
                     dataIndex: 'edad',
                     text: '<b>Edad</b>',
-                    width: '8%',
+                    width: '10%',
                     menuDisabled: true,
                     sortable: false,
+                    align: "center",
+                    renderer: function(value, metaData , record, rowIndex, colIndex, store, view){
+                      var fecha_nacimiento=record.get("fecha_nacimiento");
+                      if(!fecha_nacimiento)
+                        return "";
+                      var edad=Ext.Date.diff(new Date(fecha_nacimiento),new Date(siga.timer.result.fecha+" 24:00:00"),Ext.Date.YEAR);
+                      var tiempo="años";
+                      if(edad==0){
+                        edad=Ext.Date.diff(new Date(fecha_nacimiento),new Date(siga.timer.result.fecha+" 24:00:00"),Ext.Date.MONTH);
+                        tiempo="meses";
+
+                        if(edad==0){
+                          edad=Ext.Date.diff(new Date(fecha_nacimiento),new Date(siga.timer.result.fecha+" 24:00:00"),Ext.Date.DAY);
+                          tiempo="dias";
+                          if(edad<=0){
+                            return "";
+                          }
+                          else if(edad==1)
+                            tiempo="dia";
+                        }
+                        else if(edad==1){
+                          tiempo="mes";
+                        }
+                      }
+                      else if(edad==1){
+                        tiempo="año";
+                      }
+                      if(edad<=0) return "";
+                      return edad+" "+tiempo;
+                    }
                   },
                   {
                     xtype: 'gridcolumn',
@@ -1239,6 +1271,9 @@ siga.define('ficha', {
                 else{
                   me.getCmp('fecha_egreso_'+i).setDisabled(true);
                 }
+              },
+              change: function(){
+                me.calculateAntiguedadInstitucion();
               }
             }
           },
@@ -1265,6 +1300,9 @@ siga.define('ficha', {
                     me.getCmp("container_ingreso_egreso").remove(me.getCmp('subcontainer_ingreso_egreso_'+next));
                   }
                 }
+              },
+              change: function(){
+                me.calculateAntiguedadInstitucion();
               }
             }
           }
@@ -1290,6 +1328,7 @@ siga.define('ficha', {
 
 
     if(!result || result.length==0){
+      me.antiguedad_anio=0;
       me.getCmp('primer_nombre').setValue("");
       me.getCmp('segundo_nombre').setValue("");
       me.getCmp('primer_apellido').setValue("");
@@ -1303,6 +1342,7 @@ siga.define('ficha', {
       me.getCmp('cuenta_nomina').setValue("");
       me.getCmp('id_escala_salarial').setValue("");
       me.getCmp('antiguedad_apn').setValue("0");
+      me.getCmp('antiguedad_total').setValue("0");
       me.getCmp('profesionalizacion_porcentaje').setValue("0");
       me.getCmp('activo').setValue("");
 
@@ -1355,6 +1395,11 @@ siga.define('ficha', {
     }
 
     me.getCmp('antiguedad').setValue(result[0]['antiguedad']);
+    me.antiguedad_anio=0;
+    if(result[0]['antiguedad_anio'])
+      me.antiguedad_anio=result[0]['antiguedad_anio']*1;
+
+    me.getCmp('antiguedad_total').setValue(result[0]['antiguedad_apn']*1+me.antiguedad_anio);
 
     me.getCmp('codigo').setValue(result[0]['codigo']);
     me.getCmp('activo').setValue(result[0]['activo']);
@@ -1402,16 +1447,11 @@ siga.define('ficha', {
           nombres_apellidos:   result[0]['grupo_familiar'][i]["nombres_apellidos"],
           genero:              result[0]['grupo_familiar'][i]["genero"],
           fecha_nacimiento:    result[0]['grupo_familiar'][i]["fecha_nacimiento"],
-          edad:                result[0]['grupo_familiar'][i]["edad"],
+          edad:                '',
           id_parentesco:       result[0]['grupo_familiar'][i]["id_parentesco"]
         });
       }
-
-
     }
-
-
-
 
     me.changePeriodo();
   },
@@ -1470,9 +1510,34 @@ siga.define('ficha', {
   onSave: function(){
     var me=this;
 
+    me.getCmp("gridCargaFamiliar").getPlugin('rowediting').completeEdit();
+
     var grupo_familiar=[];
     for (var i=0; i<me.getCmp("gridCargaFamiliar").getStore().getCount(); i++) {
       var tmp=me.getCmp("gridCargaFamiliar").getStore().getAt(i).getData();
+
+      tmp['cedula']            = Ext.String.trim(tmp['cedula']);
+      tmp['nombres_apellidos'] = Ext.String.trim(tmp['nombres_apellidos']);
+      tmp['genero']            = Ext.String.trim(tmp['genero']);
+      tmp['id_parentesco']     = Ext.String.trim(tmp['id_parentesco']);
+
+      if(!tmp['nombres_apellidos']){
+        me.setMessage("Debe ingresar nombres y apellidos para la carga familiar, en la fila #"+(i+1),"red");
+        return;
+      }
+      if(!tmp['genero']){
+        me.setMessage("Debe seleccionar el genero para la carga familiar, en la fila #"+(i+1),"red");
+        return;
+      }
+      if(!tmp['fecha_nacimiento']){
+        me.setMessage("Debe ingresar la fecha de nacimiento para la carga familiar, en la fila #"+(i+1),"red");
+        return;
+      }
+      if(!tmp['id_parentesco']){
+        me.setMessage("Debe seleccionar el parentesco para la carga familiar, en la fila #"+(i+1),"red");
+        return;
+      }
+
       grupo_familiar.push({
         id: tmp['id_grupo_familiar'],
         id_parentesco: tmp['id_parentesco'],
@@ -1594,7 +1659,39 @@ siga.define('ficha', {
       }
     });
 
-  }
+  },
+
+  updateAntiguedadTotal: function(){
+    var me=this;
+    var v=me.getCmp('antiguedad_apn').getValue()*1;
+    me.getCmp('antiguedad_total').setValue(v+me.antiguedad_anio);
+  },
+
+  calculateAntiguedadInstitucion: function(){
+    var me=this;
+    me.antiguedad_anio=0;
+    //var edad=Ext.Date.diff(new Date(fecha_nacimiento),new Date(siga.timer.result.fecha+" 24:00:00"),Ext.Date.YEAR);
+    var n=me.getCmp("container_ingreso_egreso").items.length;
+    for(var i=0; i<n; i++){
+      var fi=me.getCmp("fecha_ingreso_"+i).getValue();
+      if(!fi) continue;
+      var ff=me.getCmp("fecha_egreso_"+i).getValue();
+      if(!ff){
+        ff=new Date(siga.timer.result.fecha+" 24:00:00");
+      }
+      if(isNaN(ff)){
+        continue;
+      }
+      console.log(ff);
+      var diff=Ext.Date.diff(fi,ff,Ext.Date.YEAR);
+      if(diff>0){
+        me.antiguedad_anio+=diff;
+      }
+    }
+
+    me.getCmp("antiguedad").setValue(me.antiguedad_anio+" años");
+    me.updateAntiguedadTotal();
+  },
 
 });
 
