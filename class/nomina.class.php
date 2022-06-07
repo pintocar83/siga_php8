@@ -578,6 +578,8 @@ class nomina{
     if($periodo[0]["cerrado"]==='t')
       return [];
 
+    $fecha_culminacion=$periodo[0]["fecha_culminacion"];
+
     //buscar el identificador del concepto
     $concepto=$db->Execute("SELECT
                               identificador
@@ -623,7 +625,7 @@ class nomina{
           self::addValorFicha_EscalaSalarial($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
         break;
         case 'ficha:numero_hijos':
-          self::addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+          self::addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha, $fecha_culminacion);
         break;
         case 'ficha:antiguedad_apn':
           self::addValorFicha_AntiguedadAPN($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
@@ -656,7 +658,6 @@ class nomina{
         if(is_numeric($escala[0]["sueldo_basico"]))
           $valor=$escala[0]["sueldo_basico"];
 
-
       //borrar registros existentes
       $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
 
@@ -669,8 +670,30 @@ class nomina{
     }
   }
 
-  private static function addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
-    
+  private static function addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha, $fecha_culminacion){
+    for($i=0;$i<count($ids_ficha);$i++){
+      $id_ficha=$ids_ficha[$i];
+      //buscar la carga familiar parentesco = 3 (hijo)
+      $sql="select count(*) numero_hijos from modulo_nomina.grupo_familiar where id_ficha='$id_ficha' and id_parentesco=3 and DATE_PART('year',AGE('$fecha_culminacion',fecha_nacimiento))<18";
+      $grupo_familiar=$db->Execute($sql);
+
+      $valor=0;
+      if(isset($grupo_familiar[0]["numero_hijos"]))
+        if(is_numeric($grupo_familiar[0]["numero_hijos"]))
+          $valor=$grupo_familiar[0]["numero_hijos"];
+
+      //borrar registros existentes
+      $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
+
+      if($valor>0){
+        $db->Insert("modulo_nomina.ficha_concepto",array(
+                                          "id_nomina"=>"$id_nomina",
+                                          "id_periodo"=>"$id_periodo",
+                                          "id_ficha"=>"$id_ficha",
+                                          "id_concepto"=>"$id_concepto",
+                                          "valor"=>"$valor"));
+      }
+    }
   }
 
   private static function addValorFicha_AntiguedadAPN($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
@@ -710,16 +733,17 @@ class nomina{
         if(is_numeric($ficha[0]["profesionalizacion_porcentaje"]))
           $valor=$ficha[0]["profesionalizacion_porcentaje"];
 
-
       //borrar registros existentes
       $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
 
-      $db->Insert("modulo_nomina.ficha_concepto",array(
-                                        "id_nomina"=>"$id_nomina",
-                                        "id_periodo"=>"$id_periodo",
-                                        "id_ficha"=>"$id_ficha",
-                                        "id_concepto"=>"$id_concepto",
-                                         "valor"=>"$valor"));
+      if($valor>0){
+        $db->Insert("modulo_nomina.ficha_concepto",array(
+                                          "id_nomina"=>"$id_nomina",
+                                          "id_periodo"=>"$id_periodo",
+                                          "id_ficha"=>"$id_ficha",
+                                          "id_concepto"=>"$id_concepto",
+                                          "valor"=>"$valor"));
+      }
     }
   }
 
@@ -1816,7 +1840,7 @@ class nomina{
   }
 
 
-    public static function onListFichaPeriodo($id_nomina,$id_periodo,$start,$limit,$filtro_busqueda=NULL){
+  public static function onListFichaPeriodo($id_nomina,$id_periodo,$start,$limit,$filtro_busqueda=NULL){
     $db=SIGA::DBController();
 
     $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion FROM modulo_nomina.periodo WHERE id=$id_periodo");
