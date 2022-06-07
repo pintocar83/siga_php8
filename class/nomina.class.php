@@ -631,7 +631,7 @@ class nomina{
           self::addValorFicha_AntiguedadAPN($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
         break;
         case 'ficha:antiguedad_total':
-          self::addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+          self::addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha, $fecha_culminacion);
         break;
         case 'ficha:profesionalizacion_porcentaje':
           self::addValorFicha_ProfesionalizacionPorcentaje($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
@@ -719,8 +719,32 @@ class nomina{
     }
   }
 
-  private static function addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
+  private static function addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha, $fecha_culminacion){
+    include_once("ficha.class.php");
+    for($i=0;$i<count($ids_ficha);$i++){
+      $id_ficha=$ids_ficha[$i];
+      $ficha_antiguedad=ficha::onGet_Antiguedad($id_ficha,$fecha_culminacion);
+      $ficha_antiguedad=$ficha_antiguedad["antiguedad_anio"];
 
+      $valor=0;
+      if(is_numeric($ficha_antiguedad) && $ficha_antiguedad>0)
+        $valor+=$ficha_antiguedad;
+
+      $ficha=$db->Execute("SELECT antiguedad_apn from modulo_nomina.ficha where id='$id_ficha'");
+      if(isset($ficha[0]["antiguedad_apn"]))
+        if(is_numeric($ficha[0]["antiguedad_apn"]))
+          $valor+=$ficha[0]["antiguedad_apn"];
+
+      //borrar registros existentes
+      $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
+
+      $db->Insert("modulo_nomina.ficha_concepto",array(
+                                        "id_nomina"=>"$id_nomina",
+                                        "id_periodo"=>"$id_periodo",
+                                        "id_ficha"=>"$id_ficha",
+                                        "id_concepto"=>"$id_concepto",
+                                         "valor"=>"$valor"));
+    }
   }
 
   private static function addValorFicha_ProfesionalizacionPorcentaje($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
