@@ -575,18 +575,29 @@ class nomina{
     $db=SIGA::DBController();
 
     $periodo=$db->Execute("SELECT fecha_culminacion, cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
-    if($periodo[0]["cerrado"]==='t'){
-      exit;
-    }
+    if($periodo[0]["cerrado"]==='t')
+      return [];
 
-    //buscar el identificar del concepto
+    //buscar el identificador del concepto
     $concepto=$db->Execute("SELECT
                               identificador
                             FROM
                               modulo_nomina.concepto
                             WHERE
                               id=$id_concepto");
-    if(!isset($concepto[0]["identificador"])) return [];
+    if(!isset($concepto[0]["identificador"]) || $concepto[0]["identificador"])
+      return [];
+    $identificador=$concepto[0]["identificador"];
+
+    //en caso que se ids_ficha[0]=='*', buscar todas las fichas de la nomina
+    if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
+      $F=$db->Execute("SELECT id
+                    FROM modulo_nomina.ficha
+                    WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      $ids_ficha=array();
+      for($i=0;$i<count($F);$i++)
+        $ids_ficha[$i]=$F[$i]["id"];
+    }
 
     //buscar la configuracion de los conceptos ficha:%
     $config=$db->Execute("SELECT
@@ -598,24 +609,44 @@ class nomina{
                               dato ilike 'ficha:%'");
 
     //buscar para cual caso aplica el concepto_identificar -> ficha
+    for($i=0; $i<count($config); $i++){
+      if(!$config[$i]["valor"])
+        continue;
+      $concepto_identificador=explode(",", $config[$i]["valor"]);
+      if(!in_array($identificador,$concepto_identificador))
+        continue;
 
+      $ficha_campo=$config[$i]["dato"];
 
-    if(!isset($config[0]["definicion"])) return ["b"];
-    $config=explode(",", $config[0]["definicion"]);
-
-    if(!in_array($concepto[0]["identificador"],$config)) return ["c"];
-
-
-    if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
-      $F=$db->Execute("SELECT id
-                    FROM modulo_nomina.ficha
-                    WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
-      $ids_ficha=array();
-      for($i=0;$i<count($F);$i++)
-        $ids_ficha[$i]=$F[$i]["id"];
+      switch($ficha_campo){
+        case 'ficha:escala_salarial':
+          self::addValorFicha_EscalaSalarial($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+        break;
+        case 'ficha:numero_hijos':
+          self::addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+        break;
+        case 'ficha:antiguedad_apn':
+          self::addValorFicha_AntiguedadAPN($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+        break;
+        case 'ficha:antiguedad_total':
+          self::addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+        break;
+        case 'ficha:profesionalizacion_porcentaje':
+          self::addValorFicha_ProfesionalizacionPorcentaje($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+        break;
+        default: continue;
+      }
     }
 
-    $return=array();
+    $return=[];
+    for($i=0;$i<count($ids_ficha);$i++){
+      $return[$i]["id_ficha"]=$id_ficha;
+      $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
+    }
+    return $return;
+  }
+
+  private static function addValorFicha_EscalaSalarial($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
     for($i=0;$i<count($ids_ficha);$i++){
       $id_ficha=$ids_ficha[$i];
       //buscar el valor de la escala para la persona
@@ -635,11 +666,61 @@ class nomina{
                                         "id_ficha"=>"$id_ficha",
                                         "id_concepto"=>"$id_concepto",
                                          "valor"=>"$valor"));
-
-      $return[$i]["id_ficha"]=$id_ficha;
-      $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
     }
-    return $return;
+  }
+
+  private static function addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
+    
+  }
+
+  private static function addValorFicha_AntiguedadAPN($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
+    for($i=0;$i<count($ids_ficha);$i++){
+      $id_ficha=$ids_ficha[$i];
+      //buscar el valor de la escala para la persona
+      $ficha=$db->Execute("SELECT antiguedad_apn from modulo_nomina.ficha where id='$id_ficha'");
+      $valor=0;
+      if(isset($ficha[0]["antiguedad_apn"]))
+        if(is_numeric($ficha[0]["antiguedad_apn"]))
+          $valor=$ficha[0]["antiguedad_apn"];
+
+
+      //borrar registros existentes
+      $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
+
+      $db->Insert("modulo_nomina.ficha_concepto",array(
+                                        "id_nomina"=>"$id_nomina",
+                                        "id_periodo"=>"$id_periodo",
+                                        "id_ficha"=>"$id_ficha",
+                                        "id_concepto"=>"$id_concepto",
+                                         "valor"=>"$valor"));
+    }
+  }
+
+  private static function addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
+
+  }
+
+  private static function addValorFicha_ProfesionalizacionPorcentaje($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha){
+    for($i=0;$i<count($ids_ficha);$i++){
+      $id_ficha=$ids_ficha[$i];
+      //buscar el valor de la escala para la persona
+      $ficha=$db->Execute("SELECT profesionalizacion_porcentaje from modulo_nomina.ficha where id='$id_ficha'");
+      $valor=0;
+      if(isset($ficha[0]["profesionalizacion_porcentaje"]))
+        if(is_numeric($ficha[0]["profesionalizacion_porcentaje"]))
+          $valor=$ficha[0]["profesionalizacion_porcentaje"];
+
+
+      //borrar registros existentes
+      $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
+
+      $db->Insert("modulo_nomina.ficha_concepto",array(
+                                        "id_nomina"=>"$id_nomina",
+                                        "id_periodo"=>"$id_periodo",
+                                        "id_ficha"=>"$id_ficha",
+                                        "id_concepto"=>"$id_concepto",
+                                         "valor"=>"$valor"));
+    }
   }
 
   public static function onRemove($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto){
