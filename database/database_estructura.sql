@@ -3843,7 +3843,11 @@ CREATE TABLE escala_salarial_configuracion (
 );
 
 
-
+CREATE TABLE nomina_configuracion (
+    dato character varying(100) NOT NULL,
+    valor TEXT,
+    PRIMARY KEY(dato)
+);
 
 
 CREATE SEQUENCE escala_salarial_id_seq

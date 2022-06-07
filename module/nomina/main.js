@@ -10,7 +10,7 @@ siga.define('nomina', {
 
   initComponent: function(){
     var me = this;
-    
+
     me.setInternal({
       ventanaSeleccionarNomina: null,
       ventanaVisualizar: null,
@@ -20,19 +20,19 @@ siga.define('nomina', {
       itemsToolbar:[],
       data: {
         concepto: [],
-        ficha: []        
+        ficha: []
       },
       columnaSeleccionada: null,
       cerrado: null
     });
-    
-    
-    
-    
+
+
+
+
     //VENTANA PARA CAMBIAR/SELECCIONAR NOMINA
     me.internal.ventanaSeleccionarNomina=Ext.create('Ext.window.Window', {
       title: 'Seleccionar Nómina',
-      minimizable: false,      
+      minimizable: false,
       maximizable: false,
       closable: false,
       modal: true,
@@ -54,7 +54,7 @@ siga.define('nomina', {
           return false;
         }
       },
-      
+
       items:[
         {
           xtype: 'label',
@@ -63,7 +63,7 @@ siga.define('nomina', {
           html: "&nbsp;",
           anchor: '100%'
         },
-        
+
         {
           xtype:'combobox',
           id: me._('tipoVentanaSeleccionarNomina'),
@@ -117,7 +117,7 @@ siga.define('nomina', {
             }
           }
         },
-        
+
         {
           xtype: 'combobox',
           id: me._('id_periodo'),
@@ -157,22 +157,22 @@ siga.define('nomina', {
                 me.getCmp("id_periodo").reset();
                 if(records.length>0)
                   me.getCmp("id_periodo").setValue(records[records.length-1].get("id"));
-                
+
                 //if(!me.internal.ventanaSeleccionarNomina.id_periodo)
                 //  me.internal.ventanaSeleccionarNomina.id_periodo
               },
-              beforeload: function(store,operation,eOpts){      
+              beforeload: function(store,operation,eOpts){
                 store.proxy.extraParams.tipo=me.getCmp('tipoVentanaSeleccionarNomina').getValue();
               }
             }
-            
+
           },
           displayField: 'periodo',
           valueField: 'id',
           allowBlank: false,
           forceSelection: true,
         },
-        
+
         {
           xtype: 'tagfield',
           id: me._('id_nomina'),
@@ -184,7 +184,7 @@ siga.define('nomina', {
           labelStyle: 'font-weight: bold;',
           editable: false,
           queryMode: "local",
-          multiSelect: true,          
+          multiSelect: true,
           store: {
             fields: ['id','codigo_nomina'],
             autoLoad: false,
@@ -209,7 +209,7 @@ siga.define('nomina', {
             listeners: {
               load: function(store, records, successful){
                 //seleccionar el primer elemento del select nómina
-                
+
                 if(records.length>0)
                   me.getCmp("id_nomina").setValue(records[0].get("id"));
                 return;
@@ -262,7 +262,7 @@ siga.define('nomina', {
                     me.getCmp('messageVentanaSeleccionarNomina').setText("<div style='color: red;'>Debe seleccionar el periodo.</div>",false);
                   }
                 }
-              }              
+              }
             },
             {
               xtype: 'tbspacer',
@@ -270,15 +270,15 @@ siga.define('nomina', {
             }
           ]
         }
-      ]      
+      ]
     });
     //FIN VENTANA PARA CAMBIAR/SELECCIONAR NOMINA
-    
-    
-    //VENTANA PARA VISUALIZAR REPORTES    
+
+
+    //VENTANA PARA VISUALIZAR REPORTES
     me.internal.ventanaVisualizar=Ext.create('siga.windowForm', {
       title: 'Visualizar Nóminas',
-      minimizable: false,      
+      minimizable: false,
       maximizable: false,
       modal: true,
       width: 750,
@@ -309,11 +309,11 @@ siga.define('nomina', {
               }
             break;
           }
-          
+
         }
       },
 
-      
+
       itemsToolbar:[
         {
           xtype: 'button',
@@ -328,15 +328,15 @@ siga.define('nomina', {
               click: function(){
                 var tmp=me.getCmp('id_nomina_visualizar').getValue();
                 tmp=tmp["id_nomina_visualizar"];
-                
-                var id_nomina="";                  
-                if((typeof tmp)=="object"){                    
+
+                var id_nomina="";
+                if((typeof tmp)=="object"){
                   for(var i=0;i<tmp.length;i++)
                     id_nomina+=tmp[i]+((i<tmp.length-1)?",":"");
                 }
                 else
                   id_nomina=tmp;
-                
+
                 var add_url="";
                 if(me.filtro_ficha_id && me.filtro_ficha_id.length>0)
                   add_url="&filtro_ficha_id="+me.filtro_ficha_id.join(",");
@@ -362,7 +362,7 @@ siga.define('nomina', {
                   }
                   add_url+="&formato="+formato+"&id_concepto="+id_concepto.join(",");
                 }
-                
+
                 window.open("report/"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina+add_url);
               }
           }
@@ -386,18 +386,18 @@ siga.define('nomina', {
                     if(btn == 'yes'){
                       var tmp=me.getCmp('id_nomina_visualizar').getValue();
                       tmp=tmp["id_nomina_visualizar"];
-                      
-                      var id_nomina="";                  
-                      if((typeof tmp)=="object"){                    
+
+                      var id_nomina="";
+                      if((typeof tmp)=="object"){
                         for(var i=0;i<tmp.length;i++)
                           id_nomina+=tmp[i]+((i<tmp.length-1)?",":"");
                       }
                       else
-                        id_nomina=tmp;                      
+                        id_nomina=tmp;
                       window.open("report/"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina+"&generar=1");
-                      
+
                     }
-                  });                
+                  });
               }
           }
         },
@@ -416,7 +416,7 @@ siga.define('nomina', {
                 if(me.getCmp('btnVisualizar').internal.reporte!="nomina_resumen_presupuestario_contable") return;
                 var tmp=me.getCmp('id_nomina_visualizar').getValue();
                 tmp=tmp["id_nomina_visualizar"];
-                
+
                 var id_nomina="";
                 if((typeof tmp)=="object"){
                   for(var i=0;i<tmp.length;i++)
@@ -424,13 +424,13 @@ siga.define('nomina', {
                 }
                 else
                   id_nomina=tmp;
-                
+
                 window.open("report/"+me.getCmp('btnVisualizar').internal.reporte+"_txt.php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina);
               }
           }
         },
       ],
-      
+
       items:[
         {
           xtype:'combobox',
@@ -464,7 +464,7 @@ siga.define('nomina', {
                 if(records.length>0)
                   me.getCmp("tipo").setValue(records[0].get("tipo"));
               },
-              beforeload: function(store,operation,eOpts){                
+              beforeload: function(store,operation,eOpts){
               }
             }
           },
@@ -480,7 +480,7 @@ siga.define('nomina', {
             },
             change: function(e, The, eOpts ){
               me.getCmp('id_periodo_visualizar').getStore().load();
-              
+
               me.getCmp('id_nomina_visualizar').removeAll();
               //cargar las nominas en forma de checkbox
               Ext.Ajax.request({
@@ -500,7 +500,7 @@ siga.define('nomina', {
                     me.getCmp('id_nomina_visualizar').add({boxLabel: result[i]["codigo_nomina"], name: 'id_nomina_visualizar', inputValue: result[i]["id"], checked: false});
                 },
                 failure:function(request){
-                  var result=Ext.JSON.decode(request.responseText);      
+                  var result=Ext.JSON.decode(request.responseText);
                   //me.setMessage(result.message,"red");
                 }
               });
@@ -510,7 +510,7 @@ siga.define('nomina', {
         {
           xtype: "container",
           layout: "hbox",
-          anchor: "100%",   
+          anchor: "100%",
           items: [
             {
               xtype: "checkboxgroup",
@@ -547,7 +547,7 @@ siga.define('nomina', {
                   tipTpl: '<b>{codigo}</b> {descripcion} <small>({fecha})</small>',
                   labelTpl: '{codigo} - {descripcion}',
                   tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
-              
+
                   store: {
                     fields: ['id','periodo'],
                     autoLoad: false,
@@ -574,7 +574,7 @@ siga.define('nomina', {
                         if(records.length>0)
                           me.getCmp("id_periodo_visualizar").setValue(records[records.length-1].get("id"));
                       },
-                      beforeload: function(store,operation,eOpts){      
+                      beforeload: function(store,operation,eOpts){
                         store.proxy.extraParams.tipo=me.getCmp('tipo').getValue();
                       }
                     }
@@ -647,7 +647,7 @@ siga.define('nomina', {
                   tipTpl: '<b>{codigo}</b> {concepto} <small>({fecha})</small>',
                   labelTpl: '{codigo} - {concepto}',
                   tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {concepto} <small>({tipo})</small></li></tpl></ul>',
-              
+
                   store: {
                     fields: ['id','concepto'],
                     autoLoad: true,
@@ -668,7 +668,7 @@ siga.define('nomina', {
                         sort: '[{"property": "concepto", "direction": "ASC"}]',
                         tipo: 'A'
                       }
-                    },                    
+                    },
                   },
                   displayField: 'concepto',
                   valueField: 'id',
@@ -680,7 +680,7 @@ siga.define('nomina', {
 
               ]
             },
-          ]        
+          ]
         },
 
         /*
@@ -702,18 +702,18 @@ siga.define('nomina', {
                 click: function(){
                   var tmp=me.getCmp('id_nomina_visualizar').getValue();
                   tmp=tmp["id_nomina_visualizar"];
-                  
-                  var id_nomina="";                  
-                  if((typeof tmp)=="object"){                    
+
+                  var id_nomina="";
+                  if((typeof tmp)=="object"){
                     for(var i=0;i<tmp.length;i++)
                       id_nomina+=tmp[i]+((i<tmp.length-1)?",":"");
                   }
                   else
                     id_nomina=tmp;
-                  
+
                   window.open("modulo_nomina/reportes/pdf_"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina);
                 }
-              }              
+              }
             },
             {
               xtype: 'tbspacer',
@@ -726,11 +726,11 @@ siga.define('nomina', {
               listeners: {
                 click: function(){
                   console.log(me.getCmp('id_nomina_visualizar').getValue());
-                  
-                  
-                  
+
+
+
                 }
-              }              
+              }
             },
             {
               xtype: 'tbspacer',
@@ -747,10 +747,10 @@ siga.define('nomina', {
                   var id_nomina="";
                   for(var i=0;i<tmp.length;i++)
                     id_nomina+=tmp[i]+((i<tmp.length-1)?",":"");
-                  
+
                   window.open("modulo_nomina/reportes/txt_"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina);
                 }
-              }              
+              }
             },
             {
               xtype: 'tbspacer',
@@ -758,16 +758,16 @@ siga.define('nomina', {
             }
           ]
         }*/
-      ]      
+      ]
     });
     me.internal.ventanaVisualizar.setInternal({itemSelection:0});
     //FIN VENTANA PARA VISUALIZAR REPORTES
-    
-    
+
+
     //VENTANA PARA FILTRAR
     me.internal.ventanaBusqueda=Ext.create('siga.windowForm', {
       title: 'Busqueda Avanzada',
-      minimizable: false,      
+      minimizable: false,
       maximizable: false,
       modal: true,
       width: 750,
@@ -780,11 +780,11 @@ siga.define('nomina', {
           return false;
         },
         beforeshow: function(){
-          
-          
+
+
         }
-      },  
-      
+      },
+
       items:[
         {
           xtype: 'tbspacer',
@@ -799,7 +799,7 @@ siga.define('nomina', {
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
-          value: ''          
+          value: ''
         },
 
         {
@@ -810,7 +810,7 @@ siga.define('nomina', {
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
-          value: ''          
+          value: ''
         },
 
         {
@@ -875,7 +875,7 @@ siga.define('nomina', {
                 start: 0,
                 limit: 'ALL',
                 sort: '[{"property": "escala", "direction": "ASC"}]'
-              }              
+              }
             }
           },
           displayField: 'escala',
@@ -972,7 +972,7 @@ siga.define('nomina', {
               listeners: {
                 click: function(){
                 }
-              }   
+              }
             },
             {
               xtype: 'tbspacer',
@@ -985,7 +985,7 @@ siga.define('nomina', {
               listeners: {
                 click: function(){
                 }
-              }   
+              }
             },
             {
               xtype: 'tbspacer',
@@ -994,11 +994,11 @@ siga.define('nomina', {
           ]
         }
 
-      ]      
+      ]
     });
-    
-    
-    
+
+
+
     //Barra de herramientas
     me.internal.itemsToolbar=[
       {
@@ -1032,16 +1032,16 @@ siga.define('nomina', {
         tooltip: 'Persona',
         menu: [
           /*
-          {                                    
+          {
             text: 'Agregar',
             listeners: {
               click: function(){
-                if(!me.onNominaSeleccionada())       
+                if(!me.onNominaSeleccionada())
                   return;
-                
+
                 var id_nomina=me.getCmp('id_nomina').getValue();
                 var id_periodo=me.getCmp('id_periodo').getValue();
-                
+
                 var selector=Ext.create("siga.windowSelect", {
                   internal:{
                     parent: {
@@ -1075,12 +1075,12 @@ siga.define('nomina', {
                             id_nomina: id_nomina,
                             id_periodo: id_periodo,
                             id_ficha: id_ficha
-                            
+
                           }
                         });
-                        if(resp.statusText=="OK"){                    
+                        if(resp.statusText=="OK"){
                           me.onRecargar();
-                        }                    
+                        }
                         return true;
                       }
                     }
@@ -1102,7 +1102,7 @@ siga.define('nomina', {
             hidden: true,
             listeners: {
               click: function(){
-                  
+
               }
             }
           },
@@ -1129,20 +1129,20 @@ siga.define('nomina', {
                 id: me._('btnPersonalInactivoQuitar'),
                 text: 'Quitar de Nómina(s) Actual(es)',
                 listeners: {
-                  click: function(){                
+                  click: function(){
                     Ext.MessageBox.confirm(
                       "Personal Inactivo - Quitar de Nómina(s) Actual(es)",
                       '<b>\u00BFEst\u00e1 seguro quitar a todo el personal inactivo de la nómina actual?</b><br> ',
                       function(btn,text){
-                        if(btn == 'yes'){                          
+                        if(btn == 'yes'){
                           var id_nomina=me.getCmp('id_nomina').getValue().join(',');
-                          var id_periodo=me.getCmp('id_periodo').getValue();                     
-                                  
+                          var id_periodo=me.getCmp('id_periodo').getValue();
+
                           me.getCmp('btnPersona').setDisabled(true);
                           me.getCmp('btnConcepto').setDisabled(true);
                           me.getCmp('btnCerrarPeriodo').setDisabled(true);
                           me.getCmp('btnContabilizar').setDisabled(true);
-                          
+
                           Ext.Ajax.request({
                             method: 'POST',
                             url:'module/nomina/',
@@ -1152,7 +1152,7 @@ siga.define('nomina', {
                               id_nomina: id_nomina
                             },
                             success:function(request){
-                              var result=Ext.JSON.decode(request.responseText);                                    
+                              var result=Ext.JSON.decode(request.responseText);
                               Ext.MessageBox.alert("Personal Inactivo - Quitar Nómina Actual",result["message"]);
                               me.onRecargar();
                             },
@@ -1201,17 +1201,17 @@ siga.define('nomina', {
         iconAlign: 'top',
         tooltip: 'Concepto',
         menu: [
-          {                                    
+          {
             text: 'Agregar',
             listeners: {
               click: function(){
-                if(!me.onNominaSeleccionada())       
+                if(!me.onNominaSeleccionada())
                   return;
-                
-                var ids=[];                
+
+                var ids=[];
                 for(var i=0;i<me.internal.data.concepto.length;i++)
                   ids[i]=me.internal.data.concepto[i]["id_concepto"];
-                
+
                 var selector=Ext.create("siga.windowSelect", {
                   internal: {
                     parent: {
@@ -1237,7 +1237,7 @@ siga.define('nomina', {
                       setValue: function(id_concepto){
                         var id_nomina=me.getCmp('id_nomina').getValue().join(",");
                         var id_periodo=me.getCmp('id_periodo').getValue();
-                        
+
                         var resp=Ext.Ajax.request({
                           async: false,
                           url: 'module/nomina_concepto_periodo/',
@@ -1248,9 +1248,9 @@ siga.define('nomina', {
                             id_concepto: id_concepto
                           }
                         });
-                        if(resp.statusText=="OK"){                    
+                        if(resp.statusText=="OK"){
                           me.onRecargar();
-                        }                    
+                        }
                         return true;
                       }
                     }
@@ -1266,11 +1266,11 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 if(me.internal.columnaSeleccionada==null)
-                  return;                
+                  return;
                 var id_nomina=me.getCmp('id_nomina').getValue().join(",");
                 var id_periodo=me.getCmp('id_periodo').getValue();
                 var id_concepto=me.internal.columnaSeleccionada.dataIndex;
-                
+
                 var resp=Ext.Ajax.request({
                   async: false,
                   url: 'module/nomina_concepto_periodo/',
@@ -1281,7 +1281,7 @@ siga.define('nomina', {
                     id_concepto: id_concepto
                   }
                 });
-                if(resp.statusText=="OK"){                    
+                if(resp.statusText=="OK"){
                   me.onRecargar();
                 }
               }
@@ -1296,7 +1296,7 @@ siga.define('nomina', {
             }
           }
         ]
-      },  
+      },
       {
         xtype: 'button',
         id: me._('btnRecargar'),
@@ -1375,14 +1375,14 @@ siga.define('nomina', {
             click: function(){
               //me.setMessage("");
               me.onContabilizar();
-            }        
+            }
         }*/
         menu: [
           {
             id: me._('btnContabilizarTodo'),
             text: 'Contabilizar Todo',
             listeners: {
-              click: function(){                
+              click: function(){
                 me.onContabilizar("");
               }
             }
@@ -1391,7 +1391,7 @@ siga.define('nomina', {
             id: me._('btnContabilizarSinAP'),
             text: 'Contabilizar Sin Aportes Patronales',
             listeners: {
-              click: function(){                
+              click: function(){
                 me.onContabilizar("!AP");
               }
             }
@@ -1400,7 +1400,7 @@ siga.define('nomina', {
             id: me._('btnContabilizarAP'),
             text: 'Contabilizar Aportes Patronales',
             listeners: {
-              click: function(){                
+              click: function(){
                 me.onContabilizar("AP");
               }
             }
@@ -1442,10 +1442,10 @@ siga.define('nomina', {
           reporte: ""
         },
         menu: [
-          {                                    
+          {
             text: 'Nómina',
             listeners: {
-              click: function(){                
+              click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_xls_v2";
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Nómina");
@@ -1453,7 +1453,7 @@ siga.define('nomina', {
               }
             }
           },
-          {                                    
+          {
             text: 'Recibos de Pago',
             listeners: {
               click: function(){
@@ -1464,7 +1464,7 @@ siga.define('nomina', {
               }
             }
           },
-          /*{                                    
+          /*{
             text: 'Constancias de Trabajo',
             listeners: {
               click: function(){
@@ -1522,7 +1522,7 @@ siga.define('nomina', {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_banco_xls_formato_c";
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
-                me.internal.ventanaVisualizar.setTitle("Visualizar - TXT Banco (Formato C - patria)");                
+                me.internal.ventanaVisualizar.setTitle("Visualizar - TXT Banco (Formato C - patria)");
                 me.internal.ventanaVisualizar.show();
               }
             }
@@ -1532,7 +1532,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_resumen_presupuestario_contable";
-                me.internal.ventanaVisualizar.setInternal({itemSelection: 1});  
+                me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Resumen Presupuestario/Contable");
                 me.internal.ventanaVisualizar.show();
               }
@@ -1543,7 +1543,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_aportes";
-                me.internal.ventanaVisualizar.setInternal({itemSelection: null});             
+                me.internal.ventanaVisualizar.setInternal({itemSelection: null});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Resumen de Deducciones y Aportes Patronales");
                 me.internal.ventanaVisualizar.show();
               }
@@ -1558,19 +1558,19 @@ siga.define('nomina', {
                   Ext.Msg.alert(me.title,"La nómina no se encuentra contabilizada.");
                   return;
                 }
-                
+
                 window.open("report/comprobante.php?id="+me.internal.contabilizado+(me.internal.contabilizado_ap?","+me.internal.contabilizado_ap:""));
               }
             }
           },
-          
+
         ]
       },
     ];
     //FIN Barra de herramientas
-    
-    
-    me.internal.items=[      
+
+
+    me.internal.items=[
       {
         xtype: 'gridpanel',
         id: me._('gridList'),
@@ -1595,7 +1595,7 @@ siga.define('nomina', {
           ptype: 'cellediting',
           clicksToEdit: 2,
           listeners: {
-            edit: function(editor, e){              
+            edit: function(editor, e){
               if(e.value*1.0==e.originalValue*1.0)
                 return;
               e.record.commit();
@@ -1610,7 +1610,7 @@ siga.define('nomina', {
                   data: Ext.JSON.encode([{id_ficha: e.record.get("id_ficha"), id_concepto: e.field, valor: e.value}])
                 }
               });
-              
+
               if(_tmp.statusText=="OK"){
                 var data=Ext.JSON.decode(_tmp.responseText);
                 me.onActualizarFilaFicha(e.record,data[0]);
@@ -1646,7 +1646,7 @@ siga.define('nomina', {
                     data: Ext.JSON.encode([{id_ficha: e.record.get("id_ficha"), id_concepto: e.field, valor: e.value}])
                   }
                 });
-                
+
                 if(_tmp.statusText=="OK"){
                   var data=Ext.JSON.decode(_tmp.responseText);
                   me.onActualizarFilaFicha(e.record,data[0]);
@@ -1661,13 +1661,13 @@ siga.define('nomina', {
         height: 380,
         columns: [],
         viewConfig:{
-          getRowClass: function(rec, rowIdx, params, store) {                    
+          getRowClass: function(rec, rowIdx, params, store) {
             if(rec.get('activo')=='f' || rec.get('activo_otra_nomina'))
               return 'fila-inactiva';
             return 'fila-activa';
           }
         },
-        listeners: {          
+        listeners: {
           afterrender:function(){
             var me=this;
             var view = this.getView();
@@ -1676,7 +1676,7 @@ siga.define('nomina', {
               //Ext.getDom(view.lockedView.id).scrollTop = Ext.getDom(view.normalView.id).scrollTop;
               view.lockedView.el.dom.scrollTop=view.normalView.el.dom.scrollTop;
             });
-            
+
             view.lockedView.getEl().on("scroll", function (e, t) {
               //Ext.getDom(view.normalView.id).scrollTop = Ext.getDom(view.lockedView.id).scrollTop;
               view.normalView.el.dom.scrollTop=view.lockedView.el.dom.scrollTop;
@@ -1684,12 +1684,12 @@ siga.define('nomina', {
           },
 
           columnmove: function(ct, column, fromIdx, toIdx, eOpts ){
-            
-            
+
+
             //console.log(fromIdx+" -> "+toIdx);
-            
-            
-            
+
+
+
           },/*
           afterrender:function(){
             var me=this;
@@ -1699,7 +1699,7 @@ siga.define('nomina', {
               //Ext.getDom(view.lockedView.id).scrollTop = Ext.getDom(view.normalView.id).scrollTop;
               view.lockedView.el.dom.scrollTop=view.normalView.el.dom.scrollTop;
             });
-            
+
             view.lockedView.getEl().on("scroll", function (e, t) {
               //Ext.getDom(view.normalView.id).scrollTop = Ext.getDom(view.lockedView.id).scrollTop;
               view.normalView.el.dom.scrollTop=view.lockedView.el.dom.scrollTop;
@@ -1711,7 +1711,7 @@ siga.define('nomina', {
             if(me.internal.cerrado==true){
               return;
             }
-            
+
             var columna=dataview.getGridColumns();
             var id_concepto=columna[cellIndex].dataIndex;
             //verificar si la columna corresponde a un concepto, si es un numero es concepto
@@ -1721,8 +1721,8 @@ siga.define('nomina', {
             //var id_nomina=me.getCmp('id_nomina').getValue();
             var id_periodo   = me.getCmp('id_periodo').getValue();
             var id_nomina    = record.get('id_nomina');
-            var id_ficha     = record.get('id_ficha');            
-            var menu_celda = Ext.create('Ext.menu.Menu', {              
+            var id_ficha     = record.get('id_ficha');
+            var menu_celda = Ext.create('Ext.menu.Menu', {
               items: [
                 {
                   text: 'Agregar',
@@ -1738,10 +1738,10 @@ siga.define('nomina', {
                         id_concepto: id_concepto
                       }
                     });
-                    
+
                     if(_tmp.statusText=="OK"){
-                      var data=Ext.JSON.decode(_tmp.responseText);                      
-                      me.onActualizarFilaFicha(record,data[0]); 
+                      var data=Ext.JSON.decode(_tmp.responseText);
+                      me.onActualizarFilaFicha(record,data[0]);
                     }
                   }
                 },
@@ -1759,10 +1759,31 @@ siga.define('nomina', {
                         id_concepto: id_concepto
                       }
                     });
-                    
+
                     if(_tmp.statusText=="OK"){
-                      var data=Ext.JSON.decode(_tmp.responseText);                      
-                      me.onActualizarFilaFicha(record,data[0]); 
+                      var data=Ext.JSON.decode(_tmp.responseText);
+                      me.onActualizarFilaFicha(record,data[0]);
+                    }
+                  }
+                },
+                {
+                  text: 'Agregar (Valor Según Ficha)',
+                  handler: function() {
+                    _tmp=Ext.Ajax.request({
+                      async: false,
+                      url:"module/nomina/",
+                      params: {
+                        action: 'onAddValorFicha',
+                        id_nomina: id_nomina,
+                        id_periodo: id_periodo,
+                        id_ficha: Ext.JSON.encode([id_ficha]),
+                        id_concepto: id_concepto
+                      }
+                    });
+
+                    if(_tmp.statusText=="OK"){
+                      var data=Ext.JSON.decode(_tmp.responseText);
+                      me.onActualizarFilaFicha(record,data[0]);
                     }
                   }
                 },
@@ -1781,8 +1802,8 @@ siga.define('nomina', {
                       }
                     });
                     if(_tmp.statusText=="OK"){
-                      var data=Ext.JSON.decode(_tmp.responseText);                      
-                      me.onActualizarFilaFicha(record,data[0]); 
+                      var data=Ext.JSON.decode(_tmp.responseText);
+                      me.onActualizarFilaFicha(record,data[0]);
                     }
                   }
                 },
@@ -1804,7 +1825,7 @@ siga.define('nomina', {
                         id_concepto: id_concepto
                       }
                     });
-                    
+
                     if(_tmp.statusText=="OK"){
                       var data=Ext.JSON.decode(_tmp.responseText);
                       me.getCmp('gridList').getStore().load();
@@ -1826,7 +1847,28 @@ siga.define('nomina', {
                         id_concepto: id_concepto
                       }
                     });
-                    
+
+                    if(_tmp.statusText=="OK"){
+                      var data=Ext.JSON.decode(_tmp.responseText);
+                      me.getCmp('gridList').getStore().load();
+                    }
+                  },
+                  {
+                  text: 'Agregar a Todos (Valor Según Ficha)',
+                  handler: function() {
+                    _tmp=Ext.Ajax.request({
+                      async: false,
+                      url:"module/nomina/",
+                      params: {
+                        action: 'onAddValorFicha',
+                        id_nomina: id_nomina,
+                        id_periodo: id_periodo,
+                        //id_ficha: Ext.JSON.encode(['*']),
+                        id_ficha: Ext.JSON.encode((me.filtro_ficha_id && me.filtro_ficha_id.length>0)?me.filtro_ficha_id:['*']),
+                        id_concepto: id_concepto
+                      }
+                    });
+
                     if(_tmp.statusText=="OK"){
                       var data=Ext.JSON.decode(_tmp.responseText);
                       me.getCmp('gridList').getStore().load();
@@ -1854,22 +1896,22 @@ siga.define('nomina', {
                     }
                   }
                 },
-                
+
               ]
             });
-            menu_celda.show();  //e.getXY()   
-            //console.log("XY",e.getXY());       
-            //console.log("Ext.get(td.id): ",Ext.get(td));       
+            menu_celda.show();  //e.getXY()
+            //console.log("XY",e.getXY());
+            //console.log("Ext.get(td.id): ",Ext.get(td));
             //menu_celda.showAt(Ext.get(td.id).getX(), Ext.get(td.id).getY()-menu_celda.getHeight());
             menu_celda.showAt(Ext.get(td).getX(), Ext.get(td).getY()-menu_celda.getHeight());
           }
         }
       }
     ];
-    
-    
-    
-    
+
+
+
+
     me.dockedItems=[
       {
         xtype: 'toolbar',
@@ -1907,7 +1949,7 @@ siga.define('nomina', {
             //labelAlign: 'top',
             //labelSeparator: '',
             labelStyle: 'font-weight: 500;font-size:9px;',
-            value: ''          
+            value: ''
           },
 
           {
@@ -1920,7 +1962,7 @@ siga.define('nomina', {
             //labelAlign: 'top',
             //labelSeparator: '',
             labelStyle: 'font-weight: 500;font-size:9px;',
-            value: ''          
+            value: ''
           },
 
           {
@@ -1989,7 +2031,7 @@ siga.define('nomina', {
                   start: 0,
                   limit: 'ALL',
                   sort: '[{"property": "escala", "direction": "ASC"}]'
-                }              
+                }
               }
             },
             displayField: 'escala',
@@ -2089,7 +2131,7 @@ siga.define('nomina', {
                 me.getCmp("filtro_busqueda_estatus").setValue("T");
                 me.onFiltroBusqueda();
               }
-            }   
+            }
           },
           {
             xtype: 'button',
@@ -2099,7 +2141,7 @@ siga.define('nomina', {
               click: function(){
                 me.onFiltroBusqueda();
               }
-            }   
+            }
           },
         ]
       },
@@ -2119,7 +2161,7 @@ siga.define('nomina', {
         style: 'margin: 0px; padding: 0px;',
         flex: 1,
         dock: 'bottom',
-        items: [ 
+        items: [
           {
             xtype: 'label',
             id: me._('lblNominaActual'),
@@ -2131,9 +2173,9 @@ siga.define('nomina', {
             flex: 1
           }
         ]
-      },      
+      },
     ];
-    
+
     me.items=[
       {
         xtype: 'form',
@@ -2150,24 +2192,24 @@ siga.define('nomina', {
           hideLabel: false,
           width: 200
         },
-        items: me.internal.items                    
+        items: me.internal.items
       }
     ];
-    
-    
-    
+
+
+
     me.callParent(arguments);
     //me.setAccess(define['modulo_nomina/hoja_trabajo->access']);
-    
-    
-    
-    
-    
+
+
+
+
+
   },
-  
+
   onLoad_MenuPersonaCambiarCargo: function(){
     var me=this;
-    
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina/',
@@ -2182,7 +2224,7 @@ siga.define('nomina', {
         if(!request.responseText) return;
         var result=Ext.JSON.decode(request.responseText);
         result=result["result"];
-        
+
         me.getCmp('filtro_busqueda_id_cargo').getStore().setData(result);
 
         for(var i=0;i<result.length;i++){
@@ -2190,7 +2232,7 @@ siga.define('nomina', {
             text: result[i]["denominacion"],
             internal:{id: result[i]["id"]},
             listeners: {
-              click: function(el){            
+              click: function(el){
                 var seleccion=me.getCmp("gridList").getSelection();
                 if(seleccion.length==0){
                   Ext.MessageBox.alert("Persona - Cambiar Cargo","<b>Debe seleccionar la persona a la cual va a realizar el cambio.</b>");
@@ -2200,22 +2242,22 @@ siga.define('nomina', {
                   Ext.MessageBox.alert("Persona - Cambiar Cargo","<b>Debe seleccionar solo una persona del listado.</b>");
                   return;
                 }
-                
+
                 Ext.MessageBox.confirm(
                   "Persona - Cambiar Cargo",
                   '<b>\u00BFEst\u00e1 seguro cambiar a la persona: "'+seleccion[0].data["nacionalidad"]+seleccion[0].data["cedula"]+" "+seleccion[0].data["nombre_apellido"]+'" para el cargo: "'+el.text+'"?</b><br> ',
                   function(btn,text){
                     if(btn == 'yes'){
                       var id_ficha=seleccion[0].data["id_ficha"];
-                      var id_periodo=me.getCmp("id_periodo").getValue();                      
+                      var id_periodo=me.getCmp("id_periodo").getValue();
                       var id_cargo=el.internal.id;
-                      
-    
+
+
                       me.getCmp('btnPersona').setDisabled(true);
                       me.getCmp('btnConcepto').setDisabled(true);
                       me.getCmp('btnCerrarPeriodo').setDisabled(true);
                       me.getCmp('btnContabilizar').setDisabled(true);
-                      
+
                       Ext.Ajax.request({
                         method: 'POST',
                         url:'module/nomina/',
@@ -2226,7 +2268,7 @@ siga.define('nomina', {
                           id_cargo: id_cargo
                         },
                         success:function(request){
-                          var result=Ext.JSON.decode(request.responseText);                                    
+                          var result=Ext.JSON.decode(request.responseText);
                           Ext.MessageBox.alert("Persona - Cambiar Cargo",result["message"]);
                           me.onRecargar();
                         },
@@ -2236,25 +2278,25 @@ siga.define('nomina', {
                       });
                     }
                   });
-                
+
               }
             }
           });
         }
-        
+
       },
       failure:function(request){
         var result=Ext.JSON.decode(request.responseText);
       }
     });
-    
-    
-    
+
+
+
   },
-  
+
   onLoad_MenuPersonaCambiarEP: function(){
     var me=this;
-    
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/estructura_presupuestaria/',
@@ -2277,7 +2319,7 @@ siga.define('nomina', {
             tooltip: "<b>Acción Centralizada:</b> "+result[i]["denominacion_centralizada"]+"<br><b>Específica:</b> "+result[i]["denominacion_especifica"]+"<br><b>Sub-Específica:</b> "+result[i]["denominacion_subespecifica"],
             internal:{id: result[i]["id_accion_subespecifica"]},
             listeners: {
-              click: function(el){            
+              click: function(el){
                 var seleccion=me.getCmp("gridList").getSelection();
                 if(seleccion.length==0){
                   Ext.MessageBox.alert("Persona - Cambiar Estructura Presupuestaria","<b>Debe seleccionar la persona a la cual va a realizar el cambio.</b>");
@@ -2287,21 +2329,21 @@ siga.define('nomina', {
                   Ext.MessageBox.alert("Persona - Cambiar Estructura Presupuestaria","<b>Debe seleccionar solo una persona del listado.</b>");
                   return;
                 }
-                
+
                 Ext.MessageBox.confirm(
                   "Persona - Cambiar Estructura Presupuestaria",
                   '<b>\u00BFEst\u00e1 seguro cambiar a la persona: "'+seleccion[0].data["nacionalidad"]+seleccion[0].data["cedula"]+" "+seleccion[0].data["nombre_apellido"]+'" para la Estructura Presupuestaria: "'+el.text+'"?</b><br> ',
                   function(btn,text){
                     if(btn == 'yes'){
                       var id_ficha=seleccion[0].data["id_ficha"];
-                      var id_periodo=me.getCmp("id_periodo").getValue();                      
+                      var id_periodo=me.getCmp("id_periodo").getValue();
                       var id_accion_subespecifica=el.internal.id;
-    
+
                       me.getCmp('btnPersona').setDisabled(true);
                       me.getCmp('btnConcepto').setDisabled(true);
                       me.getCmp('btnCerrarPeriodo').setDisabled(true);
                       me.getCmp('btnContabilizar').setDisabled(true);
-                      
+
                       Ext.Ajax.request({
                         method: 'POST',
                         url:'module/nomina/',
@@ -2312,7 +2354,7 @@ siga.define('nomina', {
                           id_accion_subespecifica: id_accion_subespecifica
                         },
                         success:function(request){
-                          var result=Ext.JSON.decode(request.responseText);                                    
+                          var result=Ext.JSON.decode(request.responseText);
                           Ext.MessageBox.alert("Persona - Cambiar Estructura Presupuestaria",result["message"]);
                           me.onRecargar();
                         },
@@ -2320,10 +2362,10 @@ siga.define('nomina', {
                           var result=Ext.JSON.decode(request.responseText);
                         }
                       });
-                      
+
                     }
                   });
-                
+
               }
             }
           };
@@ -2343,17 +2385,17 @@ siga.define('nomina', {
           }
 
         }
-        
+
       },
       failure:function(request){
         var result=Ext.JSON.decode(request.responseText);
       }
     });
-    
-    
-    
+
+
+
   },
-  
+
   onUpdate_MenuPersonaCambiarNomina: function(){
     var me=this;
     var nomina=me.getCmp("id_nomina").getStore().getData().items;
@@ -2363,7 +2405,7 @@ siga.define('nomina', {
 
     for(var i=0;i<nomina.length;i++){
       //if(me.getCmp("id_nomina").getValue().join(",")==nomina[i].data["id"]) continue; //no mostrar la misma nómina seleccionada
-      
+
       if($.inArray(nomina[i].data["id"],me.getCmp("id_nomina").getValue())>=0){
         me.getCmp("btnPersonaAgregar").menu.add({
           text: nomina[i].data["codigo_nomina"],
@@ -2373,10 +2415,10 @@ siga.define('nomina', {
             click: function(el){
               if(!me.onNominaSeleccionada())
                 return;
-              
+
               var id_nomina=el.internal.id;
               var id_periodo=me.getCmp('id_periodo').getValue();
-              
+
               var selector=Ext.create("siga.windowSelect", {
                 internal:{
                   parent: {
@@ -2410,12 +2452,12 @@ siga.define('nomina', {
                           id_nomina: id_nomina,
                           id_periodo: id_periodo,
                           id_ficha: id_ficha
-                          
+
                         }
                       });
-                      if(resp.statusText=="OK"){                    
+                      if(resp.statusText=="OK"){
                         me.onRecargar();
-                      }                    
+                      }
                       return true;
                     }
                   }
@@ -2425,14 +2467,14 @@ siga.define('nomina', {
               selector.search();
             }
           }
-        });        
+        });
       }
 
       me.getCmp("btnPersonaCambiarNomina").menu.add({
         text: nomina[i].data["codigo_nomina"],
         internal:{id: nomina[i].data["id"]},
         listeners: {
-          click: function(el){            
+          click: function(el){
             var seleccion=me.getCmp("gridList").getSelection();
             if(seleccion.length==0){
               Ext.MessageBox.alert("Persona - Cambiar Nómina","<b>Debe seleccionar la persona a la cual va a realizar el cambio.</b>");
@@ -2445,8 +2487,8 @@ siga.define('nomina', {
             if(seleccion[0].data["id_nomina"]==el.internal.id){
               Ext.MessageBox.alert('Persona - Cambiar Nómina','<b>La persona ya se encuentra en la nómina "'+el.text+'".</b>');
               return;
-            } 
-            
+            }
+
             Ext.MessageBox.confirm(
               "Persona - Cambiar Nómina",
               '<b>\u00BFEst\u00e1 seguro cambiar a la persona: "'+seleccion[0].data["nacionalidad"]+seleccion[0].data["cedula"]+" "+seleccion[0].data["nombre_apellido"]+'" para la nomina: "'+el.text+'"?</b><br> ',
@@ -2462,7 +2504,7 @@ siga.define('nomina', {
                   me.getCmp('btnConcepto').setDisabled(true);
                   me.getCmp('btnCerrarPeriodo').setDisabled(true);
                   me.getCmp('btnContabilizar').setDisabled(true);
-                  
+
                   Ext.Ajax.request({
                     method: 'POST',
                     url:'module/nomina/',
@@ -2474,7 +2516,7 @@ siga.define('nomina', {
                       id_nomina_anterior: id_nomina_anterior
                     },
                     success:function(request){
-                      var result=Ext.JSON.decode(request.responseText);                                    
+                      var result=Ext.JSON.decode(request.responseText);
                       Ext.MessageBox.alert("Persona - Cambiar Nómina",result["message"]);
                       me.onRecargar();
                     },
@@ -2484,7 +2526,7 @@ siga.define('nomina', {
                   });
                 }
               });
-            
+
           }
         }
       });
@@ -2500,16 +2542,16 @@ siga.define('nomina', {
               '<b>\u00BFEst\u00e1 seguro de cambiar a todo el personal inactivo para la nomina: "'+el.text+'"?</b><br> ',
               //'<b>\u00BFEst\u00e1 seguro quitar a todo el personal inactivo de la nómina actual?</b><br> ',
               function(btn,text){
-                if(btn == 'yes'){                          
-                  var id_periodo=me.getCmp('id_periodo').getValue();   
+                if(btn == 'yes'){
+                  var id_periodo=me.getCmp('id_periodo').getValue();
                   var id_nomina_anterior=me.getCmp("id_nomina").getValue().join(",");
-                  var id_nomina=el.internal.id;                  
-                          
+                  var id_nomina=el.internal.id;
+
                   me.getCmp('btnPersona').setDisabled(true);
                   me.getCmp('btnConcepto').setDisabled(true);
                   me.getCmp('btnCerrarPeriodo').setDisabled(true);
                   me.getCmp('btnContabilizar').setDisabled(true);
-                  
+
                   Ext.Ajax.request({
                     method: 'POST',
                     url:'module/nomina/',
@@ -2520,7 +2562,7 @@ siga.define('nomina', {
                       id_nomina_anterior: id_nomina_anterior
                     },
                     success:function(request){
-                      var result=Ext.JSON.decode(request.responseText);                                    
+                      var result=Ext.JSON.decode(request.responseText);
                       Ext.MessageBox.alert("Personal Inactivo - Cambiar Nómina",result["message"]);
                       me.onRecargar();
                     },
@@ -2536,20 +2578,20 @@ siga.define('nomina', {
       });
     }
   },
-  
-  
+
+
   init: function(){
     var me=this;
     me.onLoad_MenuPersonaCambiarCargo();
     me.onLoad_MenuPersonaCambiarEP();
-    me.maximize();    
+    me.maximize();
   },
-  
+
   setAccess: function(_access){
-    var me=this;        
-    
-  },   
-  
+    var me=this;
+
+  },
+
   //_: function(id){
   //  var me=this;
   //  return me.id+"-"+id;
@@ -2559,17 +2601,17 @@ siga.define('nomina', {
   //  var me=this;
   //  return Ext.getCmp(me._(String(id)));
   //},
-  
+
   //
   //setMessage: function(_text,_color,_time){
   //  var me=this;
-  //  
+  //
   //  window.clearTimeout(me.internal.messageTimeOutHandler);
-  //  
+  //
   //  if(!_text){
   //    me.getCmp('message').setText('&nbsp;',false);
   //    return;
-  //  }        
+  //  }
   //  if(!_color)
   //    _color="black";
   //  me.getCmp('message').setText("<div style='color: "+_color+";'>"+_text+"</div>",false);
@@ -2579,7 +2621,7 @@ siga.define('nomina', {
   //    me.setMessage();
   //    },_time);
   //},
-  
+
   onNominaSeleccionada: function(){
     var me=this;
     if(!me.getCmp('id_periodo').getValue()) {
@@ -2588,39 +2630,39 @@ siga.define('nomina', {
     }
     return true;
   },
-  
+
   onRecargar: function(){
     var me=this;
     //me.getCmp('gridList').store.load();
     me.onCargarNomina();
   },
-  
+
   onActualizarFilaFicha: function(registro, data){
     var me=this;
     var columna=me.getCmp('gridList').headerCt.getGridColumns();
     //si la data devuelta no corresponde al registro, salir
     if(registro.get("id_ficha")!=data["id_ficha"])
       return;
-    
+
     //limpiar columnas numericas, (datos calculados)
     for(var i=0;i<columna.length;i++){
       if(columna[i].dataIndex=="n" || columna[i].dataIndex=="persona") continue;
-      registro.data[columna[i].dataIndex]="";    
+      registro.data[columna[i].dataIndex]="";
     }
-    
+
     //colocar la información actualizada
     for(var i=0;i<data["concepto"].length;i++){
       registro.data[data["concepto"][i]["id"]]=data["concepto"][i]["valor_final"];
-      if(data["concepto"][i]["tipo"]=="AP") 
+      if(data["concepto"][i]["tipo"]=="AP")
         registro.data[data["concepto"][i]["id"]+"_ap"]=data["concepto"][i]["valor_final_ap"];
     }
-    
+
     //colocar los totales
-    registro.data["total_asignacion"]=data["total_asignacion"];    
-    registro.data["total_deduccion"]=data["total_deduccion"];    
-    registro.data["total_neto"]=data["total_neto"];    
+    registro.data["total_asignacion"]=data["total_asignacion"];
+    registro.data["total_deduccion"]=data["total_deduccion"];
+    registro.data["total_neto"]=data["total_neto"];
     registro.data["total_ap"]=data["total_ap"];
-    
+
     //actualizar la vista
     //me.getCmp('gridList').getView().refresh();
     var index=me.getCmp('gridList').getStore().indexOf(registro);
@@ -2628,24 +2670,24 @@ siga.define('nomina', {
     me.getCmp('gridList').getView().refreshNode(index);
     //registro.set('block',false);
   },
-  
+
   /*
   configurarColumnas: function(){
     var me=this;
-    
-    
+
+
     var style='';
     var style_tipo='';
     var texto_tipo='';
     var title='';
-    
+
     var columns=[];
     var columns_calc=[];
     var columns_asig=[];
     var columns_deduc=[];
     var columns_ap=[];
     var fields=["id_ficha","persona","total_asignacion","total_deduccion","total_neto","mensaje","total_ap"];
-    
+
     columns.push(
       {
           xtype: 'rownumberer',
@@ -2661,7 +2703,7 @@ siga.define('nomina', {
           resizable: false,
           align: "center"
       }
-    );        
+    );
     columns.push(
         {
           xtype: 'templatecolumn',
@@ -2680,22 +2722,22 @@ siga.define('nomina', {
           resizable: false
         }
     );
-    
+
     for(var i=0;i<me.internal.data.concepto.length;i++){
       style='';
       style_tipo='';
       texto_tipo='';
-      
+
       fields.push(me.internal.data.concepto[i]["id_concepto"]);
-      
+
       if(me.internal.data.concepto[i]["indefinido"]){
         style='error_formula';
         title=""+me.internal.data.concepto[i]["indefinido"]+" SE ENCUENTRA INDEFINIDA EN LA FORMULA.";
       }
-      
+
       var _editor=null;
       var _cls_formula="";
-      if(!me.internal.data.concepto[i]["es_formula"] && me.internal.cerrado==false) {            
+      if(!me.internal.data.concepto[i]["es_formula"] && me.internal.cerrado==false) {
         _editor={
           xtype: 'numberfield',
           minValue: 0,
@@ -2712,21 +2754,21 @@ siga.define('nomina', {
       else{
         _cls_formula=" formula";
       }
-      
+
       switch(me.internal.data.concepto[i]["tipo"]){
         case "A":
           texto_tipo='ASIGNACIÓN';
           texto_tipo='[A]';
-          style_tipo='formula_tipo_asignacion';   
-          break; 
+          style_tipo='formula_tipo_asignacion';
+          break;
         case "RD":
           style_tipo='formula_tipo_asignacion';
           texto_tipo='REINTEGRO DEDUCCÓN';
           texto_tipo='[RD]';
           break;
         case "D":
-          texto_tipo='DEDUCCIÓN';              
-          texto_tipo='[D]';              
+          texto_tipo='DEDUCCIÓN';
+          texto_tipo='[D]';
           style_tipo='formula_tipo_deduccion';
           break;
         case "AP":
@@ -2734,12 +2776,12 @@ siga.define('nomina', {
           texto_tipo='[AP]';
           style_tipo='formula_tipo_deduccion';
         case "RA":
-          texto_tipo='REINTEGRO ASIGNACIÓN';            
+          texto_tipo='REINTEGRO ASIGNACIÓN';
           texto_tipo='[RA]';
           style_tipo='formula_tipo_deduccion';
           break;
       }
-      
+
       var column_tmp=
         {
           xtype: 'gridcolumn',
@@ -2765,8 +2807,8 @@ siga.define('nomina', {
             }
             return suma;
           },
-          summaryRenderer: function(value, summaryData, dataIndex) {            
-            return Ext.util.Format.number(value, '0,0.00'); 
+          summaryRenderer: function(value, summaryData, dataIndex) {
+            return Ext.util.Format.number(value, '0,0.00');
           },
           renderer: function(value) {
             return Ext.util.Format.number(value, '0,0.00');
@@ -2790,9 +2832,9 @@ siga.define('nomina', {
             }
           }
         };
-      
+
       switch(me.internal.data.concepto[i]["tipo"]){
-        case "A":        
+        case "A":
         case "RD":
           columns_asig.push(column_tmp);
           break;
@@ -2822,8 +2864,8 @@ siga.define('nomina', {
               }
               return suma;
             },
-            summaryRenderer: function(value, summaryData, dataIndex) {            
-              return Ext.util.Format.number(value, '0,0.00'); 
+            summaryRenderer: function(value, summaryData, dataIndex) {
+              return Ext.util.Format.number(value, '0,0.00');
             },
             renderer: function(value) {
               return Ext.util.Format.number(value, '0,0.00');
@@ -2831,17 +2873,17 @@ siga.define('nomina', {
           });
         case "D":
         case "RA":
-          columns_deduc.push(column_tmp);          
+          columns_deduc.push(column_tmp);
           break;
         default:
           columns_calc.push(column_tmp);
       }
     }
-    
-    if(columns_calc.length>0) 
+
+    if(columns_calc.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group_none", menuDisabled: true, text: "", sortable: false, draggable: false, sealed: true, columns: columns_calc});
-    
-     
+
+
     if(columns_asig.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", style: 'overflow: hidden;', menuDisabled: true, text: columns_asig.length>1?"ASIGNACIONES":"ASIG.", sortable: false, draggable: false, sealed: true, columns: columns_asig});
 
@@ -2863,14 +2905,14 @@ siga.define('nomina', {
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
+
     if(columns_deduc.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", menuDisabled: true, text: columns_deduc.length>1?"DEDUCCIONES":"DEDUC.", style: 'font-size: 9px; font-weight: bold;', sortable: false, draggable: false, sealed: true, columns: columns_deduc});
 
@@ -2891,14 +2933,14 @@ siga.define('nomina', {
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
+
     columns.push(
       {
         xtype: 'gridcolumn',
@@ -2916,17 +2958,17 @@ siga.define('nomina', {
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
+
     if(columns_ap.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", style: 'overflow: hidden;', menuDisabled: true, disabled: true, text: columns_ap.length>2?"APORTE PATRONAL":"AP", sortable: false, draggable: false, sealed: true, columns: columns_ap});
-    
+
     columns.push(
       {
         xtype: 'gridcolumn',
@@ -2944,44 +2986,44 @@ siga.define('nomina', {
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
-    
+
+
     return {fields: fields, columns: columns};
-    
+
   },
   */
-  
+
   /*
   onCargarNomina: function(){
     var me=this;
     var id_periodo=me.getCmp('id_periodo').getValue();
     var id_nomina=me.getCmp('id_nomina').getValue();
-    
-    if(!me.onNominaSeleccionada())       
+
+    if(!me.onNominaSeleccionada())
       return;
-    
+
     me.getCmp('btnPersona').setDisabled(true);
     me.getCmp('btnConcepto').setDisabled(true);
     me.getCmp('btnCerrarPeriodo').setDisabled(true);
     me.getCmp('btnNotas').setDisabled(true);
     me.getCmp('btnContabilizar').setDisabled(true);
-    
+
     me.internal.columnaSeleccionada=null;
     me.internal.cerrado=null;
     me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Nómina:</b> "+me.getCmp('id_nomina').getRawValue()+". <b>Periodo:</b> "+me.getCmp('id_periodo').getRawValue()+".</div>",false);
-    
-    
+
+
     me.getCmp('gridList').getStore().removeAll(true);
     me.getCmp('gridList').reconfigure();
-    
-    
+
+
 
     Ext.Ajax.request({
       method: 'POST',
@@ -2993,33 +3035,33 @@ siga.define('nomina', {
       },
       success:function(request){
         var result=Ext.JSON.decode(request.responseText);
-        
+
         me.internal.cerrado=result["cerrado"]=='t'?true:false;
         me.internal.contabilizado=result["contabilizado"];
         me.internal.data.concepto=result["concepto"];
         me.internal.data.ficha=result["ficha"];
-        
+
         me.getCmp('btnPersona').setDisabled(me.internal.cerrado);
         me.getCmp('btnConcepto').setDisabled(me.internal.cerrado);
         me.getCmp('btnCerrarPeriodo').setDisabled(me.internal.cerrado);
         me.getCmp('btnNotas').setDisabled(me.internal.cerrado);
         me.getCmp('btnContabilizar').setDisabled(me.internal.contabilizado==null?false:true);
 
-        
+
         var config=me.configurarColumnas();
-        
+
         var _data=[];
         for(var i=0;i<result["ficha"].length;i++){
           _data[i]={};
           _data[i]["mensaje"]="";
           _data[i]["id_ficha"]=result["ficha"][i]["id"];
           _data[i]["persona"]=result["ficha"][i]["nombre_apellido"]+" <span class='nomina_cargo'>("+result["ficha"][i]["cargo"]+")</span>";
-          
+
           for(var j=0;j<result["ficha"][i]["concepto"].length;j++){
             _data[i][result["ficha"][i]["concepto"][j]["id"]]=result["ficha"][i]["concepto"][j]["valor_final"];
             if(result["ficha"][i]["concepto"][j]["tipo"]=="AP")
               _data[i][result["ficha"][i]["concepto"][j]["id"]+"_ap"]=result["ficha"][i]["concepto"][j]["valor_final_ap"];
-              
+
             //verificar si el concepto existe en config.fields
             var encontro=false;
             for(var k=0;k<config.fields.length;k++){
@@ -3031,12 +3073,12 @@ siga.define('nomina', {
             }
             if(!encontro){
               _data[i]["mensaje"]+=result["ficha"][i]["concepto"][j]["codigo"]+" "+result["ficha"][i]["concepto"][j]["concepto"]+".<br>";
-            }            
+            }
           }
           if(_data[i]["mensaje"]){
             _data[i]["mensaje"]="<b>La persona tiene los siguientes conceptos, lo cuales no se encuentran asociados a la nómina actual:<br></b><p style=\\'font-size: 10px; padding-left: 20px;\\'>"+_data[i]["mensaje"]+"</p>";
           }
-          
+
           _data[i]["total_asignacion"]=result["ficha"][i]["total_asignacion"];
           _data[i]["total_deduccion"]=result["ficha"][i]["total_deduccion"];
           _data[i]["total_neto"]=result["ficha"][i]["total_neto"];
@@ -3047,33 +3089,33 @@ siga.define('nomina', {
           fields: config.fields,
           data: _data
         },config.columns);
-        
+
         me.getCmp('pagingList').bindStore(me.getCmp('gridList').getStore());
 
-        
+
       },
       failure:function(request){
-        var result=Ext.JSON.decode(request.responseText); 
+        var result=Ext.JSON.decode(request.responseText);
       }
     });
   },*/
-  
+
     configurarColumnas: function(){
     var me=this;
-    
-    
+
+
     var style='';
     var style_tipo='';
     var texto_tipo='';
     var title='';
-    
+
     var columns=[];
     var columns_calc=[];
     var columns_asig=[];
     var columns_deduc=[];
     var columns_ap=[];
     var fields=["id_ficha","cedula","persona","total_asignacion","total_deduccion","total_neto","mensaje","total_ap"];
-    
+
     columns.push(
       {
           xtype: 'rownumberer',
@@ -3089,7 +3131,7 @@ siga.define('nomina', {
           resizable: false,
           align: "center"
       }
-    ); 
+    );
 columns.push(
         {
           xtype: 'templatecolumn',
@@ -3106,7 +3148,7 @@ columns.push(
           draggable: false,
           resizable: false
         }
-    );       
+    );
     columns.push(
         {
           xtype: 'templatecolumn',
@@ -3141,7 +3183,7 @@ columns.push(
           draggable: false,
           resizable: false
         }
-    );    
+    );
 
     columns.push(
         {
@@ -3182,22 +3224,22 @@ columns.push(
           resizable: false
         }
     );
-    
+
     for(var i=0;i<me.internal.data.concepto.length;i++){
       style='';
       style_tipo='';
       texto_tipo='';
-      
+
       fields.push(me.internal.data.concepto[i]["id_concepto"]);
-      
+
       if(me.internal.data.concepto[i]["indefinido"]){
         style='error_formula';
         title=""+me.internal.data.concepto[i]["indefinido"]+" SE ENCUENTRA INDEFINIDA EN LA FORMULA.";
       }
-      
+
       var _editor=null;
       var _cls_formula="";
-      if(!me.internal.data.concepto[i]["es_formula"] && me.internal.cerrado==false) {            
+      if(!me.internal.data.concepto[i]["es_formula"] && me.internal.cerrado==false) {
         _editor={
           xtype: 'numberfield',
           minValue: 0,
@@ -3215,21 +3257,21 @@ columns.push(
       else{
         _cls_formula=" formula";
       }
-      
+
       switch(me.internal.data.concepto[i]["tipo"]){
         case "A":
           texto_tipo='ASIGNACIÓN';
           texto_tipo='[A]';
-          style_tipo='formula_tipo_asignacion';   
-          break; 
+          style_tipo='formula_tipo_asignacion';
+          break;
         case "RD":
           style_tipo='formula_tipo_asignacion';
           texto_tipo='REINTEGRO DEDUCCÓN';
           texto_tipo='[RD]';
           break;
         case "D":
-          texto_tipo='DEDUCCIÓN';              
-          texto_tipo='[D]';              
+          texto_tipo='DEDUCCIÓN';
+          texto_tipo='[D]';
           style_tipo='formula_tipo_deduccion';
           break;
         case "AP":
@@ -3237,12 +3279,12 @@ columns.push(
           texto_tipo='[AP]';
           style_tipo='formula_tipo_deduccion';
         case "RA":
-          texto_tipo='REINTEGRO ASIGNACIÓN';            
+          texto_tipo='REINTEGRO ASIGNACIÓN';
           texto_tipo='[RA]';
           style_tipo='formula_tipo_deduccion';
           break;
       }
-      
+
       var column_tmp=
         {
           xtype: 'gridcolumn',
@@ -3268,8 +3310,8 @@ columns.push(
             }
             return suma;
           },
-          summaryRenderer: function(value, summaryData, dataIndex) {            
-            return Ext.util.Format.number(value, '0,0.00'); 
+          summaryRenderer: function(value, summaryData, dataIndex) {
+            return Ext.util.Format.number(value, '0,0.00');
           },
           renderer: function(value) {
             return Ext.util.Format.number(value, '0,0.00');
@@ -3293,9 +3335,9 @@ columns.push(
             }
           }
         };
-      
+
       switch(me.internal.data.concepto[i]["tipo"]){
-        case "A":        
+        case "A":
         case "RD":
           columns_asig.push(column_tmp);
           break;
@@ -3325,8 +3367,8 @@ columns.push(
               }
               return suma;
             },
-            summaryRenderer: function(value, summaryData, dataIndex) {            
-              return Ext.util.Format.number(value, '0,0.00'); 
+            summaryRenderer: function(value, summaryData, dataIndex) {
+              return Ext.util.Format.number(value, '0,0.00');
             },
             renderer: function(value) {
               return Ext.util.Format.number(value, '0,0.00');
@@ -3334,17 +3376,17 @@ columns.push(
           });
         case "D":
         case "RA":
-          columns_deduc.push(column_tmp);          
+          columns_deduc.push(column_tmp);
           break;
         default:
           columns_calc.push(column_tmp);
       }
     }
-    
-    if(columns_calc.length>0) 
+
+    if(columns_calc.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group_none", menuDisabled: true, text: "", sortable: false, draggable: false, sealed: true, columns: columns_calc});
-    
-     
+
+
     if(columns_asig.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", style: 'overflow: hidden;', menuDisabled: true, text: columns_asig.length>1?"ASIGNACIONES":"ASIG.", sortable: false, draggable: false, sealed: true, columns: columns_asig});
 
@@ -3366,14 +3408,14 @@ columns.push(
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
+
     if(columns_deduc.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", menuDisabled: true, text: columns_deduc.length>1?"DEDUCCIONES":"DEDUC.", style: 'font-size: 9px; font-weight: bold;', sortable: false, draggable: false, sealed: true, columns: columns_deduc});
 
@@ -3394,14 +3436,14 @@ columns.push(
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
+
     columns.push(
       {
         xtype: 'gridcolumn',
@@ -3419,17 +3461,17 @@ columns.push(
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
+
     if(columns_ap.length>0)
       columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", style: 'overflow: hidden;', menuDisabled: true, disabled: true, text: columns_ap.length>2?"APORTE PATRONAL":"AP", sortable: false, draggable: false, sealed: true, columns: columns_ap});
-    
+
     columns.push(
       {
         xtype: 'gridcolumn',
@@ -3447,37 +3489,37 @@ columns.push(
         align: 'right',
         summaryType: 'sum',
         summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00'); 
+          return Ext.util.Format.number(value, '0,0.00');
         },
         renderer: function(value) {
           return Ext.util.Format.number(value, '0,0.00');
         }
       }
     );
-    
-    
+
+
     return {fields: fields, columns: columns};
-    
+
   },
-  
+
   onCargarNomina: function(){
     var me=this;
     var id_periodo=me.getCmp('id_periodo').getValue();
     var id_nomina=me.getCmp('id_nomina').getValue().join(",");
-    
-    if(!me.onNominaSeleccionada())       
-      return;    
-    
+
+    if(!me.onNominaSeleccionada())
+      return;
+
     me.getCmp('btnPersona').setDisabled(true);
     me.getCmp('btnConcepto').setDisabled(true);
     me.getCmp('btnCerrarPeriodo').setDisabled(true);
     me.getCmp('btnNotas').setDisabled(true);
     me.getCmp('btnContabilizar').setDisabled(true);
-    
+
     me.internal.columnaSeleccionada=null;
     me.internal.cerrado=null;
     me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Nómina:</b> "+me.getCmp('id_nomina').getRawValue()+". <b>Periodo:</b> "+me.getCmp('id_periodo').getRawValue()+".</div>",false);
-    
+
     //me.getCmp('gridList').getStore().removeAll(true);
     me.getCmp('gridList').getStore().removeAll();
     me.getCmp('gridList').reconfigure();
@@ -3492,36 +3534,36 @@ columns.push(
       },
       success:function(request){
         var result=Ext.JSON.decode(request.responseText);
-        
+
         me.internal.cerrado=result["cerrado"]=='t'?true:false;
         me.internal.contabilizado=result["contabilizado"];
         me.internal.contabilizado_ap=result["contabilizado_ap"];
         me.internal.data.concepto=result["concepto"];
         me.internal.data.ficha=result["ficha"];
-        
+
         me.getCmp('btnPersona').setDisabled(me.internal.cerrado);
         me.getCmp('btnConcepto').setDisabled(me.internal.cerrado);
         me.getCmp('btnCerrarPeriodo').setDisabled(me.internal.cerrado);
         me.getCmp('btnNotas').setDisabled(me.internal.cerrado);
-        
+
         me.getCmp('btnContabilizar').setDisabled(false);
         me.getCmp('btnContabilizarTodo').setDisabled(false);
         me.getCmp('btnContabilizarSinAP').setDisabled(false);
         me.getCmp('btnContabilizarAP').setDisabled(false);
-        
+
         if(me.internal.contabilizado && me.internal.contabilizado_ap){
           me.getCmp('btnContabilizar').setDisabled(true);
-          me.getCmp('btnContabilizarTodo').setDisabled(true);          
+          me.getCmp('btnContabilizarTodo').setDisabled(true);
         }
         if(!me.internal.contabilizado && !me.internal.contabilizado_ap){
           me.getCmp('btnContabilizarAP').setDisabled(true);
         }
-        
+
         if(me.internal.contabilizado){
           me.getCmp('btnContabilizarTodo').setDisabled(true);
           me.getCmp('btnContabilizarSinAP').setDisabled(true);
         }
-        
+
         if(me.internal.contabilizado_ap){
           me.getCmp('btnContabilizarTodo').setDisabled(true);
           me.getCmp('btnContabilizarAP').setDisabled(true);
@@ -3529,7 +3571,7 @@ columns.push(
         //me.getCmp('btnContabilizar').setDisabled(me.internal.contabilizado==null?false:true);
 
         me.filtro_ficha_id="";
-        
+
         var config=me.configurarColumnas();
 
         var store= new Ext.data.Store({
@@ -3571,7 +3613,7 @@ columns.push(
                 var concepto=records[i].get("concepto");
                 for(var j=0;j<concepto.length;j++){
                   var encontro=false;
-                  for(var k=0;k<config.fields.length;k++){         
+                  for(var k=0;k<config.fields.length;k++){
                     if(concepto[j]["id"]==config.fields[k]){
                         encontro=true;
                         break;
@@ -3585,12 +3627,12 @@ columns.push(
                     );
                   }
                 }//FIN for(var j=0;j<concepto_id.length;j++)
-                
+
                 if(records[i].get("mensaje")){
                   records[i].set("mensaje","<b>La persona tiene los siguientes conceptos, lo cuales no se encuentran asociados a la nómina actual:<br></b><p>"+records[i].get("mensaje")+"</p>");
                 }
-                
-              }//FIN for(var i=0;i<records.length;i++)              
+
+              }//FIN for(var i=0;i<records.length;i++)
               store.resumeEvents();
               me.getCmp('gridList').getSelectionModel().deselectAll();
             },
@@ -3602,31 +3644,31 @@ columns.push(
             }
           }
         });
-        
+
         me.getCmp('gridList').reconfigure(store,config.columns);
-    
+
         me.getCmp('pagingList').bindStore(store);
-        
-        
+
+
         me.getCmp('gridList').getStore().load();
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
         /*var _data=[];
         for(var i=0;i<result["ficha"].length;i++){
           _data[i]={};
           _data[i]["mensaje"]="";
           _data[i]["id_ficha"]=result["ficha"][i]["id"];
           _data[i]["persona"]=result["ficha"][i]["nombre_apellido"]+" <span class='nomina_cargo'>("+result["ficha"][i]["cargo"]+")</span>";
-          
+
           for(var j=0;j<result["ficha"][i]["concepto"].length;j++){
             _data[i][result["ficha"][i]["concepto"][j]["id"]]=result["ficha"][i]["concepto"][j]["valor_final"];
             if(result["ficha"][i]["concepto"][j]["tipo"]=="AP")
               _data[i][result["ficha"][i]["concepto"][j]["id"]+"_ap"]=result["ficha"][i]["concepto"][j]["valor_final_ap"];
-              
+
             //verificar si el concepto existe en config.fields
             var encontro=false;
             for(var k=0;k<config.fields.length;k++){
@@ -3638,12 +3680,12 @@ columns.push(
             }
             if(!encontro){
               _data[i]["mensaje"]+=result["ficha"][i]["concepto"][j]["codigo"]+" "+result["ficha"][i]["concepto"][j]["concepto"]+".<br>";
-            }            
+            }
           }
           if(_data[i]["mensaje"]){
             _data[i]["mensaje"]="<b>La persona tiene los siguientes conceptos, lo cuales no se encuentran asociados a la nómina actual:<br></b><p style=\\'font-size: 10px; padding-left: 20px;\\'>"+_data[i]["mensaje"]+"</p>";
           }
-          
+
           _data[i]["total_asignacion"]=result["ficha"][i]["total_asignacion"];
           _data[i]["total_deduccion"]=result["ficha"][i]["total_deduccion"];
           _data[i]["total_neto"]=result["ficha"][i]["total_neto"];
@@ -3654,31 +3696,31 @@ columns.push(
           fields: config.fields,
           data: _data
         },config.columns);
-        
+
         me.getCmp('pagingList').bindStore(me.getCmp('gridList').getStore());
 
         */
       },
       failure:function(request){
-        var result=Ext.JSON.decode(request.responseText); 
+        var result=Ext.JSON.decode(request.responseText);
       }
     });
   },
-  
+
   onEditarConcepto: function(id_concepto) {
     var me=this;
     alert(id_concepto);
-    
-    
+
+
   },
-  
+
   onCerrarPeriodo: function(){
     var me=this;
-    if(!me.onNominaSeleccionada())       
+    if(!me.onNominaSeleccionada())
       return;
-    
+
     var id_periodo=me.getCmp('id_periodo').getValue();
-    
+
     Ext.MessageBox.confirm( 'Cerrar Período',
                             '<b>\u00BFEst\u00e1 seguro de cerrar el período?</b><br> '+me.getCmp('id_periodo').getRawValue()+'',
                             function(btn,text){
@@ -3687,7 +3729,7 @@ columns.push(
                                 me.getCmp('btnConcepto').setDisabled(true);
                                 me.getCmp('btnCerrarPeriodo').setDisabled(true);
                                 me.getCmp('btnContabilizar').setDisabled(true);
-                                
+
                                 Ext.Ajax.request({
                                   method: 'POST',
                                   url:'module/nomina/',
@@ -3696,12 +3738,12 @@ columns.push(
                                     id_periodo: id_periodo
                                   },
                                   success:function(request){
-                                    var result=Ext.JSON.decode(request.responseText);                                    
+                                    var result=Ext.JSON.decode(request.responseText);
                                     Ext.MessageBox.alert("Cerrar Período",result["message"]);
                                     //recargar el listado de periodos, para mostrar el nuevo periodo creado
                                     me.getCmp('id_periodo').getStore().load();
-                                    me.onRecargar();                                    
-                                    window.open("report/nomina_recibo_pago.php?id_periodo="+id_periodo+"&generar=1");                                    
+                                    me.onRecargar();
+                                    window.open("report/nomina_recibo_pago.php?id_periodo="+id_periodo+"&generar=1");
                                   },
                                   failure:function(request){
                                     var result=Ext.JSON.decode(request.responseText);
@@ -3710,15 +3752,15 @@ columns.push(
                               }
                             });
   },
-  
+
   onNota: function(){
     var me=this;
-    if(!me.onNominaSeleccionada())       
+    if(!me.onNominaSeleccionada())
       return;
-    
+
     var id_periodo=me.getCmp('id_periodo').getValue();
     var id_nomina=me.getCmp('id_nomina').getValue().join(",");
-    
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina_periodo_nota/',
@@ -3763,7 +3805,7 @@ columns.push(
           5,
           nota
         );
-        
+
         prompt.setWidth(500);
         prompt.center();
       },
@@ -3772,14 +3814,14 @@ columns.push(
       }
     });
   },
-  
+
   onContabilizar: function(tipo_contabilizacion){
     var me=this;
-    if(!me.onNominaSeleccionada())       
+    if(!me.onNominaSeleccionada())
       return;
-    
+
     var id_periodo=me.getCmp('id_periodo').getValue();
-    
+
     Ext.MessageBox.confirm( 'Contabilizar Período',
                             '<b>\u00BFEst\u00e1 seguro que desea contabilizar el período?</b><br> '+me.getCmp('id_periodo').getRawValue()+'',
                             function(btn,text){
@@ -3796,12 +3838,12 @@ columns.push(
                                   alert("La fecha introducida es invalida.");
                                   }
                                 _fecha=unformatDate(_fecha);
-                                
+
                                 me.getCmp('btnPersona').setDisabled(true);
                                 me.getCmp('btnConcepto').setDisabled(true);
                                 me.getCmp('btnCerrarPeriodo').setDisabled(true);
                                 me.getCmp('btnContabilizar').setDisabled(true);
-                                
+
                                 Ext.Ajax.request({
                                   method: 'POST',
                                   url:'module/nomina/',
@@ -3812,7 +3854,7 @@ columns.push(
                                     tipo: tipo_contabilizacion
                                   },
                                   success:function(request){
-                                    var result=Ext.JSON.decode(request.responseText);                                    
+                                    var result=Ext.JSON.decode(request.responseText);
                                     Ext.MessageBox.alert("Contabilizar Período",result["message"]);
                                     me.onRecargar();
                                   },
@@ -3823,14 +3865,14 @@ columns.push(
                               }
                             });
   },
-  
+
   alert: function(msj){
     var me=this;
     //alert(msj);
     //Ext.Msg.alert(me.title,msj,null,me.getId());return;
     //var msg=Ext.Msg.alert(me.title,msj);
     //console.log(msj);
-    
+
     //var msg=Ext.Msg.show({title: me.title});
     /*var win=Ext.create("Ext.window.MessageBox",{
       title: me.title,
@@ -3851,8 +3893,8 @@ columns.push(
     //msg.show();
     //Ext.MessageBox.alert(me.title,msj).toFront();
   },
-  
-  
+
+
   onFiltroBusqueda: function(){
     var me=this;
 

@@ -5169,3 +5169,9 @@ INSERT INTO concepto_presupuesto_contabilidad VALUES (1, 1, (current_setting('gl
 
 INSERT INTO escala_salarial_configuracion VALUES ('sueldo_basico', 'SUELDO_MENSUAL');
 
+INSERT INTO modulo_nomina.nomina_configuracion(dato, valor) VALUES
+('ficha:escala_salarial', 'SUELDO_MENSUAL'),
+('ficha:numero_hijos', 'NUMERO_HIJOS'),
+('ficha:antiguedad_apn', 'TIEMPO_SERVICIO_AP'),
+('ficha:antiguedad_total', 'TIEMPO_SERVICIO_TOTAL,ANTIGUEDAD_TOTAL'),
+('ficha:profesionalizacion_porcentaje', 'PORCENTAJE_PROFESIONALIZACION');

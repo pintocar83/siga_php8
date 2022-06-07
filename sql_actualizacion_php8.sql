@@ -96,3 +96,17 @@ INSERT INTO grupo_familiar_parentesco VALUES (5, 'PADRE / MADRE', true);
 INSERT INTO grupo_familiar_parentesco VALUES (6, 'SUEGRO / SUEGRA', true);
 INSERT INTO grupo_familiar_parentesco VALUES (7, 'TÍO / TÍA', true);
 SELECT pg_catalog.setval('grupo_familiar_parentesco_id_seq', 7, true);
+
+
+CREATE TABLE modulo_nomina.nomina_configuracion (
+    dato character varying(100) NOT NULL,
+    valor TEXT,
+    PRIMARY KEY(dato)
+);
+
+INSERT INTO modulo_nomina.nomina_configuracion(dato, valor) VALUES
+('ficha:escala_salarial', 'SUELDO_MENSUAL'),
+('ficha:numero_hijos', 'NUMERO_HIJOS'),
+('ficha:antiguedad_apn', 'TIEMPO_SERVICIO_AP'),
+('ficha:antiguedad_total', 'TIEMPO_SERVICIO_TOTAL,ANTIGUEDAD_TOTAL'),
+('ficha:profesionalizacion_porcentaje', 'PORCENTAJE_PROFESIONALIZACION');
