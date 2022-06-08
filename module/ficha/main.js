@@ -1027,7 +1027,13 @@ siga.define('ficha', {
                     editor: {
                       xtype:'datefield'
                     },
-                    renderer: Ext.util.Format.dateRenderer('d/m/Y')
+                    //renderer: Ext.util.Format.dateRenderer('d/m/Y')
+                    renderer: function(value){
+                      if(typeof(value) === 'string')
+                        value=value+" 00:00:00";
+                      console.log(value);
+                      return Ext.util.Format.date(value,'d/m/Y');
+                    }
                   },
                   {
                     xtype: 'gridcolumn',
@@ -1399,7 +1405,7 @@ siga.define('ficha', {
     if(result[0]['antiguedad_anio'])
       me.antiguedad_anio=result[0]['antiguedad_anio']*1;
 
-    me.getCmp('antiguedad_total').setValue(result[0]['antiguedad_apn']*1+me.antiguedad_anio);
+    me.getCmp('antiguedad_total').setValue(result[0]['antiguedad_apn']*1+me.antiguedad_anio*1);
 
     me.getCmp('codigo').setValue(result[0]['codigo']);
     me.getCmp('activo').setValue(result[0]['activo']);

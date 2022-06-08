@@ -587,7 +587,8 @@ class nomina{
                               modulo_nomina.concepto
                             WHERE
                               id=$id_concepto");
-    if(!isset($concepto[0]["identificador"]) || $concepto[0]["identificador"])
+
+    if(!isset($concepto[0]["identificador"]) || !$concepto[0]["identificador"])
       return [];
     $identificador=$concepto[0]["identificador"];
 
@@ -609,8 +610,8 @@ class nomina{
                               modulo_nomina.nomina_configuracion
                             WHERE
                               dato ilike 'ficha:%'");
-
     //buscar para cual caso aplica el concepto_identificar -> ficha
+    $ficha_valor_sw=false;
     for($i=0; $i<count($config); $i++){
       if(!$config[$i]["valor"])
         continue;
@@ -619,29 +620,68 @@ class nomina{
         continue;
 
       $ficha_campo=$config[$i]["dato"];
-
       switch($ficha_campo){
         case 'ficha:escala_salarial':
           self::addValorFicha_EscalaSalarial($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+          $ficha_valor_sw=true;
         break;
         case 'ficha:numero_hijos':
           self::addValorFicha_NumeroHijos($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha, $fecha_culminacion);
+          $ficha_valor_sw=true;
         break;
         case 'ficha:antiguedad_apn':
           self::addValorFicha_AntiguedadAPN($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+          $ficha_valor_sw=true;
         break;
         case 'ficha:antiguedad_total':
           self::addValorFicha_AntiguedadTotal($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha, $fecha_culminacion);
+          $ficha_valor_sw=true;
         break;
         case 'ficha:profesionalizacion_porcentaje':
           self::addValorFicha_ProfesionalizacionPorcentaje($db, $id_nomina, $id_periodo, $id_concepto, $ids_ficha);
+          $ficha_valor_sw=true;
         break;
-        default: continue;
+      }
+    }
+
+    //cuando no es ficha valor, usar el agregar normal
+    if($ficha_valor_sw==false){
+      //buscar definicion del concepto
+      $sql="SELECT definicion
+            FROM modulo_nomina.concepto_formula
+            WHERE id_concepto=$id_concepto AND fecha<='$fecha_culminacion'
+            ORDER BY fecha DESC
+            LIMIT 1";
+      $concepto=$db->Execute($sql);
+
+      $valor=0;
+      if(isset($concepto[0]["definicion"]))
+        $valor=$concepto[0]["definicion"];
+      if(self::es_formula($valor))
+        $valor=0;
+
+      for($i=0;$i<count($ids_ficha);$i++){
+        $id_ficha=$ids_ficha[$i];
+        //si es agregar a todos, verificar si existe valor del concepto para la ficha, si existe valor saltar.
+        $valor_actual=$db->Execute("SELECT valor FROM modulo_nomina.ficha_concepto WHERE id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
+        if(isset($valor_actual[0]["valor"]))
+          if($valor_actual[0]["valor"]>0) continue;
+
+        //borrar registros existentes
+        $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
+
+        $db->Insert("modulo_nomina.ficha_concepto",array(
+                                          "id_nomina"=>"$id_nomina",
+                                          "id_periodo"=>"$id_periodo",
+                                          "id_ficha"=>"$id_ficha",
+                                          "id_concepto"=>"$id_concepto",
+                                           "valor"=>"$valor"));
       }
     }
 
     $return=[];
     for($i=0;$i<count($ids_ficha);$i++){
+      $id_ficha=$ids_ficha[$i];
       $return[$i]["id_ficha"]=$id_ficha;
       $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
     }

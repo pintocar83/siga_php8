@@ -1853,7 +1853,8 @@ siga.define('nomina', {
                       me.getCmp('gridList').getStore().load();
                     }
                   },
-                  {
+                },
+                {
                   text: 'Agregar a Todos (Valor Según Ficha)',
                   handler: function() {
                     _tmp=Ext.Ajax.request({

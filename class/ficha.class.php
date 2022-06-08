@@ -416,7 +416,7 @@ class ficha{
           "fecha_nacimiento"   => "'".SIGA::clear($grupo_familiar[$i]["fecha_nacimiento"])."'"
         ];
         if($grupo_familiar[$i]["id"]){//update
-          $db->Update("modulo_nomina.grupo_familiar",$data,"id='$id'");
+          $db->Update("modulo_nomina.grupo_familiar",$data,"id='".SIGA::clear($grupo_familiar[$i]["id"])."'");
         }
         else{//insert
           $db->Insert("modulo_nomina.grupo_familiar",$data);
