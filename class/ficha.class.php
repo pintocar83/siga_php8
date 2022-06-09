@@ -116,7 +116,9 @@ class ficha{
     if(isset($return[0]["fecha_ingreso"])){
       $fecha_ingreso=str_replace("}","",str_replace("{","",$return[0]["fecha_ingreso"]));
       $return[0]["fecha_ingreso"]=$fecha_ingreso=explode(",",$fecha_ingreso);
-      $fecha_egreso=str_replace("}","",str_replace("{","",$return[0]["fecha_egreso"]));
+      $fecha_egreso="";
+      if(isset($return[0]["fecha_egreso"]) and $return[0]["fecha_egreso"])
+        $fecha_egreso=str_replace("}","",str_replace("{","",$return[0]["fecha_egreso"]));
       $return[0]["fecha_egreso"]=$fecha_egreso=explode(",",$fecha_egreso);
 
       $return[0]+=self::onGet_Antiguedad($return[0]["id"]);
