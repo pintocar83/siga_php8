@@ -80,7 +80,7 @@ siga.open=function(module,parameter){
   //si el menu esta abierto ocultarlo
   if(siga.menu.isVisible())
     siga.menu.hide();
-  
+
   if(!siga.isDefine(module)){
     Ext.get("siga-loading-module").set({style:{display: 'block'}, title:'Cargando módulo: '+module+', por favor espere...'});
     siga.loader(module,function(){
@@ -99,28 +99,28 @@ siga.open=function(module,parameter){
 siga.close=function(module){
   if(!siga.isDefine(module))
     return;
-  Ext.getCmp(siga.window.getId(module)).close();        
+  Ext.getCmp(siga.window.getId(module)).close();
 };
 
 siga.setAccess=function(module){
   if(!siga._value[module])
-    siga._value[module]=new Array();    
-  siga._value[module]["access"]=(siga.get({action:'access',module:module})).access;      
+    siga._value[module]=new Array();
+  siga._value[module]["access"]=(siga.get({action:'access',module:module})).access;
 },
 
 siga.getAccess=function(module){
   if(!siga.isDefine(module))
     siga.setAccess(module);
-  return siga._value[module]["access"]; 
+  return siga._value[module]["access"];
 },
 
 siga.access=function(module){
   if(!siga.isDefine(module)){
     if(!siga._value[module])
-      siga._value[module]=new Array();    
+      siga._value[module]=new Array();
     siga._value[module]["access"]=(siga.get({action:'access',module:module})).access;
   }
-  return siga._value[module]["access"]; 
+  return siga._value[module]["access"];
 },
 
 siga.window.create=function(module,parameter){
@@ -133,12 +133,12 @@ siga.window.create=function(module,parameter){
     });
     return;
   }
-  
+
   var win=Ext.create(module,{parameter: parameter});
-  siga.window.setId(module,win.getId());   
-  
+  siga.window.setId(module,win.getId());
+
   win.on('minimize',function(w){siga.window.hide(module);siga.menu.show(true);});
-  
+
   win.on('close',function(w){
     for(var i=0;i<siga.window.list.length;i++)//buscar y quitar elemento del arreglo list, que contiene la lista de ventanas abiertas
       if(module==siga.window.list[i]){
@@ -148,14 +148,14 @@ siga.window.create=function(module,parameter){
     if(!siga.window.getCmp(module).modal)//mostrar el menu cuando no sea una ventana modal
       siga.menu.show(true);
   });
-  
+
   siga.window.list.push(module);
 
   if(win.modal)
     win.show();
   else
     siga.window.focus(module);
-  
+
   if(win.init)
     win.init();
 };
@@ -176,7 +176,7 @@ siga.window.isOpen=function(module){
 
 siga.window.isVisible=function(module){
   return Ext.getCmp(siga.window.getId(module)).isVisible();
-};    
+};
 
 siga.window.show=function(module){
   Ext.getCmp(siga.window.getId(module)).show();
@@ -188,7 +188,7 @@ siga.window.hide=function(module){
 
 siga.window.focus=function(module){
   for(var i=0;i<siga.window.list.length;i++)
-    if(module!=siga.window.list[i]) 
+    if(module!=siga.window.list[i])
       siga.window.hide(siga.window.list[i]);
   siga.window.show(module);
 };
@@ -213,21 +213,21 @@ siga.menu.show=function(_generate_visible){
   if(Ext.WindowManager.mask)
   if(Ext.WindowManager.mask.isVisible())
     return;
-  
+
   siga.setHtml({id:"siga-apps-title",html:""});
-  
+
   Ext.get("siga-apps").set({style:{display: 'block'}});
   Ext.get("siga-apps-button").addCls("open");
   Ext.get("siga-apps-button").removeCls("close");
   Ext.get("siga-apps-button").set({onclick: "siga.menu.hide(true)"});
 
-  if(siga.window.list.length==0) 
+  if(siga.window.list.length==0)
     return;
 
   var wbase=280;
   var factor=0;
   var style={};
-  
+
   var w,h,div_main,div_canvas,div_cubierta,div_titulo;
   //var wtotal=window.innerWidth;
   var wtotal=300;
@@ -237,23 +237,23 @@ siga.menu.show=function(_generate_visible){
   var wwindow, hwindow;
   var module="";
   var module_id="";
-  
+
   var posx=window.innerWidth-wtotal;
   var posy=10;
   for(var i=0;i<siga.window.list.length;i++){
     module=siga.window.list[i];
     module_id=siga.window.getId(module);
-    
+
     if(_generate_visible)
       siga.window.visible[module]=siga.window.isVisible(module);
-    
+
     wwindow=Ext.getCmp(module_id).width;
-    hwindow=Ext.getCmp(module_id).height;        
+    hwindow=Ext.getCmp(module_id).height;
     factor=wbase/wwindow;
-    
+
     Ext.getCmp(module_id).show();
     Ext.getCmp(module_id).setDisabled(true);
-    
+
     _style={
       'top': posy + 'px',
       'left': posx + 'px',
@@ -264,56 +264,56 @@ siga.menu.show=function(_generate_visible){
       '-ms-transform':              'scale('+factor+')',
       '-ms-transform-origin':       '0 0',
       '-o-transform':               'scale('+factor+')',
-      '-otransform-origin':         '0 0',                                                  
+      '-otransform-origin':         '0 0',
       'transform':                  'scale('+factor+')',
       'transform-origin':           '0 0',
     };
-    
+
     var _opt={style: _style, onclick:"siga.menu.hide(); siga.window.show('"+module+"')"};
-    
+
     if(Ext.getCmp(module_id).getEl().shadow)
       if(Ext.getCmp(module_id).getEl().shadow.el)
         Ext.get(Ext.getCmp(module_id).getEl().shadow.el.id).set(_opt);
-      
+
     Ext.getCmp(module_id).getEl().set(_opt);
-    
+
     //crear el div del titulo
     var div_titulo_base=document.createElement("div");
     Ext.get(div_titulo_base).set({
       id: 'siga-apps-title-'+module_id,
       cls: 'siga-apps-title'+(siga.window.visible[siga.window.list[i]]?":hover":""),
-      style:{        
+      style:{
         'position': 'absolute',
         'top': (posy-5) + 'px',
         'left': posx + 'px',
         'width': (wbase)+'px',
         'text-align': 'center',
-        'z-index': '50000'        
-      }      
+        'z-index': '50000'
+      }
     });
-    
+
     //crear el div del titulo
     var div_titulo=document.createElement("div");
-    div_titulo.innerHTML=Ext.getCmp(module_id).title;//"Titulo de la Ventana";          
+    div_titulo.innerHTML=Ext.getCmp(module_id).title;//"Titulo de la Ventana";
     Ext.get(div_titulo).set({
       cls: 'siga-apps-title-text',
       onclick: _opt.onclick
     });
-    
+
     div_titulo_base.appendChild(div_titulo);
-    
+
     //crear el div de cerrar
     div_close=document.createElement("div");
     Ext.get(div_close).set({cls: 'siga-apps-title-close icon-close-white',onclick:"siga.close('"+module+"'); siga.menu.show(false);"});
-    
-    Ext.get(div_titulo_base).appendChild(div_close);          
-    
+
+    Ext.get(div_titulo_base).appendChild(div_close);
+
     Ext.get("siga-apps-title").appendChild(div_titulo_base);
-    
+
     //ocultar titulo y botones del header de la ventana
     if(Ext.get(module_id+"_header"))
       Ext.get(module_id+"_header").set({style:{'display':'none'}});
-      
+
     posy+=hwindow*factor+hspace;
   }
 };
@@ -322,21 +322,21 @@ siga.menu.hide=function(_cancel){
   var me=this;
   var module="";
   var module_id="";
-  
+
   siga.setHtml({id:"siga-apps-title",html:""});
   Ext.get("siga-apps").set({style:{display: 'none'}});
   if(Ext.get("siga-apps-button")){
     Ext.get("siga-apps-button").addCls("normal");
-    Ext.get("siga-apps-button").removeCls("open");  
+    Ext.get("siga-apps-button").removeCls("open");
     Ext.get("siga-apps-button").set({onclick: "siga.menu.show(true)"});
   }
-  
+
   for(var i=0;i<siga.window.list.length;i++){
     module=siga.window.list[i];
     module_id=siga.window.getId(module);
-    
+
     Ext.getCmp(module_id).setDisabled(false);
-    
+
     _style={
       '-webkit-transform':          'scale(1)',
       '-webkit-transform-origin':   '0 0',
@@ -345,26 +345,26 @@ siga.menu.hide=function(_cancel){
       '-ms-transform':              'scale(1)',
       '-ms-transform-origin':       '0 0',
       '-o-transform':               'scale(1)',
-      '-otransform-origin':         '0 0',                                                  
+      '-otransform-origin':         '0 0',
       'transform':                  'scale(1)',
       'transform-origin':           '0 0',
     };
-    
+
     var _opt={style: _style, onclick:""};
-    
+
     if(Ext.getCmp(module_id).getEl().shadow)
       if(Ext.getCmp(module_id).getEl().shadow.el)
-        Ext.get(Ext.getCmp(module_id).getEl().shadow.el.id).set(_opt);    
+        Ext.get(Ext.getCmp(module_id).getEl().shadow.el.id).set(_opt);
     Ext.getCmp(module_id).getEl().set(_opt);
-    
+
     Ext.getCmp(module_id).center();
-    if(Ext.get(module_id+"_header")) 
+    if(Ext.get(module_id+"_header"))
       Ext.get(module_id+"_header").set({style:{'display':''}});
-    
+
     if(_cancel && siga.window.visible[module])
-      siga.window.show(module);         
+      siga.window.show(module);
     else
-      siga.window.hide(module);        
+      siga.window.hide(module);
   }
 };
 
@@ -377,7 +377,7 @@ siga.menu.option=function(id){
   }
   //mostrar la opcion seleccionado
   Ext.get("siga-apps-center-"+id).set({style:{'display': 'block'}});
-  
+
   //limpiar el selected de la opcion principal del menu
   var node=document.getElementById("siga-apps-left").childNodes;
   for(var i=0;i<node.length;i++){
@@ -482,7 +482,7 @@ siga.base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345
 
 siga.jappix=function(){
   siga.js({
-    url: "module/jappix/server/get.php?l=es&t=js&g=mini.xml&ver=1.0.2", 
+    url: "module/jappix/server/get.php?l=es&t=js&g=mini.xml&ver=1.0.2",
     onLoad: function(){
       var result=siga.get({action:"session_hash"});
       result=siga.base64.decode(siga.base64.decode(result.session)).split("/");
@@ -520,7 +520,7 @@ siga.onPersona=function(o){
   var url="module/persona/";
   var onList="";
   var onGet="";
-  
+
   if(o.tipo=="N"){//Natural
     titulo="Beneficirios / Personas Naturales";
     columnas={field: ["identificacion","denominacion"], title: ["Cédula","Denominación"], width: ['20%','80'], sort: ["ASC",'NULL']};
@@ -545,12 +545,12 @@ siga.onPersona=function(o){
       var resp=Ext.Ajax.request({
         async: false,
         url:campo.internal.url,
-        params: Ext.JSON.decode("{action: '"+campo.internal.actionOnGet+"', "+campo.internal.valueField+": '"+v+"'}")
+        params: Ext.JSON.decode('{"action": "'+campo.internal.actionOnGet+'", "'+campo.internal.valueField+'": "'+v+'"}')
       });
       if(resp.statusText=="OK"){
         var result=Ext.JSON.decode(resp.responseText);
         if(o.onAccept)
-          return o.onAccept(result);        
+          return o.onAccept(result);
         return true;
       }
       return false;
@@ -601,7 +601,7 @@ siga.onCuentaBancaria=function(o){
       url: 'module/banco_cuenta/',
       actionOnList: 'onList',
       actionOnGet: 'onGet',
-      onBeforeAccept: function(dataview, record, item, index, e){        
+      onBeforeAccept: function(dataview, record, item, index, e){
         var result=[];
         result[0]=[];
         result[0]["id"]=record.get("id");
@@ -613,9 +613,9 @@ siga.onCuentaBancaria=function(o){
         result[0]["cuenta_contable"]=record.get("cuenta_contable");
         result[0]["denominacion_contable"]=record.get("denominacion_contable");
         if(o.onAccept)
-          return o.onAccept(result);        
+          return o.onAccept(result);
         return true;
-      },			
+      },
       onAccept: function(){}
     }
   };
@@ -630,7 +630,7 @@ siga.onCuentaBancaria=function(o){
 }
 
 siga.onCalendar=function(elDom){
-  if (!siga.onCalendar.el)        
+  if (!siga.onCalendar.el)
     siga.onCalendar.el=Ext.create("Ext.picker.Date",{
       floating: true,
       hidden: true,
@@ -665,8 +665,8 @@ siga.onGetComprobante=function(o){
     });
     if(_tmp.statusText=="OK"){
       var _retorno=Ext.JSON.decode(_tmp.responseText);
-      _comprobante[i]=_retorno[0];					
-    }				
+      _comprobante[i]=_retorno[0];
+    }
   }
   return _comprobante;
 };
