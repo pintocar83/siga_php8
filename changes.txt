@@ -10,6 +10,7 @@ library/siga.class.php
 library/siga.js
 library/siga.select.js
 library/siga.config.example.php
+library/db.controller.php
 
 image/menu/icon-cargo.png
 image/menu/icon-retencion.png
@@ -24,6 +25,7 @@ module/detalle_contable/
 module/detalle_presupuestario/
 module/cargo/
 module/retencion/
+module/formulacion/
 module/sigafs/index.php
 module/sigafs/library/sigafs.js
 module/sigafs/core/index.php
@@ -33,6 +35,8 @@ module/sigafs/core/cargo.js
 module/sigafs/core/cargo.php
 module/sigafs/core/retencion.js
 module/sigafs/core/retencion.php
+module/sigafs/core/formulacion.js
+module/sigafs/core/formulacion.php
 
 class/estructura_presupuestaria.class.php
 class/nomina.class.php
@@ -43,6 +47,7 @@ class/cuenta_contable.class.php
 class/ficha.class.php
 class/cargo.class.php
 class/retencion.class.php
+class/formulacion.class.php
 
 report/nomina_listado_banco_xls_formato_a.php
 report/nomina_listado_banco_xls_formato_b.php

@@ -144,7 +144,8 @@ class DBController{
   }
 	
 	public function GetMsgErrorClear(){
-    return addslashes(str_replace("\n"," ",$this->MsgError));
+		$tmp=explode("CONTEXT:", $this->MsgError);
+    return addslashes(str_replace("\n"," ",$tmp[0]));
   }
 
   public function Logs($sql){

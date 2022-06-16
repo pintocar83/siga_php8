@@ -71,7 +71,7 @@ include_once("../../library/siga.class.php");
 										<SELECT class="TextoCampoInput" id="AC_FFPDG" onchange="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__CargarAE();"></SELECT>
 										<SELECT class="TextoCampoInput" id="AE_FFPDG" onchange="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__CargarOAE();"></SELECT>
 										<SELECT class="TextoCampoInput" id="OAE_FFPDG" onchange="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__CargarFormulacion();"></SELECT>
-										
+
 										<div style="font-size: x-small;">
 											<div id="AC_FFPDG_INFO" style="overflow: hidden; width: 700px; white-space: nowrap; text-overflow: ellipsis;">&nbsp;</div>
 											<div id="AE_FFPDG_INFO" style="overflow: hidden; width: 700px; white-space: nowrap; text-overflow: ellipsis;">&nbsp;</div>
@@ -81,7 +81,7 @@ include_once("../../library/siga.class.php");
 									</td>
 								</tr>
 							</tbody>
-							</table>							
+							</table>
 							<DIV class="AreaTablaListado" style="height : 340px; width: 920px;">
 								<table id="TABLA_FORMULACION_FFPDG" border="0" cellspacing="0" cellpadding="0" width="1800px">
 								</table>
@@ -92,7 +92,8 @@ include_once("../../library/siga.class.php");
 								<td align="left">
 									<BUTTON id="BOTON_AGREGAR_FFPDG" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__Agregar();" type="BUTTON"><IMG id="IMG_AGREGAR_FFPDG" src='../../image/icon/icon-listadd-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Agregar</BUTTON>
 									<BUTTON id="BOTON_QUITAR_FFPDG" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" type="BUTTON" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__Quitar();"><IMG id="IMG_QUITAR_FFPDG" src='../../image/icon/icon-listremove-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Quitar&nbsp;&nbsp;</BUTTON>
-									<BUTTON id="BOTON_ASIGNAR_FFPDG" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top; white-space : nowrap;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__Asignar();" type="BUTTON" title="Generar comprobante de asignación de presupuesto."><IMG id="IMG_ASIGNAR_FFPDG" src='../../image/icon/icon-contabilizar-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Asignar</BUTTON>									
+									<BUTTON id="BOTON_ASIGNAR_FFPDG" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top; white-space : nowrap;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__Asignar();" type="BUTTON" title="Generar comprobante de asignación de presupuesto."><IMG id="IMG_ASIGNAR_FFPDG" src='../../image/icon/icon-contabilizar-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Asignar</BUTTON>
+									<BUTTON id="BOTON_REVERTIR_ASIGNAR_FFPDG" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top; white-space : nowrap;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__RevertirAsignar();" type="BUTTON" title="Revertir la asignación de presupuesto (se eliminará el comprobante de apertura de presupuesto). "><IMG id="IMG_REVERTIR_FFPDG" src='../../image/icon/icon-anular-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Revertir</BUTTON>
 								</td>
 								<td align="right">
 									Comprobante de Asignación Generado: <span id="FFPDG_COMPROBANTE_GENERADO"></span>

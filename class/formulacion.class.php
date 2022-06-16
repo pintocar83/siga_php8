@@ -160,6 +160,72 @@ class formulacion{
 
     return array("success"=>true,"message"=>"Datos guardados con exito.");
   }
+
+
+  public static function onDelete_Asignacion(
+    $access,
+    $anio,
+    $tipo,
+    $id_accion_subespecifica){
+    $db=SIGA::DBController();
+
+    if(!($access=="rw"))
+      return array("success"=>false,"message"=>"Error. El usuario no tiene permiso para modificar datos.");
+
+    //buscar si existe la formulacion
+    $formulacion=$db->Execute( "SELECT id, id_comprobante_apertura
+                                FROM modulo_base.formulacion
+                                WHERE
+                                  anio='$anio' AND
+                                  tipo='$tipo' AND
+                                  id_accion_subespecifica='$id_accion_subespecifica'");
+
+    if(!isset($formulacion[0]["id"]))
+      return ["success"=>false,"message"=>"Error. Formulación no encontrada."];
+
+    $id_formulacion=$formulacion[0]["id"];
+    $id_comprobante_apertura=$formulacion[0]["id_comprobante_apertura"];
+    if(!$id_comprobante_apertura)
+      return ["success"=>false,"message"=>"Error. Comprobante de apertura no encontrado."];
+
+    $db->Execute("BEGIN WORK");
+
+    $result=$db->Update("modulo_base.formulacion",array("id_comprobante_apertura"=>"NULL"),"id='$id_formulacion'");
+
+    //borrar detalles presupuestarios
+    $result=$db->Delete("modulo_base.detalle_presupuestario","id_comprobante='$id_comprobante_apertura'");
+    if(!$result){
+      $mensajeDB=$db->GetMsgErrorClear();
+      $db->Execute("ROLLBACK WORK");
+      return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
+    }
+
+    //borrar detalles contables
+    $result=$db->Delete("modulo_base.detalle_contable","id_comprobante='$id_comprobante_apertura'");
+    if(!$result){
+      $mensajeDB=$db->GetMsgErrorClear();
+      $db->Execute("ROLLBACK WORK");
+      return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
+    }
+    //borrar informacion extra
+    $result=$db->Delete("modulo_base.comprobante_datos","id_comprobante='$id_comprobante_apertura'");
+    if(!$result){
+      $mensajeDB=$db->GetMsgErrorClear();
+      $db->Execute("ROLLBACK WORK");
+      return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
+    }
+    //borrar comprobante
+    $result=$db->Delete("modulo_base.comprobante","id='$id_comprobante_apertura'");
+    if(!$result){
+      $mensajeDB=$db->GetMsgErrorClear();
+      $db->Execute("ROLLBACK WORK");
+      return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
+    }
+
+
+    $db->Execute("COMMIT WORK");
+    return array("success"=>true, "message"=>'Asignación revertida con éxito.');
+  }
 }
 
 ?>
