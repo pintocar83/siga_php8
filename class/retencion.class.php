@@ -9,9 +9,11 @@ class retencion{
   public static function onList($text,$start,$limit,$sort){
     $db=SIGA::DBController();    
     $sql="SELECT
-            *,
-            lpad(text(R.id),3,'0') as correlativo
+            R.*,
+            lpad(text(R.id),3,'0') as correlativo,
+            RT.denominacion retencion_tipo
           FROM modulo_base.retencion as R
+            LEFT JOIN modulo_base.retencion_tipo RT on RT.id=R.id_retencion_tipo
           WHERE
             R.activo AND
             (

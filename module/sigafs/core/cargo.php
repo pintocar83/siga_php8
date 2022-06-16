@@ -26,35 +26,18 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">
 	<tbody>
 		<tr>
-			<!--
-			<TD align="right">
-				<br>
-				<BUTTON class="BotonesVentana" onmouseover="IMG_NUEVO_FDC.src='../img/iconos/nuevo_con_foco.png';" onmouseout="IMG_NUEVO_FDC.src='../img/iconos/nuevo_activo.png'" onClick="Form_DEFINICIONES_CARGOS__Nuevo();">
-					<IMG src="../img/iconos/nuevo_activo.png" width="22" height="22" border="0" id="IMG_NUEVO_FDC"><br>Nuevo
-				</BUTTON>
-				<BUTTON id="BOTON_GUARDAR_FDC" class="BotonesVentana" onmouseover="IMG_GUARDAR_FDC.src='../img/iconos/guardar_con_foco.png';" onmouseout="IMG_GUARDAR_FDC.src='../img/iconos/guardar_activo.png'" onclick="Form_DEFINICIONES_CARGOS__GuardarVerificar();">
-					<IMG src="../img/iconos/guardar_activo.png" width="22" height="22" border="0" id="IMG_GUARDAR_FDC"><br>Guardar
-				</BUTTON>
-				<BUTTON id="BOTON_MODIFICAR_FDC" class="BotonesVentana" onmouseover="IMG_MODIFICAR_FDC.src='../img/iconos/modificar_con_foco.png';" onmouseout="IMG_MODIFICAR_FDC.src='../img/iconos/modificar_activo.png'" onclick="Form_DEFINICIONES_CARGOS__Modificar();">
-					<IMG src="../img/iconos/modificar_activo.png" width="22" height="22" border="0"  id="IMG_MODIFICAR_FDC"><br>Modificar
-				</BUTTON>
-				<BUTTON id="BOTON_ELIMINAR_FDC" class="BotonesVentana" onmouseover="IMG_ELIMINAR_FDC.src='../img/iconos/eliminar_con_foco.png';" onmouseout="IMG_ELIMINAR_FDC.src='../img/iconos/eliminar_activo.png'" onclick="Form_DEFINICIONES_CARGOS__Eliminar();">
-					<IMG src="../img/iconos/eliminar_activo.png" width="22" height="22" border="0"  id="IMG_ELIMINAR_FDC"><br>Eliminar
-				</BUTTON>
-			</TD>
-			-->
 			<TD class="acciones">
 				<BUTTON class="BotonesVentana" onClick="Form_DEFINICIONES_CARGOS__Nuevo();">
-					<IMG src="../../image/icon/icon-new.png" width="22" height="22" border="0" id="IMG_NUEVO_FB"><br>Nuevo
+					<IMG src="../../image/icon/icon-new.png" width="22" height="22" border="0" id="IMG_NUEVO_FDC"><br>Nuevo
 				</BUTTON>
 				<BUTTON id="BOTON_GUARDAR_FDC" class="BotonesVentana" onclick="Form_DEFINICIONES_CARGOS__GuardarVerificar();">
-					<IMG src="../../image/icon/icon-save.png" width="22" height="22" border="0" id="IMG_GUARDAR_FB"><br>Guardar
+					<IMG src="../../image/icon/icon-save.png" width="22" height="22" border="0" id="IMG_GUARDAR_FDC"><br>Guardar
 				</BUTTON>
 				<BUTTON id="BOTON_MODIFICAR_FDC" class="BotonesVentana" onclick="Form_DEFINICIONES_CARGOS__Modificar();">
-					<IMG src="../../image/icon/icon-edit-sigafs.png" width="22" height="22" border="0"  id="IMG_MODIFICAR_FB"><br>Modificar
+					<IMG src="../../image/icon/icon-edit-sigafs.png" width="22" height="22" border="0"  id="IMG_MODIFICAR_FDC"><br>Modificar
 				</BUTTON>
 				<BUTTON id="BOTON_ELIMINAR_FDC" class="BotonesVentana" onclick="Form_DEFINICIONES_CARGOS__Eliminar();">
-					<IMG src="../../image/icon/icon-delete-sigafs.png" width="22" height="22" border="0"  id="IMG_ELIMINAR_FB"><br>Eliminar
+					<IMG src="../../image/icon/icon-delete-sigafs.png" width="22" height="22" border="0"  id="IMG_ELIMINAR_FDC"><br>Eliminar
 				</BUTTON>
 			</TD>
 		</tr>

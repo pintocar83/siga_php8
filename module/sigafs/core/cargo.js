@@ -516,7 +516,7 @@ function Form_DEFINICIONES_CARGOS__SeleccionarElementoTabla(IDSeleccion, Denomin
 	Form_DEFINICIONES_CARGOS__IDSeleccionActualLista=IDSeleccion;
 	restaurarColorTabla("TABLA_LISTA_FDC");
 	colorBase=colorSeleccionTabla;
-	xGetElementById("FDC"+IDSeleccion).bgColor=colorBase;
+	//xGetElementById("FDC"+IDSeleccion).bgColor=colorBase;
 
 	xGetElementById("DENOMINACION_FDC").value=Denominacion;
 
