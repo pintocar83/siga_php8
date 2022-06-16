@@ -88,6 +88,8 @@ if(SIGA::user()):
                                           array("id"=>"cuenta_contable","icon"=>"image/menu/icon-cuenta_contable.png","name"=>"Plan de Cuentas<br>Contables"),
                                           array("id"=>"convertidor","icon"=>"image/menu/icon-convertidor.png","name"=>"Convertidor"),
                                           array("id"=>"estructura_presupuestaria","icon"=>"image/menu/icon-estructura_presupuestaria.png","name"=>"Estructura<br>Presupuestaria"),
+                                          array("id"=>"cargo","icon"=>"image/menu/icon-cargo.png","name"=>"Cargos / Impuestos"),
+                                          array("id"=>"retencion","icon"=>"image/menu/icon-retencion.png","name"=>"Retenciones"),
                                           ),
                         )),
     

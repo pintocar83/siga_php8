@@ -390,42 +390,46 @@ function Form_DEFINICIONES_DEDUCCIONES__MostrarListado(req){
 	resultado=resultado["result"];
 	var n=resultado.length;
 
+	var TextoBuscar=xTrim(strtoupper(xGetElementById("LISTADO_BUSCAR_FDD").value));
 
-	var tablaPrueba = xGetElementById("TABLA_LISTA_FDD");
-	limpiarTabla("TABLA_LISTA_FDD");
+	xGetElementById("TABLA_LISTA_FDD").innerHTML="";
+	var Contenido="";
+	var FuncionOnclick="";
+	var FuncionOnDblclick="";
+	var FuncionOnMouseOver="";
+	var FuncionOnMouseOut="";
+	var CadAux1, CadAux2, CadAux3, CadAux4;
 
-	var CadAux1, CadAux2;
-	//var NDigitos=NDigitosCodigo(resultado,'id');
-	var NDigitos=3;
-	for(var i=0; i<n; i++){
-		var col0 = mD.agregaNodoElemento('td', null, null,{'width':'5%','class':'FilaEstilo'});
-		var col1 = mD.agregaNodoElemento('td', null, null,{'width':'35%','class':'FilaEstilo'});
-		var col2 = mD.agregaNodoElemento('td', null, null,{'width':'35%','class':'FilaEstilo'});
-		var col3 = mD.agregaNodoElemento('td', null, null,{'width':'25%','class':'FilaEstilo'});
+	for(var i=0;i< n; i++){
+		FuncionOnclick="Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla('"
+					+resultado[i]['id']+"','"
+					+resultado[i]['denominacion']+"','"
+					+resultado[i]['id_cuenta_contable']+"','"
+					+resultado[i]['id_retencion_tipo']+"','"
+					+resultado[i]['formula']+"')";
+		FuncionOnDblclick="Form_DEFINICIONES_DEDUCCIONES__TabPane.setSelectedIndex(0);";
+		FuncionOnMouseOver="pintarFila(\"FDD"+resultado[i]['id']+"\")";
+		FuncionOnMouseOut="despintarFila(\"FDD"+resultado[i]['id']+"\")";
 
-		var fila = mD.agregaNodoElemento('tr', null,"FDD"+resultado[i]['id'] ,{'onclick':"Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla('"+resultado[i]['id']+"','"+resultado[i]['denominacion']+"','"+resultado[i]['id_cuenta_contable']+"','"+resultado[i]['id_retencion_tipo']+"','"+resultado[i]['formula']+"')",'onmouseover':"pintarFila('FDD"+resultado[i]['id']+"')",'onmouseout':"despintarFila('FDD"+resultado[i]['id']+"')",'ondblclick':"Form_DEFINICIONES_DEDUCCIONES__TabPane.setSelectedIndex(0);",'bgColor':colorFondoTabla});
-		fila.id="FDD"+resultado[i]['id'];
-		CadAux2=xTrim(strtoupper(xGetElementById("LISTADO_BUSCAR_FDD").value));
 
-		if(n==1 && CadAux2)
-			CadAux1="<strong>"+completarCodigoCeros(resultado[i]['id'],NDigitos)+"</strong>";
+		Contenido+="<TR id='FDD"+resultado[i]['id']+"' onclick=\""+FuncionOnclick+"\" ondblclick='"+FuncionOnDblclick+"' onmouseover='"+FuncionOnMouseOver+"' onmouseout='"+FuncionOnMouseOut+"'>";
+
+		if(n!=1)
+			Contenido+="<TD width='5%' class='FilaEstilo'>"+resultado[i]['correlativo']+ "</TD>";
 		else
-			CadAux1=completarCodigoCeros(resultado[i]['id'],NDigitos);
+			Contenido+="<TD width='5%' class='FilaEstilo'><strong>"+resultado[i]['correlativo']+ "</strong></TD>";
 
-		col0.innerHTML=CadAux1;
-		col1.innerHTML=str_replace(strtoupper(resultado[i]['denominacion']),"<strong>"+CadAux2+"</strong>",CadAux2);
+		CadAux1=str_replace(strtoupper(resultado[i]['denominacion']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
+		CadAux2=str_replace(strtoupper(resultado[i]['formula']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
+		CadAux3=str_replace(strtoupper(resultado[i]['retencion_tipo']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
 
-		col2.innerHTML=resultado[i]['formula'];
-		col3.innerHTML="<DIV align='right'>"+resultado[i]['retencion_tipo']+"</DIV>";
-
-
-		fila.appendChild(col0);
-		fila.appendChild(col1);
-		fila.appendChild(col2);
-		fila.appendChild(col3);
-
-		tablaPrueba.appendChild(fila);
+		Contenido+="<TD width='65%' class='FilaEstilo'>"+CadAux1+"</TD>";
+		Contenido+="<TD width='20%' class='FilaEstilo'>"+CadAux2+"</TD>";
+		Contenido+="<TD width='10%' class='FilaEstilo' style='text-align:right;'>"+CadAux3+"</TD>";
+		Contenido+="</TR>";
 		}
+
+	xGetElementById("TABLA_LISTA_FDD").innerHTML=Contenido;
 	}
 
 /**
@@ -443,10 +447,14 @@ function Form_DEFINICIONES_DEDUCCIONES__MostrarListado(req){
 * @param {String} DenominacionCC Denominacion del codigo contable asociado al proveedor seleccionado
 */
 function Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla(IDSeleccion, Denominacion, IDCodigoContable, IDRetencionTipo, Formula){
-		Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista=IDSeleccion;
-		restaurarColorTabla("TABLA_LISTA_FDD");
+		if(Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista!=-1)
+			xGetElementById("FDD"+Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista).bgColor=colorFondoTabla;
         colorBase=colorSeleccionTabla;
-        //xGetElementById("FDD"+IDSeleccion).bgColor=colorBase;
+        xGetElementById("FDD"+IDSeleccion).bgColor=colorBase;
+
+
+		Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista=IDSeleccion;
+
 
 		xGetElementById("DENOMINACION_FDD").value=Denominacion;
 		xGetElementById("CODIGO_CONTABLE_FDD").value=IDCodigoContable;

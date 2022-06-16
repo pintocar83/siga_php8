@@ -130,9 +130,9 @@
 							<tbody>
 								<tr class="CabeceraTablaEstilo">
 									<td width="5%">COD</td>
-									<td width="35%">DENOMINACI&Oacute;N</td>
-									<td width="35%">F&Oacute;RMULA</td>
-									<td width="25%">TIPO</td>
+									<td width="65%">DENOMINACI&Oacute;N</td>
+									<td width="20%">F&Oacute;RMULA</td>
+									<td width="10%">TIPO</td>
 								</tr>
 							</tbody>
 						</table>

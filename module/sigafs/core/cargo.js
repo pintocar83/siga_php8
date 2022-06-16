@@ -462,40 +462,45 @@ function Form_DEFINICIONES_CARGOS__MostrarListado(req){
 	resultado=resultado["result"];
 	var n=resultado.length;
 
+	var TextoBuscar=xTrim(strtoupper(xGetElementById("LISTADO_BUSCAR_FDC").value));
 
-	var tablaPrueba = xGetElementById("TABLA_LISTA_FDC");
-	limpiarTabla("TABLA_LISTA_FDC");
+	xGetElementById("TABLA_LISTA_FDC").innerHTML="";
+	var Contenido="";
+	var FuncionOnclick="";
+	var FuncionOnDblclick="";
+	var FuncionOnMouseOver="";
+	var FuncionOnMouseOut="";
+	var CadAux1, CadAux2, CadAux3, CadAux4;
 
-	var CadAux1, CadAux2;
-	//var NDigitos=NDigitosCodigo(resultado,'id');
+	for(var i=0;i< n; i++){
+		FuncionOnclick="Form_DEFINICIONES_CARGOS__SeleccionarElementoTabla('"
+					+resultado[i]['id']+"','"
+					+resultado[i]['denominacion']+"','"
+					+resultado[i]['id_cuenta_contable']+"','"
+					+resultado[i]['formula']+"','"
+					+resultado[i]['id_cuenta_presupuestaria']+"','"
+					+resultado[i]['iva']+"')";
+		FuncionOnDblclick="Form_DEFINICIONES_CARGOS__TabPane.setSelectedIndex(0);";
+		FuncionOnMouseOver="pintarFila(\"FDC"+resultado[i]['id']+"\")";
+		FuncionOnMouseOut="despintarFila(\"FDC"+resultado[i]['id']+"\")";
 
-	for(var i=0; i<n; i++){
-		var col0 = mD.agregaNodoElemento('td', null, null,{'width':'5%','class':'FilaEstilo'});
-		var col1 = mD.agregaNodoElemento('td', null, null,{'width':'50%','class':'FilaEstilo'});
-		var col2 = mD.agregaNodoElemento('td', null, null,{'width':'45%','class':'FilaEstilo'});
 
-		var fila = mD.agregaNodoElemento('tr', null,"FDC"+resultado[i]['id'] ,{'onclick':"Form_DEFINICIONES_CARGOS__SeleccionarElementoTabla('"+resultado[i]['id']+"','"+resultado[i]['denominacion']+"','"+resultado[i]['id_cuenta_contable']+"','"+resultado[i]['formula']+"','"+resultado[i]['id_cuenta_presupuestaria']+"','"+resultado[i]['iva']+"')",'onmouseover':"pintarFila('FDC"+resultado[i]['id']+"')",'onmouseout':"despintarFila('FDC"+resultado[i]['id']+"')",'ondblclick':"Form_DEFINICIONES_CARGOS__TabPane.setSelectedIndex(0);",'bgColor':colorFondoTabla});
+		Contenido+="<TR id='FDC"+resultado[i]['id']+"' onclick=\""+FuncionOnclick+"\" ondblclick='"+FuncionOnDblclick+"' onmouseover='"+FuncionOnMouseOver+"' onmouseout='"+FuncionOnMouseOut+"'>";
 
-		CadAux2=xTrim(strtoupper(xGetElementById("LISTADO_BUSCAR_FDC").value));
-
-		if(n==1 && CadAux2)
-			CadAux1="<strong>"+completarCodigoCeros(resultado[i]['id'],3)+"</strong>";
+		if(n!=1)
+			Contenido+="<TD width='5%' class='FilaEstilo'>"+resultado[i]['correlativo']+ "</TD>";
 		else
-			CadAux1=completarCodigoCeros(resultado[i]['id'],3);
+			Contenido+="<TD width='5%' class='FilaEstilo'><strong>"+resultado[i]['correlativo']+ "</strong></TD>";
 
-		col0.innerHTML=CadAux1;
-		col1.innerHTML=str_replace(strtoupper(resultado[i]['denominacion']),"<strong>"+CadAux2+"</strong>",CadAux2);
+		CadAux1=str_replace(strtoupper(resultado[i]['denominacion']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
+		CadAux2=str_replace(strtoupper(resultado[i]['formula']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
 
-		col2.innerHTML=resultado[i]['formula'];
-
-
-		fila.appendChild(col0);
-		fila.appendChild(col1);
-		fila.appendChild(col2);
-
-
-		tablaPrueba.appendChild(fila);
+		Contenido+="<TD width='50%' class='FilaEstilo'>"+CadAux1+"</TD>";
+		Contenido+="<TD width='45%' class='FilaEstilo'>"+CadAux2+"</TD>";
+		Contenido+="</TR>";
 		}
+
+	xGetElementById("TABLA_LISTA_FDC").innerHTML=Contenido;
 	}
 
 /**
@@ -513,10 +518,12 @@ function Form_DEFINICIONES_CARGOS__MostrarListado(req){
 * @param {String} DenominacionCC Denominacion del codigo contable asociado al proveedor seleccionado
 */
 function Form_DEFINICIONES_CARGOS__SeleccionarElementoTabla(IDSeleccion, Denominacion, IDCodigoContable, Formula, IDCodigoPlanUnico,EsIVA){
+	if(Form_DEFINICIONES_CARGOS__IDSeleccionActualLista!=-1)
+		xGetElementById("FDC"+Form_DEFINICIONES_CARGOS__IDSeleccionActualLista).bgColor=colorFondoTabla;
+
 	Form_DEFINICIONES_CARGOS__IDSeleccionActualLista=IDSeleccion;
-	restaurarColorTabla("TABLA_LISTA_FDC");
 	colorBase=colorSeleccionTabla;
-	//xGetElementById("FDC"+IDSeleccion).bgColor=colorBase;
+	xGetElementById("FDC"+IDSeleccion).bgColor=colorBase;
 
 	xGetElementById("DENOMINACION_FDC").value=Denominacion;
 
