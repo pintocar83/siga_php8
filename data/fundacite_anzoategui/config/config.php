@@ -6,25 +6,25 @@ $siga_title_logout="Sistema Integrado para la<br>Gestión Administrativa - Secto
 $siga_apps_common=array(
   array("id"=>"asistencia_registro","icon"=>"image/menu/icon-asistencia_registro.png","name"=>"Registro de Asistencia","public"=>true),
   array("id"=>"directorio","icon"=>"image/menu/icon-directorio.png","name"=>"Directorio<br>Telefónico","public"=>true),
-  array("id"=>"galeria","icon"=>"image/menu/icon-multimedia.png","name"=>"Galeria<br>Multimedia","public"=>true),  
-  array("id"=>"http://www.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-www.png","name"=>"Página web Institucional","public"=>true),
-  array("id"=>"https://www.zoho.com/mail/login.html#","icon"=>"image/menu/icon-mail.png","name"=>"Correo<br>Institucional","public"=>true),
-  array("id"=>"http://copernico.fundacite-sucre.gob.ve:631/printers/#","icon"=>"image/menu/icon-impresoras.png","name"=>"Servidor de Impresión","public"=>true),
-  array("id"=>"http://sigafs.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-sigafs.png","name"=>"SIGAFS<br>2009-2014","public"=>true),
-  array("id"=>"module/documentador/#","icon"=>"image/menu/icon-documentador.png","name"=>"Documentador de Sistemas","public"=>true),
+  //array("id"=>"galeria","icon"=>"image/menu/icon-multimedia.png","name"=>"Galeria<br>Multimedia","public"=>true),
+  //array("id"=>"http://www.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-www.png","name"=>"Página web Institucional","public"=>true),
+  //array("id"=>"https://www.zoho.com/mail/login.html#","icon"=>"image/menu/icon-mail.png","name"=>"Correo<br>Institucional","public"=>true),
+  //array("id"=>"http://copernico.fundacite-sucre.gob.ve:631/printers/#","icon"=>"image/menu/icon-impresoras.png","name"=>"Servidor de Impresión","public"=>true),
+  //array("id"=>"http://sigafs.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-sigafs.png","name"=>"SIGAFS<br>2009-2014","public"=>true),
+  //array("id"=>"module/documentador/#","icon"=>"image/menu/icon-documentador.png","name"=>"Documentador de Sistemas","public"=>true),
   array("id"=>"lector_qr","icon"=>"image/menu/icon-lector_qr.png","name"=>"Lector QR","public"=>true),
   );
 
 if(SIGA::user()):
   $siga_apps_admin_all=array(
                         array("id"=>"module/administrador/phppgadmin/#","icon"=>"image/menu/icon-phppgadmin.png","name"=>"phpPgAdmin"),
-                        array("id"=>"module/administrador/phpmyadmin/#","icon"=>"image/menu/icon-phpmyadmin.png","name"=>"phpMyAdmin"),
-                        array("id"=>"modulo/administrador/codiad/#","icon"=>"image/menu/icon-codiad.png","name"=>"Codiad"),
+                        //array("id"=>"module/administrador/phpmyadmin/#","icon"=>"image/menu/icon-phpmyadmin.png","name"=>"phpMyAdmin"),
+                        //array("id"=>"modulo/administrador/codiad/#","icon"=>"image/menu/icon-codiad.png","name"=>"Codiad"),
                         //array("id"=>"servicio_tecnico","icon"=>"image/menu/icon-serviciotecnico.png","name"=>"Servicio Técnico"),
                         array("id"=>"usuario","icon"=>"image/menu/icon-usuarios.png","name"=>"Usuarios y Permisología"),
                         );
   $siga_apps_admin=array();
-  
+
   for($i=0;$i<count($siga_apps_admin_all);$i++):
     if(SIGA::access($siga_apps_admin_all[$i]["id"]))
       $siga_apps_admin[]=$siga_apps_admin_all[$i];
@@ -37,13 +37,13 @@ if(SIGA::user()):
                                             array("id"=>"ficha_consulta","icon"=>"image/menu/icon-ficha.png","name"=>"Mi Expediente"),
                                             //array("id"=>"usuario_clave","icon"=>"image/menu/icon-password.png","name"=>"Cambiar<br>Contraseña"),
                                             array("id"=>"usuario_preferencias","icon"=>"image/menu/icon-user_background.png","name"=>"Fondo de<br>Pantalla"),
-                                            array("id"=>"logout","icon"=>"image/menu/icon-logout.png","name"=>"Cerrar<br>Sesión","public"=>true),  
+                                            array("id"=>"logout","icon"=>"image/menu/icon-logout.png","name"=>"Cerrar<br>Sesión","public"=>true),
                                           ),
                           "Acesso Rápido"=>$siga_apps_common,
                           //HERRAMIENTAS DEL ADMINISTRADOR, MOSTRAR UNICAMENTE CUANDO EXISTAN ELEMENTOS ACCESIBLES
                           $siga_apps_admin?"Herramientas de la Unidad de Informática":""=>$siga_apps_admin
                         )),
-    
+
     array("id"=>"administrativa","icon"=>"image/menu/icon-administrativa.png","name"=>"Sistema<br>Administrativo",
           "option"=>array(
                           "Procesos"=>array(
@@ -62,9 +62,9 @@ if(SIGA::user()):
                                           array("id"=>"credito_adicional","icon"=>"image/menu/icon-credito_adicional.png","name"=>"Crédito Adicional"),
                                           array("id"=>"reduccion","icon"=>"image/menu/icon-reduccion.png","name"=>"Reducción"),
                                           array("id"=>"disponibilidad","icon"=>"image/menu/icon-disponibilidad.png","name"=>"Disponibilidad<br>Presupuestaria"),
-                                          array("id"=>"formulacion","icon"=>"image/menu/icon-formulacion.png","name"=>"Formulación"),                                        
+                                          array("id"=>"formulacion","icon"=>"image/menu/icon-formulacion.png","name"=>"Formulación"),
                                           array("id"=>"cerrar_mes","icon"=>"image/menu/icon-cerrar_mes.png","name"=>"Cierre de Meses"),
-                                          
+
                                           ),
                           "Reportes"=>array(
                                           array("id"=>"reporte_contabilidad","icon"=>"image/menu/icon-reportes.png","name"=>"Contabilidad"),
@@ -74,7 +74,7 @@ if(SIGA::user()):
                                           array("id"=>"reporte_retencion","icon"=>"image/menu/icon-reportes.png","name"=>"Retenciones<br>IVA / ISLR"),
                                           //array("id"=>"modulo_nomina/constancia_trabajo","icon"=>"image/menu/icon-reportes.png","name"=>"Constancias<br>de Trabajo")
                                           ),
-                          
+
                           "Definiciones"=>array(
                                           array("id"=>"proveedor","icon"=>"image/menu/icon-proveedor.png","name"=>"Proveedores"),
                                           array("id"=>"beneficiario","icon"=>"image/menu/icon-beneficiario.png","name"=>"Beneficiarios"),
@@ -92,7 +92,7 @@ if(SIGA::user()):
                                           array("id"=>"retencion","icon"=>"image/menu/icon-retencion.png","name"=>"Retenciones"),
                                           ),
                         )),
-    
+
       /*array("id"=>"academica","icon"=>"image/menu/icon-academica.png","name"=>"Academia de Software Libre",
           "option"=>array(
                           "Academia de Software Libre"=>array(
@@ -104,7 +104,7 @@ if(SIGA::user()):
                                           array("id"=>"academia_reportes","icon"=>"image/menu/icon-reportes.png","name"=>"Reportes"),
                                           )
                         )),*/
-      
+
       array("id"=>"asistencia","icon"=>"image/menu/icon-asistencia.png","name"=>"Sistema de<br>Asistencia",
           "option"=>array(
                           "Sistema de Asistencia"=>array(
