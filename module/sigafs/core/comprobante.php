@@ -144,7 +144,8 @@
 										</BUTTON>
 									</td>
 									<td align="right">
-										<INPUT id='TOTAL_COMPROMISOS_FCG_DP' class='TextoCampoInputDesactivado' readonly="true" type='text' value="" style="text-align : right; width : 150px;">
+										<input class='BotonesParaCampos' type="button" value="txt" title="Ingresar detalles a través de texto plano." style="vertical-align: middle; text-align : center; font-size: 9px;" onclick="Form_COMPROBANTE_GASTO__inputText()"/>
+										<INPUT id='TOTAL_COMPROMISOS_FCG_DP' class='TextoCampoInputDesactivado' readonly="true" type='text' value="" style="text-align : right; width : 150px; vertical-align: middle;">
 									</td>
 									</tr>
 								</tbody>

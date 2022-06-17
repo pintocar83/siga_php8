@@ -957,6 +957,7 @@ function Form_COMPROBANTE_GASTO__AgregarDP() {
 	siga.open("detalle_presupuestario",{
 		onAdd: function(me){
 			//verificar si existe, si existe sumarlo al anterior
+			/*
 			for(i=0;i<Form_COMPROBANTE_GASTO__TamanoArregloDetallesPresupuestarios;i++)
 				if(Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][0]==me.internal.data.id_accion_subespecifica &&
 					 Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][1]==me.internal.data.id_fuente_recursos &&
@@ -979,7 +980,16 @@ function Form_COMPROBANTE_GASTO__AgregarDP() {
 			Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][7]=me.internal.data.monto;
 			Form_COMPROBANTE_GASTO__TamanoArregloDetallesPresupuestarios++;
 			Form_COMPROBANTE_GASTO__MostrarTablaDP();
-			
+			*/
+			//agregar detalle presupuestario
+			Form_COMPROBANTE_GASTO__AgregarItemDP(me.internal.data.id_accion_subespecifica,
+																					 me.internal.data.id_cuenta_presupuestaria,
+																					 me.internal.data.estructura_presupuestaria,
+																					 me.internal.data.cuenta_presupuestaria,
+																					 me.internal.data.denominacion_presupuestaria,
+																					 me.internal.data.operacion,
+																					 me.internal.data.monto);
+
 			//agregar detalle contable
 			Form_COMPROBANTE_GASTO__AgregarItemDC(me.internal.data.id_cuenta_contable,
 																						me.internal.data.cuenta_contable,
@@ -1029,6 +1039,28 @@ function Form_COMPROBANTE_GASTO__AgregarItemDC(id_cuenta_contable, cuenta_contab
 }
 
 
+function Form_COMPROBANTE_GASTO__AgregarItemDP(id_accion_subespecifica,id_cuenta_presupuestaria,estructura_presupuestaria,cuenta_presupuestaria,denominacion_presupuestaria,operacion,monto){
+	for(i=0;i<Form_COMPROBANTE_GASTO__TamanoArregloDetallesPresupuestarios;i++)
+		if(Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][0]==id_accion_subespecifica &&
+			 Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][2]==id_cuenta_presupuestaria &&
+			 Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][6]==operacion){
+			Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][7]=Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][7]*1+monto*1;
+			Form_COMPROBANTE_GASTO__MostrarTablaDP();
+			return;
+			}
+
+	var i=Form_COMPROBANTE_GASTO__TamanoArregloDetallesPresupuestarios;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i]=new Array(8);
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][0]=id_accion_subespecifica;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][2]=id_cuenta_presupuestaria;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][3]=estructura_presupuestaria;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][4]=cuenta_presupuestaria;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][5]=denominacion_presupuestaria;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][6]=operacion;
+	Form_COMPROBANTE_GASTO__ArregloDetallesPresupuestarios[i][7]=monto;
+	Form_COMPROBANTE_GASTO__TamanoArregloDetallesPresupuestarios++;
+	Form_COMPROBANTE_GASTO__MostrarTablaDP();
+}
 
 
 
@@ -1064,3 +1096,91 @@ function Form_COMPROBANTE_GASTO__Imprimir(){
 	window.open("../../report/comprobante.php?id="+Form_COMPROBANTE_GASTO__IDSeleccionActualLista);
 	}
 
+
+function Form_COMPROBANTE_GASTO__inputText(){
+	Ext.MessageBox.show({
+		title: 'Ingresar detalles por txt',
+		msg: "<b>Ejemplo para entradas:</b><span style='font-size: 10px;'><br>ACC000001-00-01 401010100 CCP 200.00<br>ACC000002-00-01 401010200 CCP 800.00<br>PRO124900-02-02 403100700 CCP 5000.00<br>611000000000 D 1000<br>613000000000 D 5000.00<br>111010201001 H 6000.00</span>",
+		width:700,
+		buttons: Ext.MessageBox.OKCANCEL,
+		multiline: true,
+		defaultTextHeight: 300,
+		value: '',
+		fn: function(btn, text){
+			if(btn=="cancel") return;
+
+			var _tmp="";
+			var linea=text.split("\n");
+			var segmento="";
+			for(var i=0;i<linea.length;i++){
+				segmento=linea[i].split(" ");
+				//validar entradas
+				if(segmento[0].length==12 && segmento[1].length==1 && (segmento[1]=="D" || segmento[1]=="H") && segmento[2]*1>=0 ) {
+					console.log("Agregando detalle contable: "+linea[i]);
+					_tmp=Ext.Ajax.request({
+						async: false,
+						url:"module/cuenta_contable/",
+						params: {
+							action: 'onGet',
+							id_cuenta_contable: segmento[0]
+						}
+					});
+					if(_tmp.statusText=="OK"){
+						var _retorno=Ext.JSON.decode(_tmp.responseText);
+						if(_retorno.length>0){
+							Form_COMPROBANTE_GASTO__AgregarItemDC(	segmento[0],
+																										_retorno[0]["cuenta_contable"],
+																										_retorno[0]["denominacion"],
+																										segmento[1],
+																										segmento[2]*1
+																										);
+						}
+					}
+				}
+				else if(segmento[0].split("-").length==3 && (segmento[0].substring(0,3)=="ACC" || segmento[0].substring(0,3)=="PRO") && segmento[1].length==9 && (segmento[2]=="C" || segmento[2]=="CC" || segmento[2]=="CCP" || segmento[2]=="AU" || segmento[2]=="DI" || segmento[2]=="AP" || segmento[2]=="P" || segmento[2]=="GC" || segmento[2]=="NN") && segmento[3]*1>=0 ) {
+					console.log("Agregando detalle presupuestario: "+linea[i]);
+					_tmp=Ext.Ajax.request({
+						async: false,
+						url:"module/estructura_presupuestaria/",
+						params: {
+							action: 'onGet_IdCodigo',
+							codigo: segmento[0]
+						}
+					});
+					if(_tmp.statusText=="OK"){
+						var _retorno=Ext.JSON.decode(_tmp.responseText);
+						if(_retorno.length>0){
+							var _id_accion_subespecifica=_retorno[0]["id_accion_subespecifica"];
+
+							_tmp=Ext.Ajax.request({
+								async: false,
+								url:"module/cuenta_presupuestaria/",
+								params: {
+									action: 'onGet',
+									id_cuenta_presupuestaria: segmento[1]
+								}
+							});
+							if(_tmp.statusText=="OK"){
+								var _retorno=Ext.JSON.decode(_tmp.responseText);
+								if(_retorno.length>0){
+									var _cuenta_presupuestaria=_retorno[0]["cuenta_presupuestaria"];
+									var _denominacion_cuenta_presupuestaria=_retorno[0]["denominacion"];
+									Form_COMPROBANTE_GASTO__AgregarItemDP(	_id_accion_subespecifica,
+																												segmento[1],
+																												segmento[0],
+																												_cuenta_presupuestaria,
+																												_denominacion_cuenta_presupuestaria,
+																												segmento[2],
+																												segmento[3]*1);
+
+								}
+							}
+						}
+					}
+				}
+				else
+					console.log("Linea no reconocida: "+linea[i]);
+			}
+		}
+	});
+}

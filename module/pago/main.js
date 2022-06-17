@@ -516,7 +516,7 @@ siga.define('pago', {
         CadAux8=formatNumber(me.Arreglo[i][7]);
         CadAux9=me.Arreglo[i][8];
     
-        Contenido+="<TR id='FCOP_S"+i+"' v='{index:"+i+"}' style='vertical-align: middle;'>";
+        Contenido+="<TR id='FCOP_S"+i+"' v='{\"index\":\""+i+"\"}' style='vertical-align: middle;'>";
         Contenido+="<TD width='1%' class='FilaEstilo' align='right'><img view_op class='BotonesParaCampos' src='image/icon/icon-display_16x16.png' style='border: none; background: none; margin-right: 3px; margin-left: 1px; width: 16px; height: 16px;' title='Visualizar'/></TD>";
         if(me.TipoModificar!=-1){
           if(CadAux1==true)
@@ -1248,8 +1248,8 @@ siga.define('pago', {
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
-        form: me.$("FORMULARIO"),
-        isUpload: true,
+        //form: me.$("FORMULARIO"),
+        //isUpload: true,
         params:{
           action: 'onSave',
           id: _id_comprobante,
@@ -1261,6 +1261,7 @@ siga.define('pago', {
           detalle: Ext.encode(_detalle)
         },
         success:function(request){
+          console.log(request);
           me.GuardarMensaje(request);
         },
         failure:function(request){
@@ -1424,7 +1425,7 @@ siga.define('pago', {
     
     
         //Contenido+="<TR id='FCOP"+resultado[i]['id']+"' onclick=\""+FuncionOnclick+"\" ondblclick='"+FuncionOnDblclick+"' onmouseover='"+FuncionOnMouseOver+"' onmouseout='"+FuncionOnMouseOut+"'>";
-        Contenido+="<TR id='FCOP"+resultado[i]['id']+"' v='{id:"+resultado[i]['id']+",estado:"+estado+"}'>";
+        Contenido+="<TR id='FCOP"+resultado[i]['id']+"' v='{\"id\":\""+resultado[i]['id']+"\",\"estado\":\""+estado+"\"}'>";
         
         if(!resultado[i]['persona']) 
           resultado[i]['persona']="";

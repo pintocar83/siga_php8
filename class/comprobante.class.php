@@ -588,13 +588,13 @@ class comprobante{
 
       //si es cheque con orden de pago o cheque directo, verificar si existe
       if($codigo_operacion=="CH" or $codigo_operacion=="PD"){
-        $existe=$db->Execute("SELECT count(*)
+        $existe=$db->Execute("SELECT count(*) n
                               FROM modulo_base.comprobante_bancario
                               WHERE
                                 id_banco_cuenta='".str_clear($detalle["comprobante_bancario"]["id_banco_cuenta"])."' AND
                                 numero='".str_clear($detalle["comprobante_bancario"]["numero"])."' AND id_comprobante<>'$id'");
 
-        if($existe[0][0]>0)
+        if(isset($existe[0]["n"]) and $existe[0]["n"]>0)
           return array("success"=>false, "message"=>"Error. El cheque No ".str_clear($detalle["comprobante_bancario"]["numero"])." ya se encuentra registrado.");
       }
     }
@@ -1056,7 +1056,7 @@ class comprobante{
     //$_FILES
 
 
-
+    //$db->Execute("ROLLBACK WORK");return array("success"=>false, "message"=>"Prueba para revertir (fue success)");
 
 
 
