@@ -89,12 +89,12 @@
 									<strong>Consolidado por otras acciones especificas.</strong><br>
 									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									<SELECT id="ID_PROYECTO3_FFPDGI" class='TextoCampoInput' onchange="Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarAE();"></SELECT>
-									<SELECT id="ID_ACCION_ESPECIFICA3_FFPDGI" class='TextoCampoInput' onchange=""></SELECT>
+									<SELECT id="ID_ACCION_ESPECIFICA3_FFPDGI" class='TextoCampoInput' onchange="Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarOAE();"></SELECT>
 									<SELECT id="ID_OTRA_ACCION_ESPECIFICA3_FFPDGI" class='TextoCampoInput'></SELECT>
 									<INPUT type="text" class='CampoTextoBlanco' id="NOMBRE_OTRA_ACCION_ESPECIFICA_FFPDGI" value="" size="30" readonly="true">
 								</td>
 							</tr>							
-							<tr>
+							<tr style="display: none;">
 								<td class='TextCampos' >
 									<INPUT type="radio" class='TextoCampoInput' name="RADIO_IMPRIMIR_FFPDGI" id="ID_RADIO_IMPRIMIR_FFPDGI_7" value="5">
 									<strong>Consolidado por acci&oacute;n centralizada o proyecto, y por otras acciones especificas.</strong><br>

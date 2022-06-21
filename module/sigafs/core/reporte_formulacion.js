@@ -30,7 +30,8 @@ function Form_FORMULACION_PRESUPUESTO_DE_GATOS_IMPRIMIR_CargarDatos(){
 			xGetElementById("sw_formulacion_reformulacion_FFPDGI").options[1].selected=true;
 
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR__TabPane.setSelectedIndex(0);
-	Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR__CargarFuente();
+	//Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR__CargarFuente();
+	Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR__CargarAC();
 	}
 
 
@@ -99,14 +100,14 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarAE(){
 							var resultado = eval("(" + respuesta + ")");
 							resultado=resultado["result"];							
 							CargarSELECT(resultado,"ID_ACCION_ESPECIFICA3_FFPDGI",-2,"id","codigo_especifica",'','','denominacion_especifica');
-							//Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarOAE();
+							Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarOAE();
 							},
 					 'url':'../estructura_presupuestaria/',
 					 'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
 					 });
 	}
 
-/*
+
 function Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarOAE(){
 	if(!xGetElementById("ID_ACCION_ESPECIFICA3_FFPDGI").value)
 		return;
@@ -123,7 +124,7 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR3__CargarOAE(){
 					 'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
 					 });
 	}
-*/
+
 
 
 
@@ -157,7 +158,8 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS_IMPRIMIR__Imprimir(){
 	else if(Opcion==5)
 		window.open("../../report/formulacion.php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO2_FFPDGI").value+"&id_accion_especifica="+xGetElementById("ID_ACCION_ESPECIFICA_FFPDGI").value+"&OCULTAR="+sw_ocultar);
 	else if(Opcion==6)
-		window.open("../../report/formulacion.php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_especifica="+xGetElementById("ID_ACCION_ESPECIFICA3_FFPDGI").value+"&id_fuente_recursos="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA3_FFPDGI").value+"&OCULTAR="+sw_ocultar);
+		window.open("../../report/formulacion.php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_especifica="+xGetElementById("ID_ACCION_ESPECIFICA3_FFPDGI").value+"&id_accion_subespecifica="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA3_FFPDGI").value+"&OCULTAR="+sw_ocultar);
+		//window.open("../../report/formulacion.php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_especifica="+xGetElementById("ID_ACCION_ESPECIFICA3_FFPDGI").value+"&id_fuente_recursos="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA3_FFPDGI").value+"&OCULTAR="+sw_ocultar);
 	else if(Opcion==7)
 		window.open("../../report/formulacion.php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO4_FFPDGI").value+"&id_fuente_recursos="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA4_FFPDGI").value+"&OCULTAR="+sw_ocultar);
 	}

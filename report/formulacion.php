@@ -41,7 +41,7 @@ switch($opcion){
 			$TITULO='CONSOLIDADO GENERAL';
 			$NOMBRE_PROYECTO_ACCION="PROYECTOS Y ACCIONES CENTRALIZADAS";
 			$DESCRIPCION_ESPECIFICA="";
-			
+
 			$sql="SELECT
             CP.denominacion,
             CP.padre,
@@ -66,7 +66,7 @@ switch($opcion){
           GROUP BY CP.denominacion, CP.padre, FD.id_cuenta_presupuestaria
           ORDER BY
             FD.id_cuenta_presupuestaria";
-				
+
 		break;
 		case 2://consolidado general de acciones centralizadas
 			$TITULO='CONSOLIDADO GENERAL';
@@ -183,7 +183,7 @@ switch($opcion){
           GROUP BY CP.denominacion, CP.padre, FD.id_cuenta_presupuestaria
           ORDER BY
             FD.id_cuenta_presupuestaria";
-			
+
 			$TITULO='CONSOLIDADO';
 			$DENOMINACION=$db->Execute("select denominacion_centralizada from modulo_base.accion_centralizada where id='$id_accion_centralizada'");
 
@@ -191,7 +191,7 @@ switch($opcion){
 			$DESCRIPCION_ESPECIFICA="";
 		break;
 		case 5://proyecto y especifica $_GET["ID_AC_PRO"], $_GET["ID_ESPECIFICA"]
-			
+
 			$sql="SELECT
             --F.*,
             --FD.*,
@@ -222,7 +222,7 @@ switch($opcion){
 																								modulo_base.accion_especifica as AE,
 																								modulo_base.accion_subespecifica as ASE
 																						where
-																								ASE.id_accion_especifica=AE.id and AE.id_accion_centralizada=AC.id and AE.id='$id_accion_especifica' 
+																								ASE.id_accion_especifica=AE.id and AE.id_accion_centralizada=AC.id and AE.id='$id_accion_especifica'
 																								)
           GROUP BY CP.denominacion, CP.padre, FD.id_cuenta_presupuestaria
           ORDER BY
@@ -230,7 +230,7 @@ switch($opcion){
 			$TITULO='';
 			$DENOMINACION=$db->Execute("select denominacion_centralizada from modulo_base.accion_centralizada where id='$id_accion_centralizada'");
 			$NOMBRE_PROYECTO_ACCION=$DENOMINACION[0][0];
-			
+
 			$DENOMINACION=$db->Execute("select codigo_especifica, denominacion_especifica from modulo_base.accion_especifica where id='$id_accion_especifica'");
 			$DESCRIPCION_ESPECIFICA=$DENOMINACION[0]["codigo_especifica"]." ".$DENOMINACION[0]["denominacion_especifica"].".";
 
@@ -259,34 +259,77 @@ switch($opcion){
             FD.id_cuenta_presupuestaria=CP.id_cuenta_presupuestaria AND
             F.anio='$anio' AND
             F.tipo='$tipo' AND
-						F.id_fuente_recursos='$id_fuente_recursos' AND
-						F.id_accion_subespecifica IN (select
-																								ASE.id
-																						from
-																								modulo_base.accion_centralizada as AC,
-																								modulo_base.accion_especifica as AE,
-																								modulo_base.accion_subespecifica as ASE
-																						where
-																								ASE.id_accion_especifica=AE.id and AE.id_accion_centralizada=AC.id and AE.id='$id_accion_especifica' 
-																								)
+						F.id_accion_subespecifica = '$id_accion_subespecifica'
           ORDER BY
             FD.id_cuenta_presupuestaria";
-						
+			//print $sql;
 			$TITULO='';
 			$DENOMINACION=$db->Execute("select
 																		denominacion_centralizada, codigo_especifica, denominacion_especifica
 																 from modulo_base.accion_centralizada as AC, modulo_base.accion_especifica as AE
 																 where AC.id=AE.id_accion_centralizada AND AE.id='$id_accion_especifica'");
-			$NOMBRE_PROYECTO_ACCION=$DENOMINACION[0]["denominacion_centralizada"];		
+			$NOMBRE_PROYECTO_ACCION=$DENOMINACION[0]["denominacion_centralizada"];
 			$DESCRIPCION_ESPECIFICA=$DENOMINACION[0]["codigo_especifica"]." ".$DENOMINACION[0]["denominacion_especifica"].".";
-			
-			$DENOMINACION=$db->Execute("select codigo_fuente, denominacion_fuente from modulo_base.fuente_recursos where id='$id_fuente_recursos'");
-			$DESCRIPCION_ESPECIFICA=$DESCRIPCION_ESPECIFICA."  ".$DENOMINACION[0]["codigo_fuente"]." ".$DENOMINACION[0]["denominacion_fuente"];
-			
+
+			//$DENOMINACION=$db->Execute("select codigo_fuente, denominacion_fuente from modulo_base.fuente_recursos where id='$id_fuente_recursos'");
+			//$DESCRIPCION_ESPECIFICA=$DESCRIPCION_ESPECIFICA."  ".$DENOMINACION[0]["codigo_fuente"]." ".$DENOMINACION[0]["denominacion_fuente"];
+
 			//$DENOMINACION=$db->Execute("select codigo_subespecifica, denominacion_subespecifica from modulo_base.accion_subespecifica where id='$id_accion_subespecifica'");
 			//$DESCRIPCION_ESPECIFICA=$DESCRIPCION_ESPECIFICA." - ".$DENOMINACION[0]["codigo_subespecifica"].".- ".$DENOMINACION[0]["denominacion_subespecifica"].".";
 
 		break;
+    case 61111://proyecto, especifica y otra especifica    $_GET["ID_EP"]
+      $sql="SELECT
+            F.*,
+            FD.*,
+            CP.denominacion,
+            CP.padre,
+            FD.id_cuenta_presupuestaria,
+            FD.monto[1]+FD.monto[2]+FD.monto[3] as monto_t1,
+            FD.monto[4]+FD.monto[5]+FD.monto[6] as monto_t2,
+            FD.monto[7]+FD.monto[8]+FD.monto[9] as monto_t3,
+            FD.monto[10]+FD.monto[11]+FD.monto[12] as monto_t4,
+            (FD.monto[1]+FD.monto[2]+FD.monto[3]+FD.monto[4]+FD.monto[5]+FD.monto[6]+FD.monto[7]+FD.monto[8]+FD.monto[9]+FD.monto[10]+FD.monto[11]+FD.monto[12]) as monto,
+            monto_real,
+            monto_estimado
+          FROM
+            modulo_base.formulacion as F,
+            modulo_base.formulacion_detalle as FD,
+            modulo_base.cuenta_presupuestaria as CP
+          WHERE
+            FD.id_cuenta_presupuestaria ilike '4%' AND
+            F.id=FD.id_formulacion AND
+            FD.id_cuenta_presupuestaria=CP.id_cuenta_presupuestaria AND
+            F.anio='$anio' AND
+            F.tipo='$tipo' AND
+            F.id_fuente_recursos='$id_fuente_recursos' AND
+            F.id_accion_subespecifica IN (select
+                                                ASE.id
+                                            from
+                                                modulo_base.accion_centralizada as AC,
+                                                modulo_base.accion_especifica as AE,
+                                                modulo_base.accion_subespecifica as ASE
+                                            where
+                                                ASE.id_accion_especifica=AE.id and AE.id_accion_centralizada=AC.id and AE.id='$id_accion_especifica'
+                                                )
+          ORDER BY
+            FD.id_cuenta_presupuestaria";
+
+      $TITULO='';
+      $DENOMINACION=$db->Execute("select
+                                    denominacion_centralizada, codigo_especifica, denominacion_especifica
+                                 from modulo_base.accion_centralizada as AC, modulo_base.accion_especifica as AE
+                                 where AC.id=AE.id_accion_centralizada AND AE.id='$id_accion_especifica'");
+      $NOMBRE_PROYECTO_ACCION=$DENOMINACION[0]["denominacion_centralizada"];
+      $DESCRIPCION_ESPECIFICA=$DENOMINACION[0]["codigo_especifica"]." ".$DENOMINACION[0]["denominacion_especifica"].".";
+
+      $DENOMINACION=$db->Execute("select codigo_fuente, denominacion_fuente from modulo_base.fuente_recursos where id='$id_fuente_recursos'");
+      $DESCRIPCION_ESPECIFICA=$DESCRIPCION_ESPECIFICA."  ".$DENOMINACION[0]["codigo_fuente"]." ".$DENOMINACION[0]["denominacion_fuente"];
+
+      //$DENOMINACION=$db->Execute("select codigo_subespecifica, denominacion_subespecifica from modulo_base.accion_subespecifica where id='$id_accion_subespecifica'");
+      //$DESCRIPCION_ESPECIFICA=$DESCRIPCION_ESPECIFICA." - ".$DENOMINACION[0]["codigo_subespecifica"].".- ".$DENOMINACION[0]["denominacion_subespecifica"].".";
+
+    break;
 		case 7://proyecto, otra especifica por codigo
 			$sql="SELECT
             F.*,
@@ -319,15 +362,15 @@ switch($opcion){
 																								modulo_base.accion_especifica as AE,
 																								modulo_base.accion_subespecifica as ASE
 																						where
-																								ASE.id_accion_especifica=AE.id and AE.id_accion_centralizada=AC.id and AC.id='$id_accion_centralizada' 
+																								ASE.id_accion_especifica=AE.id and AE.id_accion_centralizada=AC.id and AC.id='$id_accion_centralizada'
 																								)
           ORDER BY
             FD.id_cuenta_presupuestaria";
-				
+
 				$TITULO='';
 				$DENOMINACION=$db->Execute("select denominacion_centralizada from modulo_base.accion_centralizada where id='$id_accion_centralizada'");
 				$NOMBRE_PROYECTO_ACCION=$DENOMINACION[0][0];
-				
+
 				$DENOMINACION=$db->Execute("select codigo_fuente, denominacion_fuente from modulo_base.fuente_recursos where id='$id_fuente_recursos'");
 				$DESCRIPCION_ESPECIFICA=$DENOMINACION[0]["codigo_fuente"]." ".$DENOMINACION[0]["denominacion_fuente"];
 		break;
@@ -337,7 +380,10 @@ switch($opcion){
 	}
 
 $FORMULACION_TMP=$db->Execute($sql);
-
+if(!$FORMULACION_TMP or count($FORMULACION_TMP)==0){
+  print "Sin datos que mostrar, para los parametros y filtros solicitados.";
+  exit;
+}
 
 $FORMULACION=array();
 $n=0;
@@ -352,12 +398,12 @@ for($i=0;$i<count($FORMULACION_TMP);$i++){
 
 function AgregarEspecifica($reg){
 		global $FORMULACION, $n, $db;
-		
+
 		$FORMULACION[]=$reg;
 		$n++;
-		
+
 		$aux_codigo=$reg["id_cuenta_presupuestaria"];
-		$padre=array();		
+		$padre=array();
 		$padre[0]=$aux_codigo;
 		$padre[1]=substr($aux_codigo,0,1)."00000000";
 		$padre[2]=substr($aux_codigo,0,3)."000000";
@@ -367,7 +413,7 @@ function AgregarEspecifica($reg){
 			$k=4;
 		else
 			$k=5;
-			
+
 		//print_r($FORMULACION);
 
 		for($i=1;$i<$k;$i++){
@@ -387,13 +433,13 @@ function AgregarEspecifica($reg){
 				}
 				//sino la encontro agregarla
 				if($sw==false){
-					$FORMULACION[$n]=array();			
+					$FORMULACION[$n]=array();
 					$FORMULACION[$n]["id_cuenta_presupuestaria"]=$padre[$i];
 					$FORMULACION[$n]["denominacion"]="";
-					
+
 					$CUENTA_PRESUPUESTARIA=$db->Execute("select denominacion from modulo_base.cuenta_presupuestaria where id_cuenta_presupuestaria='".$padre[$i]."'");
 					$FORMULACION[$n]["denominacion"]=$CUENTA_PRESUPUESTARIA[0][0];
-					
+
 					$FORMULACION[$n]["padre"]='t';
 					$FORMULACION[$n]["monto_t1"]=$reg["monto_t1"];
 					$FORMULACION[$n]["monto_t2"]=$reg["monto_t2"];
