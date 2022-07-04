@@ -66,7 +66,7 @@
 										Balance general
 										<br>
 										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										<select id="SELECT_BALANCEGENERAL_FIR" class="TextoCampoInput"><option value="1">FORMATO A</option><option value="2" selected>FORMATO B</option></select>
+										<select id="SELECT_BALANCEGENERAL_FIR" class="TextoCampoInput"><option value="1" style="display:none;">FORMATO A</option><option value="2" selected>FORMATO B</option></select>
 									</td>
 								</tr>
 								<tr>

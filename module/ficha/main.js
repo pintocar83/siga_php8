@@ -1,7 +1,7 @@
 siga.define('ficha', {
   extend: 'siga.window',
   title: 'Nómina - Ficha',
-  width: 850,
+  width: 880,
   height: 720,
 
   initComponent: function(){
@@ -717,7 +717,7 @@ siga.define('ficha', {
                     queryMode: "local",
                     //rootProperty: "result",
                     displayTpl: '<tpl for=".">{escala} - {sueldo_basico}</tpl>',
-                    tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{escala}</b> <small style="float: right;">{sueldo_basico}</small></li></tpl></ul>',
+                    tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item" data-qtip="{escala}"><div style="width:100%;overflow:hidden;white-space:nowrap;position:relative;"><div style="white-space:nowrap;padding-right:30px;font-weight:bold;width:100%;overflow:hidden;text-overflow:ellipsis;">{escala}</div> <small style="position:absolute; right:0; top:0;">{sueldo_basico}</small></div></li></tpl></ul>',
                     store: {
                       fields: ['id','escala_sueldo_basico'],
                       autoLoad: true,
