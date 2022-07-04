@@ -733,7 +733,11 @@ siga.define('ficha', {
                           totalProperty:'total'
                         },
                         extraParams: {
-                          action: 'onList'
+                          action: 'onList',
+                          text: '',
+                          start: 0,
+                          limit: 'ALL',
+                          sort: '[{"property": "escala", "direction": "ASC"}]'
                         }
                       },
                       listeners: {

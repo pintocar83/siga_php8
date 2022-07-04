@@ -395,6 +395,7 @@ class ficha{
       $id=$result[0][0];
     }
 
+    //  print_r($grupo_familiar);
     if($grupo_familiar!==NULL){
       $tmp=[];
       //guardar los ids viejos para omitirlos en en borrado, se deben hacer update sobre estos
@@ -403,9 +404,14 @@ class ficha{
           $tmp[]=$grupo_familiar[$i]["id"];
         }
       }
+      //print_r($tmp);
       //borrado
       if(count($tmp)>0){
         $db->Delete("modulo_nomina.grupo_familiar","not id in ('".implode("','",$tmp)."') and id_ficha='$id'");
+        //print "DELETE not id in ('".implode("','",$tmp)."') and id_ficha='$id'  ";
+      }
+      else{
+        $db->Delete("modulo_nomina.grupo_familiar","id_ficha='$id'");
       }
 
       //hacer updates sobre id!='' e insert id=''
@@ -414,16 +420,20 @@ class ficha{
           "id_ficha"           => "'$id'",
           "id_parentesco"      => "'".SIGA::clear($grupo_familiar[$i]["id_parentesco"])."'",
           "nacionalidad"       => "'".SIGA::clear($grupo_familiar[$i]["nacionalidad"])."'",
-          "cedula"             => "'".SIGA::clear($grupo_familiar[$i]["cedula"])."'",
+          "cedula"             => $grupo_familiar[$i]["cedula"]?"'".SIGA::clear($grupo_familiar[$i]["cedula"])."'":"NULL",
           "nombres_apellidos"  => "'".SIGA::clear($grupo_familiar[$i]["nombres_apellidos"])."'",
           "genero"             => "'".SIGA::clear($grupo_familiar[$i]["genero"])."'",
           "fecha_nacimiento"   => "'".SIGA::clear($grupo_familiar[$i]["fecha_nacimiento"])."'"
         ];
         if($grupo_familiar[$i]["id"]){//update
-          $db->Update("modulo_nomina.grupo_familiar",$data,"id='".SIGA::clear($grupo_familiar[$i]["id"])."'");
+          $result=$db->Update("modulo_nomina.grupo_familiar",$data,"id='".SIGA::clear($grupo_familiar[$i]["id"])."'");
+          if(!$result)
+        return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_nomina.grupo_familiar","messageDB"=>$db->GetMsgErrorClear());
         }
         else{//insert
-          $db->Insert("modulo_nomina.grupo_familiar",$data);
+          $result=$db->Insert("modulo_nomina.grupo_familiar",$data);
+          if(!$result)
+        return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_nomina.grupo_familiar","messageDB"=>$db->GetMsgErrorClear());
         }
       }
     }

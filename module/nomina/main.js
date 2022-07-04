@@ -1673,13 +1673,13 @@ siga.define('nomina', {
             var view = this.getView();
             //para corregir error al hacer scroll, prueba nuevamente con una version nueva de extjs para verficar coreccion de bug.
             view.normalView.on("scroll", function (e, t) {
-              //Ext.getDom(view.lockedView.id).scrollTop = Ext.getDom(view.normalView.id).scrollTop;
-              view.lockedView.el.dom.scrollTop=view.normalView.el.dom.scrollTop;
+              Ext.getDom(view.lockedView.id).scrollTop = Ext.getDom(view.normalView.id).scrollTop;
+              //view.lockedView.el.dom.scrollTop=view.normalView.el.dom.scrollTop;
             });
 
             view.lockedView.getEl().on("scroll", function (e, t) {
-              //Ext.getDom(view.normalView.id).scrollTop = Ext.getDom(view.lockedView.id).scrollTop;
-              view.normalView.el.dom.scrollTop=view.lockedView.el.dom.scrollTop;
+              Ext.getDom(view.normalView.id).scrollTop = Ext.getDom(view.lockedView.id).scrollTop;
+              //view.normalView.el.dom.scrollTop=view.lockedView.el.dom.scrollTop;
             });
           },
 

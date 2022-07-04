@@ -1104,6 +1104,22 @@ class comprobante{
       return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
     }
 
+    //borrar comprobante previo monto pagado
+    $result=$db->Delete("modulo_base.comprobante_previo_monto_pagado","id_comprobante='$id'");
+    if(!$result){
+      $mensajeDB=$db->GetMsgErrorClear();
+      $db->Execute("ROLLBACK WORK");
+      return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
+    }
+
+    //borrar comprobante previo
+    $result=$db->Delete("modulo_base.comprobante_previo","id_comprobante='$id'");
+    if(!$result){
+      $mensajeDB=$db->GetMsgErrorClear();
+      $db->Execute("ROLLBACK WORK");
+      return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
+    }
+
     //borrar comprobante
     $result=$db->Delete("modulo_base.comprobante","id='$id'");
     if(!$result){

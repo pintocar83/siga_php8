@@ -1619,12 +1619,14 @@ siga.define('pago', {
           me.OcultarBotones();
           switch(estado){
             //SIN CONTABILIZAR (ROJO)
-            case 0://activar el boton de modificar, mostrar el boton de contabilizar															
+            case 0://activar el boton de modificar, mostrar el boton de contabilizar
+            case '0':															
               me.ActivarBotonModificar();
               me.$("BOTON_CONTABLIZAR").style.display="";
               break;
             //CONTABILIZADO (VERDE)
             case 2://mostrar el boton de reversar y anular
+            case '2':
               me.$("BOTON_REVERSAR").style.display="";
               me.$("BOTON_ANULAR").style.display="";
               break;

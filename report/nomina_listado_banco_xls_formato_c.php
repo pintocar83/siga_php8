@@ -79,6 +79,10 @@ for($i=0;$i<count($id_nomina);$i++):
 		}
 		
 		$data[$c]["nombre_apellido"]=$ficha[$j]["nombre_apellido"];
+
+		if($data[$c]["total_neto"]<=0){
+			continue;
+		}
 		
 		$total_neto+=$data[$c]["total_neto"];
 		$c++;
