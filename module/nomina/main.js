@@ -1745,6 +1745,7 @@ siga.define('nomina', {
                     }
                   }
                 },
+                /*
                 {
                   text: 'Agregar (Según Escala Salarial)',
                   handler: function() {
@@ -1766,6 +1767,7 @@ siga.define('nomina', {
                     }
                   }
                 },
+                */
                 {
                   text: 'Agregar (Valor Según Ficha)',
                   handler: function() {
@@ -1832,6 +1834,7 @@ siga.define('nomina', {
                     }
                   }
                 },
+                /*
                 {
                   text: 'Agregar a Todos (Según Escala Salarial)',
                   handler: function() {
@@ -1854,6 +1857,7 @@ siga.define('nomina', {
                     }
                   },
                 },
+                */
                 {
                   text: 'Agregar a Todos (Valor Según Ficha)',
                   handler: function() {

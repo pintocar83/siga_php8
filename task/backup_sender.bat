@@ -1,1 +1,1 @@
-php -f backup_sender.php
+C:\Bitnami\wappstack-8.0.6-0\php\php.exe -f backup_sender.php
