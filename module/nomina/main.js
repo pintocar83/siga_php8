@@ -26,8 +26,25 @@ siga.define('nomina', {
       cerrado: null
     });
 
-
-
+    me.storeNomina = Ext.create('Ext.data.Store', {
+      fields: ['id','codigo_nomina'],
+      autoLoad: true,
+      pageSize: 1000,
+      proxy: {
+        type:'ajax',
+        url: 'module/nomina/',
+        actionMethods:  {read: "POST"},//actionMethods:'POST',actionMethods:'POST',
+        timeout: 3600000,
+        reader: {
+          type: 'json',
+          rootProperty: 'result',
+          totalProperty:'total'
+        },
+        extraParams: {
+          action: 'onInit'
+        }
+      }
+    });
 
     //VENTANA PARA CAMBIAR/SELECCIONAR NOMINA
     me.internal.ventanaSeleccionarNomina=Ext.create('Ext.window.Window', {
@@ -37,10 +54,11 @@ siga.define('nomina', {
       closable: false,
       modal: true,
       width: 550,
-      height: 340,
+      height: 300,
       resizable: true,
       layout: 'anchor',
-      bodyStyle: 'padding: 5px 20px 0px 20px; background-color: #FFF;',
+      bodyStyle: 'padding: 5px 20px 0px 20px; background-color: #e8e8e8; border-color: #e8e8e8;',
+      autoScroll: true,
       internal:{
         tipo: '',
         id_periodo: '',
@@ -182,6 +200,7 @@ siga.define('nomina', {
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
+          cls: 'seleccionar_nomina__nomina',
           editable: false,
           queryMode: "local",
           multiSelect: true,
@@ -237,7 +256,7 @@ siga.define('nomina', {
           xtype: 'container',
           anchor: '100%',
           layout: 'hbox',
-          style: 'padding-top: 25px;',
+          style: 'padding-top: 25px; padding-bottom: 10px;',
           items: [
             {
               xtype: 'tbspacer',
@@ -300,6 +319,7 @@ siga.define('nomina', {
             case "nomina_recibo_pago":                      me.getCmp("publicar").show();   break;
             case "nomina_resumen_presupuestario_contable":  me.getCmp("txt").show();        break;
             case "nomina_listado_banco_xls_formato_c":
+              me.getCmp("txt").show();
               me.getCmp('formato_visualizar').show();
               if(me.getCmp('formato_visualizar').getValue()=="0"){
                 me.getCmp('id_concepto_formato_visualizar').hide();

@@ -345,3 +345,13 @@
     color:  black;
     /*font-weight: 700;*/
 }
+
+
+.seleccionar_nomina__nomina .x-form-text-default.x-tagfield {
+    padding-right: 4px;
+}
+
+.seleccionar_nomina__nomina .x-tagfield-item {
+    width: 100%;
+    margin-right: 0px !important;
+}

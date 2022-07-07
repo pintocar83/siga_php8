@@ -2,6 +2,7 @@
 class SIGA extends SIGA_CONFIG {
   private static $path;
   private static $session_previous;
+  public static $DBMode=NULL;
 
   public static function access_array($value=NULL){
     if($value===NULL) return self::session_value("SIGA::access");
@@ -123,6 +124,8 @@ class SIGA extends SIGA_CONFIG {
       isset($database_config["password"])?$database_config["password"]:"",
       isset($database_config["port"])?$database_config["port"]:""
     );
+    if(self::$DBMode)
+      $db->mode=self::$DBMode;
     return $db;
   }
 

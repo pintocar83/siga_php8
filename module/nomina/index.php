@@ -9,6 +9,20 @@ class MODULO extends nomina{
   public static function onInit(){
     $access=SIGA::access("nomina");
     switch($_REQUEST["action"]){
+      case "onInit":
+        header('Content-Type: text/plain; charset=utf-8');
+        SIGA::$DBMode=PGSQL_ASSOC;
+        include("../../class/nomina_periodo_tipo.class.php");
+        include("../../class/nomina_escala_salarial.class.php");
+        $return=[];
+        $return["periodo_tipo"]    = nomina_periodo_tipo::onList_Activo("",0,"ALL",'[{"property": "denominacion", "direction": "ASC"}]')["result"];
+        $return["nomina"]          = self::onList("","","",0,"ALL",'[{"property": "tipo", "direction": "ASC"},{"property": "codigo_nomina", "direction": "ASC"}]')["result"];
+        $return["cargo"]           = self::onList_Cargo("",0,"ALL",'[{"property": "cargo", "direction": "ASC"}]')["result"];
+        $return["escala_salarial"] = nomina_escala_salarial::onList("",0,"ALL",'[{"property": "escala", "direction": "ASC"}]')["result"];
+
+
+        print json_encode($return);
+        break;
       case "onGet":
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onGet($access,SIGA::param("id_nomina"),SIGA::param("id_periodo")));
@@ -16,7 +30,7 @@ class MODULO extends nomina{
       case "onList":
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onList(SIGA::param("id_periodo"),SIGA::param("tipo"),SIGA::paramUpper("text"),SIGA::param("start"),SIGA::param("limit"),SIGA::param("sort",false)));
-        break;      
+        break;
       case "onSave":
         header('Content-Type: text/plain; charset=utf-8');
         $data=json_decode(SIGA::param("data",false),true);
@@ -41,7 +55,7 @@ class MODULO extends nomina{
         $ids_ficha=json_decode(SIGA::param("id_ficha",false),true);
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onRemove($access,SIGA::param("id_nomina"),SIGA::param("id_periodo"),$ids_ficha,SIGA::param("id_concepto")));
-        break;      
+        break;
       case "onClose":
         header('Content-Type: text/plain; charset=utf-8');
         $access=SIGA::access("nomina_cerrar_periodo");
@@ -83,11 +97,11 @@ class MODULO extends nomina{
         break;
       case "onJavascript":
       case "js":
-      case "javascript":  
+      case "javascript":
         header('Content-Type: text/javascript; charset=utf-8');
         print self::onJavascript($access);
         break;
-      
+
       case "onListFichaPeriodo":
         header('Content-Type: text/plain; charset=utf-8');
         $filtro_busqueda=json_decode(SIGA::param("filtro_busqueda",false),true);
@@ -103,15 +117,15 @@ class MODULO extends nomina{
         print json_encode(self::onListConceptoPeriodo($access,
                                                       SIGA::param("id_nomina"),
                                                       SIGA::param("id_periodo")));
-        break; 
-    }    
-  }  
-  
+        break;
+    }
+  }
+
   public static function onCss($access){
     if(!$access) return;
     return SIGA::css("main.css");
   }
-  
+
   public static function onJavascript($access){
     if(!$access) return;
     return SIGA::js("main.js");

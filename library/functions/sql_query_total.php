@@ -16,7 +16,7 @@ function sql_query_total($sql){
 			$sw=true;
 		}
 		if($sw==true and $cs==0)
-			return substr_replace($sql," count(*) ",$i_select+6,$i-($i_select+6));
+			return substr_replace($sql," count(*) total ",$i_select+6,$i-($i_select+6));
 	}
 	return null;	
 }

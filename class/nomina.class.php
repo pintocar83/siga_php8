@@ -1760,7 +1760,17 @@ class nomina{
 
   public static function onList($id_periodo,$tipo,$text,$start,$limit,$sort=''){
     $db=SIGA::DBController();
-    $sql="SELECT *, codigo||' '||nomina as codigo_nomina FROM modulo_nomina.nomina WHERE activo AND UPPER(nomina) LIKE UPPER('%$text%')";
+    $sql="
+      SELECT
+        N.*,
+        N.codigo||' '||N.nomina as codigo_nomina,
+        PT.denominacion periodo_tipo
+      FROM modulo_nomina.nomina N
+        LEFT JOIN modulo_nomina.periodo_tipo PT ON PT.tipo=N.tipo
+      WHERE
+        N.activo AND
+        UPPER(N.nomina) LIKE UPPER('%$text%')
+    ";
 
     if($id_periodo){
       $sql="SELECT N.*, N.codigo||' '||N.nomina as codigo_nomina
@@ -1773,11 +1783,15 @@ class nomina{
             WHERE N.activo AND UPPER(N.nomina) LIKE UPPER('%$text%') AND N.tipo='$tipo'";
     }
 
-
     //$return["result"]=$db->Execute($sql);
     $return["result"]=$db->Execute($sql." ".sql_sort($sort)." LIMIT $limit OFFSET $start");
-    $return["total"]=$db->Execute(sql_query_total($sql));
-    $return["total"]=$return["total"][0][0];
+    if(strtoupper($limit)=="ALL"){
+      $return["total"]=count($return["result"]);
+    }
+    else{
+      $return["total"]=$db->Execute(sql_query_total($sql));
+      $return["total"]=$return["total"][0]["total"];
+    }
     return $return;
   }
 
@@ -1851,8 +1865,13 @@ class nomina{
     $db=SIGA::DBController();
     $sql="SELECT * FROM modulo_nomina.cargo WHERE activo";
     $return["result"]=$db->Execute($sql." ".sql_sort($sort)." LIMIT $limit OFFSET $start");
-    $return["total"]=$db->Execute(sql_query_total($sql));
-    $return["total"]=$return["total"][0][0];
+    if(strtoupper($limit)=="ALL"){
+      $return["total"]=count($return["result"]);
+    }
+    else{
+      $return["total"]=$db->Execute(sql_query_total($sql));
+      $return["total"]=$return["total"][0]["total"];
+    }
     return $return;
   }
 

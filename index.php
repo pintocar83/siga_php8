@@ -235,7 +235,8 @@ include_once(SIGA::databasePath()."/config/config.php");
   }
 
   window.onload=function(){
-    var version="2022.5";//para que el navegardor actualice los js y tome los cambios realizados
+    var version="2022.7";//para que el navegardor actualice los js y tome los cambios realizados
+    siga.version=version;
     siga.boot({
       file:[
         {url: "css/siga.css?version="+version, type: 'css', progress: 10, msg: "Hojas de Estilos en Cascada (Interfaz)..."},

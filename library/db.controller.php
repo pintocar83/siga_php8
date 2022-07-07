@@ -4,6 +4,7 @@ class DBController{
   private $Result;
   private $MsgError;
 	public $Connection;
+	public $mode = NULL;
 
   public function Connect($driver, $server, $name, $user, $password, $port=""){
 	  try{
@@ -48,7 +49,7 @@ class DBController{
 			return NULL;
 		}
 		$return=array();
-		while($row = pg_fetch_array($this->Result))
+		while($row = pg_fetch_array($this->Result, NULL, $this->mode?$this->mode:PGSQL_BOTH))
 			$return[]=$row;
 		return $return;
   }
