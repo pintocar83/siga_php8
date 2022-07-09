@@ -4,12 +4,14 @@ favicon.ico
 favicon.png
 favicon.svg
 
+library/functions/sql_query_total.php
 library/phpexcel/
 library/fpdf/1.84/
 library/siga.class.php
 library/siga.js
 library/siga.select.js
 library/siga.config.example.php
+library/siga.class.php
 library/db.controller.php
 
 image/menu/icon-cargo.png
@@ -48,6 +50,8 @@ class/ficha.class.php
 class/cargo.class.php
 class/retencion.class.php
 class/formulacion.class.php
+class/nomina_periodo_tipo.class.php
+class/nomina_escala_salarial.class.php
 
 report/nomina_listado_banco_xls_formato_a.php
 report/nomina_listado_banco_xls_formato_b.php

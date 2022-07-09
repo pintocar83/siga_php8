@@ -23,18 +23,18 @@ class MODULO extends nomina_periodo_tipo{
         break;
       case "onJavascript":
       case "js":
-      case "javascript":  
+      case "javascript":
         header('Content-Type: text/javascript; charset=utf-8');
         print self::onJavascript($access);
         break;
-    }    
-  }  
-  
+    }
+  }
+
   public static function onCss($access){
     if(!$access) return;
     return SIGA::css("main.css");
   }
-  
+
   public static function onJavascript($access){
     if(!$access) return;
     return SIGA::js("main.js");

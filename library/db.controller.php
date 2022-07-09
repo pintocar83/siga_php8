@@ -1,6 +1,6 @@
 <?php
 class DBController{
-  private $Driver;    
+  private $Driver;
   private $Result;
   private $MsgError;
 	public $Connection;
@@ -13,8 +13,8 @@ class DBController{
 			switch($this->DBDriver){
 				case "postgres":
 				case "pgsql":
-					$this->Connection = pg_connect("host=$server dbname=$name user=$user password=$password".($port?" port=".$port:""));			
-					pg_set_client_encoding($this->Connection,"UTF8");						
+					$this->Connection = pg_connect("host=$server dbname=$name user=$user password=$password".($port?" port=".$port:""));
+					pg_set_client_encoding($this->Connection,"UTF8");
 					break;
 				case "mysql":
 					$this->Connection = mysqli_connect($server.($port?":".$port:""), $user, $password, $name) or die('Could not connect to server.' );
@@ -23,20 +23,20 @@ class DBController{
 				case "sqlite3":
 					$this->Connection = new SQLite3($server);
 					break;
-			}					
+			}
 		  if(!$this->Connection){
 			  throw new Exception("Error al establecer conexión.");
-			}			
+			}
 		}
 	catch(Exception $e){
 		die($e->getMessage());
 		}
 	}
-	
+
 	public function ExecutePGSQL($sql){
     $this->Logs($sql);
 		$this->MsgError="";
-		try{		
+		try{
 			ini_set("display_errors","Off");
 			$this->Result=pg_query($this->Connection, $sql);
 			ini_set("display_errors","On");
@@ -53,12 +53,12 @@ class DBController{
 			$return[]=$row;
 		return $return;
   }
-	
+
 	public function ExecuteMYSQL($sql){
     $this->Logs($sql);
 		$this->MsgError="";
 		ini_set("display_errors","Off");
-		try{		
+		try{
 			$this->Result=mysqli_query($this->Connection, $sql);
 			if(!$this->Result){
 				throw new Exception("No se pudo realizar la consulta.");
@@ -95,7 +95,7 @@ class DBController{
 		ini_set("display_errors","On");
 		return $return;
   }
-	
+
 	public function Execute($sql){
 		switch($this->DBDriver){
 				case "postgres":
@@ -108,15 +108,15 @@ class DBController{
 			}
 			return NULL;
   }
-		
+
   public function Insert($tabla,$columnaValor){
 	  $col='(';
-	  $val='(';			
+	  $val='(';
 	  //while(list($clave,$valor)=each($columnaValor)){
 	  foreach($columnaValor as $clave => $valor){
 		  $col.=$clave.', ';
 		  $val.=$valor.", ";
-		}			
+		}
 	  $col=substr($col,0,strlen($col)-2);
 	  $val=substr($val,0,strlen($val)-2);
 	  $col.=')';
@@ -124,12 +124,12 @@ class DBController{
 	  $sql="INSERT INTO $tabla $col VALUES $val";
 	  return $this->Execute($sql)===NULL?FALSE:TRUE;
 	}
-	
-  public function Update($tabla, $columnaValor, $condicion){   
+
+  public function Update($tabla, $columnaValor, $condicion){
 	  $cadena="";
-	  //while(list($clave,$valor)=each($columnaValor))		
+	  //while(list($clave,$valor)=each($columnaValor))
 	  foreach($columnaValor as $clave => $valor)
-		  $cadena.=$clave."=".$valor.", ";			
+		  $cadena.=$clave."=".$valor.", ";
 	  $cadena=substr($cadena,0,strlen($cadena)-2);
 	  $sql="UPDATE $tabla SET $cadena WHERE $condicion";
 	  return $this->Execute($sql)===NULL?FALSE:TRUE;
@@ -143,7 +143,7 @@ class DBController{
   public function GetMsgError(){
     return $this->MsgError;
   }
-	
+
 	public function GetMsgErrorClear(){
 		$tmp=explode("CONTEXT:", $this->MsgError);
     return addslashes(str_replace("\n"," ",$tmp[0]));
@@ -151,7 +151,7 @@ class DBController{
 
   public function Logs($sql){
 	  //$f=fopen("/var/www/sql.txt","a");
-	  //fputs($f,$sql."\n");     
+	  //fputs($f,$sql."\n");
 	}
 }
 ?>

@@ -1111,7 +1111,7 @@ class nomina{
       $nomina[$i]["ficha"]=self::fichas($nomina[$i]["id"],$periodo["id"]);
 
 
-      if($tipo=="CCP" or $tipo=="P" or $tipo=="P-CXC"){//generar movimeinto bancario
+      if(in_array($tipo,["CCP","P","P-CXC","CCP-AP","CCP-!AP"])){//generar movimeinto bancario
         //buscar cuenta bancaria y contable de la nómina
         if($tipo=="P-CXC"){
           $cta_cxc=self::cuenta_contable_cxc();
@@ -1163,9 +1163,10 @@ class nomina{
           return array("success"=>false, "message"=> "La ficha 'id_ficha=".$nomina[$i]["ficha"][$j]["id"]."' no tiene estructura presupuestaria.");
         }
         $id_accion_subespecifica=$ficha_ep[0]["id_accion_subespecifica"];
+        $id_accion_subespecifica_original=$id_accion_subespecifica;
 
 
-        if($tipo=="CCP" or $tipo=="P" or $tipo=="P-CXC"){
+        if(in_array($tipo,["CCP","P","P-CXC","CCP-!AP"])){
           //sumar el neto
           if($tipo=="P-CXC"){
             $cta_cxc=self::cuenta_contable_cxc();
@@ -1176,9 +1177,11 @@ class nomina{
             $cuenta_bancaria[$nomina[$i]["banco_cuenta"]["id"]."|".$nomina[$i]["banco_cuenta"]["numero_cuenta"]]+=$nomina[$i]["ficha"][$j]["total_neto"];
           }
         }
-        else{
+        else{//CASO CC
           //sumar total asignaciones
-          $detalle[$nomina[$i]["banco_cuenta"]["id_cuenta_contable"]]["H"]+=$nomina[$i]["ficha"][$j]["total_asignacion"]+$nomina[$i]["ficha"][$j]["total_ap"];
+          if(!in_array($tipo,["CCP-AP"])){
+            $detalle[$nomina[$i]["banco_cuenta"]["id_cuenta_contable"]]["H"]+=$nomina[$i]["ficha"][$j]["total_asignacion"]+$nomina[$i]["ficha"][$j]["total_ap"];
+          }
         }
 
         $ficha_concepto=$nomina[$i]["ficha"][$j]["concepto"];
@@ -1199,6 +1202,20 @@ class nomina{
             }
             $tmp=$tmp[0];
 
+            switch(SIGA::database()){
+              case "alcaldia_mejia":
+                $id_accion_subespecifica=$id_accion_subespecifica_original;
+                if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,5),["40103","40104","40106"]))
+                  $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
+                if(in_array(substr($tmp["id_cuenta_presupuestaria_ap"],0,5),["40106"]))
+                  $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
+                if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,7),["4010794","4010795","4010796","4010797","4010799"]))
+                  $id_accion_subespecifica=46;//colocar partidas 4010796 por ACC001-15-01
+                if(in_array(substr($tmp["id_cuenta_presupuestaria_ap"],0,7),["4010768","4010757","4010707","4010723","4010768","4010796","40107","4010795","4010797","4010794","4010799"]))
+                  $id_accion_subespecifica=46;//colocar partidas 4010796 por ACC001-15-01
+              break;
+            }
+
             if(!isset($detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria"]]) and $tmp["id_cuenta_presupuestaria"]!="") $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria"]]=0;
             if(!isset($detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria_ap"]]) and $tmp["id_cuenta_presupuestaria_ap"]!="") $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria_ap"]]=0;
             if(!isset($detalle[$tmp["id_cuenta_contable"]]) and $tmp["id_cuenta_contable"]!="") $detalle[$tmp["id_cuenta_contable"]]=array("D"=>0,"H"=>0);
@@ -1207,37 +1224,44 @@ class nomina{
 
             switch($ficha_concepto[$k]["tipo"]){
               case "A":
+                if(in_array($tipo,["CCP-AP"])) break;
                 if($tmp["id_cuenta_presupuestaria"])
                   $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria"]]+=$ficha_concepto[$k]["valor_final"];
                 else
                   return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA PRESUPUESTARIA PARA LA ASIGNACIÓN (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
                 break;
               case "RA":
+                if(in_array($tipo,["CCP-AP"])) break;
                 if($tmp["id_cuenta_presupuestaria"])
                   $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria"]]-=$ficha_concepto[$k]["valor_final"];
                 else
                   return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA PRESUPUESTARIA PARA EL REINTEGRO DE ASIGNACIÓN (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
                 break;
               case "AP":
-                if($tmp["id_cuenta_presupuestaria_ap"])
-                  $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria_ap"]]+=$ficha_concepto[$k]["valor_final_ap"];
-                else
-                  return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA PRESUPUESTARIA (PATRON) PARA EL APORTE PATRONAL (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
-
-                if($tipo=="CCP" or $tipo=="P" or $tipo=="P-CXC"){
-                  if($tmp["id_cuenta_contable"])
-                    $detalle[$tmp["id_cuenta_contable"]]["H"]+=$ficha_concepto[$k]["valor_final"];
+                if(!in_array($tipo,["CCP-!AP"])){
+                  if($tmp["id_cuenta_presupuestaria_ap"])
+                    $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria_ap"]]+=$ficha_concepto[$k]["valor_final_ap"];
                   else
-                    return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA CONTABLE (TRABAJADOR) PARA EL APORTE PATRONAL (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
+                    return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA PRESUPUESTARIA (PATRON) PARA EL APORTE PATRONAL (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
+                }
 
-                  if($tmp["id_cuenta_contable_ap"])
-                    $detalle[$tmp["id_cuenta_contable_ap"]]["H"]+=$ficha_concepto[$k]["valor_final_ap"];
-                  else
-                    return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA CONTABLE (PATRON) PARA EL APORTE PATRONAL (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
+                if(in_array($tipo,["CCP","P","P-CXC","CCP-AP","CCP-!AP"])){//if($tipo=="CCP" or $tipo=="P" or $tipo=="P-CXC"){
+                  if(!in_array($tipo,["CCP-AP"])){
+                    if($tmp["id_cuenta_contable"])
+                      $detalle[$tmp["id_cuenta_contable"]]["H"]+=$ficha_concepto[$k]["valor_final"];
+                    else
+                      return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA CONTABLE (TRABAJADOR) PARA EL APORTE PATRONAL (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
+                  }
+                  if(!in_array($tipo,["CCP-!AP"])){
+                    if($tmp["id_cuenta_contable_ap"])
+                      $detalle[$tmp["id_cuenta_contable_ap"]]["H"]+=$ficha_concepto[$k]["valor_final_ap"];
+                    else
+                      return array("success"=>false, "message"=> "DEBE DEFINIR LA CUENTA CONTABLE (PATRON) PARA EL APORTE PATRONAL (id_nomina=".$nomina[$i]["id"].", id_concepto=".$ficha_concepto[$k]['id'].")");
+                  }
                 }
                 break;
-
               case "D":
+                if(in_array($tipo,["CCP-AP"])) break;
                 if($tipo=="CCP" or $tipo=="P" or $tipo=="P-CXC"){
                   if($tmp["id_cuenta_contable"])
                     $detalle[$tmp["id_cuenta_contable"]]["H"]+=$ficha_concepto[$k]["valor_final"];
@@ -1246,6 +1270,7 @@ class nomina{
                 }
                 break;
               case "RD":
+                if(in_array($tipo,["CCP-AP"])) break;
                 if($tipo=="CCP" or $tipo=="P" or $tipo=="P-CXC"){
                   if($tmp["id_cuenta_contable"])
                     $detalle[$tmp["id_cuenta_contable"]]["D"]+=$ficha_concepto[$k]["valor_final"];
@@ -1259,7 +1284,7 @@ class nomina{
       endfor;
     endfor;
 
-    if($tipo=="CCP" or $tipo=="P")
+    if(in_array($tipo,["CCP","P","CCP-!AP"]))
       if(count($cuenta_bancaria)!=1)
         return array("success"=>false, "message"=> "Error. Es necesario asociar una cuenta bancaria, consulte al administrador del sistema.");
 
@@ -1279,12 +1304,14 @@ class nomina{
     uksort($detalle,"ordenar_detalle_presupuestario_contable");
 
     $retorno=array();
-
+    $tipo_describe=$tipo;
     switch($tipo){
-      case "CCP": $tipo_describe="COMPROMETIDO/CAUSADO/PAGADO";break;
-      case "CC":  $tipo_describe="COMPROMETIDO/CAUSADO";break;
-      case "P":   $tipo_describe="PAGADO";break;
+      case "CCP":     $tipo_describe="COMPROMETIDO/CAUSADO/PAGADO";break;
+      case "CC":      $tipo_describe="COMPROMETIDO/CAUSADO";break;
+      case "P":       $tipo_describe="PAGADO";break;
       case "P-CXC":   $tipo_describe="PAGADO CxC";break;
+      case "CCP-AP":  $tipo_describe="COMPROMETIDO/CAUSADO/PAGADO APORTES";break;
+      case "CCP-!AP": $tipo_describe="COMPROMETIDO/CAUSADO/PAGADO EXCLUIR APORTES";break;
     }
     $retorno["concepto"]="";
     for($i=0;$i<count($nomina);$i++)
@@ -1293,7 +1320,7 @@ class nomina{
 
     $retorno["detalle"]=array();
 
-    if($tipo=="CCP" or $tipo=="P"){
+    if(in_array($tipo,["CCP","P","CCP-!AP"])){
       $retorno["detalle"]["comprobante_bancario"]=array();
       //buscar id nota de debito
       $id_ND=$db->Execute("select id from modulo_base.banco_movimiento_tipo where codigo='ND'");
@@ -1313,6 +1340,8 @@ class nomina{
     $retorno["detalle"]["presupuestario"]=array();
     $p=0;
     foreach ($detalle as $clave => $valor){
+      if($valor==0)
+        continue;
       $clave=explode("|",$clave);
       if(count($clave)!=2) continue;
       //$clave = id_accion_subespecifica|id_cuenta_presupuestaria
@@ -1364,6 +1393,8 @@ class nomina{
     foreach ($detalle as $clave => $valor){
       $clave=explode("|",$clave);
       if(count($clave)!=1) continue;
+      if($valor["D"]==0 && $valor["H"]==0) continue;
+
       $id_cuenta_contable=$clave[0];
       //para el caso P || P-CxC buscar la cuenta contable 611000000000 y reemplazarla por cuenta_contable_abono()
       if($tipo=="P" || $tipo=="P-CXC"){
@@ -1397,8 +1428,6 @@ class nomina{
         $c++;
       }
     }
-
-
 
 
     $retorno["success"]=true;
@@ -1718,7 +1747,7 @@ class nomina{
                                     );
     }
 
-    if($tipo=="CCP" or $tipo=="P"){
+    if(in_array($tipo,["CPP","P","CPP_AP","CPP_!AP"])){
       $cmp_tipo='MB';
       $detalle["comprobante_bancario"]=array();
       $detalle["comprobante_bancario"]["id_banco_cuenta"]=$result["detalle"]["comprobante_bancario"]["id_banco_cuenta"];
@@ -1752,7 +1781,9 @@ class nomina{
       return array("success"=>false, "message"=>$result_comprobante["message"]);
 
     $id_comprobante=$result_comprobante["id"];
-    if($tipo!="P")
+    if($contabilizacion_tipo==="CCP-AP")
+      $db->Update("modulo_nomina.periodo",array("contabilizado_ap"=>"$id_comprobante"),"id=$id_periodo");
+    else if($tipo!="P")
       $db->Update("modulo_nomina.periodo",array("contabilizado"=>"$id_comprobante"),"id=$id_periodo");
 
     return array("success"=>true, "message"=>"La nómina se contabilizó sin problemas.");

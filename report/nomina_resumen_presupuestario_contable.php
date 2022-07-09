@@ -31,13 +31,18 @@ for($i=0;$i<count($id_nomina);$i++){
 	$nomina[$i]=$nomina[$i][0];
 }
 
-$retorno=nomina::detalle_presupuestario_contable($periodo,$nomina);
+$tipo=SIGA::paramGet("tipo");
+if(!$tipo)
+	$tipo="CCP";
+
+$retorno=nomina::detalle_presupuestario_contable($periodo,$nomina,$tipo);
 
 if(!$retorno["success"]){
 	print $retorno["message"];
 	exit;
 }
 
+$concepto=$retorno["concepto"];
 
 $sw="P";
 
@@ -54,7 +59,7 @@ class PDF_P extends FPDF{
 		$this->SetTopMargin($MARGEN_TOP);
 		}
 	function CabeceraDC(){
-		global $sw, $ancho, $tc_cuenta, $tc_nombre, $tc_debe, $tc_haber;		
+		global $sw, $ancho, $tc_cuenta, $tc_nombre, $tc_debe, $tc_haber;
 		$this->SetFillColor(200,200,200);
 		$this->SetFont('helvetica','B',10);
 		$this->Cell($ancho,5,utf8_decode('DETALLE CONTABLE'),'',1,'C');
@@ -64,34 +69,36 @@ class PDF_P extends FPDF{
 		$this->Cell($tc_debe,5,utf8_decode('DEBE'),'',0,'C',true);
 		$this->Cell($tc_haber,5,utf8_decode('HABER'),'',1,'C',true);
 		$this->Ln(1);
-	} 
+	}
 	function Header(){
-		global $sw, $ancho, $tp_accpro, $tp_cuenta, $tp_nombre, $tp_monto, $periodo, $nomina;
+		global $sw, $ancho, $tp_accpro, $tp_cuenta, $tp_nombre, $tp_monto, $periodo, $nomina, $concepto;
 		$this->SetFillColor(200,200,200);
-		
+
 		if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
 			$this->Image(SIGA::databasePath()."/config/cintillo_actual.jpg",$this->MARGEN_LEFT,$this->MARGEN_TOP,180);
 		else if(file_exists(SIGA::databasePath()."/config/logo_01.jpg"))
 			$this->Image(SIGA::databasePath()."/config/logo_01.jpg",$this->MARGEN_LEFT,$this->MARGEN_TOP,40);
-		
-		
+
+
 		$this->Ln(15);
 		$this->SetFont('helvetica','B',12);
 		$this->Cell($ancho,5,utf8_decode('RESUMEN PRESUPUESTARIO / CONTABLE'),'',1,'C');
 		$this->SetFont('helvetica','',8);
 		$this->Cell($ancho,3,utf8_decode($periodo["descripcion"]),'',1,'C');
 		$this->Cell($ancho,3,utf8_decode('PERÍODO '.$periodo["codigo"].", DEL ".formatDate($periodo["fecha_inicio"])." AL ".formatDate($periodo["fecha_culminacion"])),'',1,'C');
-		
-		
+
+
 		$this->SetFont('helvetica','',6);
 		$cad="";
 		for($i=0;$i<count($nomina);$i++){
 			$cad.=$nomina[$i]["nomina"].($i<count($nomina)-1?", ":".");
-		}		
+		}
 		$this->MultiCell($ancho,3,utf8_decode($cad),'','C');
 		$this->Ln(2);
-		
-		
+
+		$this->MultiCell($ancho,3,utf8_decode($concepto),'','L');
+		$this->Ln(2);
+
 		if($sw=="P"){
 			$this->SetFont('helvetica','B',10);
 			$this->Cell($ancho,5,utf8_decode('DETALLE PRESUPUESTARIO'),'',1,'C');
@@ -103,8 +110,8 @@ class PDF_P extends FPDF{
 			$this->Ln(1);
 		}
 		else{
-			$this->CabeceraDC();			
-		}		
+			$this->CabeceraDC();
+		}
 		$this->SetFillColor(255,255,255);
 	}
 }
@@ -140,16 +147,16 @@ $suma=0;
 for($i=0;$i<count($retorno["detalle"]["presupuestario"]);$i++){
 	$detalle=$retorno["detalle"]["presupuestario"][$i];
 	//print $detalle["estructura_presupuestaria"]." ".$detalle["id_cuenta_presupuestaria"]." ".$detalle["operacion"]." ".$detalle["monto"]."\n";
-	
+
 	$pdf->Cell($tp_accpro,$t_alto,utf8_decode($detalle["estructura_presupuestaria"]),'',0,'C',true);
 	$pdf->Cell($tp_cuenta,$t_alto,utf8_decode($detalle["cuenta_presupuestaria"]),'',0,'C',true);
 	$x=$pdf->GetX();
 	$pdf->Cell($tp_nombre,$t_alto,utf8_decode(""),'',0,'L',true);
 	$pdf->Cell($tp_monto,$t_alto,utf8_decode(number_format($detalle["monto"],2,",",".")),'',0,'R',true);
-	
+
 	$pdf->SetX($x);
 	$pdf->MultiCell($tp_nombre,$t_alto,utf8_decode($detalle["denominacion"]."."),'','L',true);
-	
+
 	$suma+=$detalle["monto"];
 }
 
@@ -172,13 +179,13 @@ for($i=0;$i<count($retorno["detalle"]["contable"]);$i++){
 	$pdf->Cell($tc_cuenta,$t_alto,utf8_decode($detalle["cuenta_contable"]),'',0,'C',true);
 	$x=$pdf->GetX();
 	$pdf->Cell($tc_nombre,$t_alto,utf8_decode(""),'',0,'C',true);
-	
+
 	if($detalle["operacion"]=="D"){
 		$pdf->Cell($tc_debe,$t_alto,utf8_decode(number_format($detalle["monto"],2,",",".")),'',0,'R',true);
 		$pdf->Cell($tc_haber,$t_alto,"",'',0,'R',true);
 		$suma_debe+=$detalle["monto"];
 	}
-	
+
 	if($detalle["operacion"]=="H"){
 		$pdf->Cell($tc_debe,$t_alto,"",'',0,'R',true);
 		$pdf->Cell($tc_haber,$t_alto,utf8_decode(number_format($detalle["monto"],2,",",".")),'',0,'R',true);
@@ -195,7 +202,7 @@ $pdf->Cell($tc_debe,$t_alto,utf8_decode(number_format($suma_debe,2,",",".")),'T'
 $pdf->Cell($tc_haber,$t_alto,utf8_decode(number_format($suma_haber,2,",",".")),'T',0,'R',true);
 
 
-	
+
 
 $pdf->Output("resumen_presupuesatario_contable.pdf","I");
 

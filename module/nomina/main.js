@@ -1399,29 +1399,56 @@ siga.define('nomina', {
         }*/
         menu: [
           {
-            id: me._('btnContabilizarTodo'),
-            text: 'Contabilizar Todo',
+            id: me._('btnContabilizar_CCP'),
+            text: 'Generar Comprometido/Causado/Pagado',
             listeners: {
               click: function(){
-                me.onContabilizar("");
+                me.onContabilizar("CCP");
               }
             }
           },
           {
-            id: me._('btnContabilizarSinAP'),
-            text: 'Contabilizar Sin Aportes Patronales',
+            id: me._('btnContabilizar_CC'),
+            text: 'Generar Comprometido/Causado',
             listeners: {
               click: function(){
-                me.onContabilizar("!AP");
+                me.onContabilizar("CC");
               }
             }
           },
           {
-            id: me._('btnContabilizarAP'),
-            text: 'Contabilizar Aportes Patronales',
+            id: me._('btnContabilizar_P'),
+            text: 'Generar Pagado - Banco',
             listeners: {
               click: function(){
-                me.onContabilizar("AP");
+                me.onContabilizar("P");
+              }
+            }
+          },
+          {
+            id: me._('btnContabilizar_P_CXC'),
+            text: 'Generar Pagado - CxC',
+            listeners: {
+              click: function(){
+                me.onContabilizar("P-CXC");
+              }
+            }
+          },
+          {
+            id: me._('btnContabilizar_CPP_NO_AP'),
+            text: 'Generar Comprometido/Causado/Pagado [Sin Aportes Patronales]',
+            listeners: {
+              click: function(){
+                me.onContabilizar("CCP-!AP");
+              }
+            }
+          },
+          {
+            id: me._('btnContabilizar_CPP_AP'),
+            text: 'Generar Comprometido/Causado/Pagado [Aportes Patronales]',
+            listeners: {
+              click: function(){
+                me.onContabilizar("CCP-AP");
               }
             }
           },
@@ -1579,7 +1606,11 @@ siga.define('nomina', {
                   return;
                 }
 
-                window.open("report/comprobante.php?id="+me.internal.contabilizado+(me.internal.contabilizado_ap?","+me.internal.contabilizado_ap:""));
+                window.open("report/comprobante.php?id="+
+                  me.internal.contabilizado+
+                  (me.internal.contabilizado_pagado?(","+me.internal.contabilizado_pagado):"")+
+                  (me.internal.contabilizado_ap?","+me.internal.contabilizado_ap:"")
+                );
               }
             }
           },
@@ -2281,7 +2312,7 @@ siga.define('nomina', {
                       me.getCmp('btnPersona').setDisabled(true);
                       me.getCmp('btnConcepto').setDisabled(true);
                       me.getCmp('btnCerrarPeriodo').setDisabled(true);
-                      me.getCmp('btnContabilizar').setDisabled(true);
+                      //me.getCmp('btnContabilizar').setDisabled(true);
 
                       Ext.Ajax.request({
                         method: 'POST',
@@ -2367,7 +2398,7 @@ siga.define('nomina', {
                       me.getCmp('btnPersona').setDisabled(true);
                       me.getCmp('btnConcepto').setDisabled(true);
                       me.getCmp('btnCerrarPeriodo').setDisabled(true);
-                      me.getCmp('btnContabilizar').setDisabled(true);
+                      //me.getCmp('btnContabilizar').setDisabled(true);
 
                       Ext.Ajax.request({
                         method: 'POST',
@@ -2528,7 +2559,7 @@ siga.define('nomina', {
                   me.getCmp('btnPersona').setDisabled(true);
                   me.getCmp('btnConcepto').setDisabled(true);
                   me.getCmp('btnCerrarPeriodo').setDisabled(true);
-                  me.getCmp('btnContabilizar').setDisabled(true);
+                  //me.getCmp('btnContabilizar').setDisabled(true);
 
                   Ext.Ajax.request({
                     method: 'POST',
@@ -2575,7 +2606,7 @@ siga.define('nomina', {
                   me.getCmp('btnPersona').setDisabled(true);
                   me.getCmp('btnConcepto').setDisabled(true);
                   me.getCmp('btnCerrarPeriodo').setDisabled(true);
-                  me.getCmp('btnContabilizar').setDisabled(true);
+                  //me.getCmp('btnContabilizar').setDisabled(true);
 
                   Ext.Ajax.request({
                     method: 'POST',
@@ -3539,7 +3570,7 @@ columns.push(
     me.getCmp('btnConcepto').setDisabled(true);
     me.getCmp('btnCerrarPeriodo').setDisabled(true);
     me.getCmp('btnNotas').setDisabled(true);
-    me.getCmp('btnContabilizar').setDisabled(true);
+    //me.getCmp('btnContabilizar').setDisabled(true);
 
     me.internal.columnaSeleccionada=null;
     me.internal.cerrado=null;
@@ -3563,6 +3594,7 @@ columns.push(
         me.internal.cerrado=result["cerrado"]=='t'?true:false;
         me.internal.contabilizado=result["contabilizado"];
         me.internal.contabilizado_ap=result["contabilizado_ap"];
+        me.internal.contabilizado_pagado="";
         me.internal.data.concepto=result["concepto"];
         me.internal.data.ficha=result["ficha"];
 
@@ -3571,29 +3603,70 @@ columns.push(
         me.getCmp('btnCerrarPeriodo').setDisabled(me.internal.cerrado);
         me.getCmp('btnNotas').setDisabled(me.internal.cerrado);
 
-        me.getCmp('btnContabilizar').setDisabled(false);
-        me.getCmp('btnContabilizarTodo').setDisabled(false);
-        me.getCmp('btnContabilizarSinAP').setDisabled(false);
-        me.getCmp('btnContabilizarAP').setDisabled(false);
+        //me.getCmp('btnContabilizar').setDisabled(false);
+        //me.getCmp('btnContabilizarTodo').setDisabled(false);
+        //me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(false);
+        //me.getCmp('btnContabilizar_CPP_AP').setDisabled(false);
 
+        me.getCmp('btnContabilizar_CCP').setDisabled(true);
+        me.getCmp('btnContabilizar_CC').setDisabled(true);
+        me.getCmp('btnContabilizar_P').setDisabled(true);
+        me.getCmp('btnContabilizar_P_CXC').setDisabled(true);
+        me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(false);
+        me.getCmp('btnContabilizar_CPP_AP').setDisabled(false);
+        /*
         if(me.internal.contabilizado && me.internal.contabilizado_ap){
           me.getCmp('btnContabilizar').setDisabled(true);
           me.getCmp('btnContabilizarTodo').setDisabled(true);
         }
         if(!me.internal.contabilizado && !me.internal.contabilizado_ap){
-          me.getCmp('btnContabilizarAP').setDisabled(true);
+          me.getCmp('btnContabilizar_CPP_AP').setDisabled(true);
         }
 
         if(me.internal.contabilizado){
           me.getCmp('btnContabilizarTodo').setDisabled(true);
-          me.getCmp('btnContabilizarSinAP').setDisabled(true);
+          me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(true);
         }
 
         if(me.internal.contabilizado_ap){
           me.getCmp('btnContabilizarTodo').setDisabled(true);
-          me.getCmp('btnContabilizarAP').setDisabled(true);
+          me.getCmp('btnContabilizar_CPP_AP').setDisabled(true);
         }
         //me.getCmp('btnContabilizar').setDisabled(me.internal.contabilizado==null?false:true);
+        */
+        if(me.internal.contabilizado!==null){
+          var comprobante=siga.onGetComprobante({id:[me.internal.contabilizado]});
+          console.log(comprobante);
+          if(comprobante.length>0){
+            if(comprobante[0]["tipo"]=="MB"){//es del tipo CCP
+              me.getCmp('btnContabilizar_CCP').setDisabled(true);
+              me.getCmp('btnContabilizar_CC').setDisabled(true);
+              me.getCmp('btnContabilizar_P').setDisabled(true);
+              me.getCmp('btnContabilizar_P_CXC').setDisabled(true);
+            }
+            else if((comprobante[0]["tipo"]=="PC" && comprobante[0]["detalle_comprobante_previo"].length===1) || String(comprobante[0]["concepto"]).indexOf("[PAGADO CxC]")>=0){//es del tipo PC y tiene comprobante precio (es P-CxC)
+              me.getCmp('btnContabilizar_CCP').setDisabled(true);
+              me.getCmp('btnContabilizar_CC').setDisabled(true);
+              me.getCmp('btnContabilizar_P').setDisabled(true);
+              me.getCmp('btnContabilizar_P_CXC').setDisabled(true);
+            }
+            else if(comprobante[0]["tipo"]=="PC" && comprobante[0]["detalle_comprobante_posterior"].length===0){//es del tipo CC (si es pc y no tiene comprobantes asociados)
+              me.getCmp('btnContabilizar_CCP').setDisabled(true);
+              me.getCmp('btnContabilizar_CC').setDisabled(true);
+              me.getCmp('btnContabilizar_P').setDisabled(false);
+              me.getCmp('btnContabilizar_P_CXC').setDisabled(false);
+            }
+            if(comprobante[0]["detalle_comprobante_posterior"].length>0){
+              me.internal.contabilizado_pagado=comprobante[0]["detalle_comprobante_posterior"][0]["id_comprobante_posterior"];
+            }
+          }
+        }
+        else {
+          me.getCmp('btnContabilizar_CCP').setDisabled(true);
+          me.getCmp('btnContabilizar_CC').setDisabled(false);
+          me.getCmp('btnContabilizar_P').setDisabled(true);
+          me.getCmp('btnContabilizar_P_CXC').setDisabled(true);
+        }
 
         me.filtro_ficha_id="";
 
