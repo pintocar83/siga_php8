@@ -1202,18 +1202,17 @@ class nomina{
             }
             $tmp=$tmp[0];
 
-            switch(SIGA::database()){
-              case "alcaldia_mejia":
-                $id_accion_subespecifica=$id_accion_subespecifica_original;
-                if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,5),["40103","40104","40106"]))
-                  $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
-                if(in_array(substr($tmp["id_cuenta_presupuestaria_ap"],0,5),["40106"]))
-                  $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
-                if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,7),["4010794","4010795","4010796","4010797","4010799"]))
-                  $id_accion_subespecifica=46;//colocar partidas 4010796 por ACC001-15-01
-                if(in_array(substr($tmp["id_cuenta_presupuestaria_ap"],0,7),["4010768","4010757","4010707","4010723","4010768","4010796","40107","4010795","4010797","4010794","4010799"]))
-                  $id_accion_subespecifica=46;//colocar partidas 4010796 por ACC001-15-01
-              break;
+            //CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
+            if(preg_grep("/".SIGA::database()."/i",["alcaldia_mejia","alcaldiamejia"])){
+              $id_accion_subespecifica=$id_accion_subespecifica_original;
+              if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,5),["40103","40104","40106"]))
+                $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
+              if(in_array(substr($tmp["id_cuenta_presupuestaria_ap"],0,5),["40106"]))
+                $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
+              if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,7),["4010794","4010795","4010796","4010797","4010799"]))
+                $id_accion_subespecifica=46;//colocar partidas 4010796 por ACC001-15-01
+              if(in_array(substr($tmp["id_cuenta_presupuestaria_ap"],0,7),["4010768","4010757","4010707","4010723","4010768","4010796","40107","4010795","4010797","4010794","4010799"]))
+                $id_accion_subespecifica=46;//colocar partidas 4010796 por ACC001-15-01
             }
 
             if(!isset($detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria"]]) and $tmp["id_cuenta_presupuestaria"]!="") $detalle["$id_accion_subespecifica|".$tmp["id_cuenta_presupuestaria"]]=0;
