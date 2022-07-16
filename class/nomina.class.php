@@ -1202,8 +1202,9 @@ class nomina{
             }
             $tmp=$tmp[0];
 
+            $database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
             //CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
-            if(preg_grep("/".SIGA::database()."/i",["alcaldia_mejia","alcaldiamejia"])){
+            if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
               $id_accion_subespecifica=$id_accion_subespecifica_original;
               if(in_array(substr($tmp["id_cuenta_presupuestaria"],0,5),["40103","40104","40106"]))
                 $id_accion_subespecifica=46;//colocar partidas 40103 (prima prof, hijos y antiguedad) y 40104 (bono alimentacion) por ACC001-15-01
