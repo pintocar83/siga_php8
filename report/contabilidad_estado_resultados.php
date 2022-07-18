@@ -581,5 +581,6 @@ $pdf->Cell($tam_monto,5,'','B',0,'R',1);
 $pdf->Cell($tam_monto,5,number_format($TOTAL_INGRESO-$TOTAL_EGRESO,2,",","."),'RB',1,'R',1);
 
 $pdf->AliasNbPages();
+ob_clean();
 $pdf->Output("Estado_Ingresos_Egresos.pdf","I");
 ?>
