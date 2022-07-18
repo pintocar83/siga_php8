@@ -233,6 +233,7 @@ for($i=0;$i<$N2;$i++){
 			$CC[$N]["id_codigo_contable"]=$PADRES[$j];
 			$sql="select denominacion from modulo_base.cuenta_contable where id_cuenta_contable='".$PADRES[$j]."'";
 			$AUX=$db->Execute($sql);
+			//if(!isset($AUX[0]["denominacion"]))print $PADRES[$j]." ";
 			$CC[$N]["denominacion_cta_contable"]=$AUX[0]["denominacion"];
 			$CC[$N]["es_padre"]=1;
 			$CC[$N]["total_debe"]=0;
@@ -959,6 +960,7 @@ $pdf->Cell($tam_monto,5,utf8_decode(number_format($TOTAL_PASIVO+$TOTAL_CAPITAL,2
 
 
 $pdf->AliasNbPages();
+ob_clean();
 $pdf->Output("balance_general.pdf","I");
 
 ?>
