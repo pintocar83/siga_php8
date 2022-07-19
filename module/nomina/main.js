@@ -855,7 +855,7 @@ siga.define('nomina', {
             change: function(e, The, eOpts ){
               //me.getCmp('id_periodo').getStore().load();
               //me.getCmp('id_nomina_concepto_importar').getStore().load();
-              me.getCmp('id_nomina_concepto_importar').setData(me.internal.data.preload["nomina"]);
+              me.getCmp('id_nomina_concepto_importar').getStore().setData(me.getDataNomina({tipo: me.getCmp("tipo_nomina_concepto_importar").getValue()}));
             }
           }
         },
@@ -3939,7 +3939,20 @@ columns.push(
       estatus: estatus,
     };
     return filtro_busqueda;
-  }
+  },
+
+  getDataNomina: function(o){
+    var me=this;
+
+    if(o.tipo){
+      var tmp=[];
+      for(var i = 0; i<me.internal.data.preload["nomina"].length; i++)
+        if(me.internal.data.preload["nomina"][i]["tipo"]==o.tipo)
+          tmp.push(me.internal.data.preload["nomina"][i]);
+      return tmp;
+    }
+    return me.internal.data.preload["nomina"];
+  },
 
 });
 
