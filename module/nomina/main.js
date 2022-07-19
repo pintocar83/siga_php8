@@ -798,7 +798,7 @@ siga.define('nomina', {
     //FIN VENTANA PARA VISUALIZAR REPORTES
 
 
-    //VENTANA PARA FILTRAR
+    //VENTANA IMPORTACION DE CONCEPTOS DESDE EXCEL
     me.internal.ventanaConceptoImportar=Ext.create('Ext.window.Window', {
       title: 'Concepto - Importar Excel',
       minimizable: false,
@@ -824,8 +824,8 @@ siga.define('nomina', {
       items:[
         {
           xtype:'combobox',
-          id: me._('tipoVentanaSeleccionarNomina'),
-          name: 'tipoVentanaSeleccionarNomina',
+          id: me._('tipo_nomina_concepto_importar'),
+          name: 'tipo_nomina_concepto_importar',
           fieldLabel: 'Tipo de Nómina/Periodo',
           labelAlign: 'top',
           labelSeparator: '',
@@ -834,28 +834,11 @@ siga.define('nomina', {
           queryMode: "local",
           store: {
             fields: ['tipo','denominacion'],
-            autoLoad: true,
-            pageSize: 1000,
-            proxy: {
-              type:'ajax',
-              url: 'module/nomina_periodo_tipo/',
-              actionMethods: {read: "POST"},
-              timeout: 3600000,
-              reader: {
-                type: 'json',
-                rootProperty: 'result',
-                totalProperty:'total'
-              },
-              extraParams: {
-                action: 'onList_Activo',
-                text: '',
-                sort: '[{"property": "denominacion", "direction": "ASC"}]'
-              }
-            },
+            data: me.internal.data.preload["periodo_tipo"],
             listeners: {
               load: function(store, records, successful){
                 if(records.length>0)
-                  me.getCmp("tipoVentanaSeleccionarNomina").setValue(records[0].get("tipo"));
+                  me.getCmp("tipo_nomina_concepto_importar").setValue(records[0].get("tipo"));
               }
             }
           },
@@ -867,11 +850,58 @@ siga.define('nomina', {
           value: '',
           listeners: {
             afterrender: function(e, eOpts ){
-              e.setValue("Q");
+              //e.setValue("Q");
             },
             change: function(e, The, eOpts ){
-              me.getCmp('id_periodo').getStore().load();
-              me.getCmp('id_nomina').getStore().load();
+              //me.getCmp('id_periodo').getStore().load();
+              //me.getCmp('id_nomina_concepto_importar').getStore().load();
+              me.getCmp('id_nomina_concepto_importar').setData(me.internal.data.preload["nomina"]);
+            }
+          }
+        },
+        {
+          xtype: 'tagfield',
+          id: me._('id_nomina_concepto_importar'),
+          name: 'id_nomina_concepto_importar',
+          anchor: '100%',
+          fieldLabel: 'Nómina',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          cls: 'seleccionar_nomina__nomina',
+          editable: false,
+          queryMode: "local",
+          multiSelect: true,
+          store: {
+            fields: ['id','codigo_nomina'],
+            autoLoad: false,
+            pageSize: 1000,
+            data: [],
+            listeners: {
+              load: function(store, records, successful){
+                //seleccionar el primer elemento del select nómina
+
+                //if(records.length>0)
+                //  me.getCmp("id_nomina").setValue(records[0].get("id"));
+                //return;
+                //if(records.length>0 && !me.getCmp('id_nomina').getValue().join(","))
+                //  me.getCmp("id_nomina").setValue(records[0].get("id"));
+              },
+              beforeload: function(store,operation,eOpts){
+                //store.proxy.extraParams.id_periodo=me.getCmp('id_periodo').getValue();
+                //store.proxy.extraParams.tipo=me.getCmp('tipoVentanaSeleccionarNomina').getValue();
+                //store.data=me.internal.data.preload["periodo_tipo"];
+              }
+            }
+          },
+          displayField: 'codigo_nomina',
+          valueField: 'id',
+          allowBlank: false,
+          forceSelection: true,
+          listeners:{
+            change: function(){
+              //me.getCmp('messageVentanaSeleccionarNomina').setText("&nbsp;",false);
+              //me.getCmp('id_periodo').getStore().load();
             }
           }
         },
