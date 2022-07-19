@@ -9,7 +9,6 @@ class MODULO extends nomina{
   public static function onInit(){
     $access=SIGA::access("nomina");
     switch($_REQUEST["action"]){
-      /*
       case "onInit":
         header('Content-Type: text/plain; charset=utf-8');
         SIGA::$DBMode=PGSQL_ASSOC;
@@ -24,7 +23,6 @@ class MODULO extends nomina{
 
         print json_encode($return);
         break;
-      */
       case "onGet":
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onGet($access,SIGA::param("id_nomina"),SIGA::param("id_periodo")));

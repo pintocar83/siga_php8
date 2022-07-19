@@ -57,6 +57,7 @@
       white-space: nowrap;
       text-align: left;
       width: 0px;
+      height: 40px;
       margin-left: 50%;
       /*margin-bottom: -15px;*/
       margin-top: -25px;
@@ -71,8 +72,8 @@
     }
     
     .text_indeficador{
-      color: #A3ACBA;
-      font-size: 8pt;
+      color: #a1a1a1;
+      font-size: 7pt;
       font-weight: normal;
     }
     
@@ -354,4 +355,8 @@
 .seleccionar_nomina__nomina .x-tagfield-item {
     width: 100%;
     margin-right: 0px !important;
+}
+
+.text_vertical .concepto_codigo {
+    font-size: 10px;
 }

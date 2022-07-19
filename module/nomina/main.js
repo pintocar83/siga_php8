@@ -19,13 +19,14 @@ siga.define('nomina', {
       toCopy:[],
       itemsToolbar:[],
       data: {
+        preload: {},
         concepto: [],
         ficha: []
       },
       columnaSeleccionada: null,
       cerrado: null
     });
-
+/*
     me.storeNomina = Ext.create('Ext.data.Store', {
       fields: ['id','codigo_nomina'],
       autoLoad: true,
@@ -45,6 +46,19 @@ siga.define('nomina', {
         }
       }
     });
+*/
+
+    _tmp=Ext.Ajax.request({
+      async: false,
+      url:"module/nomina/",
+      params: {
+        action: 'onInit'
+      }
+    });
+
+    if(_tmp.statusText=="OK"){
+      me.internal.data.preload=Ext.JSON.decode(_tmp.responseText);
+    }
 
     //VENTANA PARA CAMBIAR/SELECCIONAR NOMINA
     me.internal.ventanaSeleccionarNomina=Ext.create('Ext.window.Window', {
@@ -785,18 +799,20 @@ siga.define('nomina', {
 
 
     //VENTANA PARA FILTRAR
-    me.internal.ventanaBusqueda=Ext.create('siga.windowForm', {
-      title: 'Busqueda Avanzada',
+    me.internal.ventanaConceptoImportar=Ext.create('Ext.window.Window', {
+      title: 'Concepto - Importar Excel',
       minimizable: false,
       maximizable: false,
       modal: true,
       width: 750,
       height: 420,
       resizable: false,
+      bodyStyle: 'padding: 5px 20px 0px 20px; background-color: #e8e8e8; border-color: #e8e8e8;',
+      layout: 'anchor',
 
       listeners: {
         beforeclose: function(w,o){
-          me.internal.ventanaBusqueda.hide();
+          me.internal.ventanaConceptoImportar.hide();
           return false;
         },
         beforeshow: function(){
@@ -807,82 +823,23 @@ siga.define('nomina', {
 
       items:[
         {
-          xtype: 'tbspacer',
-          flex: 1,
-          height: 20,
-        },
-        {
-          xtype:'textfield',
-          id: me._('busqueda_cedula'),
-          name: 'busqueda_cedula',
-          fieldLabel: 'Cédula',
+          xtype:'combobox',
+          id: me._('tipoVentanaSeleccionarNomina'),
+          name: 'tipoVentanaSeleccionarNomina',
+          fieldLabel: 'Tipo de Nómina/Periodo',
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
-          value: ''
-        },
-
-        {
-          xtype:'textfield',
-          id: me._('busqueda_nombre_apellido'),
-          name: 'busqueda_nombre_apellido',
-          fieldLabel: 'Nombres/Apellidos',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          value: ''
-        },
-
-        {
-          xtype: 'tagfield',
-          id: me._('busqueda_id_cargo'),
-          name: 'busqueda_id_cargo',
-          //hideTrigger: true,
-          fieldLabel: 'Cargo',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          editable: false,
-          filterPickList: true,
-          multiSelect: true,
+          anchor: '100%',
           queryMode: "local",
-          tipTpl: '{cargo}',
-          labelTpl: '{cargo}',
-          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item">{cargo}</li></tpl></ul>',
           store: {
-            fields: ['id','cargo'],
-            data: []
-          },
-          displayField: 'cargo',
-          valueField: 'id',
-          allowBlank: true,
-          forceSelection: true
-        },
-
-        {
-          xtype: 'tagfield',
-          id: me._('busqueda_id_escala_salarial'),
-          name: 'busqueda_id_escala_salarial',
-          //hideTrigger: true,
-          fieldLabel: 'Escala Salarial',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          editable: false,
-          filterPickList: true,
-          multiSelect: true,
-          queryMode: "local",
-          tipTpl: '{escala}',
-          labelTpl: '{escala}',
-          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item">{escala}</li></tpl></ul>',
-          store: {
-            fields: ['id','escala'],
+            fields: ['tipo','denominacion'],
             autoLoad: true,
-            //pageSize: 1000,
+            pageSize: 1000,
             proxy: {
               type:'ajax',
-              url: 'module/nomina_escala_salarial/',
-              actionMethods: {read: "POST"},//actionMethods:'POST',
+              url: 'module/nomina_periodo_tipo/',
+              actionMethods: {read: "POST"},
               timeout: 3600000,
               reader: {
                 type: 'json',
@@ -890,91 +847,46 @@ siga.define('nomina', {
                 totalProperty:'total'
               },
               extraParams: {
-                action: 'onList',
+                action: 'onList_Activo',
                 text: '',
-                start: 0,
-                limit: 'ALL',
-                sort: '[{"property": "escala", "direction": "ASC"}]'
+                sort: '[{"property": "denominacion", "direction": "ASC"}]'
+              }
+            },
+            listeners: {
+              load: function(store, records, successful){
+                if(records.length>0)
+                  me.getCmp("tipoVentanaSeleccionarNomina").setValue(records[0].get("tipo"));
               }
             }
           },
-          displayField: 'escala',
-          valueField: 'id',
-          allowBlank: true,
-          forceSelection: true
-        },
-
-        {
-          xtype: 'tagfield',
-          id: me._('busqueda_ingreso_mes'),
-          name: 'busqueda_ingreso_mes',
-          //hideTrigger: true,
-          fieldLabel: 'Ingreso <small>(Mes)</small>',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          editable: false,
-          filterPickList: true,
-          multiSelect: true,
-          queryMode: "local",
-          tipTpl: '{denominacion}',
-          labelTpl: '{denominacion}',
-          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item">{denominacion}</li></tpl></ul>',
-          store: {
-            fields: ['id','denominacion'],
-            data: [
-              {id: '01', denominacion: 'Enero'},
-              {id: '02', denominacion: 'Febrero'},
-              {id: '03', denominacion: 'Marzo'},
-              {id: '04', denominacion: 'Abril'},
-              {id: '05', denominacion: 'Mayo'},
-              {id: '06', denominacion: 'Junio'},
-              {id: '07', denominacion: 'Julio'},
-              {id: '08', denominacion: 'Agosto'},
-              {id: '09', denominacion: 'Septiembre'},
-              {id: '10', denominacion: 'Octubre'},
-              {id: '11', denominacion: 'Noviembre'},
-              {id: '12', denominacion: 'Diciembre'}
-            ]
-          },
           displayField: 'denominacion',
-          valueField: 'id',
-          allowBlank: true,
-          forceSelection: true
+          valueField: 'tipo',
+          allowBlank: false,
+          forceSelection: true,
+          editable: false,
+          value: '',
+          listeners: {
+            afterrender: function(e, eOpts ){
+              e.setValue("Q");
+            },
+            change: function(e, The, eOpts ){
+              me.getCmp('id_periodo').getStore().load();
+              me.getCmp('id_nomina').getStore().load();
+            }
+          }
         },
-
         {
-          xtype: 'combobox',
-          id: me._('busqueda_estatus'),
-          name: 'busqueda_estatus',
-          //hideTrigger: true,
-          fieldLabel: 'Estatus',
+          xtype:'filefield',
+          id: me._('concepto_importar_excel_archivo'),
+          name: 'concepto_importar_excel_archivo',
+          fieldLabel: 'Archivo Excel',
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
-          editable: false,
-          filterPickList: true,
-          multiSelect: false,
-          queryMode: "local",
-          tipTpl: '{estatus}',
-          labelTpl: '{estatus}',
-          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item">{estatus}</li></tpl></ul>',
-          store: {
-            fields: ['id','estatus'],
-            data: [
-              {id: 'T', estatus: 'TODOS'},
-              {id: 'A', estatus: 'ACTIVOS'},
-              {id: 'I', estatus: 'INACTIVOS'},
-            ]
-          },
-          displayField: 'estatus',
-          valueField: 'id',
-          allowBlank: false,
-          value: 'T',
-          defaultValue: 'T',
-          forceSelection: true
+          anchor: '100%',
+          value: '',
+          accept: '.xls, .xlsx'
         },
-
         {
           xtype: 'container',
           anchor: '100%',
@@ -987,20 +899,7 @@ siga.define('nomina', {
             },
             {
               xtype: 'button',
-              text: '<b>Restablecer</b>',
-              width: 150,
-              listeners: {
-                click: function(){
-                }
-              }
-            },
-            {
-              xtype: 'tbspacer',
-              width: 40,
-            },
-            {
-              xtype: 'button',
-              text: '<b>Aceptar</b>',
+              text: '<b>Importar</b>',
               width: 150,
               listeners: {
                 click: function(){
@@ -1308,6 +1207,17 @@ siga.define('nomina', {
             }
           },
           {
+            text: 'Importar Excel',
+            listeners: {
+              click: function(){
+                var id_nomina=me.getCmp('id_nomina').getValue().join(",");
+                var id_periodo=me.getCmp('id_periodo').getValue();
+
+                me.internal.ventanaConceptoImportar.show();
+              }
+            }
+          },
+          {
             text: 'Administrar',
             listeners: {
               click: function(){
@@ -1453,23 +1363,6 @@ siga.define('nomina', {
             }
           },
         ]
-      },
-      {
-        xtype: 'button',
-        id: me._('btnBusqueda'),
-        height: 45,
-        width: 55,
-        hidden: true,
-        text: 'Busqueda',
-        cls: 'siga-btn-base',
-        iconCls: 'siga-btn-base-icon icon-nomina_persona_buscar',
-        iconAlign: 'top',
-        tooltip: 'Busqueda Avanzada',
-        listeners: {
-            click: function(){
-              me.internal.ventanaBusqueda.show();
-            }
-        }
       },
       {
         xtype: 'tbspacer',
@@ -3345,7 +3238,7 @@ columns.push(
         {
           xtype: 'gridcolumn',
           dataIndex: me.internal.data.concepto[i]["id_concepto"],
-          html: "<div class='columna_editar'><img src='image/icon/icon-edit.png' style='width: 16px; cursor: pointer;' onclick=\"siga.window.getCmp('"+me.self.getName()+"').onEditarConcepto("+me.internal.data.concepto[i]["id_concepto"]+")\" /></div><div class='text_vertical'>"+me.internal.data.concepto[i]["concepto"]+"<span class='"+style_tipo+"'> "+texto_tipo+"</span><div class='text_indeficador'>"+me.internal.data.concepto[i]["identificador"]+"</div><div class='text_formula "+style+"' title='"+title+"' onclick='alert(\""+me.internal.data.concepto[i]["id"]+"\")'>"+me.internal.data.concepto[i]["definicion"]+"</div></div>",
+          html: "<div class='columna_editar'><img src='image/icon/icon-edit.png' style='width: 16px; cursor: pointer;' onclick=\"siga.window.getCmp('"+me.self.getName()+"').onEditarConcepto("+me.internal.data.concepto[i]["id_concepto"]+")\" /></div><div class='text_vertical'><span class='concepto_codigo'>"+me.internal.data.concepto[i]["codigo"]+" ~ </span> "+me.internal.data.concepto[i]["concepto"]+"<span class='"+style_tipo+"'> "+texto_tipo+"</span><div class='text_indeficador'>"+me.internal.data.concepto[i]["identificador"]+"</div><div class='text_formula "+style+"' title='"+title+"' onclick='alert(\""+me.internal.data.concepto[i]["id"]+"\")'>"+me.internal.data.concepto[i]["definicion"]+"</div></div>",
           width: 65,
           menuDisabled: true,
           sortable: false,
