@@ -804,11 +804,12 @@ siga.define('nomina', {
       minimizable: false,
       maximizable: false,
       modal: true,
-      width: 750,
+      width: 850,
       height: 420,
-      resizable: false,
       bodyStyle: 'padding: 5px 20px 0px 20px; background-color: #e8e8e8; border-color: #e8e8e8;',
       layout: 'anchor',
+      resizable: true,
+      autoScroll: true,
 
       listeners: {
         beforeclose: function(w,o){
@@ -818,6 +819,12 @@ siga.define('nomina', {
         beforeshow: function(){
 
 
+        },
+        afterrender: function(){
+          me.getCmp("tipo_nomina_concepto_importar").setValue("Q");
+        },
+        aftershow: function(){
+          //me.getCmp("tipo_nomina_concepto_importar").setValue("Q");
         }
       },
 
@@ -855,9 +862,43 @@ siga.define('nomina', {
             change: function(e, The, eOpts ){
               //me.getCmp('id_periodo').getStore().load();
               //me.getCmp('id_nomina_concepto_importar').getStore().load();
-              me.getCmp('id_nomina_concepto_importar').getStore().setData(me.getDataNomina({tipo: me.getCmp("tipo_nomina_concepto_importar").getValue()}));
+              var tipo = me.getCmp("tipo_nomina_concepto_importar").getValue();
+              var data_periodo=me.getDataPeriodo({tipo: tipo});
+              me.getCmp('id_periodo_concepto_importar').getStore().setData(data_periodo);
+              if(data_periodo.length>0){
+                console.log(data_periodo, data_periodo[data_periodo.length-1]["id"]);
+                me.getCmp("id_periodo_concepto_importar").setValue(data_periodo[data_periodo.length-1]["id"]);
+              }
+
+              var data_nomina=me.getDataNomina({tipo: tipo});
+              me.getCmp('id_nomina_concepto_importar').getStore().setData(data_nomina);
+              if(data_nomina.length>0){
+                me.getCmp("id_nomina_concepto_importar").setValue(Ext.Array.map(data_nomina,function(item,index,Array){return item["id"]}));
+              }
             }
           }
+        },
+        {
+          xtype: 'combobox',
+          id: me._('id_periodo_concepto_importar'),
+          name: 'id_periodo_concepto_importar',
+          anchor: '100%',
+          fieldLabel: 'Periodo',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          editable: false,
+          queryMode: "local",
+          displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
+          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
+          store: {
+            fields: ['id','periodo'],
+            data: []
+          },
+          displayField: 'periodo',
+          valueField: 'id',
+          allowBlank: true,
+          forceSelection: true,
         },
         {
           xtype: 'tagfield',
@@ -874,42 +915,24 @@ siga.define('nomina', {
           multiSelect: true,
           store: {
             fields: ['id','codigo_nomina'],
-            autoLoad: false,
-            pageSize: 1000,
-            data: [],
-            listeners: {
-              load: function(store, records, successful){
-                //seleccionar el primer elemento del select nómina
-
-                //if(records.length>0)
-                //  me.getCmp("id_nomina").setValue(records[0].get("id"));
-                //return;
-                //if(records.length>0 && !me.getCmp('id_nomina').getValue().join(","))
-                //  me.getCmp("id_nomina").setValue(records[0].get("id"));
-              },
-              beforeload: function(store,operation,eOpts){
-                //store.proxy.extraParams.id_periodo=me.getCmp('id_periodo').getValue();
-                //store.proxy.extraParams.tipo=me.getCmp('tipoVentanaSeleccionarNomina').getValue();
-                //store.data=me.internal.data.preload["periodo_tipo"];
-              }
-            }
+            data: []
           },
           displayField: 'codigo_nomina',
           valueField: 'id',
-          allowBlank: false,
+          allowBlank: true,
           forceSelection: true,
-          listeners:{
+          listeners: {
             change: function(){
-              //me.getCmp('messageVentanaSeleccionarNomina').setText("&nbsp;",false);
-              //me.getCmp('id_periodo').getStore().load();
+              var height=me.getCmp("id_nomina_concepto_importar").getHeight();
+              me.internal.ventanaConceptoImportar.setHeight(270+height);
             }
           }
         },
         {
           xtype:'filefield',
-          id: me._('concepto_importar_excel_archivo'),
-          name: 'concepto_importar_excel_archivo',
-          fieldLabel: 'Archivo Excel',
+          id: me._('archivo_excel_concepto_importar'),
+          name: 'archivo_excel_concepto_importar',
+          fieldLabel: 'Excel a Importar',
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
@@ -921,7 +944,7 @@ siga.define('nomina', {
           xtype: 'container',
           anchor: '100%',
           layout: 'hbox',
-          style: 'padding-top: 45px;',
+          style: 'padding-top: 25px; padding-bottom: 10px;',
           items: [
             {
               xtype: 'tbspacer',
@@ -933,6 +956,7 @@ siga.define('nomina', {
               width: 150,
               listeners: {
                 click: function(){
+                  me.onConceptoImportar();
                 }
               }
             },
@@ -3952,6 +3976,39 @@ columns.push(
       return tmp;
     }
     return me.internal.data.preload["nomina"];
+  },
+
+  getDataPeriodo: function(o){
+    var me=this;
+
+    if(o.tipo){
+      var tmp=[];
+      for(var i = 0; i<me.internal.data.preload["periodo"].length; i++)
+        if(me.internal.data.preload["periodo"][i]["tipo"]==o.tipo)
+          tmp.push(me.internal.data.preload["periodo"][i]);
+      return tmp;
+    }
+    return me.internal.data.preload["periodo"];
+  },
+
+  onConceptoImportar: function(){
+    var me=this;
+
+    var file = me.getCmp("archivo_excel_concepto_importar").fileInputEl.dom.files[0];
+    if(!file){
+
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.addEventListener("load", function (e) {
+      var content = e.target.result.split(';base64,')[1];
+
+      console.log(content);
+
+    }, false);
+
+    reader.readAsDataURL(file);
   },
 
 });

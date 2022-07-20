@@ -12,9 +12,11 @@ class MODULO extends nomina{
       case "onInit":
         header('Content-Type: text/plain; charset=utf-8');
         SIGA::$DBMode=PGSQL_ASSOC;
+        include("../../class/nomina_periodo.class.php");
         include("../../class/nomina_periodo_tipo.class.php");
         include("../../class/nomina_escala_salarial.class.php");
         $return=[];
+        $return["periodo"]         = nomina_periodo::onList(NULL,NULL,"",0,"ALL",'[{"property": "codigo", "direction": "ASC"}]')["result"];
         $return["periodo_tipo"]    = nomina_periodo_tipo::onList_Activo("",0,"ALL",'[{"property": "denominacion", "direction": "ASC"}]')["result"];
         $return["nomina"]          = self::onList("","","",0,"ALL",'[{"property": "tipo", "direction": "ASC"},{"property": "codigo_nomina", "direction": "ASC"}]')["result"];
         $return["cargo"]           = self::onList_Cargo("",0,"ALL",'[{"property": "cargo", "direction": "ASC"}]')["result"];
