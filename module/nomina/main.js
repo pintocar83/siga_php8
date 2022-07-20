@@ -4000,11 +4000,34 @@ columns.push(
       return;
     }
 
+    var extension=file.name.substring(file.name.lastIndexOf('.')+1);
+
+    var id_periodo = me.getCmp("id_periodo_concepto_importar").getValue();
+    var id_nomina  = me.getCmp("id_nomina_concepto_importar").getValue();
+
     var reader = new FileReader();
     reader.addEventListener("load", function (e) {
       var content = e.target.result.split(';base64,')[1];
 
-      console.log(content);
+      Ext.Ajax.request({
+        method: 'POST',
+        url:'module/nomina/',
+        params:{
+          action: 'onAddConceptoExcel',
+          id_periodo: id_periodo,
+          id_nomina: id_nomina,
+          archivo_extension: extension,
+          archivo_contenido: content
+        },
+        success:function(request){
+          var result=Ext.JSON.decode(request.responseText);
+
+        },
+        failure:function(request){
+          var result=Ext.JSON.decode(request.responseText);
+          //me.setMessage(result.message,"red");
+        }
+      });
 
     }, false);
 

@@ -53,6 +53,10 @@ class MODULO extends nomina{
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onAddValorFicha($access,SIGA::param("id_nomina"),SIGA::param("id_periodo"),$ids_ficha,SIGA::param("id_concepto")));
         break;
+      case "onAddConceptoExcel":
+        header('Content-Type: text/plain; charset=utf-8');
+        print json_encode(self::onAddConceptoExcel($access,SIGA::param("id_nomina"),SIGA::param("id_periodo"),SIGA::param("archivo_extension",false),SIGA::param("archivo_contenido",false)));
+        break;
       case "onRemove":
         $ids_ficha=json_decode(SIGA::param("id_ficha",false),true);
         header('Content-Type: text/plain; charset=utf-8');

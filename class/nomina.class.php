@@ -811,6 +811,26 @@ class nomina{
     }
   }
 
+  public static function onAddConceptoExcel($access,$id_nomina,$id_periodo,$archivo_extension,$archivo_contenido){
+    $db=SIGA::DBController();
+
+    $periodo=$db->Execute("SELECT cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    if($periodo[0]["cerrado"]==='t')
+      return [];
+
+    $carpeta_base=SIGA::databasePath()."/nomina/importar_concepto/";
+    if(!file_exists($carpeta_base))
+      mkdir($carpeta_base,0755,true);
+
+    $uid=date("Ymd_His")."_".uniqid();
+    $archivo_excel="{$carpeta_base}{$uid}.{$archivo_extension}";
+    file_put_contents($archivo_excel,base64_decode($archivo_contenido));
+
+
+
+    return [];
+  }
+
   public static function onRemove($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto){
     $db=SIGA::DBController();
 
