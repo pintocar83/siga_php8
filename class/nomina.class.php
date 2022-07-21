@@ -816,7 +816,7 @@ class nomina{
 
     $periodo=$db->Execute("SELECT cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
     if($periodo[0]["cerrado"]==='t')
-      return [];
+      return ["success"=>false, "message"=>"El periodo se encuentra cerrado."];
 
     $carpeta_base=SIGA::databasePath()."/nomina/importar_concepto/";
     if(!file_exists($carpeta_base))
@@ -826,9 +826,76 @@ class nomina{
     $archivo_excel="{$carpeta_base}{$uid}.{$archivo_extension}";
     file_put_contents($archivo_excel,base64_decode($archivo_contenido));
 
+    if(!file_exists($archivo_excel))
+      return ["success"=>false, "message"=>"Error al cargar archivo."];
+
+    include_once(SIGA::path()."/library/phpexcel/PHPExcel.php");
+    $reader = PHPExcel_IOFactory::createReader('Excel2007');
+    //$reader->setReadDataOnly(true);
+
+    //$excel = $reader->load($archivo_excel);
+    /*
+    foreach ($excel->getWorksheetIterator() as $sheet){
+      $concepto=[];
+      $c=0;
+
+      foreach ($sheet->getRowIterator() as $row) {
+        $i = $row->getRowIndex();
+        $A = $sheet->getCell("A$i")->getValue();
+
+        //Leer encabezado
+
+        if($i==0){
+          //detectar cuantos conceptos cargaron (columnas)
+          $col_index = 1;//Comenzar en la columna B
+          while($col_index<=100){
+            $col_letter = PHPExcel_Cell::stringFromColumnIndex($col_index);
+            $CELL=$col_letter.$col_index;
+            $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
+            $CELL_VALUE = trim($CELL_VALUE);
+            if(!$CELL_VALUE){
+              break;
+            }
+            //buscar el concepto por el codigo
+            $sql="SELECT id, codigo, concepto, identificador, tipo FROM modulo_nomina.concepto WHERE codigo LIKE '$CELL_VALUE' AND activo";
+            $tmp=$db->Execute("$sql");
+            if(count($tmp)===1 && isset($tmp[0]["id"])){
+              $concepto[$c]=$tmp[0];
+              $concepto[$c]["column"]=$col_letter;
+              $concepto[$c]["success"]=true;
+              $concepto[$c]["message"]="";
+            }
+            else if(count($tmp)>1){
+              $concepto[$c]["codigo"]=$CELL_VALUE;
+              $concepto[$c]["column"]=$col_letter;
+              $concepto[$c]["success"]=false;
+              $concepto[$c]["message"]="Existen multiples conceptos con el mismo codigo ($CELL_VALUE).";
+            }
+            else{
+              $concepto[$c]["codigo"]=$CELL_VALUE;
+              $concepto[$c]["column"]=$col_letter;
+              $concepto[$c]["success"]=false;
+              $concepto[$c]["message"]="Código de concepto ($CELL_VALUE) no encontrado.";
+            }
+            $c++;
+            $col_index++;
+          }
+          continue;
+        }
+
+        //$CEDULA = $sheet->getCell("A$i")->getValue();
+        //buscar la ficha por la cedula
 
 
-    return [];
+
+      }
+
+
+    }*/
+
+    return [
+      //"concepto"=>$concepto,
+    ];
   }
 
   public static function onRemove($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto){
