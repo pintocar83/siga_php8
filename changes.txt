@@ -109,3 +109,8 @@ module/academia_reportes/pdf/curso_certificados.php
 module/academia_reportes/pdf/curso_constancia_asistencia.php
 module/academia_reportes/pdf/curso_constancia_asistencia_B.php
 module/academia_reportes/pdf/curso_participantes.php
+
+
+
+library/phpexcel/PHPExcel/ReferenceHelper.php
+library/phpexcel/PHPExcel/Cell/DefaultValueBinder.php

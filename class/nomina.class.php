@@ -811,7 +811,8 @@ class nomina{
     }
   }
 
-  public static function onAddConceptoExcel($access,$id_nomina,$id_periodo,$archivo_extension,$archivo_contenido){
+  public static function onAddConceptoExcel($access,$id_nomina_seleccion,$id_periodo,$archivo_extension,$archivo_contenido){
+    SIGA::$DBMode=PGSQL_ASSOC;
     $db=SIGA::DBController();
 
     $periodo=$db->Execute("SELECT cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
@@ -831,26 +832,46 @@ class nomina{
 
     include_once(SIGA::path()."/library/phpexcel/PHPExcel.php");
     $reader = PHPExcel_IOFactory::createReader('Excel2007');
-    //$reader->setReadDataOnly(true);
+    $reader->setReadDataOnly(true);
 
-    //$excel = $reader->load($archivo_excel);
-    /*
+    $ficha_concepto=[];
+    $nomina_seleccion=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE id in ($id_nomina_seleccion)");
+
+    $excel = $reader->load($archivo_excel);
     foreach ($excel->getWorksheetIterator() as $sheet){
+      $cod_nomina = explode(" ",$sheet->getTitle());
+      $cod_nomina = trim($cod_nomina[0]);
+
+      //buscar si el titulo de la hoja corresponde algun codigo de nomina, de ser asi realizar la carga solo sobre esa nomina
+      //en caso contrario aplicar el conceptos en las nominas seleccionadas y donde se encuentra la persona agregada
+      $id_nomina="";
+      $nomina=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE codigo LIKE '$cod_nomina'");
+      if(isset($nomina[0]["id"])){
+        if(!in_array($nomina[0]["id"],explode(",",$id_nomina_seleccion))){
+          //["success"=>false, "message"=>"El codigo de la nómina en el excel no corresponde a la seleccionada."];
+          continue;
+        }
+        $id_nomina=$nomina[0]["id"];
+      }
+      else{
+        $id_nomina=$id_nomina_seleccion;
+      }
+
+
       $concepto=[];
       $c=0;
 
       foreach ($sheet->getRowIterator() as $row) {
-        $i = $row->getRowIndex();
-        $A = $sheet->getCell("A$i")->getValue();
+        $ln = $row->getRowIndex();
+        $A = $sheet->getCell("A$ln")->getValue();
 
         //Leer encabezado
-
-        if($i==0){
+        if($ln==1){
           //detectar cuantos conceptos cargaron (columnas)
           $col_index = 1;//Comenzar en la columna B
           while($col_index<=100){
             $col_letter = PHPExcel_Cell::stringFromColumnIndex($col_index);
-            $CELL=$col_letter.$col_index;
+            $CELL=$col_letter.$ln;
             $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
             $CELL_VALUE = trim($CELL_VALUE);
             if(!$CELL_VALUE){
@@ -883,18 +904,63 @@ class nomina{
           continue;
         }
 
-        //$CEDULA = $sheet->getCell("A$i")->getValue();
         //buscar la ficha por la cedula
+        $CEDULA = $sheet->getCell("A$ln")->getValue();
+        $CEDULA = trim($CEDULA);
+        if(!$CEDULA){
+          //cedula vacia
+          continue;
+        }
+        $add_buscar="P.identificacion_numero='$CEDULA' AND";
+        if(in_array($CEDULA[0],['V','E']))
+          $add_buscar="concat(P.identificacion_tipo,P.identificacion_numero) LIKE '$CEDULA' AND";
 
+        //si id_nomina existe. buscar si existe la persona en esa nomina para agregarle el concepto
+        $sql="
+          SELECT DISTINCT
+            FC.id_nomina,
+            FC.id_ficha
+          FROM
+            modulo_base.persona as P,
+            modulo_nomina.ficha AS F,
+            modulo_nomina.ficha_concepto as FC
+          WHERE
+            $add_buscar
+            P.tipo='N' AND
+            P.id=F.id_persona AND
+            F.id=FC.id_ficha AND
+            FC.id_periodo=$id_periodo AND
+            FC.id_nomina in ($id_nomina)
+        ";
+        //print $sql;
+        $nomina_ficha=$db->Execute($sql);
+        if(count($nomina_ficha)==0){
+          //no existe la persona en la nomina
+          continue;
+        }
 
+        for($j=0; $j<count($nomina_ficha); $j++){
+          for($k=0; $k<$c; $k++){
+            //capturar el valor del concepto en la celda
+            $CELL = $concepto[$k]["column"].$ln;
+            $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
 
+            $ficha_concepto[]=[
+              "id_periodo"     => $id_periodo,
+              "id_nomina"      => $nomina_ficha[$j]["id_nomina"],
+              "id_ficha"       => $nomina_ficha[$j]["id_ficha"],
+              "id_concepto"    => $concepto[$k]["id"],
+              "valor"          => "$CELL_VALUE"
+            ];
+          }
+        }
       }
 
-
-    }*/
+    }
 
     return [
-      //"concepto"=>$concepto,
+      "concepto"=>$concepto,
+      "ficha_concepto"=>$ficha_concepto
     ];
   }
 

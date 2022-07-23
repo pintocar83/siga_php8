@@ -921,6 +921,7 @@ siga.define('nomina', {
           valueField: 'id',
           allowBlank: true,
           forceSelection: true,
+          //hideTrigger:true,
           listeners: {
             change: function(){
               var height=me.getCmp("id_nomina_concepto_importar").getHeight();
@@ -4003,7 +4004,7 @@ columns.push(
     var extension=file.name.substring(file.name.lastIndexOf('.')+1);
 
     var id_periodo = me.getCmp("id_periodo_concepto_importar").getValue();
-    var id_nomina  = me.getCmp("id_nomina_concepto_importar").getValue();
+    var id_nomina  = me.getCmp("id_nomina_concepto_importar").getValue().join(",");
 
     var reader = new FileReader();
     reader.addEventListener("load", function (e) {
