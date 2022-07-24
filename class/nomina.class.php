@@ -811,7 +811,7 @@ class nomina{
     }
   }
 
-  public static function onAddConceptoExcel($access,$id_nomina_seleccion,$id_periodo,$archivo_extension,$archivo_contenido){
+  public static function onAddConceptoExcelPreCargar($access,$id_nomina_seleccion,$id_periodo,$archivo_extension,$archivo_contenido){
     SIGA::$DBMode=PGSQL_ASSOC;
     $db=SIGA::DBController();
 
@@ -859,6 +859,7 @@ class nomina{
 
 
       $concepto=[];
+      $ficha=[];
       $c=0;
 
       foreach ($sheet->getRowIterator() as $row) {
@@ -918,9 +919,15 @@ class nomina{
         //si id_nomina existe. buscar si existe la persona en esa nomina para agregarle el concepto
         $sql="
           SELECT DISTINCT
+            N.codigo || ' ' || N.nomina as nomina,
             FC.id_nomina,
-            FC.id_ficha
+            FC.id_ficha,
+            P.identificacion_tipo as nacionalidad,
+            P.identificacion_numero as cedula,
+            split_part(P.denominacion,';',1) || ' ' || split_part(P.denominacion,';',3) as nombre_apellido,
+            replace(P.denominacion,';',' ') as nombres_apellidos
           FROM
+            modulo_nomina.nomina as N,
             modulo_base.persona as P,
             modulo_nomina.ficha AS F,
             modulo_nomina.ficha_concepto as FC
@@ -929,8 +936,11 @@ class nomina{
             P.tipo='N' AND
             P.id=F.id_persona AND
             F.id=FC.id_ficha AND
+            FC.id_nomina=N.id AND
             FC.id_periodo=$id_periodo AND
             FC.id_nomina in ($id_nomina)
+          ORDER BY
+            nomina, cedula
         ";
         //print $sql;
         $nomina_ficha=$db->Execute($sql);
@@ -939,6 +949,16 @@ class nomina{
           continue;
         }
 
+        $ficha[]=[
+          "id_ficha"          => $nomina_ficha[0]["id_ficha"],
+          "nacionalidad"      => $nomina_ficha[0]["nacionalidad"],
+          "cedula"            => $nomina_ficha[0]["cedula"],
+          "nombre_apellido"   => $nomina_ficha[0]["nombre_apellido"],
+          "nombres_apellidos" => $nomina_ficha[0]["nombres_apellidos"],
+          "id_nomina"         => $nomina_ficha[0]["id_nomina"],
+          "nomina"            => $nomina_ficha[0]["nomina"],
+        ];
+
         for($j=0; $j<count($nomina_ficha); $j++){
           for($k=0; $k<$c; $k++){
             //capturar el valor del concepto en la celda
@@ -946,11 +966,11 @@ class nomina{
             $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
 
             $ficha_concepto[]=[
-              "id_periodo"     => $id_periodo,
-              "id_nomina"      => $nomina_ficha[$j]["id_nomina"],
-              "id_ficha"       => $nomina_ficha[$j]["id_ficha"],
-              "id_concepto"    => $concepto[$k]["id"],
-              "valor"          => "$CELL_VALUE"
+              "id_periodo"        => $id_periodo,
+              "id_nomina"         => $nomina_ficha[$j]["id_nomina"],
+              "id_ficha"          => $nomina_ficha[$j]["id_ficha"],
+              "id_concepto"       => $concepto[$k]["id"],
+              "valor"             => "$CELL_VALUE"
             ];
           }
         }
@@ -959,9 +979,57 @@ class nomina{
     }
 
     return [
-      "concepto"=>$concepto,
-      "ficha_concepto"=>$ficha_concepto
+      "ficha" => $ficha,
+      "concepto" => $concepto,
+      "ficha_concepto" => $ficha_concepto
     ];
+  }
+
+  public static function onAddConceptoExcelAplicar($access,$data){
+    SIGA::$DBMode=PGSQL_ASSOC;
+    $db=SIGA::DBController();
+
+    if(!count($data)>0)
+      return ["success"=>false, "message"=>"Sin data para importar."];
+
+    $id_periodo=$data[0]["id_periodo"];
+
+    $periodo=$db->Execute("SELECT cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    if($periodo[0]["cerrado"]==='t')
+      return ["success"=>false, "message"=>"El periodo se encuentra cerrado."];
+
+
+    $id_nomina=[];
+    for($i=0; $i<count($data); $i++){
+      //borrar registros existentes
+      $db->Delete("modulo_nomina.ficha_concepto","id_nomina='".$data[$i]["id_nomina"]."' and id_periodo='".$data[$i]["id_periodo"]."' and id_ficha='".$data[$i]["id_ficha"]."' and id_concepto='".$data[$i]["id_concepto"]."'");
+
+      if($data[$i]["valor"]>0){
+        $db->Insert("modulo_nomina.ficha_concepto",array(
+                                          "id_nomina"   => $data[$i]["id_nomina"],
+                                          "id_periodo"  => $data[$i]["id_periodo"],
+                                          "id_ficha"    => $data[$i]["id_ficha"],
+                                          "id_concepto" => $data[$i]["id_concepto"],
+                                          "valor"       => $data[$i]["valor"]));
+        if(!in_array($data[$i]["id_nomina"],$id_nomina))
+          $id_nomina[]=$data[$i]["id_nomina"];
+      }
+    }
+
+    $id_nomina=implode(',',$id_nomina);
+
+    //agregar conceptos del encabezado de nomina
+    $sql="
+      INSERT INTO modulo_nomina.concepto_periodo(id_concepto,id_nomina,id_periodo)
+      SELECT DISTINCT FC.id_concepto, FC.id_nomina, FC.id_periodo
+      FROM modulo_nomina.ficha_concepto FC
+      WHERE FC.id_nomina IN ($id_nomina) AND FC.id_periodo=$id_periodo AND
+      NOT FC.id_concepto IN (select CP.id_concepto from modulo_nomina.concepto_periodo CP where CP.id_nomina=$id_nomina and CP.id_periodo=$id_periodo)
+    ";
+    $db->Execute($sql);
+
+    return array("success"=>true, "message"=>"La importación se realizó con exito.");
+
   }
 
   public static function onRemove($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto){

@@ -806,168 +806,251 @@ siga.define('nomina', {
       modal: true,
       width: 850,
       height: 420,
-      bodyStyle: 'padding: 5px 20px 0px 20px; background-color: #e8e8e8; border-color: #e8e8e8;',
-      layout: 'anchor',
+      bodyStyle: 'background-color: #e8e8e8; border-color: #e8e8e8;',
+      layout: 'fit',
       resizable: true,
       autoScroll: true,
 
       listeners: {
         beforeclose: function(w,o){
+          me.internal.ventanaConceptoImportar.data_importar=[];
           me.internal.ventanaConceptoImportar.hide();
           return false;
         },
         beforeshow: function(){
-
-
+          me.internal.ventanaConceptoImportar.data_importar=[];
+          me.getCmp("container_paso1_concepto_importar").show();
+          me.getCmp("container_paso2_concepto_importar").hide();
         },
         afterrender: function(){
           me.getCmp("tipo_nomina_concepto_importar").setValue("Q");
-        },
-        aftershow: function(){
-          //me.getCmp("tipo_nomina_concepto_importar").setValue("Q");
+          me.onConceptoImportarHeightPaso1();
         }
       },
 
       items:[
         {
-          xtype:'combobox',
-          id: me._('tipo_nomina_concepto_importar'),
-          name: 'tipo_nomina_concepto_importar',
-          fieldLabel: 'Tipo de Nómina/Periodo',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          anchor: '100%',
-          queryMode: "local",
-          store: {
-            fields: ['tipo','denominacion'],
-            data: me.internal.data.preload["periodo_tipo"],
-            listeners: {
-              load: function(store, records, successful){
-                if(records.length>0)
-                  me.getCmp("tipo_nomina_concepto_importar").setValue(records[0].get("tipo"));
-              }
-            }
-          },
-          displayField: 'denominacion',
-          valueField: 'tipo',
-          allowBlank: false,
-          forceSelection: true,
-          editable: false,
-          value: '',
-          listeners: {
-            afterrender: function(e, eOpts ){
-              //e.setValue("Q");
-            },
-            change: function(e, The, eOpts ){
-              //me.getCmp('id_periodo').getStore().load();
-              //me.getCmp('id_nomina_concepto_importar').getStore().load();
-              var tipo = me.getCmp("tipo_nomina_concepto_importar").getValue();
-              var data_periodo=me.getDataPeriodo({tipo: tipo});
-              me.getCmp('id_periodo_concepto_importar').getStore().setData(data_periodo);
-              if(data_periodo.length>0){
-                console.log(data_periodo, data_periodo[data_periodo.length-1]["id"]);
-                me.getCmp("id_periodo_concepto_importar").setValue(data_periodo[data_periodo.length-1]["id"]);
-              }
-
-              var data_nomina=me.getDataNomina({tipo: tipo});
-              me.getCmp('id_nomina_concepto_importar').getStore().setData(data_nomina);
-              if(data_nomina.length>0){
-                me.getCmp("id_nomina_concepto_importar").setValue(Ext.Array.map(data_nomina,function(item,index,Array){return item["id"]}));
-              }
-            }
-          }
-        },
-        {
-          xtype: 'combobox',
-          id: me._('id_periodo_concepto_importar'),
-          name: 'id_periodo_concepto_importar',
-          anchor: '100%',
-          fieldLabel: 'Periodo',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          editable: false,
-          queryMode: "local",
-          displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
-          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
-          store: {
-            fields: ['id','periodo'],
-            data: []
-          },
-          displayField: 'periodo',
-          valueField: 'id',
-          allowBlank: true,
-          forceSelection: true,
-        },
-        {
-          xtype: 'tagfield',
-          id: me._('id_nomina_concepto_importar'),
-          name: 'id_nomina_concepto_importar',
-          anchor: '100%',
-          fieldLabel: 'Nómina',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          cls: 'seleccionar_nomina__nomina',
-          editable: false,
-          queryMode: "local",
-          multiSelect: true,
-          store: {
-            fields: ['id','codigo_nomina'],
-            data: []
-          },
-          displayField: 'codigo_nomina',
-          valueField: 'id',
-          allowBlank: true,
-          forceSelection: true,
-          //hideTrigger:true,
-          listeners: {
-            change: function(){
-              var height=me.getCmp("id_nomina_concepto_importar").getHeight();
-              me.internal.ventanaConceptoImportar.setHeight(270+height);
-            }
-          }
-        },
-        {
-          xtype:'filefield',
-          id: me._('archivo_excel_concepto_importar'),
-          name: 'archivo_excel_concepto_importar',
-          fieldLabel: 'Excel a Importar',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          anchor: '100%',
-          value: '',
-          accept: '.xls, .xlsx'
-        },
-        {
           xtype: 'container',
+          id: me._('container_paso1_concepto_importar'),
           anchor: '100%',
-          layout: 'hbox',
-          style: 'padding-top: 25px; padding-bottom: 10px;',
+          layout: 'anchor',
+          style: "padding: 5px 20px 0px 20px;",
           items: [
             {
-              xtype: 'tbspacer',
-              flex: 1
-            },
-            {
-              xtype: 'button',
-              text: '<b>Importar</b>',
-              width: 150,
+              xtype:'combobox',
+              id: me._('tipo_nomina_concepto_importar'),
+              name: 'tipo_nomina_concepto_importar',
+              fieldLabel: 'Tipo de Nómina/Periodo',
+              labelAlign: 'top',
+              labelSeparator: '',
+              labelStyle: 'font-weight: bold;',
+              anchor: '100%',
+              queryMode: "local",
+              store: {
+                fields: ['tipo','denominacion'],
+                data: me.internal.data.preload["periodo_tipo"],
+                listeners: {
+                  load: function(store, records, successful){
+                    if(records.length>0)
+                      me.getCmp("tipo_nomina_concepto_importar").setValue(records[0].get("tipo"));
+                  }
+                }
+              },
+              displayField: 'denominacion',
+              valueField: 'tipo',
+              allowBlank: false,
+              forceSelection: true,
+              editable: false,
+              value: '',
               listeners: {
-                click: function(){
-                  me.onConceptoImportar();
+                afterrender: function(e, eOpts ){
+                  //e.setValue("Q");
+                },
+                change: function(e, The, eOpts ){
+                  //me.getCmp('id_periodo').getStore().load();
+                  //me.getCmp('id_nomina_concepto_importar').getStore().load();
+                  var tipo = me.getCmp("tipo_nomina_concepto_importar").getValue();
+                  var data_periodo=me.getDataPeriodo({tipo: tipo});
+                  me.getCmp('id_periodo_concepto_importar').getStore().setData(data_periodo);
+                  if(data_periodo.length>0){
+                    console.log(data_periodo, data_periodo[data_periodo.length-1]["id"]);
+                    me.getCmp("id_periodo_concepto_importar").setValue(data_periodo[data_periodo.length-1]["id"]);
+                  }
+
+                  var data_nomina=me.getDataNomina({tipo: tipo});
+                  me.getCmp('id_nomina_concepto_importar').getStore().setData(data_nomina);
+                  if(data_nomina.length>0){
+                    me.getCmp("id_nomina_concepto_importar").setValue(Ext.Array.map(data_nomina,function(item,index,Array){return item["id"]}));
+                  }
                 }
               }
             },
             {
-              xtype: 'tbspacer',
-              flex: 1
+              xtype: 'combobox',
+              id: me._('id_periodo_concepto_importar'),
+              name: 'id_periodo_concepto_importar',
+              anchor: '100%',
+              fieldLabel: 'Periodo',
+              labelAlign: 'top',
+              labelSeparator: '',
+              labelStyle: 'font-weight: bold;',
+              editable: false,
+              queryMode: "local",
+              displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
+              tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
+              store: {
+                fields: ['id','periodo'],
+                data: []
+              },
+              displayField: 'periodo',
+              valueField: 'id',
+              allowBlank: true,
+              forceSelection: true,
+            },
+            {
+              xtype: 'tagfield',
+              id: me._('id_nomina_concepto_importar'),
+              name: 'id_nomina_concepto_importar',
+              anchor: '100%',
+              fieldLabel: 'Nómina',
+              labelAlign: 'top',
+              labelSeparator: '',
+              labelStyle: 'font-weight: bold;',
+              cls: 'seleccionar_nomina__nomina',
+              editable: false,
+              queryMode: "local",
+              multiSelect: true,
+              store: {
+                fields: ['id','codigo_nomina'],
+                data: []
+              },
+              displayField: 'codigo_nomina',
+              valueField: 'id',
+              allowBlank: true,
+              forceSelection: true,
+              //hideTrigger:true,
+              listeners: {
+                change: function(){
+                  me.onConceptoImportarHeightPaso1();
+                }
+              }
+            },
+            {
+              xtype:'filefield',
+              id: me._('archivo_excel_concepto_importar'),
+              name: 'archivo_excel_concepto_importar',
+              fieldLabel: 'Excel a Importar',
+              labelAlign: 'top',
+              labelSeparator: '',
+              labelStyle: 'font-weight: bold;',
+              anchor: '100%',
+              value: '',
+              accept: '.xls, .xlsx'
+            },
+            {
+              xtype: 'container',
+              anchor: '100%',
+              layout: 'hbox',
+              style: 'padding-top: 25px; padding-bottom: 10px;',
+              items: [
+                {
+                  xtype: 'tbspacer',
+                  flex: 1
+                },
+                {
+                  xtype: 'button',
+                  text: '<b>Pre-Cargar</b>',
+                  width: 150,
+                  listeners: {
+                    click: function(){
+                      me.onConceptoImportarPreCargar();
+                    }
+                  }
+                },
+                {
+                  xtype: 'tbspacer',
+                  flex: 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          xtype: 'container',
+          id: me._('container_paso2_concepto_importar'),
+          anchor: '100%',
+          layout: 'vbox',
+          hidden: true,
+          items: [
+            {
+              xtype: 'gridpanel',
+              id: me._('grid_concepto_importar'),
+              selType : 'cellmodel',
+              columnLines: true,
+              enableLocking: true,
+              flex: 1,
+              width: '100%',
+              columns: [],
+              cls: "nomina_hoja_trabajo",
+              features:[{
+                  ftype: 'grouping',
+                  groupHeaderTpl: "<div class='nomina_grupo'><div class='text'>{name}</div></div>",
+                  collapsible : false
+                }
+              ],
+              viewConfig:{
+                getRowClass: function(rec, rowIdx, params, store) {
+                  if(rec.get('activo')=='f' || rec.get('activo_otra_nomina'))
+                    return 'fila-inactiva';
+                  return 'fila-activa';
+                }
+              },
+              listeners: {
+              },
+            },
+            {
+              xtype: 'container',
+              width: '100%',
+              height: 40,
+              layout: 'hbox',
+              style: 'padding-top: 10px;',
+              items: [
+                {
+                  xtype: 'tbspacer',
+                  flex: 1
+                },
+                {
+                  xtype: 'button',
+                  text: '<b>Regresar</b>',
+                  width: 150,
+                  listeners: {
+                    click: function(){
+                      me.onConceptoImportarRegresar();
+                    }
+                  }
+                },
+                {
+                  xtype: 'tbspacer',
+                  width: 20
+                },
+                {
+                  xtype: 'button',
+                  text: '<b>Aplicar</b>',
+                  width: 150,
+                  listeners: {
+                    click: function(){
+                      me.onConceptoImportarAplicar();
+                    }
+                  }
+                },
+                {
+                  xtype: 'tbspacer',
+                  flex: 1
+                }
+              ]
             }
           ]
         }
-
       ]
     });
 
@@ -1269,6 +1352,7 @@ siga.define('nomina', {
                 var id_periodo=me.getCmp('id_periodo').getValue();
 
                 me.internal.ventanaConceptoImportar.show();
+                //me.onConceptoImportarCargarGrid();
               }
             }
           },
@@ -3136,7 +3220,7 @@ siga.define('nomina', {
           align: "center"
       }
     );
-columns.push(
+    columns.push(
         {
           xtype: 'templatecolumn',
           text: "<b>CÉDULA</b>",
@@ -3992,14 +4076,16 @@ columns.push(
     return me.internal.data.preload["periodo"];
   },
 
-  onConceptoImportar: function(){
+  onConceptoImportarPreCargar: function(){
     var me=this;
+    me.internal.ventanaConceptoImportar.data_importar=[];
 
     var file = me.getCmp("archivo_excel_concepto_importar").fileInputEl.dom.files[0];
     if(!file){
-
       return;
     }
+
+
 
     var extension=file.name.substring(file.name.lastIndexOf('.')+1);
 
@@ -4010,11 +4096,12 @@ columns.push(
     reader.addEventListener("load", function (e) {
       var content = e.target.result.split(';base64,')[1];
 
+      var msgWait=Ext.Msg.wait('Importando excel. Por favor espere...', me.internal.ventanaConceptoImportar.getTitle(),{text:''});
       Ext.Ajax.request({
         method: 'POST',
         url:'module/nomina/',
         params:{
-          action: 'onAddConceptoExcel',
+          action: 'onAddConceptoExcelPreCargar',
           id_periodo: id_periodo,
           id_nomina: id_nomina,
           archivo_extension: extension,
@@ -4022,17 +4109,170 @@ columns.push(
         },
         success:function(request){
           var result=Ext.JSON.decode(request.responseText);
-
+          msgWait.close();
+          me.onConceptoImportarCargarGrid(result);
         },
         failure:function(request){
           var result=Ext.JSON.decode(request.responseText);
-          //me.setMessage(result.message,"red");
+          msgWait.close();
         }
       });
 
     }, false);
 
     reader.readAsDataURL(file);
+  },
+
+  onConceptoImportarHeightPaso1: function(){
+    var me=this;
+
+    var height=me.getCmp("id_nomina_concepto_importar").getHeight();
+    me.internal.ventanaConceptoImportar.setHeight(270+height);
+  },
+
+  onConceptoImportarRegresar: function(){
+    var me=this;
+    me.internal.ventanaConceptoImportar.data_importar=[];
+    me.getCmp("container_paso1_concepto_importar").show();
+    me.getCmp("container_paso2_concepto_importar").hide();
+    me.onConceptoImportarHeightPaso1();
+  },
+
+  onConceptoImportarCargarGrid: function(result){
+    var me=this;
+
+    me.getCmp("container_paso1_concepto_importar").hide();
+    me.getCmp("container_paso2_concepto_importar").show();
+    me.internal.ventanaConceptoImportar.setHeight(600);
+
+    //var result = {"ficha":[{"id_ficha":"208","nacionalidad":"V","cedula":"4183374","nombre_apellido":"MERCEDES M. SANCHEZ DE I.","nombres_apellidos":"MERCEDES M.  SANCHEZ DE I. ","id_nomina":"1","nomina":"0001 EMPLEADOS FIJOS (TIEMPO COMPLETO)"}],"concepto":[{"id":"1","codigo":"001","concepto":"SUELDO B\u00c1SICO","identificador":"SUELDO_BASICO","tipo":"A","column":"B","success":true,"message":""},{"id":"93","codigo":"091","concepto":"TIEMPO DE SERVICIO (ADMINISTRACION PUBLICA)","identificador":"TIEMPO_SERVICIO_AP","tipo":"","column":"C","success":true,"message":""},{"id":"85","codigo":"084","concepto":"% PROFESIONALIZACION","identificador":"PORCENTAJE_PROFESIONALIZACION","tipo":"","column":"D","success":true,"message":""}],"ficha_concepto":[{"id_periodo":"253","id_nomina":"1","id_ficha":"208","id_concepto":"1","valor":"100"},{"id_periodo":"253","id_nomina":"1","id_ficha":"208","id_concepto":"93","valor":"200"},{"id_periodo":"253","id_nomina":"1","id_ficha":"208","id_concepto":"85","valor":"300"}]};
+
+    var fields = ["id_nomina","nomina","id_ficha","nacionalidad","cedula","persona","mensaje"];
+    var columns = [];
+
+    columns.push({
+      xtype: 'rownumberer',
+      dataIndex: 'n',
+      text: "<b>Nº</b>",
+      width: 30,
+      sortable: false,
+      cls: "hoja_trabajo_header_fijo",
+      tdCls: "hoja_trabajo_cell_fijo",
+      locked: true,
+      lockable: true,
+      draggable: false,
+      resizable: false,
+      align: "center"
+    });
+
+    columns.push({
+      xtype: 'templatecolumn',
+      text: "<b>CÉDULA</b>",
+      tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
+      width: 100,
+      menuDisabled: true,
+      sortable: false,
+      height: 181,
+      cls: "hoja_trabajo_header_fijo",
+      tdCls: "hoja_trabajo_cell_fijo",
+      locked: true,
+      lockable: true,
+      draggable: false,
+      resizable: false
+    });
+
+    columns.push({
+      xtype: 'templatecolumn',
+      text: "<b>PERSONA</b>",
+      tpl: "<div style='width: 100%;' data-qtip='{mensaje}'><div style='width:80%; float: left;'>{nombre_apellido}<tpl if='mensaje'><img style='float: right; width: 12px; cursor: pointer;' src='image/icon/icon-advertencia.png' /></tpl></div>",
+      width: 220,
+      menuDisabled: true,
+      sortable: false,
+      height: 181,
+      cls: "hoja_trabajo_header_fijo",
+      tdCls: "hoja_trabajo_cell_fijo",
+      locked: true,
+      lockable: true,
+      draggable: false,
+      resizable: false
+    });
+
+    for(var i=0; i<result["concepto"].length; i++){
+      var field="concepto_id_"+result["concepto"][i]["id"];
+      fields.push(field);
+
+      columns.push({
+        xtype: 'gridcolumn',
+        dataIndex: field,
+        html: "<div class='text_vertical'><span class='concepto_codigo'>"+result["concepto"][i]["codigo"]+" ~ </span> "+result["concepto"][i]["concepto"]+"<div class='text_indeficador'>"+result["concepto"][i]["identificador"]+"</div></div>",
+        width: 65,
+        menuDisabled: true,
+        sortable: false,
+        height: 181,
+        locked: false,
+        lockable: false,
+        resizable: false,
+        align: 'right',
+        cls: "hoja_trabajo_header",
+        tdCls: 'hoja_trabajo_cell',
+        renderer: function(value) {
+          return Ext.util.Format.number(value, '0,0.00');
+        }
+      });
+    }
+
+    var data = [];
+    for(var i=0; i<result["ficha"].length; i++){
+      data[i]=result["ficha"][i];
+      for(var j=0; j<result["ficha_concepto"].length; j++){
+        if(result["ficha_concepto"][j]["id_ficha"]==data[i]["id_ficha"]){
+          var field="concepto_id_"+result["ficha_concepto"][j]["id_concepto"];
+          data[i][field]=result["ficha_concepto"][j]["valor"];
+        }
+      }
+    }
+
+    var store= new Ext.data.Store({
+      pageSize: 50,
+      fields: fields,
+      groupField: "nomina",
+      autoLoad: false,
+      remoteSort: false,
+      data: data
+    });
+
+    me.getCmp('grid_concepto_importar').reconfigure(store,columns);
+    me.internal.ventanaConceptoImportar.data_importar=result["ficha_concepto"];
+  },
+
+  onConceptoImportarAplicar: function(){
+    var me=this;
+
+    var msgWait=Ext.Msg.wait('Aplicando los cambios. Por favor espere...', me.internal.ventanaConceptoImportar.getTitle(),{text:''});
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina/',
+      params:{
+        action: 'onAddConceptoExcelAplicar',
+        data: Ext.JSON.encode(me.internal.ventanaConceptoImportar.data_importar)
+      },
+      success:function(request){
+        var result=Ext.JSON.decode(request.responseText);
+        msgWait.close();
+
+        if(!result.success){
+          return;
+        }
+        me.internal.ventanaConceptoImportar.close();
+        me.onRecargar();
+      },
+      failure:function(request){
+        var result=Ext.JSON.decode(request.responseText);
+        msgWait.close();
+      }
+    });
+
+
   },
 
 });
