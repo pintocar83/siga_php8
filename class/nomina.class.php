@@ -2403,11 +2403,13 @@ class nomina{
 
       $result[$i]["mes_ingreso"]=0;
       $tmp1=explode("-", $fecha_inicio);
-      $tmp2=explode("-", $result[$i]["fecha_ingreso"]);
+      $tmp2=explode("/", $result[$i]["fecha_ingreso"]);//Formato DD/MM/YYYY
+      if(count($tmp2)==0){//si es cero, el formato de la fecha es YYYY-MM-DD
+        $tmp2=explode("-", $result[$i]["fecha_ingreso"]);
+      }
       if(isset($tmp1[1]) and isset($tmp2[1]))
         if($tmp1[1]==$tmp2[1])
           $result[$i]["mes_ingreso"]=1;
-
       if($ficha_concepto["antiguedad_anio_dia"][0]==0) $result[$i]["mes_ingreso"]=0;
     }
 
