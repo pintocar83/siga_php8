@@ -50,7 +50,8 @@ class nomina{
   }
 
   public static function formula_tokens($formula){
-    preg_match_all("/[A-Z_]+[0-9]*/", $formula, $token);
+    //preg_match_all("/[A-Z_]+[0-9]*/", $formula, $token);
+    preg_match_all("/[A-Z_]+[0-9]*|{[A-Z_]+[0-9]*}|{[A-Z_]+[0-9]*,\d{4}-\d{3}}/", $formula, $token);
     $token=$token[0];
     $token_final=array();
     $k=0;
@@ -815,9 +816,11 @@ class nomina{
     SIGA::$DBMode=PGSQL_ASSOC;
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    $periodo=$db->Execute("SELECT cerrado, fecha_culminacion FROM modulo_nomina.periodo WHERE id=$id_periodo");
     if($periodo[0]["cerrado"]==='t')
       return ["success"=>false, "message"=>"El periodo se encuentra cerrado."];
+
+    $fecha_culminacion = $periodo[0]["fecha_culminacion"];
 
     $carpeta_base=SIGA::databasePath()."/nomina/importar_concepto/";
     if(!file_exists($carpeta_base))
@@ -857,6 +860,8 @@ class nomina{
         $id_nomina=$id_nomina_seleccion;
       }
 
+      $sql="SELECT id_concepto, id_nomina FROM modulo_nomina.concepto_periodo WHERE id_periodo='$id_periodo' AND id_nomina IN ($id_nomina)";
+      $concepto_periodo=$db->Execute($sql);
 
       $concepto=[];
       $ficha=[];
@@ -886,6 +891,35 @@ class nomina{
               $concepto[$c]["column"]=$col_letter;
               $concepto[$c]["success"]=true;
               $concepto[$c]["message"]="";
+              $concepto[$c]["concepto_asociado"]=[];
+
+
+              //buscar el concepto a agregar
+              $concepto_identificador=$concepto[$c]['identificador'];
+              $sql="
+                SELECT
+                  id_concepto,
+                  definicion
+                FROM
+                  modulo_nomina.concepto_formula as CF
+                WHERE
+                  CF.definicion LIKE '%{$concepto_identificador}%' AND
+                  CF.fecha = (SELECT fecha
+                              FROM modulo_nomina.concepto_formula
+                              WHERE fecha<='{$fecha_culminacion}' AND id_concepto=CF.id_concepto
+                              ORDER BY fecha DESC
+                              LIMIT 1)";
+              //print $sql;
+              $concepto_asociado_tmp=$db->Execute($sql);
+              for($f=0; $f<count($concepto_asociado_tmp); $f++){
+                $tokens=self::formula_tokens($concepto_asociado_tmp[$f]['definicion']);
+                if(in_array($concepto_identificador,$tokens))
+                  $concepto[$c]["concepto_asociado"][]=$concepto_asociado_tmp[$f]['id_concepto'];
+              }
+              //$valor=$concepto[0]["definicion"];
+              //if(self::es_formula($valor)) $valor="0";
+
+
             }
             else if(count($tmp)>1){
               $concepto[$c]["codigo"]=$CELL_VALUE;
@@ -964,13 +998,35 @@ class nomina{
             //capturar el valor del concepto en la celda
             $CELL = $concepto[$k]["column"].$ln;
             $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
+            $CELL_VALUE = trim($CELL_VALUE);
+
+            if($CELL_VALUE=="")
+              continue;
+
+            $success=true;
+            $message="";
+            if(!is_numeric($CELL_VALUE)){
+              $success=false;
+              $message="El valor del concepto debe ser numérico.";
+            }
+
+            //agregar el concepto asociado solo si este se encuentra agregado a la nomina
+            $concepto_asociado=[];
+            for($cp=0; $cp<count($concepto_periodo); $cp++){
+              if($concepto_periodo[$cp]["id_nomina"]==$nomina_ficha[$j]["id_nomina"] and in_array($concepto_periodo[$cp]["id_concepto"],$concepto[$k]["concepto_asociado"])){
+                $concepto_asociado[]=$concepto_periodo[$cp]["id_concepto"];
+              }
+            }
 
             $ficha_concepto[]=[
               "id_periodo"        => $id_periodo,
               "id_nomina"         => $nomina_ficha[$j]["id_nomina"],
               "id_ficha"          => $nomina_ficha[$j]["id_ficha"],
               "id_concepto"       => $concepto[$k]["id"],
-              "valor"             => "$CELL_VALUE"
+              "valor"             => "$CELL_VALUE",
+              "concepto_asociado" => $concepto_asociado,
+              "success"           => $success,
+              "message"           => $message
             ];
           }
         }
@@ -1013,6 +1069,28 @@ class nomina{
                                           "valor"       => $data[$i]["valor"]));
         if(!in_array($data[$i]["id_nomina"],$id_nomina))
           $id_nomina[]=$data[$i]["id_nomina"];
+
+        //agregar conceptos asociados. Pj para el concepto CANTIDAD HORAS EXTRA -> agregar HORAS EXTRAS (el calculo)
+        for($j=0; $j<count($data[$i]["concepto_asociado"]); $j++){
+          $tmp=$db->Execute("
+            SELECT count(*) total
+            FROM modulo_nomina.ficha_concepto
+            WHERE
+              id_nomina='{$data[$i]["id_nomina"]}' AND
+              id_periodo='{$data[$i]["id_periodo"]}' AND
+              id_ficha='{$data[$i]["id_ficha"]}' AND
+              id_concepto='{$data[$i]["concepto_asociado"][$j]}'
+          ");
+          if($tmp[0]["total"]>0)//si ya existe no agregarlo
+            continue;
+          $db->Insert("modulo_nomina.ficha_concepto",array(
+                                          "id_nomina"   => $data[$i]["id_nomina"],
+                                          "id_periodo"  => $data[$i]["id_periodo"],
+                                          "id_ficha"    => $data[$i]["id_ficha"],
+                                          "id_concepto" => $data[$i]["concepto_asociado"][$j],
+                                          "valor"       => "NULL"));
+        }
+
       }
     }
 

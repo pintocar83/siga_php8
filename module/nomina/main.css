@@ -360,3 +360,9 @@
 .text_vertical .concepto_codigo {
     font-size: 10px;
 }
+
+.nomina_hoja_trabajo .x-grid-cell.celda-error{
+  background-color: #ff5722 !important;
+  color: #FFFFFF;
+  font-weight: bold;
+}

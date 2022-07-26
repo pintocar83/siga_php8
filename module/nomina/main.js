@@ -4168,7 +4168,7 @@ siga.define('nomina', {
     columns.push({
       xtype: 'templatecolumn',
       text: "<b>CÉDULA</b>",
-      tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
+      tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'>{nacionalidad}{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
       width: 100,
       menuDisabled: true,
       sortable: false,
@@ -4205,6 +4205,8 @@ siga.define('nomina', {
         xtype: 'gridcolumn',
         dataIndex: field,
         html: "<div class='text_vertical'><span class='concepto_codigo'>"+result["concepto"][i]["codigo"]+" ~ </span> "+result["concepto"][i]["concepto"]+"<div class='text_indeficador'>"+result["concepto"][i]["identificador"]+"</div></div>",
+        //tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'>{"+field+"}<tpl if='mensaje'><img style='float: right; width: 12px; cursor: pointer;' src='image/icon/icon-advertencia.png' /></tpl></div>",
+        //tpl: "<div style='width:100%;position:relative;'>{"+field+"}</div>",
         width: 65,
         menuDisabled: true,
         sortable: false,
@@ -4215,8 +4217,20 @@ siga.define('nomina', {
         align: 'right',
         cls: "hoja_trabajo_header",
         tdCls: 'hoja_trabajo_cell',
-        renderer: function(value) {
-          return Ext.util.Format.number(value, '0,0.00');
+        renderer: function(data, metaData, record, rowIndex, colIndex, store, view) {
+          console.log(data, metaData, record, rowIndex, colIndex, store, view);
+          if(!data) return '';
+          var value   = data.value;
+          var success = data.success;
+          var message = data.message;
+
+          if(message)
+            metaData.tdAttr = 'data-qtip="'+message+'"';
+
+          if(!success || success=='false')
+            metaData.tdCls = 'celda-error';
+
+          return $.isNumeric(value)?Ext.util.Format.number(value, '0,0.00'):value;
         }
       });
     }
@@ -4227,13 +4241,16 @@ siga.define('nomina', {
       for(var j=0; j<result["ficha_concepto"].length; j++){
         if(result["ficha_concepto"][j]["id_ficha"]==data[i]["id_ficha"]){
           var field="concepto_id_"+result["ficha_concepto"][j]["id_concepto"];
-          data[i][field]=result["ficha_concepto"][j]["valor"];
+          data[i][field]={
+            value: result["ficha_concepto"][j]["valor"],
+            success: result["ficha_concepto"][j]["success"],
+            message: result["ficha_concepto"][j]["message"]
+          };
         }
       }
     }
 
     var store= new Ext.data.Store({
-      pageSize: 50,
       fields: fields,
       groupField: "nomina",
       autoLoad: false,
