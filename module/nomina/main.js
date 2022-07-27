@@ -819,6 +819,12 @@ siga.define('nomina', {
         },
         beforeshow: function(){
           me.internal.ventanaConceptoImportar.data_importar=[];
+
+          me.getCmp("archivo_excel_concepto_importar").setValue("");
+          me.getCmp("archivo_excel_concepto_importar").setRawValue("");
+          if(me.getCmp("archivo_excel_concepto_importar").fileInputEl && me.getCmp("archivo_excel_concepto_importar").fileInputEl.dom)
+            me.getCmp("archivo_excel_concepto_importar").fileInputEl.dom.value = '';
+
           me.getCmp("container_paso1_concepto_importar").show();
           me.getCmp("container_paso2_concepto_importar").hide();
         },
@@ -2037,7 +2043,14 @@ siga.define('nomina', {
             //labelAlign: 'top',
             //labelSeparator: '',
             labelStyle: 'font-weight: 500;font-size:9px;',
-            value: ''
+            value: '',
+            listeners:{
+              specialkey: function(field, e){
+                if (e.getKey() == e.ENTER){
+                  me.onFiltroBusqueda();
+                }
+              }
+            }
           },
 
           {
@@ -2050,7 +2063,14 @@ siga.define('nomina', {
             //labelAlign: 'top',
             //labelSeparator: '',
             labelStyle: 'font-weight: 500;font-size:9px;',
-            value: ''
+            value: '',
+            listeners:{
+              specialkey: function(field, e){
+                if (e.getKey() == e.ENTER){
+                  me.onFiltroBusqueda();
+                }
+              }
+            }
           },
 
           {
@@ -3224,7 +3244,7 @@ siga.define('nomina', {
         {
           xtype: 'templatecolumn',
           text: "<b>CÉDULA</b>",
-          tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
+          tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'><tpl if='nacionalidad!=\"V\"'>{nacionalidad}</tpl>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
           width: 100,
           menuDisabled: true,
           sortable: false,
@@ -4085,8 +4105,6 @@ siga.define('nomina', {
       return;
     }
 
-
-
     var extension=file.name.substring(file.name.lastIndexOf('.')+1);
 
     var id_periodo = me.getCmp("id_periodo_concepto_importar").getValue();
@@ -4097,6 +4115,7 @@ siga.define('nomina', {
       var content = e.target.result.split(';base64,')[1];
 
       var msgWait=Ext.Msg.wait('Importando excel. Por favor espere...', me.internal.ventanaConceptoImportar.getTitle(),{text:''});
+      msgWait.setAlwaysOnTop(true);
       Ext.Ajax.request({
         method: 'POST',
         url:'module/nomina/',
@@ -4132,6 +4151,12 @@ siga.define('nomina', {
 
   onConceptoImportarRegresar: function(){
     var me=this;
+
+    me.getCmp("archivo_excel_concepto_importar").setValue("");
+    me.getCmp("archivo_excel_concepto_importar").setRawValue("");
+    if(me.getCmp("archivo_excel_concepto_importar").fileInputEl && me.getCmp("archivo_excel_concepto_importar").fileInputEl.dom)
+      me.getCmp("archivo_excel_concepto_importar").fileInputEl.dom.value = '';
+
     me.internal.ventanaConceptoImportar.data_importar=[];
     me.getCmp("container_paso1_concepto_importar").show();
     me.getCmp("container_paso2_concepto_importar").hide();
@@ -4205,8 +4230,6 @@ siga.define('nomina', {
         xtype: 'gridcolumn',
         dataIndex: field,
         html: "<div class='text_vertical'><span class='concepto_codigo'>"+result["concepto"][i]["codigo"]+" ~ </span> "+result["concepto"][i]["concepto"]+"<div class='text_indeficador'>"+result["concepto"][i]["identificador"]+"</div></div>",
-        //tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'>{"+field+"}<tpl if='mensaje'><img style='float: right; width: 12px; cursor: pointer;' src='image/icon/icon-advertencia.png' /></tpl></div>",
-        //tpl: "<div style='width:100%;position:relative;'>{"+field+"}</div>",
         width: 65,
         menuDisabled: true,
         sortable: false,
@@ -4218,7 +4241,6 @@ siga.define('nomina', {
         cls: "hoja_trabajo_header",
         tdCls: 'hoja_trabajo_cell',
         renderer: function(data, metaData, record, rowIndex, colIndex, store, view) {
-          console.log(data, metaData, record, rowIndex, colIndex, store, view);
           if(!data) return '';
           var value   = data.value;
           var success = data.success;
@@ -4265,7 +4287,17 @@ siga.define('nomina', {
   onConceptoImportarAplicar: function(){
     var me=this;
 
+    //verificar si el archivo esta correcto
+    for(var i=0; i<me.internal.ventanaConceptoImportar.data_importar.length; i++){
+      if(!me.internal.ventanaConceptoImportar.data_importar[i]["success"]){
+        Ext.Msg.alert( me.internal.ventanaConceptoImportar.getTitle(), 'Existen errores en el archivo cargado, verifique la data.');
+        return;
+      }
+    }
+
     var msgWait=Ext.Msg.wait('Aplicando los cambios. Por favor espere...', me.internal.ventanaConceptoImportar.getTitle(),{text:''});
+    msgWait.setAlwaysOnTop(true);
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina/',
@@ -4278,6 +4310,7 @@ siga.define('nomina', {
         msgWait.close();
 
         if(!result.success){
+          Ext.Msg.alert( me.internal.ventanaConceptoImportar.getTitle(), result.message);
           return;
         }
         me.internal.ventanaConceptoImportar.close();

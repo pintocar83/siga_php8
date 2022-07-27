@@ -256,7 +256,7 @@ include_once(SIGA::databasePath()."/config/config.php");
         {url: "library/siga.js?version="+version, type: 'js', progress: 100, msg: "Gestor de Módulos..."}
       ],
       onLoad: function(){
-
+        Ext.Ajax.setTimeout(15*60000);//15min
         Ext.application({
           name   : 'SIGA',
           launch : function(){
