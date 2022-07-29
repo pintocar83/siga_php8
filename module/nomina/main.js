@@ -8,6 +8,13 @@ siga.define('nomina', {
 
   filtro_ficha_id: "",
 
+  listeners: {
+    afterrender: function(){
+      var me=this;
+      me.onActualizarDataPreload();
+    },
+  },
+
   initComponent: function(){
     var me = this;
 
@@ -47,7 +54,7 @@ siga.define('nomina', {
       }
     });
 */
-
+/*
     _tmp=Ext.Ajax.request({
       async: false,
       url:"module/nomina/",
@@ -59,7 +66,7 @@ siga.define('nomina', {
     if(_tmp.statusText=="OK"){
       me.internal.data.preload=Ext.JSON.decode(_tmp.responseText);
     }
-
+*/
     //VENTANA PARA CAMBIAR/SELECCIONAR NOMINA
     me.internal.ventanaSeleccionarNomina=Ext.create('Ext.window.Window', {
       title: 'Seleccionar Nómina',
@@ -67,8 +74,8 @@ siga.define('nomina', {
       maximizable: false,
       closable: false,
       modal: true,
-      width: 550,
-      height: 300,
+      width: 650,
+      height: 270,
       resizable: true,
       layout: 'anchor',
       bodyStyle: 'padding: 5px 20px 0px 20px; background-color: #e8e8e8; border-color: #e8e8e8;',
@@ -84,6 +91,9 @@ siga.define('nomina', {
           me.internal.ventanaSeleccionarNomina.hide();
           //me.onUpdate_MenuPersonaCambiarNomina();
           return false;
+        },
+        afterrender: function(){
+          me.onSeleccionarNominaHeight();
         }
       },
 
@@ -96,6 +106,45 @@ siga.define('nomina', {
           anchor: '100%'
         },
 
+        {
+          xtype:'combobox',
+          id: me._('tipoVentanaSeleccionarNomina'),
+          name: 'tipoVentanaSeleccionarNomina',
+          fieldLabel: 'Tipo de Nómina/Periodo',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          anchor: '100%',
+          queryMode: "local",
+          store: {
+            fields: ['tipo','denominacion'],
+            data: []
+          },
+          displayField: 'denominacion',
+          valueField: 'tipo',
+          allowBlank: false,
+          forceSelection: true,
+          editable: false,
+          value: '',
+          listeners: {
+            change: function(e, The, eOpts ){
+              var tipo = me.getCmp("tipoVentanaSeleccionarNomina").getValue();
+              var data_periodo=me.getDataPeriodo({tipo: tipo});
+              me.getCmp('id_periodo').getStore().setData(data_periodo);
+              if(data_periodo.length>0){
+                console.log(data_periodo, data_periodo[data_periodo.length-1]["id"]);
+                me.getCmp("id_periodo").setValue(data_periodo[data_periodo.length-1]["id"]);
+              }
+
+              var data_nomina=me.getDataNomina({tipo: tipo});
+              me.getCmp('id_nomina').getStore().setData(data_nomina);
+              if(data_nomina.length>0){
+                me.getCmp("id_nomina").setValue(data_nomina[0]["id"]);
+              }
+            }
+          }
+        },
+/*
         {
           xtype:'combobox',
           id: me._('tipoVentanaSeleccionarNomina'),
@@ -149,7 +198,31 @@ siga.define('nomina', {
             }
           }
         },
+*/
 
+        {
+          xtype: 'combobox',
+          id: me._('id_periodo'),
+          name: 'id_periodo',
+          anchor: '100%',
+          fieldLabel: 'Periodo',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          editable: false,
+          queryMode: "local",
+          displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
+          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
+          store: {
+            fields: ['id','periodo'],
+            data: []
+          },
+          displayField: 'periodo',
+          valueField: 'id',
+          allowBlank: true,
+          forceSelection: true,
+        },
+/*
         {
           xtype: 'combobox',
           id: me._('id_periodo'),
@@ -204,6 +277,35 @@ siga.define('nomina', {
           allowBlank: false,
           forceSelection: true,
         },
+*/
+        {
+          xtype: 'tagfield',
+          id: me._('id_nomina'),
+          name: 'id_nomina',
+          anchor: '100%',
+          fieldLabel: 'Nómina',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          cls: 'seleccionar_nomina__nomina',
+          editable: false,
+          queryMode: "local",
+          multiSelect: true,
+          store: {
+            fields: ['id','codigo_nomina'],
+            data: []
+          },
+          displayField: 'codigo_nomina',
+          valueField: 'id',
+          allowBlank: true,
+          forceSelection: true,
+          listeners: {
+            change: function(){
+              me.onSeleccionarNominaHeight();
+            }
+          }
+        },
+/*
 
         {
           xtype: 'tagfield',
@@ -266,6 +368,7 @@ siga.define('nomina', {
             }
           }
         },
+*/
         {
           xtype: 'container',
           anchor: '100%',
@@ -829,7 +932,6 @@ siga.define('nomina', {
           me.getCmp("container_paso2_concepto_importar").hide();
         },
         afterrender: function(){
-          me.getCmp("tipo_nomina_concepto_importar").setValue("Q");
           me.onConceptoImportarHeightPaso1();
         }
       },
@@ -854,13 +956,7 @@ siga.define('nomina', {
               queryMode: "local",
               store: {
                 fields: ['tipo','denominacion'],
-                data: me.internal.data.preload["periodo_tipo"],
-                listeners: {
-                  load: function(store, records, successful){
-                    if(records.length>0)
-                      me.getCmp("tipo_nomina_concepto_importar").setValue(records[0].get("tipo"));
-                  }
-                }
+                data: me.internal.data.preload["periodo_tipo"]
               },
               displayField: 'denominacion',
               valueField: 'tipo',
@@ -869,12 +965,7 @@ siga.define('nomina', {
               editable: false,
               value: '',
               listeners: {
-                afterrender: function(e, eOpts ){
-                  //e.setValue("Q");
-                },
                 change: function(e, The, eOpts ){
-                  //me.getCmp('id_periodo').getStore().load();
-                  //me.getCmp('id_nomina_concepto_importar').getStore().load();
                   var tipo = me.getCmp("tipo_nomina_concepto_importar").getValue();
                   var data_periodo=me.getDataPeriodo({tipo: tipo});
                   me.getCmp('id_periodo_concepto_importar').getStore().setData(data_periodo);
@@ -4144,6 +4235,7 @@ siga.define('nomina', {
 
   onConceptoImportarHeightPaso1: function(){
     var me=this;
+    if(!me.getCmp("id_nomina_concepto_importar").getEl()) return;
 
     var height=me.getCmp("id_nomina_concepto_importar").getHeight();
     me.internal.ventanaConceptoImportar.setHeight(270+height);
@@ -4321,7 +4413,48 @@ siga.define('nomina', {
         msgWait.close();
       }
     });
+  },
 
+  onSeleccionarNominaHeight: function(){
+    var me=this;
+    if(!me.getCmp("id_nomina").getEl()) return;
+
+    var height=me.getCmp("id_nomina").getHeight();
+    me.internal.ventanaSeleccionarNomina.setHeight(220+height);
+  },
+
+  onActualizarDataPreload: function(){
+    var me=this;
+
+    _tmp=Ext.Ajax.request({
+      async: false,
+      url:"module/nomina/",
+      params: {
+        action: 'onInit'
+      }
+    });
+
+    if(_tmp.statusText=="OK"){
+      me.internal.data.preload=Ext.JSON.decode(_tmp.responseText);
+    }
+
+    //ACTUALIZAR DATA EN VENTANA SELECCION DE NOMINA
+    me.getCmp("tipoVentanaSeleccionarNomina").getStore().setData(me.internal.data.preload["periodo_tipo"]);
+    if(!me.getCmp("tipoVentanaSeleccionarNomina").getValue()){
+      me.getCmp("tipoVentanaSeleccionarNomina").setValue("Q");
+    }
+    else{
+      me.getCmp("tipoVentanaSeleccionarNomina").fireEvent("change");
+    }
+
+    //ACTUALIZAR DATA EN VENTANA IMPORTAR CONCEPTOS
+    me.getCmp("tipo_nomina_concepto_importar").getStore().setData(me.internal.data.preload["periodo_tipo"]);
+    if(!me.getCmp("tipo_nomina_concepto_importar").getValue()){
+      me.getCmp("tipo_nomina_concepto_importar").setValue("Q");
+    }
+    else{
+      me.getCmp("tipo_nomina_concepto_importar").fireEvent("change");
+    }
 
   },
 
