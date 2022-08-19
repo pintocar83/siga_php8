@@ -537,9 +537,12 @@ $modificado_di=$db->Execute("SELECT
 															ORDER BY
 																DP.id_cuenta_presupuestaria");
 
-
-//$pagado=$causado;
-//$pagado_acumulado=$causado_acumulado;
+$database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
+//CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
+if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
+	$pagado=$causado;
+	$pagado_acumulado=$causado_acumulado;
+}
 /*exit;
 
 

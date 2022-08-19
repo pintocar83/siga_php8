@@ -2574,10 +2574,10 @@ class Postgres extends ADODB_base {
 			if ($status != 0) { // update failed
 			$this->rollbackTransaction();
 				return -1;
-			} elseif ($this->conn->Affected_Rows() != 1) { // more than one row could be updated
+			} /*elseif ($this->conn->Affected_Rows() != 1) { // more than one row could be updated
 				$this->rollbackTransaction();
 				return -2;
-		}
+		}*/
 
 			// End transaction
 		return $this->endTransaction();
