@@ -3078,6 +3078,8 @@ INSERT INTO retencion VALUES (8, 3, 'RETENCIÓN IMPUESTO 1 X MIL', 'MONTO*0.001'
 SELECT pg_catalog.setval('retencion_id_seq', 8, true);
 
 INSERT INTO configuracion VALUES ('version', current_setting('global_siga.anio')||'-01-01');
+INSERT INTO configuracion VALUES ('ciudad', '');
+INSERT INTO configuracion VALUES ('report/pago/ciudad', '');
 
 INSERT INTO convertidor VALUES
 ('611000000000', '401010100'),

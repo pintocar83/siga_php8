@@ -109,6 +109,19 @@ class DBController{
 			return NULL;
   }
 
+  public function EscapeString($str){
+		switch($this->DBDriver){
+				case "sqlite":
+					return  sqlite_escape_string($str);
+				case "postgres":
+				case "pgsql":
+					return 	pg_escape_string($str);
+				case "mysql":
+					return 	mysql_escape_string($str);
+			}
+		return $str;
+  }
+
   public function Insert($tabla,$columnaValor){
 	  $col='(';
 	  $val='(';

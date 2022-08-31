@@ -1,6 +1,12 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+/*
+Version mejorada del nomina_xls.php
+Se agrega el filtro que se encuentra activo en pantalla y las columnas: Genero y Fecha de Ingreso
+*/
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
+error_reporting(0);
+ini_set('display_errors', 'Off');
 set_time_limit(-1);
 
 include_once("../library/db.controller.php");
@@ -24,12 +30,22 @@ $organismo=$db->Execute("SELECT P.identificacion_tipo||P.identificacion_numero a
 
 
 
-$id_periodo=explode(",",SIGA::paramGet("id_periodo"));
-if(count($id_periodo)!=1){
-	print "Actualmente solo puede seleccionar un periodo.";
+if(!SIGA::paramGet("id_periodo")){
+	print "Debe seleccionar el periodo";
 	exit;
 }
+
+$id_periodo=explode(",",SIGA::paramGet("id_periodo"));
+//if(count($id_periodo)!=1){
+//	print "Actualmente solo puede seleccionar un periodo.";
+//	exit;
+//}
 //$id_periodo=$id_periodo[0];
+
+if(count($id_periodo)==0){
+	print "Debe ingresar al menos un periodo";
+	exit;
+}
 
 $id_nomina=explode(",",SIGA::paramGet("id_nomina"));
 
@@ -37,17 +53,6 @@ $filtro_ficha_id=SIGA::paramGet("filtro_ficha_id");
 if($filtro_ficha_id){
 		$filtro_ficha_id=explode(",",$filtro_ficha_id);	
 }
-
-/*
-
-$periodo=$db->Execute("SELECT codigo, fecha_inicio, fecha_culminacion, descripcion FROM modulo_nomina.periodo WHERE id=$id_periodo");
-$nomina_concepto=$db->Execute("SELECT distinct CP.id_concepto, C.concepto, C.tipo, C.orden
-															 FROM modulo_nomina.concepto_periodo as CP, modulo_nomina.concepto as C
-															 WHERE C.id=CP.id_concepto AND CP.id_periodo=$id_periodo AND (C.tipo<>'' OR C.identificador='SUELDO_NORMAL')
-															 ORDER BY C.orden");
-
-
-*/
 
 $text="";
 $by="";
@@ -105,7 +110,7 @@ if($config_report){
 	if(isset($config_report["dividir_impresion"]))	$config["dividir_impresion"] = $config_report["dividir_impresion"];
 }
 
-
+//print_r($config);exit;
 
 function Cabecera(){
 	global $config, $periodo, $ln, $activeSheet, $columna, $n_columna, $ultima_columna, $concepto, $ancho, $t_n, $t_cedula, $t_nombre, $t_cargo, $t_antiguedad, $t_neto, $t_asignaciones, $t_deducciones, $t_separacion, $t_firma, $t_col, $p, $border;
@@ -295,6 +300,9 @@ for($p=0;$p<count($periodo);$p++):
 	$concepto=$periodo[$p]["concepto"];
 
 	$activeSheet = $excel->createSheet($p);
+	$titulo_hoja = preg_replace('/[^A-Za-z0-9. -]/', '', $periodo[$p]["descripcion"]);
+	$titulo_hoja = substr($titulo_hoja, 0, 30);
+	$activeSheet->setTitle($titulo_hoja);
 	$activeSheet->setShowGridlines(false);
 	$activeSheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
 	$activeSheet->getPageSetup()->setFitToPage(true);
@@ -526,9 +534,10 @@ for($p=0;$p<count($periodo);$p++):
 	$activeSheet->getRowDimension($ln)->setRowHeight(50);
 
 	if(isset($columna["N"]))
-	if($config["aporte_patronal"]=="hide")
+	if("${config["aporte_patronal"]}"=="hide"){
 		for($i=$columna["N"]+1;$i<$n_columna;$i++)
 			$activeSheet->getColumnDimension(column_hash($columna_base+$i))->setVisible(false);
+	}
 
 
 	//DIVIDIR AREA DE IMPRESION EN 2 PARTES, ASIGNACIONES Y DEDUCCIONES
@@ -544,6 +553,6 @@ header('Content-Disposition: attachment;filename="'.str_replace(" ", "_", $nombr
 
 $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 $writer->setPreCalculateFormulas(true);
-$writer->save('php://output');
 
+$writer->save('php://output');
 ?>

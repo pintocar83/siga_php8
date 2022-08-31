@@ -110,3 +110,6 @@ INSERT INTO modulo_nomina.nomina_configuracion(dato, valor) VALUES
 ('ficha:antiguedad_apn', 'TIEMPO_SERVICIO_AP'),
 ('ficha:antiguedad_total', 'TIEMPO_SERVICIO_TOTAL,ANTIGUEDAD_TOTAL'),
 ('ficha:profesionalizacion_porcentaje', 'PORCENTAJE_PROFESIONALIZACION');
+
+INSERT INTO modulo_base.configuracion VALUES ('ciudad', '');
+INSERT INTO modulo_base.configuracion VALUES ('report/pago/ciudad', '');

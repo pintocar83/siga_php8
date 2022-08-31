@@ -134,6 +134,26 @@ class SIGA extends SIGA_CONFIG {
     self::session_value("SIGA::dataName",$value);
   }
 
+  public static function configuration($property,$value=NULL){
+    $db=self::DBController();
+    if(!$value){
+      $dato="'".implode("','",$property)."'";
+      $result=$db->Execute("select * from modulo_base.configuracion where dato in ($dato)");
+      $return=array();
+      for($i=0;$i<count($result);$i++)
+        $return[$result[$i]["dato"]]=$result[$i]["valor"];
+      return $return;
+    }
+
+    for($i=0;$i<count($property);$i++){
+      $db->Delete("modulo_base.configuracion","dato='".$property[$i]."'");
+      $result=$db->Insert("modulo_base.configuracion",["dato"=>"'".$property[$i]."'","valor"=>"'".$db->EscapeString($value[$i])."'"]);
+      if(!$result)
+        return ["success"=>"false","message"=>"Error al guardar los datos en '".$property[$i]."'", "error"=>$db->Error()];
+    }
+    return ["success"=>"true","message"=>"Datos guardados con éxito."];
+  }
+
   public static function init(){
     date_default_timezone_set('America/Caracas');
     self::$path                       = str_replace("\\", "/",dirname(dirname(__FILE__)));

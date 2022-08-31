@@ -1,35 +1,12 @@
 <?php
 /*
-
-$generar=SIGA::param("generar");
-
-$id_periodo = SIGA::param("id_periodo");
-$id_nomina  = SIGA::param("id_nomina");
-$text       = SIGA::paramUpper("text");
-
-$id_unidad_funcional=SIGA::param("id_unidad_funcional");
-$by=array();
-if($id_unidad_funcional){
-	$by["id_unidad_funcional"]=$id_unidad_funcional;
-}
-
-global $periodo;
-$periodo=array();
-for($i=0; $i<count($id_periodo); $i++){
-	$periodo[$i]=$db->Execute("SELECT p.codigo, p.fecha_inicio, p.fecha_culminacion, p.descripcion, p.cerrado, nt.nomina_tipo FROM nomina.periodo p, nomina.nomina_tipo nt WHERE p.id_nomina_tipo=nt.id AND p.id='".str_clear($id_periodo[$i])."'");
-	if(!isset($periodo[$i][0])) exit;
-	$periodo[$i]=$periodo[$i][0];
-	$periodo[$i]["concepto"]=nomina::onListConceptoPeriodo("r",$id_nomina,str_clear($id_periodo[$i]),array("tipo"=>array("","_","A","D","AP","RA","RD")))["concepto"];
-
-	$periodo[$i]["ficha"]=nomina::onListFichaPeriodo("r",$id_nomina,str_clear($id_periodo[$i]),$text,0,'ALL',$by)["result"];
-
-	$periodo[$i]["nota"]=$db->Execute("SELECT nota FROM nomina.periodo_nota WHERE id_nomina IN (".str_clear(implode(",", $id_nomina)).") and id_periodo=".str_clear($id_periodo[$i]));
-}
-
-
+Version descontinuada
 */
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
+error_reporting(0);
+ini_set('display_errors', 'Off');
+set_time_limit(-1);
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
@@ -50,26 +27,23 @@ $organismo=$db->Execute("SELECT P.identificacion_tipo||P.identificacion_numero a
                           WHERE O.id_persona=P.id");
 
 
-
-$id_periodo=explode(",",SIGA::paramGet("id_periodo"));
-if(count($id_periodo)!=1){
-	print "Actualmente solo puede seleccionar un periodo.";
+if(!$id_periodo){
 	exit;
 }
+
+$id_periodo=explode(",",SIGA::paramGet("id_periodo"));
+//if(count($id_periodo)!=1){
+//	print "Actualmente solo puede seleccionar un periodo.";
+//	exit;
+//}
 //$id_periodo=$id_periodo[0];
+
+if(count($id_periodo)==0){
+	exit;
+}
 
 $id_nomina=explode(",",SIGA::paramGet("id_nomina"));
 
-/*
-
-$periodo=$db->Execute("SELECT codigo, fecha_inicio, fecha_culminacion, descripcion FROM modulo_nomina.periodo WHERE id=$id_periodo");
-$nomina_concepto=$db->Execute("SELECT distinct CP.id_concepto, C.concepto, C.tipo, C.orden
-															 FROM modulo_nomina.concepto_periodo as CP, modulo_nomina.concepto as C
-															 WHERE C.id=CP.id_concepto AND CP.id_periodo=$id_periodo AND (C.tipo<>'' OR C.identificador='SUELDO_NORMAL')
-															 ORDER BY C.orden");
-
-
-*/
 
 $text="";
 $by="";

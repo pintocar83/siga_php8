@@ -730,6 +730,7 @@ switch($periodo_tipo){
 
 //busca el monto en el arreglo para el codigo dado
 function bm($A,$id_cuenta_presupuestaria,$col_monto="monto"){
+	if(!$A) return 0;
 	for($i=0;$i<count($A) and $A;$i++)
 		if($A[$i]["id_cuenta_presupuestaria"]==$id_cuenta_presupuestaria)
 				return $A[$i][$col_monto];
