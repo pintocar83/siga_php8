@@ -8,6 +8,19 @@ include_once("../library/functions/letra_numero.php");
 
 include_once("../library/fpdf/1.84/fpdf.php");
 
+
+$config_report = SIGA::configuration(["ciudad","report/pago/ciudad"]);
+$config = [
+	"ciudad"          => "CUMANÁ"
+];
+
+if($config_report){
+	if(isset($config_report["ciudad"]) && $config_report["ciudad"])	                         $config["ciudad"] = $config_report["ciudad"];
+	if(isset($config_report["report/pago/ciudad"]) && $config_report["report/pago/ciudad"])	 $config["ciudad"] = $config_report["report/pago/ciudad"];
+}
+
+
+
 $db=SIGA::DBController();
 
 
@@ -17,7 +30,7 @@ $id=explode(",",SIGA::paramGet("id"));
 
 class PDF_P extends FPDF{
 	function Header(){
-		global $CHEQUE, $ORDEN_PAGO;
+		global $CHEQUE, $ORDEN_PAGO, $config;
 		//monto
 		$this->SetFont('times','B',17);
 		$this->Cell(141-8,1,utf8_decode(""),'',0,'',1);
@@ -44,7 +57,7 @@ class PDF_P extends FPDF{
 		$this->SetY(38-4+2);
 		$FECHA_CHEQUE=explode("/",$CHEQUE[0]["fecha"]);
 		$this->Cell(25+10,12,utf8_decode(""),'',0,'',1);
-		$this->Cell(52,12,utf8_decode("CUMANÁ, ".$FECHA_CHEQUE[0]."/".$FECHA_CHEQUE[1]),'',0,'',1);
+		$this->Cell(52,12,utf8_decode($config["ciudad"].", ".$FECHA_CHEQUE[0]."/".$FECHA_CHEQUE[1]),'',0,'',1);
 		$this->Cell(27,12,utf8_decode($FECHA_CHEQUE[2]),'',1,'',1);
 		$Y3=$this->GetY();
 		$Y3=$Y3-11;
