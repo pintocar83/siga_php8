@@ -1292,9 +1292,9 @@ siga.define('nomina', {
                           var id_nomina=me.getCmp('id_nomina').getValue().join(',');
                           var id_periodo=me.getCmp('id_periodo').getValue();
 
-                          me.getCmp('btnPersona').setDisabled(true);
-                          me.getCmp('btnConcepto').setDisabled(true);
-                          me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                          me.menuPersona({disabled: true});
+                          me.menuConcepto({disabled: true});
+                          me.menuPeriodo({disabled: true});
                           me.getCmp('btnContabilizar').setDisabled(true);
 
                           Ext.Ajax.request({
@@ -1357,6 +1357,7 @@ siga.define('nomina', {
         menu: [
           {
             text: 'Agregar',
+            id: me._('btnConceptoAgregar'),
             listeners: {
               click: function(){
                 if(!me.onNominaSeleccionada())
@@ -1417,6 +1418,7 @@ siga.define('nomina', {
           },
           {
             text: 'Quitar',
+            id: me._('btnConceptoQuitar'),
             listeners: {
               click: function(){
                 if(me.internal.columnaSeleccionada==null)
@@ -1442,7 +1444,8 @@ siga.define('nomina', {
             }
           },
           {
-            text: 'Importar Excel',
+            text: 'Importar desde Excel',
+            id: me._('btnConceptoImportar'),
             listeners: {
               click: function(){
                 var id_nomina=me.getCmp('id_nomina').getValue().join(",");
@@ -1510,7 +1513,7 @@ siga.define('nomina', {
         menu: [
           {
             text: 'Cerrar',
-            id: me._('btnCerrarPeriodoCerrar'),
+            id: me._('btnPeriodoCerrar'),
             listeners: {
               click: function(){
                 me.onCerrarPeriodo();
@@ -1842,7 +1845,7 @@ siga.define('nomina', {
         columns: [],
         viewConfig:{
           getRowClass: function(rec, rowIdx, params, store) {
-            if(rec.get('activo')=='f' || rec.get('activo_otra_nomina'))
+            if((rec.get('activo')=='f' || rec.get('activo_otra_nomina')) && !me.internal.cerrado)
               return 'fila-inactiva';
             return 'fila-activa';
           }
@@ -2452,9 +2455,9 @@ siga.define('nomina', {
                       var id_cargo=el.internal.id;
 
 
-                      me.getCmp('btnPersona').setDisabled(true);
-                      me.getCmp('btnConcepto').setDisabled(true);
-                      me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                      me.menuPersona({disabled: true});
+                      me.menuConcepto({disabled: true});
+                      me.menuPeriodo({disabled: true});
                       //me.getCmp('btnContabilizar').setDisabled(true);
 
                       Ext.Ajax.request({
@@ -2538,9 +2541,9 @@ siga.define('nomina', {
                       var id_periodo=me.getCmp("id_periodo").getValue();
                       var id_accion_subespecifica=el.internal.id;
 
-                      me.getCmp('btnPersona').setDisabled(true);
-                      me.getCmp('btnConcepto').setDisabled(true);
-                      me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                      me.menuPersona({disabled: true});
+                      me.menuConcepto({disabled: true});
+                      me.menuPeriodo({disabled: true});
                       //me.getCmp('btnContabilizar').setDisabled(true);
 
                       Ext.Ajax.request({
@@ -2699,9 +2702,9 @@ siga.define('nomina', {
                   var id_nomina_anterior=seleccion[0].data["id_nomina"];
                   var id_nomina=el.internal.id;
 
-                  me.getCmp('btnPersona').setDisabled(true);
-                  me.getCmp('btnConcepto').setDisabled(true);
-                  me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                  me.menuPersona({disabled: true});
+                  me.menuConcepto({disabled: true});
+                  me.menuPeriodo({disabled: true});
                   //me.getCmp('btnContabilizar').setDisabled(true);
 
                   Ext.Ajax.request({
@@ -2746,9 +2749,9 @@ siga.define('nomina', {
                   var id_nomina_anterior=me.getCmp("id_nomina").getValue().join(",");
                   var id_nomina=el.internal.id;
 
-                  me.getCmp('btnPersona').setDisabled(true);
-                  me.getCmp('btnConcepto').setDisabled(true);
-                  me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                  me.menuPersona({disabled: true});
+                  me.menuConcepto({disabled: true});
+                  me.menuPeriodo({disabled: true});
                   //me.getCmp('btnContabilizar').setDisabled(true);
 
                   Ext.Ajax.request({
@@ -3208,7 +3211,7 @@ siga.define('nomina', {
     if(!me.onNominaSeleccionada())
       return;
 
-    me.getCmp('btnPersona').setDisabled(true);
+    me.menuPersona({disabled: true});
     me.getCmp('btnConcepto').setDisabled(true);
     me.getCmp('btnCerrarPeriodo').setDisabled(true);
     me.getCmp('btnNotas').setDisabled(true);
@@ -3335,7 +3338,10 @@ siga.define('nomina', {
         {
           xtype: 'templatecolumn',
           text: "<b>CÉDULA</b>",
-          tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'><tpl if='nacionalidad!=\"V\"'>{nacionalidad}</tpl>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
+          //tpl: "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'><tpl if='nacionalidad!=\"V\"'>{nacionalidad}</tpl>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>",
+          tpl: !me.internal.cerrado?
+            "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'><tpl if='nacionalidad!=\"V\"'>{nacionalidad}</tpl>{cedula}<div style='width:100%; position:absolute; top:0;right:0;height:100%;'><tpl if='activo==\"f\"'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-amarillo.png' data-qtip='<b>Personal Inactivo<b>'/></tpl><tpl if='activo_otra_nomina'><img style='float: right; width: 14px; cursor: pointer;' src='image/icon/icon-advertencia-duplicado-amarillo.png' data-qtip='<b>{activo_otra_nomina}<b>'/></tpl></div></div>":
+            "<div style='width: 100%;position:relative;' data-qtip='{mensaje}'><tpl if='nacionalidad!=\"V\"'>{nacionalidad}</tpl>{cedula}</div>",
           width: 100,
           menuDisabled: true,
           sortable: false,
@@ -3709,9 +3715,9 @@ siga.define('nomina', {
     if(!me.onNominaSeleccionada())
       return;
 
-    me.getCmp('btnPersona').setDisabled(true);
-    me.getCmp('btnConcepto').setDisabled(true);
-    me.getCmp('btnCerrarPeriodo').setDisabled(true);
+    me.menuPersona({disabled: true});
+    me.menuConcepto({disabled: true});
+    me.menuPeriodo({disabled: true});
     me.getCmp('btnNotas').setDisabled(true);
     //me.getCmp('btnContabilizar').setDisabled(true);
 
@@ -3741,9 +3747,9 @@ siga.define('nomina', {
         me.internal.data.concepto=result["concepto"];
         me.internal.data.ficha=result["ficha"];
 
-        me.getCmp('btnPersona').setDisabled(me.internal.cerrado);
-        me.getCmp('btnConcepto').setDisabled(me.internal.cerrado);
-        me.getCmp('btnCerrarPeriodo').setDisabled(me.internal.cerrado);
+        me.menuPersona( {disabled: me.internal.cerrado});
+        me.menuConcepto({disabled: me.internal.cerrado});
+        me.menuPeriodo( {disabled: me.internal.cerrado});
         me.getCmp('btnNotas').setDisabled(me.internal.cerrado);
 
         //me.getCmp('btnContabilizar').setDisabled(false);
@@ -3966,9 +3972,9 @@ siga.define('nomina', {
                             '<b>\u00BFEst\u00e1 seguro de cerrar el período?</b><br> '+me.getCmp('id_periodo').getRawValue()+'',
                             function(btn,text){
                               if(btn == 'yes'){
-                                me.getCmp('btnPersona').setDisabled(true);
-                                me.getCmp('btnConcepto').setDisabled(true);
-                                me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                                me.menuPersona({disabled: true});
+                                me.menuConcepto({disabled: true});
+                                me.menuPeriodo({disabled: true});
                                 me.getCmp('btnContabilizar').setDisabled(true);
 
                                 Ext.Ajax.request({
@@ -4080,9 +4086,9 @@ siga.define('nomina', {
                                   }
                                 _fecha=unformatDate(_fecha);
 
-                                me.getCmp('btnPersona').setDisabled(true);
-                                me.getCmp('btnConcepto').setDisabled(true);
-                                me.getCmp('btnCerrarPeriodo').setDisabled(true);
+                                me.menuPersona({disabled: true});
+                                me.menuConcepto({disabled: true});
+                                me.menuPeriodo({disabled: true});
                                 me.getCmp('btnContabilizar').setDisabled(true);
 
                                 Ext.Ajax.request({
@@ -4457,6 +4463,35 @@ siga.define('nomina', {
     }
 
   },
+
+  menuConcepto: function(o){
+    var me=this;
+    if(o.disabled===true || o.disabled===false){
+      me.getCmp('btnConceptoAgregar').setDisabled(o.disabled);
+      me.getCmp('btnConceptoQuitar').setDisabled(o.disabled);
+      me.getCmp('btnConceptoImportar').setDisabled(o.disabled);
+    }
+  },
+
+  menuPeriodo: function(o){
+    var me=this;
+    if(o.disabled===true || o.disabled===false){
+      me.getCmp('btnPeriodoCerrar').setDisabled(o.disabled);
+    }
+  },
+
+  menuPersona: function(o){
+    var me=this;
+    if(o.disabled===true || o.disabled===false){
+      me.getCmp('btnPersonaAgregar').setDisabled(o.disabled);
+      me.getCmp('btnPersonaCambiarCargo').setDisabled(o.disabled);
+      me.getCmp('btnPersonaCambiarNomina').setDisabled(o.disabled);
+      me.getCmp('btnPersonaCambiarEP').setDisabled(o.disabled);
+      me.getCmp('btnPersonalInactivo').setDisabled(o.disabled);
+      me.getCmp('btnPersonalInactivoQuitar').setDisabled(o.disabled);
+      me.getCmp('btnPersonalInactivoCambiarNomina').setDisabled(o.disabled);
+    }
+  }
 
 });
 

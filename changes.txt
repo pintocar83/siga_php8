@@ -111,6 +111,8 @@ module/academia_reportes/pdf/curso_constancia_asistencia_B.php
 module/academia_reportes/pdf/curso_participantes.php
 
 
-
+library/phpexcel/PHPExcel/
 library/phpexcel/PHPExcel/ReferenceHelper.php
 library/phpexcel/PHPExcel/Cell/DefaultValueBinder.php
+
+library/functions/remove_accent.php

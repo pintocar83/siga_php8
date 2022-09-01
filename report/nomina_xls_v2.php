@@ -16,6 +16,7 @@ include_once("../library/functions/formatDate.php");
 include_once("../library/functions/str_clear.php");
 include_once("../library/functions/sql_query_total.php");
 include_once("../library/functions/column_hash.php");
+include_once("../library/functions/remove_accent.php");
 include_once("../library/fpdf/1.84/rotation.php");
 include_once("../library/phpexcel/PHPExcel.php");
 //include_once("../class/nomina_v2.class.php");
@@ -300,7 +301,8 @@ for($p=0;$p<count($periodo);$p++):
 	$concepto=$periodo[$p]["concepto"];
 
 	$activeSheet = $excel->createSheet($p);
-	$titulo_hoja = preg_replace('/[^A-Za-z0-9. -]/', '', $periodo[$p]["descripcion"]);
+	$titulo_hoja = remove_accent($periodo[$p]["descripcion"]);
+	$titulo_hoja = preg_replace('/[^A-Za-z0-9. -]/', '', $titulo_hoja);
 	$titulo_hoja = substr($titulo_hoja, 0, 30);
 	$activeSheet->setTitle($titulo_hoja);
 	$activeSheet->setShowGridlines(false);
