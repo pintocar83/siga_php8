@@ -671,6 +671,28 @@ siga.onGetComprobante=function(o){
   return _comprobante;
 };
 
+siga.onListCuentaPresupuestaria=function(){
+  if(siga.value('cuenta_presupuestaria'))
+    return siga.value('cuenta_presupuestaria');
+  _tmp=Ext.Ajax.request({
+      async: false,
+      url:"module/cuenta_presupuestaria/",
+      params: {
+        action: 'onList',
+        start: 0,
+        limit: 'ALL',
+        filtro: '4%',
+        mode_assoc: true
+      }
+    });
+    if(_tmp.statusText=="OK"){
+      var _retorno=Ext.JSON.decode(_tmp.responseText);
+      siga.value('cuenta_presupuestaria',_retorno['result']);
+      return _retorno['result'];
+    }
+  return [];
+}
+
 siga.dsp_site=function(){
   window.open("http://dsp.com.ve/")
 }

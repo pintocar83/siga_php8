@@ -41,7 +41,7 @@ var Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloCamposTablaFormulacion=new Ar
 																					"monto_nov",
 																					"monto_dic");
 
-var Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanUnicoCuentas;
+var Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria;
 
 /**
 * Muestra los mensajes en la parte superior del formulario
@@ -96,18 +96,10 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__DesactivarBotonGuardar(){
 function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__Nuevo(){
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal=new Array();
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__KArregloPrincipal=0;
-/*
-	AjaxRequest.post({'parameters':{ 'accion':"Form_LISTA_CUENTAS_PRESUPUESTARIAS__BuscarListado",
-									'CadenaBuscar':""},
-									'onSuccess':
-										function(req){
-											var respuesta = req.responseText;
-											Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanUnicoCuentas = eval("(" + respuesta + ")");
-											},
-									'url':'../modulo_cuentas/consultas.php',
-									'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
-									});
-*/
+
+	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria = siga.onListCuentaPresupuestaria();
+
+
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__MostrarTablaFormulacion();
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__TabPane.setSelectedIndex(0);
 
@@ -297,14 +289,14 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__CargarFormulacion(sw){
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__DesactivarBotonGuardar();
 	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__DesactivarFormulario();
 	//xGetElementById("TD_DESHACER_ASIGNACION").innerHTML="";
-	var Contenido="<tr class='CabeceraTablaEstilo' style='font-size : 11px;'>"+
+	var Contenido="<tr class='CabeceraTablaEstilo' style='font-size : 12px;'>"+
 						"<td width='600px'></td>"+
 						"<td width='100px' rowspan='2'>REAL<br>"+(xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value-2)+"</td>"+
 						"<td width='100px' rowspan='2'>ESTIMADO<br>"+(xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value-1)+"</td>"+
 						"<td width='100px' rowspan='2'>TOTAL<br>"+xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value+"</td>"+
 						"<td width='900px' colspan='12'>PRESUPUESTO DE GASTO "+xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value+"</td>"+
 					"</tr>"+
-					"<tr class='CabeceraTablaEstilo' style='font-size : 11px;'>"+
+					"<tr class='CabeceraTablaEstilo' style='font-size : 12px;'>"+
 						"<td width='600px'>CUENTA PRESUPUESTARIA</td>"+
 						"<td width='75px'>ENE</td>"+
 						"<td width='75px'>FEB</td>"+
@@ -458,20 +450,29 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__AgregarEspecifica(registro){
 			Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]=padre[i];
 			Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]="";
 			Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=true;
-			var respuesta=Ext.Ajax.request({
-				async: false,
-				url: "module/cuenta_presupuestaria/",
-				method: 'POST',
-				params:{
-					action: 'onGet',
-					id_cuenta_presupuestaria: Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]
-					}
-				});
-			if(respuesta.statusText=="OK") {
-				cuenta_presupuestaria=SIGA.Ext.decode(respuesta.responseText);
-				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=cuenta_presupuestaria[0]["denominacion"];
-				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=cuenta_presupuestaria[0]["padre"]=='t'?true:false;
+			//var respuesta=Ext.Ajax.request({
+			//	async: false,
+			//	url: "module/cuenta_presupuestaria/",
+			//	method: 'POST',
+			//	params:{
+			//		action: 'onGet',
+			//		id_cuenta_presupuestaria: Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]
+			//		}
+			//	});
+			//if(respuesta.statusText=="OK") {
+			//	cuenta_presupuestaria=SIGA.Ext.decode(respuesta.responseText);
+			//	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=cuenta_presupuestaria[0]["denominacion"];
+			//	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=cuenta_presupuestaria[0]["padre"]=='t'?true:false;
+			//	}
+
+			for(var p=0; p<Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria.length; p++) {
+				if(Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]['id_cuenta_presupuestaria']==Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]){
+					Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["denominacion"];
+					Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["padre"]=='t'?true:false;
+					break;
 				}
+			}
+
 			n++;
 			}
 		}
@@ -595,28 +596,36 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__PostAgregar(){
 			if(i==0){//si es el hijo
 				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=false;
 				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=aux_denominacion;
-				}
+			}
 			else{//buscar denominacion del padre
 				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=true;
 				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]="";
-				var respuesta=Ext.Ajax.request({
-					async: false,
-					url: "module/cuenta_presupuestaria/",
-					method: 'POST',
-					params:{
-						action: 'onGet',
-						id_cuenta_presupuestaria: Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]
-					}
-				});
-				if(respuesta.statusText=="OK") {
-					cuenta_presupuestaria=SIGA.Ext.decode(respuesta.responseText);
-					Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=cuenta_presupuestaria[0]["denominacion"];
+				//var respuesta=Ext.Ajax.request({
+				//	async: false,
+				//	url: "module/cuenta_presupuestaria/",
+				//	method: 'POST',
+				//	params:{
+				//		action: 'onGet',
+				//		id_cuenta_presupuestaria: Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]
+				//	}
+				//});
+				//if(respuesta.statusText=="OK") {
+				//	cuenta_presupuestaria=SIGA.Ext.decode(respuesta.responseText);
+				//	Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=cuenta_presupuestaria[0]["denominacion"];
+				//	}
+				for(var p=0; p<Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria.length; p++) {
+					if(Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]['id_cuenta_presupuestaria']==Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["id_cuenta_presupuestaria"]){
+						Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["denominacion"]=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["denominacion"];
+						//Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n]["padre"]=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["padre"]=='t'?true:false;
+						break;
 					}
 				}
+			}
+
 			for(var j=0;j<=14;j++){
 				AUX=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloCamposTablaFormulacion[j];
 				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[n][AUX]=0;
-				}
+			}
 			Form_FORMULACION_PRESUPUESTO_DE_GASTOS__KArregloPrincipal++;
 			}
 		}//for(i=0;i<k;i++)
@@ -650,14 +659,14 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__MostrarTablaFormulacion(bloquea
 	var sw;
 	var style;
 
-	var Contenido="<tr class='CabeceraTablaEstilo' style='font-size : 11px;'>"+
+	var Contenido="<tr class='CabeceraTablaEstilo' style='font-size : 12px;'>"+
 						"<td width='600px'></td>"+
 						"<td width='100px' rowspan='2'>REAL<br>"+(xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value-2)+"</td>"+
 						"<td width='100px' rowspan='2'>ESTIMADO<br>"+(xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value-1)+"</td>"+
 						"<td width='100px' rowspan='2'>TOTAL<br>"+xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value+"</td>"+
 						"<td width='900px' colspan='12'>PRESUPUESTO DE GASTO "+xGetElementById("ANIO_PRESUPUESTARIO_ACTUAL").value+"</td>"+
 					"</tr>"+
-					"<tr class='CabeceraTablaEstilo' style='font-size : 11px;'>"+
+					"<tr class='CabeceraTablaEstilo' style='font-size : 12px;'>"+
 						"<td width='600px'>CUENTA PRESUPUESTARIA</td>"+
 						"<td width='75px'>ENE</td>"+
 						"<td width='75px'>FEB</td>"+
@@ -693,7 +702,7 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__MostrarTablaFormulacion(bloquea
 			FuncionOnMouseOver="";
 			FuncionOnMouseOut="";
 			sw=true;
-			style="style='font-weight : bold; font-size : 11px;'";
+			style="style='font-weight : bold; font-size : 12px;'";
 			}
 		else{
 			estilo_fila="FilaEstilo";
@@ -707,7 +716,7 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__MostrarTablaFormulacion(bloquea
 		if(bloquear)
 			sw=true;
 
- 		Contenido+="<TD class='"+estilo_fila+"'><DIV style='overflow : hidden; width:600px;'><UL style='list-style-type : none; margin-bottom : 0; margin-left : 0; margin-right : 0%; margin-top : 0; padding-bottom : 0px; padding-left : 0px; padding-right : 0; padding-top : 0; text-align : left; white-space : nowrap; font-size : 11px;'><li "+style+"><strong>"+Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[i]["id_cuenta_presupuestaria"]+"</strong> "+Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[i]["denominacion"]+"</li></UL><DIV></TD>";
+ 		Contenido+="<TD class='"+estilo_fila+"'><DIV style='overflow : hidden; width:600px;'><UL style='list-style-type : none; margin-bottom : 0; margin-left : 0; margin-right : 0%; margin-top : 0; padding-bottom : 0px; padding-left : 0px; padding-right : 0; padding-top : 0; text-align : left; white-space : nowrap; font-size : 12px;'><li "+style+"><strong>"+Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[i]["id_cuenta_presupuestaria"]+"</strong> "+Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[i]["denominacion"]+"</li></UL><DIV></TD>";
 
 		for(var h=0;h<Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloCamposTablaFormulacion.length;h++){
 			if(sw==false)
@@ -757,7 +766,7 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ModificarValorCelda(i,h){
 	Valor=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[i][Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloCamposTablaFormulacion[h]];
 	if(Valor*1==0)
 		Valor="";
-	xGetElementById("TF_FFPDG_"+i+"_"+h).innerHTML="<INPUT id='FFPDG_txt_celda' class='TextoCampoInputTabla' type='text' value='"+Valor+"' onblur=\"Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ModificarValorCeldaPierdeFoco("+i+","+h+")\" onkeypress=\"return AcceptNum(event,'FFPDG_txt_celda');\" style='text-align : right;' onkeyup='Form_FORMULACION_PRESUPUESTO_DE_GASTOS__KeyPressEnter(event,"+i+","+h+")';>";
+	xGetElementById("TF_FFPDG_"+i+"_"+h).innerHTML="<INPUT id='FFPDG_txt_celda' autocomplete='off' class='TextoCampoInputTabla' type='text' value='"+Valor+"' onblur=\"Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ModificarValorCeldaPierdeFoco("+i+","+h+")\" onkeypress=\"return AcceptNum(event,'FFPDG_txt_celda');\" style='text-align : right;' onkeyup='Form_FORMULACION_PRESUPUESTO_DE_GASTOS__KeyPressEnter(event,"+i+","+h+")';>";
 	xGetElementById("FFPDG_txt_celda").focus();
 	}
 
@@ -942,3 +951,90 @@ function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__Visualizar(modal) {
 	siga.open("reporte_formulacion",{modal: true});
 }
 
+function Form_FORMULACION_PRESUPUESTO_DE_GASTOS__inputText(){
+	Ext.MessageBox.show({
+		title: 'Ingresar detalles por txt',
+		msg: "<b>Ejemplo para entradas:</b><br><span style='font-size: 10px;'>401010200 800.00<br>403100700 5000.00</span>",
+		width:700,
+		buttons: Ext.MessageBox.OKCANCEL,
+		multiline: true,
+		defaultTextHeight: 300,
+		value: '',
+		fn: function(btn, text){
+			if(btn=="cancel") return;
+
+			var _tmp="";
+			var linea=text.split("\n");
+			var segmento="";
+			var n=0;
+			var resultado=[];
+			for(var i=0;i<linea.length;i++){
+				segmento=linea[i].split(" ");
+				if(segmento.length===1){
+					segmento=linea[i].split("\t");
+				}
+
+				segmento[0]=String(segmento[0]).replaceAll('.','');
+
+				//validar entradas
+				if(segmento.length==2 && segmento[0].length==9 && segmento[1]*1>=0 ) {
+					console.log("Agregando detalle: "+linea[i]);
+
+					monto_total=segmento[1]*1.00;
+					monto_mensual=numberFormat(monto_total/12,0);
+
+					resultado[n]={
+						"id_cuenta_presupuestaria": segmento[0],
+						"denominacion": "",
+						"padre": "",
+						"monto_real": 0,
+						"monto_estimado": 0,
+						"monto": monto_total,
+						"monto_ene": monto_mensual,
+						"monto_feb": monto_mensual,
+						"monto_mar": monto_mensual,
+						"monto_abr": monto_mensual,
+						"monto_may": monto_mensual,
+						"monto_jun": monto_mensual,
+						"monto_jul": monto_mensual,
+						"monto_ago": monto_mensual,
+						"monto_sep": monto_mensual,
+						"monto_oct": monto_mensual,
+						"monto_nov": monto_mensual,
+						"monto_dic": monto_total-monto_mensual*11
+					};
+
+					for(var p=0; p<Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria.length; p++) {
+						if(Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]['id_cuenta_presupuestaria']==segmento[0]){
+							if(Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["padre"]=='t'){
+								console.log("No se permite agregar cuentas padres");
+								break;
+							}
+							resultado[n]["denominacion"]=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["denominacion"];
+							resultado[n]["padre"]=Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPlanCuentaPresupuestaria[p]["padre"]=='t'?true:false;
+							n++;
+							break;
+						}
+					}
+				}
+				else
+					console.log("Linea no reconocida: "+linea[i]);
+			}
+
+
+
+			for(var i=0;i<n;i++){
+				Form_FORMULACION_PRESUPUESTO_DE_GASTOS__AgregarEspecifica(resultado[i]);
+			}
+			//ordenar tabla
+			Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal.sort(Form_FORMULACION_PRESUPUESTO_DE_GASTOS__OrdenarDatos);
+
+			//recalcular totales
+			for(var i=0;i<Form_FORMULACION_PRESUPUESTO_DE_GASTOS__KArregloPrincipal;i++)
+				if(!Form_FORMULACION_PRESUPUESTO_DE_GASTOS__ArregloPrincipal[i]["padre"])
+					for(var h=0;h<=14;h++)
+						Form_FORMULACION_PRESUPUESTO_DE_GASTOS__CalcularMontosRelacionado(i,h);
+			Form_FORMULACION_PRESUPUESTO_DE_GASTOS__MostrarTablaFormulacion();
+		}
+	});
+}

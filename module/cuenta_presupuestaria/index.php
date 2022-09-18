@@ -4,6 +4,10 @@ if(!isset($_REQUEST["action"]))
     exit;
 include("../../class/cuenta_presupuestaria.class.php");
 
+if(isset($_REQUEST['mode_assoc']) && $_REQUEST['mode_assoc']){
+  SIGA::$DBMode=PGSQL_ASSOC;
+}
+
 class MODULO extends cuenta_presupuestaria{
   public static function onInit(){
     $access=SIGA::access("cuenta_presupuestaria");    

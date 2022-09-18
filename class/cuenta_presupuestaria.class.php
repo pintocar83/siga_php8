@@ -36,8 +36,13 @@ class cuenta_presupuestaria{
               _formatear_cuenta_presupuestaria(id_cuenta_presupuestaria) ILIKE '$text%'
             )";
     $return["result"]=$db->Execute($sql." ".sql_sort($sort)." LIMIT $limit OFFSET $start");
-    $return["total"]=$db->Execute(sql_query_total($sql));
-    $return["total"]=$return["total"][0][0];
+    if(strtoupper($limit)=="ALL"){
+      $return["total"]=count($return["result"]);
+    }
+    else{
+      $return["total"]=$db->Execute(sql_query_total($sql));
+      $return["total"]=$return["total"][0]["total"];
+    }
     return $return;
   }
 
@@ -57,8 +62,13 @@ class cuenta_presupuestaria{
             DP.operacion='AP' AND
             DP.id_cuenta_presupuestaria=CP.id_cuenta_presupuestaria";
     $return["result"]=$db->Execute($sql." ".sql_sort($sort)." LIMIT $limit OFFSET $start");
-    $return["total"]=$db->Execute(sql_query_total($sql));
-    $return["total"]=$return["total"][0][0];
+    if(strtoupper($limit)=="ALL"){
+      $return["total"]=count($return["result"]);
+    }
+    else{
+      $return["total"]=$db->Execute(sql_query_total($sql));
+      $return["total"]=$return["total"][0]["total"];
+    }
     return $return;
   }
 
