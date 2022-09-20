@@ -101,6 +101,7 @@ class PDF_P extends FPDF{
 		$Y=$this->GetY();
 		//banco
 		$this->SetFont('helvetica','B',11);
+		$this->SetXY($this->lMargin+60,$Y-2);
 		$this->MultiCell(77,3,utf8_decode($PAGO[0]["banco"]."\n".$PAGO[0]["numero_cuenta"]),'','C',1);
 
 
