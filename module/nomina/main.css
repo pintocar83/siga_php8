@@ -366,3 +366,14 @@
   color: #FFFFFF;
   font-weight: bold;
 }
+
+div.enlace_etiqueta_nomina {
+    float: right;
+}
+
+a.enlace_etiqueta_nomina {
+    font-size: 9px;
+    color: #2196f3 !important;
+    line-height: 0;
+    text-decoration: none;
+}

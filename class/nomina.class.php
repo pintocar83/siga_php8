@@ -1,4 +1,5 @@
 <?php
+set_time_limit(-1);
 include_once(SIGA::path()."/library/functions/formatDate.php");
 function nf($v){
   return number_format($v,2,".","");
@@ -475,12 +476,13 @@ class nomina{
     if(self::es_formula($valor)) $valor="0";
 
     if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
-      $F=$db->Execute("SELECT id
-                    FROM modulo_nomina.ficha
-                    WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      //$F=$db->Execute("SELECT id
+      //              FROM modulo_nomina.ficha
+      //              WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      $F=$db->Execute("SELECT DISTINCT id_ficha FROM modulo_nomina.ficha_concepto WHERE id_periodo=$id_periodo AND id_nomina=$id_nomina");
       $ids_ficha=array();
       for($i=0;$i<count($F);$i++)
-        $ids_ficha[$i]=$F[$i]["id"];
+        $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
 
     $return=array();
@@ -537,12 +539,13 @@ class nomina{
 
 
     if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
-      $F=$db->Execute("SELECT id
-                    FROM modulo_nomina.ficha
-                    WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      //$F=$db->Execute("SELECT id
+      //              FROM modulo_nomina.ficha
+      //              WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      $F=$db->Execute("SELECT DISTINCT id_ficha FROM modulo_nomina.ficha_concepto WHERE id_periodo=$id_periodo AND id_nomina=$id_nomina");
       $ids_ficha=array();
       for($i=0;$i<count($F);$i++)
-        $ids_ficha[$i]=$F[$i]["id"];
+        $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
 
     $return=array();
@@ -595,12 +598,13 @@ class nomina{
 
     //en caso que se ids_ficha[0]=='*', buscar todas las fichas de la nomina
     if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
-      $F=$db->Execute("SELECT id
-                    FROM modulo_nomina.ficha
-                    WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      //$F=$db->Execute("SELECT id
+      //              FROM modulo_nomina.ficha
+      //              WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      $F=$db->Execute("SELECT DISTINCT id_ficha FROM modulo_nomina.ficha_concepto WHERE id_periodo=$id_periodo AND id_nomina=$id_nomina");
       $ids_ficha=array();
       for($i=0;$i<count($F);$i++)
-        $ids_ficha[$i]=$F[$i]["id"];
+        $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
 
     //buscar la configuracion de los conceptos ficha:%
@@ -833,11 +837,18 @@ class nomina{
     if(!file_exists($archivo_excel))
       return ["success"=>false, "message"=>"Error al cargar archivo."];
 
+    //para omitir los errors y warnings de phpexcel
+    error_reporting(0);
+    ini_set('display_errors', 'Off');
+
     include_once(SIGA::path()."/library/phpexcel/PHPExcel.php");
     $reader = PHPExcel_IOFactory::createReader('Excel2007');
     $reader->setReadDataOnly(true);
 
     $ficha_concepto=[];
+    $concepto=[];
+    $ficha=[];
+    $errores=[];
     $nomina_seleccion=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE id in ($id_nomina_seleccion)");
 
     $excel = $reader->load($archivo_excel);
@@ -863,77 +874,76 @@ class nomina{
       $sql="SELECT id_concepto, id_nomina FROM modulo_nomina.concepto_periodo WHERE id_periodo='$id_periodo' AND id_nomina IN ($id_nomina)";
       $concepto_periodo=$db->Execute($sql);
 
-      $concepto=[];
-      $ficha=[];
-      $c=0;
-
-      foreach ($sheet->getRowIterator() as $row) {
+      foreach($sheet->getRowIterator() as $row) {
         $ln = $row->getRowIndex();
         $A = $sheet->getCell("A$ln")->getValue();
 
         //Leer encabezado
         if($ln==1){
           //detectar cuantos conceptos cargaron (columnas)
-          $col_index = 1;//Comenzar en la columna B
+          $c=0;
+          $concepto_hoja=[];
+          $col_index = 2;//Comenzar en la columna C
           while($col_index<=100){
             $col_letter = PHPExcel_Cell::stringFromColumnIndex($col_index);
             $CELL=$col_letter.$ln;
             $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
-            $CELL_VALUE = trim($CELL_VALUE);
+            if($CELL_VALUE)
+              $CELL_VALUE = trim($CELL_VALUE);
             if(!$CELL_VALUE){
               break;
             }
+
+            //buscar el codigo del concepto ($CELL_VALUE) en $concepto, para verificar que ya no se halla agregado previamente
+            $concepto_agregado=false;
+            for($x=0; $x<count($concepto); $x++){
+              if($CELL_VALUE==$concepto[$x]["codigo"]){
+                $concepto_agregado=true;
+                
+                $concepto_hoja[$c]=$concepto[$x];
+                $concepto_hoja[$c]["column"]=$col_letter;
+                $concepto_hoja[$c]["success"]=true;
+                $concepto_hoja[$c]["message"]="";
+
+                $c++;
+                break;
+              }
+            }
+            if($concepto_agregado){
+              $col_index++;
+              continue;
+            }
+
             //buscar el concepto por el codigo
             $sql="SELECT id, codigo, concepto, identificador, tipo FROM modulo_nomina.concepto WHERE codigo LIKE '$CELL_VALUE' AND activo";
             $tmp=$db->Execute("$sql");
             if(count($tmp)===1 && isset($tmp[0]["id"])){
-              $concepto[$c]=$tmp[0];
-              $concepto[$c]["column"]=$col_letter;
-              $concepto[$c]["success"]=true;
-              $concepto[$c]["message"]="";
-              $concepto[$c]["concepto_asociado"]=[];
 
-
-              //buscar el concepto a agregar
-              $concepto_identificador=$concepto[$c]['identificador'];
-              $sql="
-                SELECT
-                  id_concepto,
-                  definicion
-                FROM
-                  modulo_nomina.concepto_formula as CF
-                WHERE
-                  CF.definicion LIKE '%{$concepto_identificador}%' AND
-                  CF.fecha = (SELECT fecha
-                              FROM modulo_nomina.concepto_formula
-                              WHERE fecha<='{$fecha_culminacion}' AND id_concepto=CF.id_concepto
-                              ORDER BY fecha DESC
-                              LIMIT 1)";
-              //print $sql;
-              $concepto_asociado_tmp=$db->Execute($sql);
-              for($f=0; $f<count($concepto_asociado_tmp); $f++){
-                $tokens=self::formula_tokens($concepto_asociado_tmp[$f]['definicion']);
-                if(in_array($concepto_identificador,$tokens))
-                  $concepto[$c]["concepto_asociado"][]=$concepto_asociado_tmp[$f]['id_concepto'];
-              }
-              //$valor=$concepto[0]["definicion"];
-              //if(self::es_formula($valor)) $valor="0";
-
-
+              $concepto[]=$tmp[0];
+              $concepto_hoja[$c]=$tmp[0];
+              $concepto_hoja[$c]["column"]=$col_letter;
+              $concepto_hoja[$c]["success"]=true;
+              $concepto_hoja[$c]["message"]="";
+              $c++;
             }
             else if(count($tmp)>1){
-              $concepto[$c]["codigo"]=$CELL_VALUE;
-              $concepto[$c]["column"]=$col_letter;
-              $concepto[$c]["success"]=false;
-              $concepto[$c]["message"]="Existen multiples conceptos con el mismo codigo ($CELL_VALUE).";
+              $errores[]=[
+                "type" => "concepto",
+                "column" => $col_letter,
+                "sheet" => $cod_nomina,
+                "sheet_name" => (isset($nomina[0]["nomina"]) && $nomina[0]["nomina"])?$nomina[0]["nomina"]:"",
+                "message" => "Existen multiples conceptos con el mismo codigo ($CELL_VALUE)."
+              ];
             }
             else{
-              $concepto[$c]["codigo"]=$CELL_VALUE;
-              $concepto[$c]["column"]=$col_letter;
-              $concepto[$c]["success"]=false;
-              $concepto[$c]["message"]="Código de concepto ($CELL_VALUE) no encontrado.";
+              $errores[]=[
+                "type" => "concepto",
+                "column" => $col_letter,
+                "sheet" => $cod_nomina,
+                "sheet_name" => (isset($nomina[0]["nomina"]) && $nomina[0]["nomina"])?$nomina[0]["nomina"]:"",
+                "message" => "Código de concepto ($CELL_VALUE) no encontrado."
+              ];
             }
-            $c++;
             $col_index++;
           }
           continue;
@@ -996,8 +1006,11 @@ class nomina{
         for($j=0; $j<count($nomina_ficha); $j++){
           for($k=0; $k<$c; $k++){
             //capturar el valor del concepto en la celda
-            $CELL = $concepto[$k]["column"].$ln;
+            $CELL = $concepto_hoja[$k]["column"].$ln;
             $CELL_VALUE = $sheet->getCell("$CELL")->getCalculatedValue();
+            if($CELL_VALUE===NULL)
+              $CELL_VALUE="";
+
             $CELL_VALUE = trim($CELL_VALUE);
 
             if($CELL_VALUE=="")
@@ -1010,21 +1023,12 @@ class nomina{
               $message="El valor del concepto debe ser numérico.";
             }
 
-            //agregar el concepto asociado solo si este se encuentra agregado a la nomina
-            $concepto_asociado=[];
-            for($cp=0; $cp<count($concepto_periodo); $cp++){
-              if($concepto_periodo[$cp]["id_nomina"]==$nomina_ficha[$j]["id_nomina"] and in_array($concepto_periodo[$cp]["id_concepto"],$concepto[$k]["concepto_asociado"])){
-                $concepto_asociado[]=$concepto_periodo[$cp]["id_concepto"];
-              }
-            }
-
             $ficha_concepto[]=[
               "id_periodo"        => $id_periodo,
               "id_nomina"         => $nomina_ficha[$j]["id_nomina"],
               "id_ficha"          => $nomina_ficha[$j]["id_ficha"],
-              "id_concepto"       => $concepto[$k]["id"],
+              "id_concepto"       => $concepto_hoja[$k]["id"],
               "valor"             => "$CELL_VALUE",
-              "concepto_asociado" => $concepto_asociado,
               "success"           => $success,
               "message"           => $message
             ];
@@ -1037,7 +1041,8 @@ class nomina{
     return [
       "ficha" => $ficha,
       "concepto" => $concepto,
-      "ficha_concepto" => $ficha_concepto
+      "ficha_concepto" => $ficha_concepto,
+      "errores" => $errores
     ];
   }
 
@@ -1119,12 +1124,13 @@ class nomina{
     }
 
     if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
-      $F=$db->Execute("SELECT id
-                        FROM modulo_nomina.ficha
-                        WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      //$F=$db->Execute("SELECT id
+      //                  FROM modulo_nomina.ficha
+      //                  WHERE id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)");
+      $F=$db->Execute("SELECT DISTINCT id_ficha FROM modulo_nomina.ficha_concepto WHERE id_periodo=$id_periodo AND id_nomina=$id_nomina");
       $ids_ficha=array();
       for($i=0;$i<count($F);$i++)
-        $ids_ficha[$i]=$F[$i]["id"];
+        $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
 
     $return=array();

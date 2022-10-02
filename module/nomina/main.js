@@ -283,7 +283,8 @@ siga.define('nomina', {
           id: me._('id_nomina'),
           name: 'id_nomina',
           anchor: '100%',
-          fieldLabel: 'Nómina',
+          //fieldLabel: 'Nómina',
+          fieldLabel: 'Nómina <div class="enlace_etiqueta_nomina"><a class="enlace_etiqueta_nomina" href="#" onclick=\"siga.getCmp(\'nomina\').onNominaSeleccionarTodo()\" title="Seleccionar Todos">[&#x2714;]<a/><a class="enlace_etiqueta_nomina" href="#" onclick=\"siga.getCmp(\'nomina\').onNominaSeleccionarNada()\" title="Seleccionar Ninguno">[&#x2716;]</a></div>',
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
@@ -299,6 +300,8 @@ siga.define('nomina', {
           valueField: 'id',
           allowBlank: true,
           forceSelection: true,
+          filterPickList: true,
+          hideTrigger: true,
           listeners: {
             change: function(){
               me.onSeleccionarNominaHeight();
@@ -905,7 +908,7 @@ siga.define('nomina', {
     me.internal.ventanaConceptoImportar=Ext.create('Ext.window.Window', {
       title: 'Concepto - Importar Excel',
       minimizable: false,
-      maximizable: false,
+      maximizable: true,
       modal: true,
       width: 850,
       height: 420,
@@ -1009,7 +1012,7 @@ siga.define('nomina', {
               id: me._('id_nomina_concepto_importar'),
               name: 'id_nomina_concepto_importar',
               anchor: '100%',
-              fieldLabel: 'Nómina',
+              fieldLabel: 'Nómina <div class="enlace_etiqueta_nomina"><a class="enlace_etiqueta_nomina" href="#" onclick=\"siga.getCmp(\'nomina\').onConceptoImportarNominaSeleccionarTodo()\" title="Seleccionar Todos">[&#x2714;]<a/><a class="enlace_etiqueta_nomina" href="#" onclick=\"siga.getCmp(\'nomina\').onConceptoImportarNominaSeleccionarNada()\" title="Seleccionar Ninguno">[&#x2716;]</a></div>',
               labelAlign: 'top',
               labelSeparator: '',
               labelStyle: 'font-weight: bold;',
@@ -1017,6 +1020,7 @@ siga.define('nomina', {
               editable: false,
               queryMode: "local",
               multiSelect: true,
+              filterPickList: true,
               store: {
                 fields: ['id','codigo_nomina'],
                 data: []
@@ -1025,7 +1029,7 @@ siga.define('nomina', {
               valueField: 'id',
               allowBlank: true,
               forceSelection: true,
-              //hideTrigger:true,
+              hideTrigger:true,
               listeners: {
                 change: function(){
                   me.onConceptoImportarHeightPaso1();
@@ -1047,26 +1051,36 @@ siga.define('nomina', {
             {
               xtype: 'container',
               anchor: '100%',
-              layout: 'hbox',
+              layout: {
+                type: 'hbox',
+                align: 'middle'
+              },
               style: 'padding-top: 25px; padding-bottom: 10px;',
               items: [
                 {
-                  xtype: 'tbspacer',
-                  flex: 1
-                },
-                {
                   xtype: 'button',
-                  text: '<b>Pre-Cargar</b>',
-                  width: 150,
+                  text: '<b>Descargar Formato de Pre-Carga</b>',
+                  width: 200,
                   listeners: {
                     click: function(){
-                      me.onConceptoImportarPreCargar();
+                      me.onConceptoImportarDescargarFormato();
                     }
                   }
                 },
                 {
                   xtype: 'tbspacer',
                   flex: 1
+                },
+                {
+                  xtype: 'button',
+                  text: '<b><big>Pre-Cargar</big></b>',
+                  scale: 'medium',
+                  width: 150,
+                  listeners: {
+                    click: function(){
+                      me.onConceptoImportarPreCargar();
+                    }
+                  }
                 }
               ]
             }
@@ -3723,7 +3737,7 @@ siga.define('nomina', {
 
     me.internal.columnaSeleccionada=null;
     me.internal.cerrado=null;
-    me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Nómina:</b> "+me.getCmp('id_nomina').getRawValue()+". <b>Periodo:</b> "+me.getCmp('id_periodo').getRawValue()+".</div>",false);
+    me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Periodo:</b> "+me.getCmp('id_periodo').getRawValue()+". <b>Nómina:</b> "+me.getCmp('id_nomina').getRawValue()+".</div>",false);
 
     //me.getCmp('gridList').getStore().removeAll(true);
     me.getCmp('gridList').getStore().removeAll();
@@ -4193,6 +4207,15 @@ siga.define('nomina', {
     return me.internal.data.preload["periodo"];
   },
 
+  onConceptoImportarDescargarFormato: function(){
+    var me=this;
+
+    var id_periodo = me.getCmp("id_periodo_concepto_importar").getValue();
+    var id_nomina  = me.getCmp("id_nomina_concepto_importar").getValue().join(",");
+
+    window.open("report/nomina_formato_concepto_importar.php?id_periodo="+id_periodo+"&id_nomina="+id_nomina);
+  },
+
   onConceptoImportarPreCargar: function(){
     var me=this;
     me.internal.ventanaConceptoImportar.data_importar=[];
@@ -4277,7 +4300,7 @@ siga.define('nomina', {
       xtype: 'rownumberer',
       dataIndex: 'n',
       text: "<b>Nº</b>",
-      width: 30,
+      width: 50,
       sortable: false,
       cls: "hoja_trabajo_header_fijo",
       tdCls: "hoja_trabajo_cell_fijo",
@@ -4462,6 +4485,42 @@ siga.define('nomina', {
       me.getCmp("tipo_nomina_concepto_importar").fireEvent("change");
     }
 
+  },
+
+  onConceptoImportarNominaSeleccionarTodo: function(){
+    var me=this;
+    if(!(me.internal.data && me.internal.data.preload && me.internal.data.preload["nomina"]))
+      return;
+
+    var v=[];
+    for(var i=0; i<me.internal.data.preload["nomina"].length; i++){
+      v.push(me.internal.data.preload["nomina"][i]["id"])
+    }
+    me.getCmp("id_nomina_concepto_importar").setValue(v);
+  },
+
+  onConceptoImportarNominaSeleccionarNada: function(){
+    var me=this;
+
+    me.getCmp("id_nomina_concepto_importar").setValue([]);
+  },
+
+  onNominaSeleccionarTodo: function(){
+    var me=this;
+    if(!(me.internal.data && me.internal.data.preload && me.internal.data.preload["nomina"]))
+      return;
+
+    var v=[];
+    for(var i=0; i<me.internal.data.preload["nomina"].length; i++){
+      v.push(me.internal.data.preload["nomina"][i]["id"])
+    }
+    me.getCmp("id_nomina").setValue(v);
+  },
+
+  onNominaSeleccionarNada: function(){
+    var me=this;
+
+    me.getCmp("id_nomina").setValue([]);
   },
 
   menuConcepto: function(o){

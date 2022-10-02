@@ -126,7 +126,7 @@ function Cabecera(){
 
 	$activeSheet->setCellValueExplicit("A$ln","Nº",PHPExcel_Cell_DataType::TYPE_STRING);	
 	$activeSheet->setCellValueExplicit("B$ln","CÉDULA",PHPExcel_Cell_DataType::TYPE_STRING);	
-	$activeSheet->setCellValueExplicit("C$ln","NOMBRES Y APELLIDO",PHPExcel_Cell_DataType::TYPE_STRING);	
+	$activeSheet->setCellValueExplicit("C$ln","NOMBRES Y APELLIDOS",PHPExcel_Cell_DataType::TYPE_STRING);	
 	$activeSheet->setCellValueExplicit("D$ln","CARGO",PHPExcel_Cell_DataType::TYPE_STRING);
 
 	$activeSheet->setCellValueExplicit("E$ln","GENERO",PHPExcel_Cell_DataType::TYPE_STRING);	
