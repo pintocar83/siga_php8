@@ -1058,14 +1058,31 @@ siga.define('nomina', {
               style: 'padding-top: 25px; padding-bottom: 10px;',
               items: [
                 {
-                  xtype: 'button',
-                  text: '<b>Descargar Formato de Pre-Carga</b>',
-                  width: 200,
-                  listeners: {
-                    click: function(){
-                      me.onConceptoImportarDescargarFormato();
-                    }
-                  }
+                  xtype:'fieldset',
+                  columnWidth: 0.5,
+                  title: '<b>Formato de Pre-Carga</b>',
+                  collapsible: false,
+                  defaults: {anchor: '100%'},
+                  layout: 'anchor',
+                  items :[
+                    {
+                      xtype: 'checkbox',
+                      id: me._('valor_actual_concepto_importar'),
+                      boxLabel: 'Incluir Valores Actuales',
+                      checked: false
+                    },
+                    {
+                      xtype: 'button',
+                      text: '<b>Descargar</b>',
+                      margin: '5 0 5 0',
+                      width: 180,
+                      listeners: {
+                        click: function(){
+                          me.onConceptoImportarDescargarFormato();
+                        }
+                      }
+                    },
+                  ]
                 },
                 {
                   xtype: 'tbspacer',
@@ -4212,8 +4229,9 @@ siga.define('nomina', {
 
     var id_periodo = me.getCmp("id_periodo_concepto_importar").getValue();
     var id_nomina  = me.getCmp("id_nomina_concepto_importar").getValue().join(",");
+    var incluir_valores = me.getCmp("valor_actual_concepto_importar").getValue()?1:0;
 
-    window.open("report/nomina_formato_concepto_importar.php?id_periodo="+id_periodo+"&id_nomina="+id_nomina);
+    window.open("report/nomina_formato_concepto_importar.php?id_periodo="+id_periodo+"&id_nomina="+id_nomina+"&incluir_valores="+incluir_valores);
   },
 
   onConceptoImportarPreCargar: function(){
@@ -4267,7 +4285,7 @@ siga.define('nomina', {
     if(!me.getCmp("id_nomina_concepto_importar").getEl()) return;
 
     var height=me.getCmp("id_nomina_concepto_importar").getHeight();
-    me.internal.ventanaConceptoImportar.setHeight(270+height);
+    me.internal.ventanaConceptoImportar.setHeight(320+height);
   },
 
   onConceptoImportarRegresar: function(){

@@ -17,12 +17,14 @@ $db=SIGA::DBController();
 
 $id_nomina=SIGA::paramGet("id_nomina");
 $id_periodo=SIGA::paramGet("id_periodo");
+$incluir_valores=SIGA::paramGet("incluir_valores");
+$incluir_valores=$incluir_valores=="1"?true:false;
 
 $periodo=$db->Execute("SELECT fecha_culminacion, cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
 $fecha_culminacion=$periodo[0]["fecha_culminacion"];
 
 
-$nomina=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE id in ($id_nomina)");
+$nomina=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE id in ($id_nomina) ORDER BY codigo");
 
 
 
@@ -36,7 +38,7 @@ for($i=0; $i<count($nomina); $i++){
   $activeSheet = $excel->createSheet($i);
   $activeSheet->setTitle($nomina[$i]["codigo"]);
   //buscar los conceptos del periodo
-  $sql="SELECT C.id, C.codigo, C.concepto, C.identificador, C.tipo  FROM modulo_nomina.concepto_periodo CP, modulo_nomina.concepto C WHERE C.id=CP.id_concepto AND CP.id_periodo='$id_periodo' AND CP.id_nomina = '".$nomina[$i]["id"]."'";
+  $sql="SELECT C.id, C.codigo, C.concepto, C.identificador, C.tipo  FROM modulo_nomina.concepto_periodo CP, modulo_nomina.concepto C WHERE C.id=CP.id_concepto AND CP.id_periodo='$id_periodo' AND CP.id_nomina = '".$nomina[$i]["id"]."' ORDER BY C.orden";
   $concepto=$db->Execute($sql);
   for($c=0; $c<count($concepto); $c++){
     //buscar definicion (formula) del concepto
@@ -101,7 +103,7 @@ for($i=0; $i<count($nomina); $i++){
 
     //colocar el valor de cada concepto en la celda
     $col_index = 2;//Comenzar en la columna C
-    for($c=0; $c<count($concepto); $c++){
+    for($c=0; $c<count($concepto) && $incluir_valores; $c++){
       if(nomina::es_formula($concepto[$c]["definicion"]))
         continue;
       $col_letter = PHPExcel_Cell::stringFromColumnIndex($col_index);
@@ -115,12 +117,8 @@ for($i=0; $i<count($nomina); $i++){
         $activeSheet->setCellValueExplicit("{$col_letter}{$ln}",number_format($valor,2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);
         $activeSheet->getStyle("{$col_letter}{$ln}")->getNumberFormat()->setFormatCode('#,##0.00');
       }
-
-
       $col_index++;
     }
-
-
 
     $ln++;
   }
