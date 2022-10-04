@@ -919,6 +919,23 @@ class nomina{
             $tmp=$db->Execute("$sql");
             if(count($tmp)===1 && isset($tmp[0]["id"])){
 
+              $tmp[0]["concepto_asociado"]=[];
+              $concepto_identificador=$tmp[0]['identificador'];
+              $sql="
+                SELECT id_concepto, definicion
+                FROM modulo_nomina.concepto_formula
+                WHERE fecha<='{$fecha_culminacion}' AND definicion LIKE '%{$concepto_identificador}%'
+                ORDER BY fecha DESC
+                LIMIT 1
+              ";
+              //print $sql;
+              $concepto_asociado_tmp=$db->Execute($sql);
+              for($f=0; $f<count($concepto_asociado_tmp); $f++){
+                $tokens=self::formula_tokens($concepto_asociado_tmp[$f]['definicion']);
+                if(in_array($concepto_identificador,$tokens))
+                  $tmp[0]["concepto_asociado"][]=$concepto_asociado_tmp[$f]['id_concepto'];
+              }
+
               $concepto[]=$tmp[0];
               $concepto_hoja[$c]=$tmp[0];
               $concepto_hoja[$c]["column"]=$col_letter;
@@ -1023,12 +1040,21 @@ class nomina{
               $message="El valor del concepto debe ser numérico.";
             }
 
+            //agregar el concepto asociado solo si este se encuentra agregado a la nomina
+            $concepto_asociado=[];
+            for($cp=0; $cp<count($concepto_periodo); $cp++){
+              if($concepto_periodo[$cp]["id_nomina"]==$nomina_ficha[$j]["id_nomina"] and in_array($concepto_periodo[$cp]["id_concepto"],$concepto[$k]["concepto_asociado"])){
+                $concepto_asociado[]=$concepto_periodo[$cp]["id_concepto"];
+              }
+            }
+
             $ficha_concepto[]=[
               "id_periodo"        => $id_periodo,
               "id_nomina"         => $nomina_ficha[$j]["id_nomina"],
               "id_ficha"          => $nomina_ficha[$j]["id_ficha"],
               "id_concepto"       => $concepto_hoja[$k]["id"],
               "valor"             => "$CELL_VALUE",
+              "concepto_asociado" => $concepto_asociado,
               "success"           => $success,
               "message"           => $message
             ];
