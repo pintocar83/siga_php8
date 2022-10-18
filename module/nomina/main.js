@@ -393,9 +393,9 @@ siga.define('nomina', {
                       me.getCmp('messageVentanaSeleccionarNomina').setText("<div style='color: red;'>Debe seleccionar la nómina.</div>",false);
                       return;
                     }
+                    me.onUpdate_MenuPersonaCambiarNomina();
                     me.onCargarNomina();
                     me.internal.ventanaSeleccionarNomina.hide();
-                    me.onUpdate_MenuPersonaCambiarNomina();
                   }
                   else{
                     me.getCmp('messageVentanaSeleccionarNomina').setText("<div style='color: red;'>Debe seleccionar el periodo.</div>",false);
@@ -2631,19 +2631,21 @@ siga.define('nomina', {
 
   onUpdate_MenuPersonaCambiarNomina: function(){
     var me=this;
-    var nomina=me.getCmp("id_nomina").getStore().getData().items;
+    //var nomina=me.getCmp("id_nomina").getStore().getData().items;
+    var nomina=me.internal.data.preload["nomina"];
     me.getCmp("btnPersonaAgregar").menu.removeAll();
     me.getCmp("btnPersonaCambiarNomina").menu.removeAll();
     me.getCmp("btnPersonalInactivoCambiarNomina").menu.removeAll();
-
+    //console.log("onUpdate_MenuPersonaCambiarNomina->nomina: ",nomina);
     for(var i=0;i<nomina.length;i++){
       //if(me.getCmp("id_nomina").getValue().join(",")==nomina[i].data["id"]) continue; //no mostrar la misma nómina seleccionada
-
-      if($.inArray(nomina[i].data["id"],me.getCmp("id_nomina").getValue())>=0){
+      //console.log(nomina[i]);
+      if($.inArray(nomina[i]["id"],me.getCmp("id_nomina").getValue())>=0){
+        console.log("agregar persona");
         me.getCmp("btnPersonaAgregar").menu.add({
-          text: nomina[i].data["codigo_nomina"],
+          text: nomina[i]["codigo_nomina"],
           //internal:{id: nomina[i]["id"]},
-          internal:{id: nomina[i].data["id"]},
+          internal:{id: nomina[i]["id"]},
           listeners: {
             click: function(el){
               if(!me.onNominaSeleccionada())
@@ -2704,8 +2706,8 @@ siga.define('nomina', {
       }
 
       me.getCmp("btnPersonaCambiarNomina").menu.add({
-        text: nomina[i].data["codigo_nomina"],
-        internal:{id: nomina[i].data["id"]},
+        text: nomina[i]["codigo_nomina"],
+        internal:{id: nomina[i]["id"]},
         listeners: {
           click: function(el){
             var seleccion=me.getCmp("gridList").getSelection();
@@ -2765,8 +2767,8 @@ siga.define('nomina', {
       });
 
       me.getCmp("btnPersonalInactivoCambiarNomina").menu.add({
-        text: nomina[i].data["codigo_nomina"],
-        internal:{id: nomina[i].data["id"]},
+        text: nomina[i]["codigo_nomina"],
+        internal:{id: nomina[i]["id"]},
         listeners: {
           click: function(el){
 
@@ -4419,6 +4421,7 @@ siga.define('nomina', {
       data: data
     });
 
+    me.getCmp('grid_concepto_importar').getStore().removeAll();
     me.getCmp('grid_concepto_importar').reconfigure(store,columns);
     me.internal.ventanaConceptoImportar.data_importar=result["ficha_concepto"];
   },
