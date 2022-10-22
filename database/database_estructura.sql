@@ -3694,7 +3694,6 @@ CREATE TABLE grupo_familiar (
 );
 
 CREATE SEQUENCE grupo_familiar_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3710,7 +3709,6 @@ CREATE TABLE grupo_familiar_parentesco (
 
 
 CREATE SEQUENCE grupo_familiar_parentesco_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
