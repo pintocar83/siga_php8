@@ -5,10 +5,10 @@ siga.define('lector_qr', {
     title: 'Lector QR',
     width: 800,
     height: 600,
-    
+
     initComponent: function(){
       var me = this;
-      
+
       me.dockedItems=[{
         xtype: 'toolbar',
         id: me._("toolbar"),
@@ -22,7 +22,7 @@ siga.define('lector_qr', {
           width: 55,
           text: 'Escanear',
           cls: 'siga-btn-base',
-          iconCls: 'siga-btn-base-icon icon-lector_qr',         
+          iconCls: 'siga-btn-base-icon icon-lector_qr',
           iconAlign: 'top',
           listeners: {
             click: function(){
@@ -31,8 +31,8 @@ siga.define('lector_qr', {
           }
         }
       }];
-      
-      me.items=[        
+
+      me.items=[
         {
           xtype: "siga.video",
           id: me._("camara"),
@@ -41,7 +41,7 @@ siga.define('lector_qr', {
           //resolution: {width: 320, height: 240},
           resolution: {width: 640, height: 480},
           delay: 100,
-          stream: function(e){    
+          stream: function(e){
             var context=me.internal.canvas.getContext('2d');
             context.drawImage(e.video, 0, 0, e.resolution.width, e.resolution.height);
             var imageData = context.getImageData(0, 0, e.resolution.width, e.resolution.height);
@@ -50,9 +50,10 @@ siga.define('lector_qr', {
               var grey = (imageData.data[i]+imageData.data[i+1]+imageData.data[i+2])/3;
               imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = grey;
             }
-            
+
             var result=zbarProcessImageData(imageData);
-            if (result.length>0) {              
+            console.log("zbarProcessImageData: ",result);
+            if (result.length>0) {
               me.openView(result);
             }
           }
@@ -81,25 +82,25 @@ siga.define('lector_qr', {
                 src : "",
                 style: "border: none; background: white;"
               }
-            }            
+            }
           ]
         }
       ];
-      
+
       me.callParent(arguments);
     },
-    
-    
+
+
     init: function(){
       var me=this;
-      
+
       me.internal.canvas=document.createElement("canvas");
       me.internal.canvas.width=me.getCmp("camara").resolution.width;
       me.internal.canvas.height=me.getCmp("camara").resolution.height;
-      
+
       me.getCmp("camara").init();
     },
-    
+
     setDirection: function(type,direction){
       var me=this;
       me.getCmp("direction").setValue("["+type+"] "+direction);
@@ -107,35 +108,35 @@ siga.define('lector_qr', {
       Ext.get(me._("frame")).set({src:direction});
       Ext.get(me._("frame")).set({style:{display:""}});
     },
-    
+
     openView: function(result){
       var me=this;
-      
+
       var type=result[0][0];
       var url=result[0][2];
-      
+
       if(Ext.form.field.VTypes.url(url)){
-        me.getCmp("camara").pause();        
+        me.getCmp("camara").pause();
         me.getCmp("camara").hide();
         me.getCmp("toolbar").show();
-        
+
         me.setDirection(type,url);
         me.getCmp("view").show();
         return;
       }
-      
+
       alert("No es una url valida: "+url);
     },
-    
+
     closeView: function(){
       var me=this;
       me.getCmp("camara").play();
 
       Ext.get(me._("frame")).set({src:""});
-      
+
       me.getCmp("toolbar").hide();
-      me.getCmp("camara").show();   
-      
+      me.getCmp("camara").show();
+
       me.getCmp("view").hide();
     }
 });

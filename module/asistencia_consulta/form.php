@@ -9,8 +9,8 @@
  *
  *  @author Carlos Pinto <pintocar83@gmail.com>
  *  @license http://www.gnu.org/licenses/gpl.html GNU General Public License
- *  @copyright Copyright (c) 2014, FUNDACITE Sucre 
- *  
+ *  @copyright Copyright (c) 2014, FUNDACITE Sucre
+ *
  *  @version 2016.01.07
  */
 include_once("../../library/include.php");
@@ -19,7 +19,10 @@ include_once("../../library/functions/letra_dia_semana.php");
 include_once("../../library/functions/letra_mes.php");
 
 
-$db=SIGA::DBController("siga");
+$database=SIGA::database();
+if(!$database)
+  $database=SIGA_CONFIG::$database_default;
+$db=SIGA::DBController($database);
 
 
 $user=SIGA::user();
@@ -40,7 +43,7 @@ if(isset($_REQUEST["id_persona"]))
   $id_persona=$_REQUEST["id_persona"];
 
 //si no hay persona seleccionada, abrir por defecto la cuenta
-if(!$id_persona){  
+if(!$id_persona){
   $user=SIGA::user();
   if($user){
     $user_inf=$db->Execute("SELECT id_persona_responsable FROM modulo_base.usuario WHERE usuario='$user'");
@@ -118,32 +121,32 @@ $lista_personal=$db->Execute("SELECT
       margin-left: 10px;
       /*line-height: 1.4;*/
     }
-    
+
     .nombre_apellidor{
       font-size: 20px;
       font-weight: bold;
       text-align: left;
       color: #000000;
-      
+
     }
-    
+
     .cedula{
       font-size: 12px;
       text-align: left;
       color: #545454;
-      
+
     }
-    
+
     #bloque_asistencia{
-      
-      
+
+
     }
-    
+
     .tabla_asistencia{
       width: 100%;
-      
+
     }
-    
+
     .tabla_asistencia_cabecera{
       text-align: center;
       font-weight: bold;
@@ -151,7 +154,7 @@ $lista_personal=$db->Execute("SELECT
       color: #FFFFFF;
       background-color: #545454;
     }
-    
+
     .tabla_asistencia_contenido{
       text-align: center;
       background-color: #FFF;
@@ -159,128 +162,129 @@ $lista_personal=$db->Execute("SELECT
       white-space: nowrap;
       cursor: pointer;
     }
-    
+
     .tabla_asistencia_col_dia{
       font-weight: bold;
       background-color: #DBDBDB;
     }
-    
+
     .tabla_asistencia_col_dia div{
       font-weight: normal;
       font-size: 9px;
     }
-    
+
     .tabla_asistencia_col_totalhoras{
       background-color: #EAEAEA;
     }
-    
+
     .tabla_asistencia_col_totaldiario{
       font-weight: bold;
       background-color: #DBDBDB;
-      
+
     }
-    
+
     .tabla_asistencia_fila_blanca{
       background-color: #FFF;
     }
-    
+
     .lista_empleados{
       white-space: nowrap;
       font-weight: bold;
       font-size: 14px;
       width: 1%;
     }
-    
+
     .menu{
       border: 1px solid #D5E7ED;
       margin-bottom: 2px;
-      background-color: #E6EFF4;      
+      background-color: #E6EFF4;
       border-radius: 0px;
       color: #545454;
       cursor: pointer;
       padding: 0px 10px 0px 10px;
       text-align: center;
     }
-    
+
     .menu:hover{
       background-color: #FFF9C6;
     }
-    
+
     .menu_sel{
       color: #FFF;
       background-color: #537689;
     }
-    
+
     .menu_sel:hover{
       color: #000000;
     }
-    
+
     .menu_nombre_apellido{
       font-size: 12px;
       font-weight: bold;
     }
-    
+
     .menu_cedula{
       font-size: 9px;
       font-weight: normal;
     }
-    
+
     .menu_superior{
       border: 1px solid #F9F463;
       margin-bottom: 2px;
-      background-color: #FFFD9E;      
+      background-color: #FFFD9E;
       border-radius: 0px;
       color: #000000;
       padding: 0px 10px 0px 10px;
       position: fixed;
       top: 0px;
       right: 0px;
+      z-index: 1000;
 
     }
-    
+
     .select, input{
       border: 1px solid #E0E0E0;
       background: #FFF;
       font-size: 18px;
-      
+
     }
-    
+
     .tabla_asistencia_contenido:hover,
     .tabla_asistencia_contenido:hover .tabla_asistencia_col_dia,
     .tabla_asistencia_contenido:hover .tabla_asistencia_col_totalhoras,
-    .tabla_asistencia_contenido:hover .tabla_asistencia_col_totaldiario    
+    .tabla_asistencia_contenido:hover .tabla_asistencia_col_totaldiario
     {
       background-color: #FFFAB7;
     }
-    
+
     .tabla_asistencia_col_nota{
       font-weight: normal;
       font-size: 10px;
       line-height: 0.9;
       width: 150px;
       padding: 0px;
-      white-space: normal; 
+      white-space: normal;
     }
-    
+
     .hora_manual{
       color: #D30000;
     }
-    
+
     .usuario {
       font-size: 9px;
       /*font-style: italic;*/
       color: gray;
     }
-    
+
     .oculto{
       color: rgba(0,0,0,0.5);
-      
+
     }
-    
+
     .tabla_asistencia td{
       position: relative;
     }
-    
+
     .tabla_asistencia td:hover .asistencia_imagen{
       display: block;
       position: absolute;
@@ -289,7 +293,7 @@ $lista_personal=$db->Execute("SELECT
       border: 1px solid #A3A3A3;
       z-index: 2000;
     }
-    
+
     .asistencia_imagen{
       display: none;
     }
@@ -299,29 +303,29 @@ $lista_personal=$db->Execute("SELECT
     function onchange_mes(value){
       reload();
     }
-    
+
     function onchange_anio(value){
       reload();
     }
-    
+
     function reload(id_persona){
       if(!id_persona)
         var id_persona="<?php print $id_persona;?>";
       var mes=document.getElementById("s_mes").value;
       var anio=document.getElementById("s_anio").value;
-      
+
       window.location.href='?id_persona='+id_persona+'&mes='+mes+'&anio='+anio;
     }
-    
+
     function reload2(id_persona){
       if(!id_persona)
         var id_persona="<?php print $id_persona;?>";
       var mes=document.getElementById("s_mes").value;
       var anio=document.getElementById("s_anio").value;
-      
+
       window.location.href='?id_persona='+id_persona+'&mes='+mes+'&anio='+anio;
     }
-    
+
     function mostrar_nota(_id_persona,_fecha,_nota){
       var mostrar="";
       mostrar="<table width='100%' cellpadding='3'>";
@@ -329,37 +333,37 @@ $lista_personal=$db->Execute("SELECT
       mostrar+="<td style='padding: 5px 10px 5px 10px;'><b>Nº</b></td>";
       mostrar+="<td style='padding: 5px 10px 5px 10px;'><b>Tipo de Nota</b></td>";
       mostrar+="<td style='padding: 5px 10px 5px 10px;'><b>Descripción</b></td>";
-      <?php      
+      <?php
       if($access=="rw"):
       ?>
       mostrar+="<td style=''></td>";
-      <?php      
+      <?php
       endif;
       ?>
       mostrar+="</tr>";
-      
+
       for(var i=0;i<_nota.length;i++){
         mostrar+="<tr style='background-color: #FFF;'>";
         mostrar+="<td style='text-align: center;'><b>"+(i+1)+"</b></td>";
         mostrar+="<td>"+_nota[i]["tipo"]+"</td>";
         mostrar+="<td>"+_nota[i]["descripcion"]+"</td>";
-        <?php      
+        <?php
         if($access=="rw"):
         ?>
         mostrar+="<td title='Editar' style='cursor: pointer;' onclick='siga.open(\"asistencia_ingresar_nota\",{accion:\"buscar\", id_nota:"+_nota[i]["id"]+"})'><img src='image/icon/icon-edit.png' width='16' height='16'></td>";
-        <?php      
+        <?php
         endif;
         ?>
         mostrar+="</tr>";
       }
-      
+
       mostrar+="</table>";
-      
-      
-      <?php      
+
+
+      <?php
       if($access=="rw" or $access=="a"):
       ?>
-      
+
       mostrar+="<br><b>¿Desea agregar otra nota?</b>";
       parent.Ext.Msg.show({
         title:'NOTAS DEL '+parent.formatDate(_fecha),
@@ -371,7 +375,7 @@ $lista_personal=$db->Execute("SELECT
         }
         });
       <?php
-      else:      
+      else:
       ?>
       parent.Ext.Msg.show({
         title:'NOTAS DEL '+parent.formatDate(_fecha),
@@ -379,11 +383,11 @@ $lista_personal=$db->Execute("SELECT
         buttons:  parent.Ext.Msg.OK
         });
       <?php
-      endif;     
+      endif;
       ?>
     }
-    
-    
+
+
     function crear_nota(_id_persona,_fecha){
       parent.siga.open(
         "asistencia_ingresar_nota",
@@ -392,7 +396,7 @@ $lista_personal=$db->Execute("SELECT
           fecha:_fecha
         });
     }
-    
+
     function ingresar_hora(_id_persona,_fecha,_hora){
       parent.siga.open(
         "asistencia_ingresar_hora",
@@ -402,20 +406,20 @@ $lista_personal=$db->Execute("SELECT
           hora:_hora
         });
     }
-    
+
     function ver_imagen(event, id_asistencia) {
-      if (event.stopPropagation) 
+      if (event.stopPropagation)
         event.stopPropagation();   // W3C model
-      else 
+      else
         event.cancelBubble = true; // IE model
-  
+
       alert(id_asistencia);
-      
+
       //return false;
     }
-    
+
   </script>
-  
+
 </head>
 <body>
   <table width="100%" border="0">
@@ -423,7 +427,7 @@ $lista_personal=$db->Execute("SELECT
       <td colspan="2">
         <div class="menu_superior">
           <b>Mes</b>
-          
+
           <select class="select" id="s_mes" onchange="onchange_mes(value)">
             <?php
             for($i=1;$i<=12;$i++)
@@ -438,25 +442,25 @@ $lista_personal=$db->Execute("SELECT
             ?>
           </select>
 
-        </div>        
+        </div>
       </td>
     </tr>
     <tr>
       <td class="lista_empleados" valign="top">
-        <?php        
+        <?php
         for($l=0;$l<count($lista_personal);$l++){
           $tmp=explode(";",$lista_personal[$l]["denominacion"]);
           $nombre_apellido=$tmp[0]." ".$tmp[2];
           $cedula=$lista_personal[$l]["identificacion_tipo"]."-".number_format($lista_personal[$l]["identificacion_numero"],0,"",".");
           $idp=$lista_personal[$l]["id"];
-          
+
           $add_cls="";
           if($idp==$id_persona)
             $add_cls="menu_sel";
-            
+
           echo "<div class='menu $add_cls' onclick=\"reload('$idp')\">";
           echo "<div class='menu_nombre_apellido'>$nombre_apellido</div>";
-          //echo "<div class='menu_cedula'>$cedula</div>";          
+          //echo "<div class='menu_cedula'>$cedula</div>";
           echo "</div>";
         }
         $add_cls="";
@@ -464,26 +468,26 @@ $lista_personal=$db->Execute("SELECT
           $add_cls="menu_sel";
         echo "<div class='menu $add_cls' onclick=\"reload('-1')\"><div class='menu_nombre_apellido'>TODOS</div></div>";
         ?>
-        
+
       </td>
       <td class="" valign="">
-      
+
   <?php
   if(!$personal)
     echo "<div style='text-align: center; font-size: 14px;'>Haga click en el nombre de la persona,<br>para mostrar su registro de asistencia.</div>";
-  
+
   for($i=0;$i<count($personal);$i++){
     $tmp=explode(";",$personal[$i]["denominacion"]);
     $nombre_apellido=$tmp[0]." ".$tmp[2];
     $cedula=$personal[$i]["identificacion_tipo"]."-".number_format($personal[$i]["identificacion_numero"],0,"",".");
     $idp=$personal[$i]["id_persona"];
 
-    
+
     echo "<div class='contenedor'>";
     echo "<div class='nombre_apellidor'>".$nombre_apellido."</div>";
     echo "<div class='cedula'>".$cedula."</div>";
     echo "<div id='bloque_asistencia'>";
-    
+
     //buscar asistencia de la persona para el mes y anio en curso
     $asistencia_turno=$db->Execute("SELECT
                                 count(fecha) as maximo
@@ -501,7 +505,7 @@ $lista_personal=$db->Execute("SELECT
       $turno=$asistencia_turno[0][0];
     $turno=ceil($turno/2);
     if($turno<2) $turno=2;
-    
+
     echo "<table class='tabla_asistencia' border='0' cellspacing='2' cellpadding='3'>";
     echo "<tr class='tabla_asistencia_cabecera'>";
     echo "<td rowspan='2'>Fecha</td>";
@@ -513,20 +517,20 @@ $lista_personal=$db->Execute("SELECT
     echo "</tr>";
     echo "<tr class='tabla_asistencia_cabecera'>";
     for($t=1;$t<=$turno;$t++)
-      echo "<td>Inicio</td><td>Salida</td><td>Total</td>";    
+      echo "<td>Inicio</td><td>Salida</td><td>Total</td>";
     echo "</tr>";
-    
-    
-    
+
+
+
     for($d=1;$d<=$dias_mes[intval($mes)-1];$d++){
       $dia=$d<10?"0$d":"$d";
-      
-      
+
+
       //si dia de la semana es domingo insertar una fila en blanco
       $dia_semana=date("N",strtotime("$anio-$mes-$dia"));
       if($dia_semana==1)
         echo "<tr class='tabla_asistencia_fila_blanca'><td colspan='9'></td></tr>";
-      
+
       $asistencia_dia=$db->Execute("SELECT
                                       id,
                                       fecha,
@@ -541,28 +545,28 @@ $lista_personal=$db->Execute("SELECT
                                     ORDER BY
                                       fecha,
                                       hora");
-      
-      
+
+
       $fecha="$dia/".$mes."/$anio";
       echo "<tr class='tabla_asistencia_contenido'>";
       echo "<td class='tabla_asistencia_col_dia'><div>".letra_dia_semana($dia_semana)."</div>$fecha</td>";
       $total_diario=0;
-      
+
       for($k=0;$k<count($asistencia_dia);$k+=2){
         $add_img_hentrada="";
         $add_img_hsalida="";
-        
+
         if($user=="admin"){
           $add_img_hentrada="<img class='asistencia_imagen' src='../asistencia_registro/?action=onGet_Imagen&id=".$asistencia_dia[$k]["id"]."' width='200' height='100' />";
           if(isset($asistencia_dia[$k+1]["id"]))
             $add_img_hsalida= "<img  class='asistencia_imagen' src='../asistencia_registro/?action=onGet_Imagen&id=".$asistencia_dia[$k+1]["id"]."' width='200' height='100' />";
         }
 
-        
-        $timestamp_hentrada=strtotime($asistencia_dia[$k]["hora"]);        
+
+        $timestamp_hentrada=strtotime($asistencia_dia[$k]["hora"]);
         $manual_hentrada=$asistencia_dia[$k]["manual"];
         $usuario_hentrada=$asistencia_dia[$k]["usuario_validador"];
-        
+
         $timestamp_hsalida="";
         $manual_hsalida="";
         $usuario_hsalida=NULL;
@@ -572,40 +576,40 @@ $lista_personal=$db->Execute("SELECT
           $manual_hsalida=$asistencia_dia[$k+1]["manual"];
         if(isset($asistencia_dia[$k+1]["usuario_validador"]))
           $usuario_hsalida=$asistencia_dia[$k+1]["usuario_validador"];
-        
+
         if(!$timestamp_hsalida or !$timestamp_hentrada)
           $total_horas="";
         else
           $total_horas=date("H:i:s",strtotime("00:00:00")+$timestamp_hsalida-$timestamp_hentrada);
-        
+
         if($total_horas)//si hay total horas por tuno, sumar al total diario
           $total_diario+=($timestamp_hsalida-$timestamp_hentrada);
-        
+
         if($timestamp_hentrada){//si hay hora de entrada
           $add_td='';
           $add_cls='';
           if($usuario_hentrada===NULL){ $usuario_hentrada="&nbsp;"; $add_cls.="oculto "; }
           elseif($usuario_hentrada)     $usuario_hentrada="$usuario_hentrada";
           else                          $usuario_hentrada="&nbsp;";
-          
+
           if($manual_hentrada=='t' or $user=="admin"){
             if($manual_hentrada=='t') $add_cls.="hora_manual ";
             $add_td="onclick='ingresar_hora($idp,\"$anio-$mes-$dia\",\"".date("H:i:s",$timestamp_hentrada)."\")'";
           }
           if($add_cls) $add_cls="class='$add_cls'";
-          
+
           echo "<td $add_cls $add_td>".date("h:i:s a",$timestamp_hentrada)."<div class='usuario'>$usuario_hentrada</div>$add_img_hentrada</td>";
         }
         else
           echo "<td onclick='ingresar_hora($idp,\"$anio-$mes-$dia\")'>-</td>";
-          
+
         if($timestamp_hsalida){//si hay hora de salida
           $add_td='';
           $add_cls='';
           if($usuario_hsalida===NULL){ $usuario_hsalida="&nbsp;"; $add_cls.="oculto "; }
           elseif($usuario_hsalida)     $usuario_hsalida="$usuario_hsalida";
           else                         $usuario_hsalida="&nbsp;";
-          
+
           if($manual_hsalida=='t' or $user=="admin"){
             if($manual_hsalida=='t') $add_cls.="hora_manual ";
             $add_td="onclick='ingresar_hora($idp,\"$anio-$mes-$dia\",\"".date("H:i:s",$timestamp_hsalida)."\")'";
@@ -626,7 +630,7 @@ $lista_personal=$db->Execute("SELECT
         echo "<td class='tabla_asistencia_col_totaldiario'>".date("H:i:s",strtotime("00:00:00")+$total_diario)."</td>";
       else
         echo "<td class='tabla_asistencia_col_totaldiario'></td>";
-      
+
       //notas
       $asistencia_nota=$db->Execute("SELECT
                                       id,
@@ -644,28 +648,28 @@ $lista_personal=$db->Execute("SELECT
           $nota=substr($asistencia_nota[0]["descripcion"],0,50)."...";
         else
           $nota=$asistencia_nota[0]["descripcion"];
-          
+
         if(count($asistencia_nota)>1)
           $nota.="<sup>(".count($asistencia_nota).")<sup>";
         $onclick="mostrar_nota(\"$idp\",\"$anio-$mes-$dia\",".json_encode($asistencia_nota).")";
       }
       echo "<td class='tabla_asistencia_col_nota' onclick='$onclick'>$nota</td>";
-      
+
       echo "</tr>";
     }
-    
+
     echo "</table>";
-    
+
     echo "</div>";
     echo "</div>";
   }
-  
+
   ?>
-  
+
         </td>
     </tr>
   </table>
-  
-  
+
+
 </body>
 </html>

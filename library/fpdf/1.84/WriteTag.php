@@ -3,32 +3,33 @@ include_once('rotation.php');
 
 class PDF_WriteTag extends PDF_Rotate
 {
-	var $wLine; // Maximum width of the line
-	var $hLine; // Height of the line
-	var $Text; // Text to display
-	var $border;
-	var $align; // Justification of the text
-	var $fill;
-	var $Padding;
-	var $lPadding;
-	var $tPadding;
-	var $bPadding;
-	var $rPadding;
-	var $TagStyle; // Style for each tag
-	var $Indent;
-	var $Space; // Minimum space between words
-	var $PileStyle; 
-	var $Line2Print; // Line to display
-	var $NextLineBegin; // Buffer between lines 
-	var $TagName;
-	var $Delta; // Maximum width minus width
-	var $StringLength; 
-	var $LineLength;
-	var $wTextLine; // Width minus paddings
-	var $nbSpace; // Number of spaces in the line
-	var $Xini; // Initial position
-	var $href; // Current URL
-	var $TagHref; // URL for a cell
+	protected $wLine; // Maximum width of the line
+	protected $hLine; // Height of the line
+	protected $Text; // Text to display
+	protected $border;
+	protected $align; // Justification of the text
+	protected $fill;
+	protected $Padding;
+	protected $lPadding;
+	protected $tPadding;
+	protected $bPadding;
+	protected $rPadding;
+	protected $TagStyle; // Style for each tag
+	protected $Indent;
+	protected $Bullet; // Bullet character
+	protected $Space; // Minimum space between words
+	protected $PileStyle; 
+	protected $Line2Print; // Line to display
+	protected $NextLineBegin; // Buffer between lines 
+	protected $TagName;
+	protected $Delta; // Maximum width minus width
+	protected $StringLength; 
+	protected $LineLength;
+	protected $wTextLine; // Width minus paddings
+	protected $nbSpace; // Number of spaces in the line
+	protected $Xini; // Initial position
+	protected $href; // Current URL
+	protected $TagHref; // URL for a cell
 
 	// Public Functions
 
@@ -48,6 +49,7 @@ class PDF_WriteTag extends PDF_Rotate
 		$this->PileStyle=array();		
 		$this->TagHref=array();
 		$this->LastLine=false;
+		$this->NextLineBegin=array();
 
 		$this->SetSpace();
 		$this->Padding();
@@ -64,14 +66,15 @@ class PDF_WriteTag extends PDF_Rotate
 	}
 
 
-	function SetStyle($tag, $family, $style, $size, $color, $indent=-1)
+	function SetStyle($tag, $family, $style, $size, $color, $indent=-1, $bullet='')
 	{
-		 $tag=trim($tag);
-		 $this->TagStyle[$tag]['family']=trim($family);
-		 $this->TagStyle[$tag]['style']=trim($style);
-		 $this->TagStyle[$tag]['size']=trim($size);
-		 $this->TagStyle[$tag]['color']=trim($color);
-		 $this->TagStyle[$tag]['indent']=$indent;
+		$tag=trim($tag);
+		$this->TagStyle[$tag]['family']=trim($family);
+		$this->TagStyle[$tag]['style']=trim($style);
+		$this->TagStyle[$tag]['size']=trim($size);
+		$this->TagStyle[$tag]['color']=trim($color);
+		$this->TagStyle[$tag]['indent']=$indent;
+		$this->TagStyle[$tag]['bullet']=$bullet;
 	}
 
 
@@ -142,14 +145,16 @@ class PDF_WriteTag extends PDF_Rotate
 	}
 
 
-	function DoStyle($tag) // Applies a style
+	function DoStyle($ind) // Applies a style
 	{
-		$tag=trim($tag);
-		$this->SetFont($this->TagStyle[$tag]['family'],
-			$this->TagStyle[$tag]['style'],
-			$this->TagStyle[$tag]['size']);
+		if(!isset($this->TagStyle[$ind]))
+			return;
 
-		$tab=explode(",",$this->TagStyle[$tag]['color']);
+		$this->SetFont($this->TagStyle[$ind]['family'],
+			$this->TagStyle[$ind]['style'],
+			$this->TagStyle[$ind]['size']);
+
+		$tab=explode(",",$this->TagStyle[$ind]['color']);
 		if(count($tab)==1)
 			$this->SetTextColor($tab[0]);
 		else
@@ -166,8 +171,7 @@ class PDF_WriteTag extends PDF_Rotate
 			$family=$this->TagStyle[$tag]['family'];
 		else
 		{
-			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			foreach($this->PileStyle as $val)
 			{
 				$val=trim($val);
 				if($this->TagStyle[$val]['family']!="") {
@@ -185,8 +189,7 @@ class PDF_WriteTag extends PDF_Rotate
 			$bold=false;
 			$italic=false;
 			$underline=false;
-			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			foreach($this->PileStyle as $val)
 			{
 				$val=trim($val);
 				$style1=strtoupper($this->TagStyle[$val]['style']);
@@ -215,8 +218,7 @@ class PDF_WriteTag extends PDF_Rotate
 			$size=$this->TagStyle[$tag]['size'];
 		else
 		{
-			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			foreach($this->PileStyle as $val)
 			{
 				$val=trim($val);
 				if($this->TagStyle[$val]['size']!=0) {
@@ -231,8 +233,7 @@ class PDF_WriteTag extends PDF_Rotate
 			$color=$this->TagStyle[$tag]['color'];
 		else
 		{
-			reset($this->PileStyle);
-			while(list($k,$val)=each($this->PileStyle))
+			foreach($this->PileStyle as $val)
 			{
 				$val=trim($val);
 				if($this->TagStyle[$val]['color']!="") {
@@ -269,7 +270,7 @@ class PDF_WriteTag extends PDF_Rotate
 			if(preg_match("/(.+) (.+)='(.+)'/",$regs[2])) {
 				$tab1=preg_split("/ +/",$regs[2]);
 				$tab[2]=trim($tab1[0]);
-				while(list($i,$couple)=each($tab1))
+				foreach($tab1 as $i=>$couple)
 				{
 					if($i>0) {
 						$tab2=explode("=",$couple);
@@ -336,6 +337,7 @@ class PDF_WriteTag extends PDF_Rotate
 				if($this->TagStyle[$tab[2]]['indent']!=-1) {
 					$Length+=$this->TagStyle[$tab[2]]['indent'];
 					$this->Indent=$this->TagStyle[$tab[2]]['indent'];
+					$this->Bullet=$this->TagStyle[$tab[2]]['bullet'];
 				}
 				if($tab[2]=="a")
 					$this->href=$tab['href'];
@@ -442,10 +444,12 @@ class PDF_WriteTag extends PDF_Rotate
 		$y=$this->GetY();
 		$this->SetXY($this->Xini+$this->lPadding,$y);
 
-		if($this->Indent!=-1) {
-			if($this->Indent!=0)
-				$this->Cell($this->Indent,$this->hLine);
+		if($this->Indent>0) {
+			if($this->Bullet!='')
+				$this->SetTextColor(0);
+			$this->Cell($this->Indent,$this->hLine,$this->Bullet);
 			$this->Indent=-1;
+			$this->Bullet='';
 		}
 
 		$space=$this->LineAlign();
@@ -509,7 +513,6 @@ class PDF_WriteTag extends PDF_Rotate
 		$y=$this->GetY()+$this->hLine/2;
 		$this->SetXY($x,$y);
 	}
-
 } // End of class
 
 ?>

@@ -6,12 +6,12 @@ header('Content-Type: text/html; charset=utf-8');
 <html>
 <head>
   <style>
-    
+
     body{
       font-family: sans-serif;
     }
-    
-    
+
+
     .contenedor_video_foto{
       text-align: center;
     }
@@ -23,7 +23,7 @@ header('Content-Type: text/html; charset=utf-8');
       /*font-style: italic;*/
       margin-bottom: 5px;
     }
-    
+
     input[type=button] {
       font-size: 11px;
       padding:0px 15px;
@@ -33,11 +33,11 @@ header('Content-Type: text/html; charset=utf-8');
       -webkit-border-radius: 5px;
       border-radius: 5px;
     }
-    
+
     input[type=button]:hover, .buttons_hover {
         background-color:rgba(255,204,0,0.8);
     }
-    
+
   </style>
   <script type="text/javascript">
     var siga=parent.siga;
@@ -55,8 +55,8 @@ header('Content-Type: text/html; charset=utf-8');
       request.open("GET", url, false); //<-- false makes it a synchonous request!
       request.send(null);
       return request.responseText;//return Ext.decode(request.responseText);
-      } 
-    
+      }
+
     //function toBinaryImage(pixels) {
     //            var data = pixels.data;
     //            for (var i=0; i<data.length; i+=4)
@@ -72,45 +72,45 @@ header('Content-Type: text/html; charset=utf-8');
     //                }
     //            }
     //        }
-    
+
     var WEBCAM={
       video: null,
       width: 500, //320
       height: 375, //240
       context: "",
       canvas: null,
-      
+
       imgDataPrevio: null,
       intervalTimeOut: 1000,
       intervalHandler: null,
       autocerrar: 0,
-      
+
       nuevo_registro: {
         id_persona: null,
         fecha: null,
         hora: null
       },
-      
-      
+
+
       displayAsistencia: function(result){
         var me=this;
-        
-        document.getElementById("imagen_persona").setAttribute("src","../../image/photo-default.png"); 
+
+        document.getElementById("imagen_persona").setAttribute("src","../../image/photo-default.png");
         document.getElementById("CANVAS_STREAM").style.display="";
         document.getElementById("DISPLAY").style.display="none";
         document.getElementById("codigo").style.visibility="";
-        
+
         document.getElementById("nombre_apellido").innerHTML="";
         document.getElementById("cedula").innerHTML="";
         document.getElementById("registro_nuevo_fecha").innerHTML="";
         document.getElementById("registro_nuevo_hora").innerHTML="";
         document.getElementById("registro_nuevo_alerta").innerHTML="";
-        
+
         document.getElementById("registro_previo_fecha").innerHTML="";
         document.getElementById("registro_previo_hora").innerHTML="";
         //document.getElementById("registro_previo_hora_s").innerHTML="";
-        
-        
+
+
         //si la imagen enviada al servidor es valida
         if(result!="null"){
           result=parent.Ext.JSON.decode(result);
@@ -121,13 +121,13 @@ header('Content-Type: text/html; charset=utf-8');
           document.getElementById("registro_nuevo_hora").innerHTML=result["registro_nuevo"]["hora_mostrar"];
           if(result["registro_nuevo"]["alerta"])
             document.getElementById("registro_nuevo_alerta").innerHTML="Jornada laboral comprendida entre 08:00am y 4:30pm.<br>Tiempo de retraso "+result["registro_nuevo"]["alerta"]+".";
-          
+
           for(var i=0;i<result["registro_previo"].length;i++){
             if(i==0 || (i>0 && result["registro_previo"][i]["fecha"]!=result["registro_previo"][i-1]["fecha"]))
               document.getElementById("registro_previo_fecha").innerHTML+=parent.formatDate(result["registro_previo"][i]["fecha"])+"<br>";
             else
               document.getElementById("registro_previo_fecha").innerHTML+="&nbsp;<br>";
-            
+
             if(result["registro_previo"][i]["hora"])
               document.getElementById("registro_previo_hora").innerHTML+=result["registro_previo"][i]["hora"]+"<br>";
             else
@@ -139,46 +139,46 @@ header('Content-Type: text/html; charset=utf-8');
               document.getElementById("registro_previo_hora_s").innerHTML+="&nbsp;<br>";
             */
           }
-          
-          
-          
-          
-          
+
+
+
+
+
           document.getElementById("CANVAS_STREAM").style.display="none";//document.getElementById("WEBCAM_STREAM").style.display="none";
           document.getElementById("DISPLAY").style.display="";
           document.getElementById("codigo").style.visibility="hidden";
-          
-          
+
+
           me.nuevo_registro.id_persona=result["id_persona"];
           me.nuevo_registro.fecha=result["registro_nuevo"]["fecha"];
           me.nuevo_registro.hora=result["registro_nuevo"]["hora"];
-          
+
           me.autocerrar=5;
           me.bucleAutoCerrar();
           return true;
         }
         return false;
       },
-      
+
       stopInterval: function(){
         var me=this;
         //clearInterval(me.intervalHandler);
         clearTimeout(me.intervalHandler);
-        
+
       },
-      
+
       registrarAsistencia: function(){
         var me=this;
         var result=postData("registrar.php","id_persona="+me.nuevo_registro.id_persona+"&fecha="+me.nuevo_registro.fecha+"&hora="+me.nuevo_registro.hora);
         if(result!="true") {alert("Error al registrar datos.");}
-        
-        document.getElementById("imagen_persona").setAttribute("src","../../image/photo-default.png"); 
+
+        document.getElementById("imagen_persona").setAttribute("src","../../image/photo-default.png");
         document.getElementById("CANVAS_STREAM").style.display="";
         document.getElementById("DISPLAY").style.display="none";
         document.getElementById("codigo").style.visibility="";
         document.getElementById("codigo").focus();
       },
-      
+
       bucleAutoCerrar: function(){
         var me=this;
         document.getElementById("cuenta_atras").innerHTML=me.autocerrar;
@@ -190,9 +190,9 @@ header('Content-Type: text/html; charset=utf-8');
         setTimeout('WEBCAM.bucleAutoCerrar()',1000);
         document.getElementById("btn_aceptar").focus();
       },
-      
+
     };
-    
+
     function onkeypressenter(event){
       if (event.which == 13 || event.keyCode == 13) {
         if(String(document.getElementById("codigo").value).length!=4) return false;
@@ -212,35 +212,35 @@ header('Content-Type: text/html; charset=utf-8');
           document.getElementById("codigo").value="";
           document.getElementById("codigo").focus();
         }
-        
-        
+
+
         return false;
       }
       return true;
     }
-    
+
     function onLoad(){
       document.getElementById('codigo').focus();
       document.getElementById('logo').src="../../"+siga.value("folder")+"/logo_01.jpg";
     }
-    
+
   </script>
-  
-  
+
+
 </head>
 <body onload="onLoad()">
   <div class="contenedor_video_foto">
     <div class="contenedor_titulo">Sistema para el Control de Asistencia</div>
     <!--Contenedor principal-->
     <div style="background-color: #FFFFFF; width: 500px; border: 2px solid #282828; left: 50%; margin-left: -250px; position: relative;">
-      <div style="width: 100%; height: 100%;">        
+      <div style="width: 100%; height: 100%;">
         <!--Información de la barra superior-->
         <div style="background-color: #282828; color: #FFF; font: 10px sans-serif; padding: 2px;">
           Para marcar la asistencia ingrese el código asignado.
-        </div>        
+        </div>
         <!--Donde se mostrará el video de la camara-->
         <div id="CANVAS_STREAM" style="width: 500px; height: 375px;">
-          
+
           <table width="100%" border="0" style="padding-top: 50px;">
             <tr>
               <!--<td width="150"><img src='../images/dedometro.png' width='120' /></td>-->
@@ -262,9 +262,9 @@ header('Content-Type: text/html; charset=utf-8');
             </tr>
           </table>
           <img src='../../image/menu/icon-asistencia_registro.png' width='100'  style='position: absolute; top: 80px; left: 20px;'/>
-          
+
         </div>
-        
+
         <!--Donde se mostrará la infromación de la asistencia ingresada-->
         <div id="DISPLAY"  style="width: 500px; height: 375px; background-color: #FFF; display: none; font-family: sans-serif;">
           <table width='100%'>
@@ -292,7 +292,7 @@ header('Content-Type: text/html; charset=utf-8');
                 </tr>
               </table>
               <div style="height: 100px; width: 100%; overflow: auto;" align="center">
-                <table align="center" width="100%" border = "0" cellpadding="3" cellspacing="2" style="border: 0px solid #000;">              
+                <table align="center" width="100%" border = "0" cellpadding="3" cellspacing="2" style="border: 0px solid #000;">
                   <tr valign="top">
                     <td width="50%" align = "center" style="background-color: #FCFCFC;" id='registro_previo_fecha'></td>
                     <td width="" align = "center" style="background-color: #FCFCFC;" id='registro_previo_hora'></td>
@@ -302,7 +302,7 @@ header('Content-Type: text/html; charset=utf-8');
             </div>
           </div>
           <br>
-          <span style="font-size: 11px; font-style: italic; color: #9E9E9E; position: absolute; bottom: 0px; left: 0px; width: 100%; padding-bottom: 5px;">Este mensaje se cerrará automáticamente en <span id="cuenta_atras"></span> segundos.<br>No cierre la ventana hasta finalizar.<br><input id="btn_aceptar" type="button" value="Aceptar" onclick="WEBCAM.autocerrar=0;" /></span> 
+          <span style="font-size: 11px; font-style: italic; color: #9E9E9E; position: absolute; bottom: 0px; left: 0px; width: 100%; padding-bottom: 5px;">Este mensaje se cerrará automáticamente en <span id="cuenta_atras"></span> segundos.<br>No cierre la ventana hasta finalizar.<br><input id="btn_aceptar" type="button" value="Aceptar" onclick="WEBCAM.autocerrar=0;" /></span>
         </div>
         <!--Fin DISPLAY-->
       </div>

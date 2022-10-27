@@ -6,7 +6,7 @@
  *    modulo_asistencia/ingresar_hora.js y
  *    modulo_asistencia/core/index.php
  *  para registrar, modificar y eliminar horas en el registro de asistencia.
- *  
+ *
  *  @param  integer $id_persona    Identificador de la persona a registrar la asistencia.
  *  @param  string  $fecha         Fecha correspondiente al registro
  *  @param  string  $hora          Hora a ingresar en el registro.
@@ -17,12 +17,12 @@
  *  @param  boolean $manual        Indica que el registro a ingresar es manual.
  *  @param  string  $imagen        Captura fotográfica tomada al marcar la asistencia
  *  @return boolean                Indica si el registro tuvo exito o no.
- *  
- *  
+ *
+ *
  *  @author Carlos Pinto <pintocar83@gmail.com>
  *  @license http://www.gnu.org/licenses/gpl.html GNU General Public License
- *  @copyright Copyright (c) 2014, FUNDACITE Sucre 
- *  
+ *  @copyright Copyright (c) 2014, FUNDACITE Sucre
+ *
  *  @version 2014.09.09
  */
 
@@ -65,7 +65,7 @@ else{
 }
 
 
-$hora_anterior=SIGA::param("hora_anterior");  
+$hora_anterior=SIGA::param("hora_anterior");
 if($hora_anterior)
   $hora_anterior=date("H:i:s",strtotime($hora_anterior));
 
@@ -91,12 +91,15 @@ if(SIGA::data()){
 
 
 
-$db=SIGA::DBController("siga");
+$database=SIGA::database();
+if(!$database)
+  $database=SIGA_CONFIG::$database_default;
+$db=SIGA::DBController($database);
 
 
 $return="";
 //si es un registro nuevo, (insertar)
-if($hora and !$hora_anterior): 
+if($hora and !$hora_anterior):
   /*
   $data=array("id_persona"=>"'$id_persona'",
               "fecha"=>"'$fecha'",
@@ -104,7 +107,7 @@ if($hora and !$hora_anterior):
               "manual"=>"$manual",
               "usuario_validador"=>"$usuario_validador"
               );
-  $return=$db->Insert("modulo_asistencia.asistencia",$data);            
+  $return=$db->Insert("modulo_asistencia.asistencia",$data);
   */
   $return=$db->Execute("INSERT INTO modulo_asistencia.asistencia(id_persona,fecha,hora,manual,usuario_validador)
                        VALUES('$id_persona','$fecha','$hora',$manual,$usuario_validador) RETURNING id");
@@ -112,9 +115,9 @@ if($hora and !$hora_anterior):
     $id=$return[0][0];
     if(!file_exists(SIGA::databasePath()."/asistencia_registro/"))
       mkdir(SIGA::databasePath()."/asistencia_registro/");
-    
-    $data=$_POST["imagen"];    
-    list($type, $data)      = explode(',', $data);    
+
+    $data=$_POST["imagen"];
+    list($type, $data)      = explode(',', $data);
     if($type=="data:image/png;base64"){
       //crear imagen png en el servidor
       $data = str_replace(' ', '+', $data);
@@ -134,7 +137,7 @@ elseif(!$hora and $hora_anterior):
     $return=$db->Delete("modulo_asistencia.asistencia","id='$id'");
     if(file_exists(SIGA::databasePath()."/asistencia_registro/$id.png"))
       unlink(SIGA::databasePath()."/asistencia_registro/$id.png");
-  }  
+  }
 endif;
 
 if(!$return)

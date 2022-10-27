@@ -44,7 +44,7 @@ else{
         u.usuario like '".SIGA::user()."' and
         u.id_persona_responsable=p.id";
     $persona=$db->Execute($sql);
-    
+
     $nacionalidad=$persona[0]["identificacion_tipo"];
     $cedula=$persona[0]["identificacion_numero"];
 }
@@ -81,19 +81,22 @@ $cargo=$db->Execute("SELECT
                                    from modulo_nomina.ficha_cargo
                                    where id_ficha=$id_ficha and fecha <= '$fecha_culminacion'
                                    order by fecha desc
-                                   limit 1)");   
+                                   limit 1)");
 
 if(!isset($cargo[0]["cargo_denominacion"])){
-  print "Debe asignarle un cargo para generar el carnet.";
-  exit;
+  $cargo[0]["cargo_denominacion"]="";
+  //exit;
 }
 //SIGA::databasePath()."/config/"
+if(isset($detalle_ficha[0]["foto"])){
+  $foto=SIGA::databasePath()."/persona/".$detalle_ficha[0]["foto"];
 
-$foto=SIGA::databasePath()."/persona/".$detalle_ficha[0]["foto"];
-
-if(!file_exists($foto)){
-  print "La persona no posee foto.";
-  exit;
+  if(!file_exists($foto)){
+    $foto="../image/photo-default.png";
+  }
+}
+else{
+  $foto="../image/photo-default.png";
 }
 
 
@@ -123,7 +126,7 @@ while(1){
   $alto_escala=$tamano_foto_h*$escala;
   //print "<br>ANCHO: ".$tamaño["foto"]['ancho']."  ALTO: ".$alto_escala;
   if($alto_escala>=26){
-    $tamaño["foto"]['ancho']--;    
+    $tamaño["foto"]['ancho']--;
   }
   else{
     break;
@@ -191,7 +194,11 @@ $pdf->SetX(3);
 $pdf->MultiCell($tamano["pagina"]['ancho']-3*2,3,utf8_decode("En caso de extravio favor reportarlo al siguiente número telefónico: (0293)467.25.31"),'','J');
 
 
-$url="http://www.fundacite-sucre.gob.ve/query?".base64_encode("FICHA=$nacionalidad$cedula");
+//$url="http://www.fundacite-sucre.gob.ve/query?".base64_encode("FICHA=$nacionalidad$cedula");
+$config=SIGA::configuration(["public/site"]);
+$url=isset($config["public/site"])?$config["public/site"]:"";
+
+$url=$url."query/?".base64_encode("FICHA=$nacionalidad$cedula");
 QRcode::png($url,"tmp/qrcode_$nacionalidad$cedula.png",QR_ECLEVEL_L,4);
 $pdf->Image("tmp/qrcode_$nacionalidad$cedula.png",($tamano["pagina"]['ancho']-30)/2,50,30,30);
 
