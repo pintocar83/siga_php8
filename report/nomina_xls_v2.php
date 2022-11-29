@@ -17,7 +17,7 @@ include_once("../library/functions/str_clear.php");
 include_once("../library/functions/sql_query_total.php");
 include_once("../library/functions/column_hash.php");
 include_once("../library/functions/remove_accent.php");
-include_once("../library/fpdf/1.84/rotation.php");
+//include_once("../library/fpdf/1.84/rotation.php");
 include_once("../library/phpexcel/PHPExcel.php");
 //include_once("../class/nomina_v2.class.php");
 include_once("../class/nomina.class.php");
@@ -52,7 +52,7 @@ $id_nomina=explode(",",SIGA::paramGet("id_nomina"));
 
 $filtro_ficha_id=SIGA::paramGet("filtro_ficha_id");
 if($filtro_ficha_id){
-		$filtro_ficha_id=explode(",",$filtro_ficha_id);	
+		$filtro_ficha_id=explode(",",$filtro_ficha_id);
 }
 
 $text="";
@@ -117,30 +117,29 @@ function Cabecera(){
 	global $config, $periodo, $ln, $activeSheet, $columna, $n_columna, $ultima_columna, $concepto, $ancho, $t_n, $t_cedula, $t_nombre, $t_cargo, $t_antiguedad, $t_neto, $t_asignaciones, $t_deducciones, $t_separacion, $t_firma, $t_col, $p, $border;
 	global $sw_deducciones, $sw_aportes;
 	global $columna_base;
-	
+
 	$n_columna=0;
 	$id_sueldo_normal="";
-	$id_tiempo_servicio_otro="";	
+	$id_tiempo_servicio_otro="";
 
 	$activeSheet->getRowDimension($ln)->setRowHeight(120);
 
-	$activeSheet->setCellValueExplicit("A$ln","Nº",PHPExcel_Cell_DataType::TYPE_STRING);	
-	$activeSheet->setCellValueExplicit("B$ln","CÉDULA",PHPExcel_Cell_DataType::TYPE_STRING);	
-	$activeSheet->setCellValueExplicit("C$ln","NOMBRES Y APELLIDOS",PHPExcel_Cell_DataType::TYPE_STRING);	
+	$activeSheet->setCellValueExplicit("A$ln","Nº",PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("B$ln","CÉDULA",PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("C$ln","NOMBRES Y APELLIDOS",PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("D$ln","CARGO",PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("E$ln","ESCALA SALARIAL",PHPExcel_Cell_DataType::TYPE_STRING);
-
-	$activeSheet->setCellValueExplicit("F$ln","GENERO",PHPExcel_Cell_DataType::TYPE_STRING);	
-	$activeSheet->setCellValueExplicit("G$ln","INGRESO",PHPExcel_Cell_DataType::TYPE_STRING);	
-
-	$activeSheet->setCellValueExplicit("H$ln","AÑOS",PHPExcel_Cell_DataType::TYPE_STRING);	
-	$activeSheet->setCellValueExplicit("I$ln","DÍAS",PHPExcel_Cell_DataType::TYPE_STRING);	
+	$activeSheet->setCellValueExplicit("F$ln","ESTRUCTURA\nPRESUPUESTARIA",PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("G$ln","GENERO",PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("H$ln","INGRESO",PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("I$ln","AÑOS",PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("J$ln","DÍAS",PHPExcel_Cell_DataType::TYPE_STRING);
 
 	//$columna_base=6;
 	$n_columna=0;
 	for($i=0;$i<count($concepto);$i++){
 		if($concepto[$i]["tipo"]=="A" or $concepto[$i]["tipo"]=="RD" or $concepto[$i]["tipo"]=="_"){
-			$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln",$concepto[$i]["concepto"],PHPExcel_Cell_DataType::TYPE_STRING);			
+			$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln",$concepto[$i]["concepto"],PHPExcel_Cell_DataType::TYPE_STRING);
 			$columna[$concepto[$i]["id_concepto"]]=$n_columna;
 			$n_columna++;
 		}
@@ -153,19 +152,19 @@ function Cabecera(){
 			}
 		}
 	}
-	
+
 	//columa del sueldo normal
 	if($id_sueldo_normal){
-		$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln","SUELDO NORMAL",PHPExcel_Cell_DataType::TYPE_STRING);	
+		$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln","SUELDO NORMAL",PHPExcel_Cell_DataType::TYPE_STRING);
 		$columna[$id_sueldo_normal]=$n_columna;
 		$n_columna++;
-	}			
-	
+	}
+
 	//columa total asignaciones
 	$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln","ASIGNACIONES",PHPExcel_Cell_DataType::TYPE_STRING);
 	$columna["A"]=$n_columna;
 	$n_columna++;
-	
+
 	//columna de deducciones
 	$sw_deducciones=false;
 	for($i=0;$i<count($concepto);$i++)
@@ -175,19 +174,19 @@ function Cabecera(){
 			$n_columna++;
 			$sw_deducciones=true;
 		}
-	
+
 	if($sw_deducciones){
 		//columa total deducciones
 		$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln","DEDUCCIONES",PHPExcel_Cell_DataType::TYPE_STRING);
 		$columna["D"]=$n_columna;
 		$n_columna++;
-		
+
 		//columa total
 		$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln","TOTAL",PHPExcel_Cell_DataType::TYPE_STRING);
 		$columna["N"]=$n_columna;
 		$n_columna++;
-	}		
-	
+	}
+
 	//columna de aporte patron
 	if($config["aporte_patronal"]){
 		$sw_aportes=false;
@@ -198,7 +197,7 @@ function Cabecera(){
 				$n_columna++;
 				$sw_aportes=true;
 			}
-		
+
 		//columa total
 		if($sw_aportes){
 			$activeSheet->setCellValueExplicit(column_hash($columna_base+$n_columna)."$ln","TOTAL APORTES",PHPExcel_Cell_DataType::TYPE_STRING);
@@ -206,11 +205,11 @@ function Cabecera(){
 			$n_columna++;
 		}
 	}
-	
+
 
 	$ultima_columna=column_hash($columna_base+$n_columna-1);
 	$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getFont()->setBold(true);
-	$activeSheet->getStyle("F$ln:$ultima_columna$ln")->getAlignment()->setTextRotation(90);
+	$activeSheet->getStyle("G$ln:$ultima_columna$ln")->getAlignment()->setTextRotation(90);
 	$activeSheet->getStyle("F$ln:$ultima_columna$ln")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getAlignment()->setWrapText(true);
 	$activeSheet->getStyle("A$ln:$ultima_columna$ln")->applyFromArray($border);
@@ -232,7 +231,7 @@ function Cabecera(){
 
 function TotalNomina(){
 	global $activeSheet, $ln, $n_columna, $suma_columna, $total_columna, $columna_base, $ultima_columna, $border, $nomina_anterior;
-	$activeSheet->mergeCells("A$ln:I$ln");
+	$activeSheet->mergeCells("A$ln:J$ln");
 	$activeSheet->setCellValueExplicit("A$ln","TOTAL: $nomina_anterior",PHPExcel_Cell_DataType::TYPE_STRING);
 
 	for($k=0;$k<$n_columna;$k++){
@@ -243,9 +242,9 @@ function TotalNomina(){
 	$activeSheet->getStyle("A$ln")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 	$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getFont()->setBold(true);
 	$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getFont()->setSize(9);
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->applyFromArray($border);
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->applyFromArray($border);
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
 
 	for($k=0;$k<$n_columna;$k++)
 		$suma_columna[$k]=0;
@@ -261,11 +260,11 @@ function TotalUnidad(){
 		$activeSheet->setCellValueExplicit(column_hash($columna_base+$k)."$ln",number_format($suma_columna_unidad[$k],2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);
 	}
 
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getFont()->setBold(true);
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getFont()->setSize(9);
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->applyFromArray($border);
-	$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getFont()->setBold(true);
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getFont()->setSize(9);
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->applyFromArray($border);
+	$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
 
 	for($k=0;$k<$n_columna;$k++)
 		$suma_columna_unidad[$k]=0;
@@ -278,7 +277,7 @@ function TotalUnidad(){
 
 
 $nombre_reporte="NOMINA";
-$columna_base=9;
+$columna_base=10;
 $ultima_columna="A";
 
 $border=array(
@@ -325,7 +324,7 @@ for($p=0;$p<count($periodo);$p++):
 
 	$c=1;
 	$ln=5;
-	
+
 	Cabecera();
 
 	$total_columna=array();
@@ -338,7 +337,7 @@ for($p=0;$p<count($periodo);$p++):
 		$suma_columna[$k]=0;
 		$suma_columna_unidad[$k]=0;
 	}
-	
+
 	$numero_nomina=0;
 	$nomina_anterior="";
 	$unidadfuncional_anterior="";
@@ -353,7 +352,7 @@ for($p=0;$p<count($periodo);$p++):
 				$sw_total_aporte=true;
 			}
 
-			
+
 			$nomina_anterior=$ficha[$j]["nomina"];
 			$unidadfuncional_anterior="";
 			$numero_nomina++;
@@ -363,7 +362,7 @@ for($p=0;$p<count($periodo);$p++):
 			$activeSheet->mergeCells("A$ln:$ultima_columna$ln");
 			$activeSheet->getStyle("A$ln")->getFont()->setBold(true);
 			$activeSheet->getStyle("A$ln")->getFont()->setSize(14);
-			$activeSheet->setCellValueExplicit("A$ln",$ficha[$j]["nomina"],PHPExcel_Cell_DataType::TYPE_STRING);	
+			$activeSheet->setCellValueExplicit("A$ln",$ficha[$j]["nomina"],PHPExcel_Cell_DataType::TYPE_STRING);
 			$ln++;
 		}
 
@@ -371,13 +370,13 @@ for($p=0;$p<count($periodo);$p++):
 		/*if($unidadfuncional_anterior!=$ficha[$j]["unidad_funcional"]){
 			$unidadfuncional_anterior=$ficha[$j]["unidad_funcional"];
 
-			if($j!=0 and $sw_total_aporte==false) 
-				TotalUnidad();		
+			if($j!=0 and $sw_total_aporte==false)
+				TotalUnidad();
 
 			$activeSheet->mergeCells("A$ln:$ultima_columna$ln");
 			$activeSheet->getStyle("A$ln")->getFont()->setBold(true);
 			$activeSheet->getStyle("A$ln")->getFont()->setSize(9);
-			$activeSheet->setCellValueExplicit("A$ln",$ficha[$j]["unidad_funcional"],PHPExcel_Cell_DataType::TYPE_STRING);	
+			$activeSheet->setCellValueExplicit("A$ln",$ficha[$j]["unidad_funcional"],PHPExcel_Cell_DataType::TYPE_STRING);
 			$activeSheet->getStyle("A$ln:$ultima_columna$ln")->applyFromArray($border);
 			$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
 			$ln++;
@@ -385,30 +384,31 @@ for($p=0;$p<count($periodo);$p++):
 
 		//COLUMNAS DE LA NOMINA
 		//NUMERO EN LISTA
-		$activeSheet->setCellValueExplicit("A$ln","$c",PHPExcel_Cell_DataType::TYPE_STRING);	
-		//NOMBRE/APELLIDO	
+		$activeSheet->setCellValueExplicit("A$ln","$c",PHPExcel_Cell_DataType::TYPE_STRING);
+		//NOMBRE/APELLIDO
 		$activeSheet->setCellValueExplicit("B$ln",$ficha[$j]["nacionalidad"].$ficha[$j]["cedula"],PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->setCellValueExplicit("C$ln",$ficha[$j]["nombre_apellido"],PHPExcel_Cell_DataType::TYPE_STRING);
 		//CARGO
 		//$activeSheet->setCellValueExplicit("D$ln",$ficha[$j]["cargo"],PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->setCellValueExplicit("D$ln",$ficha[$j]["cargo"],PHPExcel_Cell_DataType::TYPE_STRING);
 		$activeSheet->setCellValueExplicit("E$ln",$ficha[$j]["escala_salarial"],PHPExcel_Cell_DataType::TYPE_STRING);
-		
+		$activeSheet->setCellValueExplicit("F$ln",$ficha[$j]["estructura_presupuestaria"],PHPExcel_Cell_DataType::TYPE_STRING);
+
 		//GENERO
 		$genero=$ficha[$j]["genero"];
 		if($ficha[$j]["genero"]=="M")
 			$genero="M";
 		else if($ficha[$j]["genero"]=="F")
 			$genero="F";
-		$activeSheet->setCellValueExplicit("F$ln",$genero,PHPExcel_Cell_DataType::TYPE_STRING);
+		$activeSheet->setCellValueExplicit("G$ln",$genero,PHPExcel_Cell_DataType::TYPE_STRING);
 
 		//FECHA INGRESO
-		$activeSheet->setCellValueExplicit("G$ln",$ficha[$j]["fecha_ingreso"],PHPExcel_Cell_DataType::TYPE_STRING);
+		$activeSheet->setCellValueExplicit("H$ln",$ficha[$j]["fecha_ingreso"],PHPExcel_Cell_DataType::TYPE_STRING);
 
 		//ANTIGUEDAD (AÑOS / DIAS)
-		$activeSheet->setCellValueExplicit("H$ln",$ficha[$j]["antiguedad_anio_dia"][0],PHPExcel_Cell_DataType::TYPE_STRING);
-		$activeSheet->setCellValueExplicit("I$ln",$ficha[$j]["antiguedad_anio_dia"][1],PHPExcel_Cell_DataType::TYPE_STRING);
-		$activeSheet->getStyle("F$ln:I$ln")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$activeSheet->setCellValueExplicit("I$ln",$ficha[$j]["antiguedad_anio_dia"][0],PHPExcel_Cell_DataType::TYPE_STRING);
+		$activeSheet->setCellValueExplicit("J$ln",$ficha[$j]["antiguedad_anio_dia"][1],PHPExcel_Cell_DataType::TYPE_STRING);
+		$activeSheet->getStyle("F$ln:J$ln")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
 		//PARA CADA COLUMNA CREAR LA CELDA VACIA
 		//COLOCAR EN LA CELDA CORRESPONDINTE EL VALOR DEL CONCEPTO
@@ -431,12 +431,12 @@ for($p=0;$p<count($periodo);$p++):
 			$activeSheet->getStyle(column_hash($columna_base+$x)."$ln")->getNumberFormat()->setFormatCode('#,##0.00');
 			$activeSheet->setCellValueExplicit(column_hash($columna_base+$x)."$ln",number_format($ficha[$j]["concepto"][$k]["valor_final"],2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);
 		}
-		
+
 		//TOTAL ASIGNACIONES
 		$activeSheet->getStyle(column_hash($columna_base+$columna["A"])."$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
 		$activeSheet->getStyle(column_hash($columna_base+$columna["A"])."$ln")->getNumberFormat()->setFormatCode('#,##0.00');
 		$activeSheet->setCellValueExplicit(column_hash($columna_base+$columna["A"])."$ln",number_format($ficha[$j]["total_asignacion"],2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);
-		
+
 		if($sw_deducciones){
 			//TOTAL DEDUCCIONES
 			$activeSheet->getStyle(column_hash($columna_base+$columna["D"])."$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
@@ -446,8 +446,8 @@ for($p=0;$p<count($periodo);$p++):
 			$activeSheet->getStyle(column_hash($columna_base+$columna["N"])."$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
 			$activeSheet->getStyle(column_hash($columna_base+$columna["N"])."$ln")->getNumberFormat()->setFormatCode('#,##0.00');
 			$activeSheet->setCellValueExplicit(column_hash($columna_base+$columna["N"])."$ln",number_format($ficha[$j]["total_neto"],2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);
-		}			
-		
+		}
+
 		//TOTAL AP
 		if($sw_aportes){
 			$activeSheet->getStyle(column_hash($columna_base+$columna["AP"])."$ln")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('AAE7E7E7');
@@ -458,7 +458,7 @@ for($p=0;$p<count($periodo);$p++):
 		$activeSheet->getStyle("A$ln:$ultima_columna$ln")->applyFromArray($border);
 		$activeSheet->getStyle("A$ln:F$ln")->getFont()->setSize(11);
 		$activeSheet->getStyle("D$ln")->getFont()->setSize(8);
-		$activeSheet->getStyle("I$ln:$ultima_columna$ln")->getFont()->setSize(9);
+		$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getFont()->setSize(9);
 
 		$suma_columna[$columna["A"]]+=$ficha[$j]["total_asignacion"];
 		$suma_columna_unidad[$columna["A"]]+=$ficha[$j]["total_asignacion"];
@@ -468,7 +468,7 @@ for($p=0;$p<count($periodo);$p++):
 			$suma_columna_unidad[$columna["D"]]+=$ficha[$j]["total_deduccion"];
 			$suma_columna_unidad[$columna["N"]]+=$ficha[$j]["total_neto"];
 		}
-		
+
 		if($sw_aportes){
 			$suma_columna[$columna["AP"]]+=$ficha[$j]["total_ap"];
 			$suma_columna_unidad[$columna["AP"]]+=$ficha[$j]["total_ap"];
@@ -476,29 +476,29 @@ for($p=0;$p<count($periodo);$p++):
 		$c++;
 		$ln++;
 	}
-	
+
 	TotalNomina();
 
 	//TOTAL GENERAL DE NOMINAS
 	if($numero_nomina>1){
-		$activeSheet->mergeCells("A$ln:I$ln");
+		$activeSheet->mergeCells("A$ln:J$ln");
 		$activeSheet->setCellValueExplicit("A$ln","TOTAL NÓMINAS",PHPExcel_Cell_DataType::TYPE_STRING);
 
 		for($k=0;$k<$n_columna;$k++)
-			$activeSheet->setCellValueExplicit(column_hash($columna_base+$k)."$ln",number_format($total_columna[$k],2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);	
+			$activeSheet->setCellValueExplicit(column_hash($columna_base+$k)."$ln",number_format($total_columna[$k],2,".",""),PHPExcel_Cell_DataType::TYPE_NUMERIC);
 
 
 		$activeSheet->getStyle("A$ln")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 		$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getFont()->setBold(true);
 		$activeSheet->getStyle("A$ln:$ultima_columna$ln")->getFont()->setSize(9);
-		$activeSheet->getStyle("J$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
+		$activeSheet->getStyle("K$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
 
 		/*$activeSheet->getStyle("G$ln:$ultima_columna$ln")->getNumberFormat()->setFormatCode('#,##0.00');
 		$activeSheet->getStyle("G$ln:$ultima_columna$ln")->getFont()->setBold(true);
 		$activeSheet->getStyle("G$ln:$ultima_columna$ln")->getFont()->setSize(9);*/
 		$ln++;
 	}
-	
+
 
 	$activeSheet->getColumnDimension("A")->setAutoSize(true);
 	$activeSheet->getColumnDimension("B")->setAutoSize(true);
@@ -507,8 +507,9 @@ for($p=0;$p<count($periodo);$p++):
 	$activeSheet->getColumnDimension("E")->setAutoSize(true);
 	$activeSheet->getColumnDimension("F")->setAutoSize(true);
 	$activeSheet->getColumnDimension("G")->setAutoSize(true);
-	$activeSheet->getColumnDimension("H")->setWidth(5);
+	$activeSheet->getColumnDimension("H")->setAutoSize(true);
 	$activeSheet->getColumnDimension("I")->setWidth(5);
+	$activeSheet->getColumnDimension("J")->setWidth(5);
 	for($i=$columna_base;$i<($columna_base+$n_columna);$i++){
 		$activeSheet->getColumnDimension(column_hash($i))->setAutoSize(true);
 	}
@@ -529,10 +530,10 @@ for($p=0;$p<count($periodo);$p++):
 		$tmp=trim($periodo[$p]["nota"][$n]["nota"],"\n\r ");
 		if($tmp)
 			$nota.=$tmp."\n";
-	}	
+	}
 
 	$activeSheet->mergeCells("A$ln:$ultima_columna$ln");
-	$activeSheet->getStyle("A$ln")->getFont()->setSize(10);	
+	$activeSheet->getStyle("A$ln")->getFont()->setSize(10);
 	$activeSheet->setCellValueExplicit("A$ln","NOTAS: \n".$nota,PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->getStyle("A$ln")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
     $activeSheet->getStyle("A$ln")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);

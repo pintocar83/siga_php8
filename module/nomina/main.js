@@ -427,6 +427,7 @@ siga.define('nomina', {
       listeners: {
         beforeclose: function(w,o){
           me.internal.ventanaVisualizar.hide();
+          me.getCmp('btnVisualizar').internal.proyeccion=false;
           return false;
         },
         beforeshow: function(){
@@ -501,6 +502,10 @@ siga.define('nomina', {
                     return;
                   }
                   add_url+="&formato="+formato+"&id_concepto="+id_concepto.join(",");
+                }
+
+                if(me.getCmp('btnVisualizar').internal.proyeccion==true){
+                  add_url+="&concepto_proyeccion=1";
                 }
 
                 window.open("report/"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina+add_url);
@@ -1182,6 +1187,152 @@ siga.define('nomina', {
       ]
     });
 
+    //VENTANA IMPORTACION DE CONCEPTOS DESDE EXCEL
+    console.log("concepto_identificadores",me.internal.data.preload["concepto_identificadores"]);
+    me.internal.ventanaConfigurarProyeccion=Ext.create('Ext.window.Window', {
+      title: 'Proyección - Configurar',
+      minimizable: false,
+      //maximizable: true,
+      modal: true,
+      width: 500,
+      height: 300,
+      bodyStyle: 'background-color: #e8e8e8; border-color: #e8e8e8;',
+      layout: 'anchor',
+      resizable: true,
+      autoScroll: true,
+      padding: "20 20 0 20",
+
+      listeners: {
+        beforeclose: function(w,o){
+          
+          me.internal.ventanaConfigurarProyeccion.hide();
+          return false;
+        },
+        beforeshow: function(){
+          var msgWait=Ext.Msg.wait('Cargando configuración. Por favor espere...', me.internal.ventanaConfigurarProyeccion.getTitle(),{text:''});
+          msgWait.setAlwaysOnTop(true);
+    
+          Ext.Ajax.request({
+            method: 'POST',
+            url:'module/nomina/',
+            params:{
+              action: 'onConfiguracionProyeccion_Get'
+            },
+            success:function(request){
+              msgWait.close();
+              var result=Ext.JSON.decode(request.responseText);
+              me.getCmp("identificador_proyeccion").setValue(result["identificador"]);
+              me.getCmp("porcentaje_proyeccion").setValue(result["porcentaje"]*100);
+            },
+            failure:function(request){
+              msgWait.close();
+              Ext.MessageBox.alert("Proyección - Configurar","Error al buscar configuracion.");
+              var result=Ext.JSON.decode(request.responseText);
+            }
+          });
+        },
+        afterrender: function(){
+          //console.log("concepto_identificadores",me.internal.data.preload["concepto_identificadores"]);
+        }
+      },
+
+      items:[
+
+        {
+          xtype: 'tagfield',
+          id: me._('identificador_proyeccion'),
+          name: 'identificador_proyeccion',
+          anchor: '100%',
+          fieldLabel: 'Conceptos <small>(Identificador)</small>',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          editable: false,
+          queryMode: "local",
+          multiSelect: true,
+          filterPickList: true,
+          store: {
+            fields: ['identificador'],
+            data: me.internal.data.preload["concepto_identificadores"],
+            //data: [{identificador: "hola"}]
+          },
+          displayField: 'identificador',
+          valueField: 'identificador',
+          allowBlank: true,
+          forceSelection: true
+        },
+        {
+          xtype:'numberfield',
+          id: me._('porcentaje_proyeccion'),
+          name: 'porcentaje_proyeccion',
+          anchor: '100%',
+          fieldLabel: 'Proyección <small>(%)</small>',
+          labelAlign: 'top',
+          labelSeparator: '',
+          labelStyle: 'font-weight: bold;',
+          value: '',
+          minValue: 0,
+          allowDecimals: true,
+          allowNegative: false
+        },
+        {
+          xtype: 'container',
+          anchor: '100%',
+          layout: {
+            type: 'hbox',
+            align: 'middle'
+          },
+          style: 'padding-top: 25px; padding-bottom: 10px;',
+          items: [
+            {
+              xtype: 'tbspacer',
+              flex: 1
+            },
+            {
+              xtype: 'button',
+              text: '<b><big>Guardar</big></b>',
+              scale: 'medium',
+              width: 150,
+              listeners: {
+                click: function(){
+                  var msgWait=Ext.Msg.wait('Guardando configuración. Por favor espere...', me.internal.ventanaConfigurarProyeccion.getTitle(),{text:''});
+                  msgWait.setAlwaysOnTop(true);
+
+                  Ext.Ajax.request({
+                    method: 'POST',
+                    url:'module/nomina/',
+                    params:{
+                      action: 'onConfiguracionProyeccion_Save',
+                      'identificador[]': me.getCmp("identificador_proyeccion").getValue(),
+                      porcentaje: (me.getCmp("porcentaje_proyeccion").getValue()/100.00).toFixed(2)
+                    },
+                    success:function(request){
+                      msgWait.close();
+                      me.internal.ventanaConfigurarProyeccion.hide();
+                      var result=Ext.JSON.decode(request.responseText);
+                      Ext.MessageBox.alert("Proyección - Configurar",result["message"]);
+                    },
+                    failure:function(request){
+                      msgWait.close();
+                      Ext.MessageBox.alert("Proyección - Configurar","Error al guardar datos.");
+                      var result=Ext.JSON.decode(request.responseText);
+                    }
+                  });
+                }
+              }
+            },
+            {
+              xtype: 'tbspacer',
+              flex: 1
+            }
+          ]
+        }
+
+
+
+      ]
+    });
+
 
 
     //Barra de herramientas
@@ -1657,6 +1808,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_xls_v2";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Nómina");
                 me.internal.ventanaVisualizar.show();
@@ -1668,6 +1820,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_recibo_pago";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Recibos de Pago");
                 me.internal.ventanaVisualizar.show();
@@ -1687,6 +1840,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_firma";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Listado de Firmas");
                 me.internal.ventanaVisualizar.show();
@@ -1698,6 +1852,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_concepto";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Listado de Conceptos");
                 me.internal.ventanaVisualizar.show();
@@ -1709,6 +1864,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_banco_xls_formato_a";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - TXT Banco (Formato A)");
                 me.internal.ventanaVisualizar.show();
@@ -1720,6 +1876,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_banco_xls_formato_b";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - TXT Banco (Formato B - Nuevo)");
                 me.internal.ventanaVisualizar.show();
@@ -1731,6 +1888,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_banco_xls_formato_c";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - TXT Banco (Formato C - patria)");
                 me.internal.ventanaVisualizar.show();
@@ -1742,6 +1900,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_resumen_presupuestario_contable";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Resumen Presupuestario/Contable");
                 me.internal.ventanaVisualizar.show();
@@ -1753,6 +1912,7 @@ siga.define('nomina', {
             listeners: {
               click: function(){
                 me.getCmp('btnVisualizar').internal.reporte="nomina_listado_aportes";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
                 me.internal.ventanaVisualizar.setInternal({itemSelection: null});
                 me.internal.ventanaVisualizar.setTitle("Visualizar - Resumen de Deducciones y Aportes Patronales");
                 me.internal.ventanaVisualizar.show();
@@ -1776,6 +1936,46 @@ siga.define('nomina', {
                 );
               }
             }
+          },
+          {
+            text: 'Proyección',
+            menu: [
+              {
+                text: 'Nómina',
+                listeners: {
+                  click: function(){
+                    me.getCmp('btnVisualizar').internal.reporte="nomina_xls_v2";
+                    me.getCmp('btnVisualizar').internal.proyeccion=true;
+                    me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
+                    me.internal.ventanaVisualizar.setTitle("Visualizar Proyección - Nómina");
+                    me.internal.ventanaVisualizar.show();
+                  }
+                }
+              },
+              {
+                text: 'Resumen Presupuestario/Contable',
+                listeners: {
+                  click: function(){
+                    me.getCmp('btnVisualizar').internal.reporte="nomina_resumen_presupuestario_contable";
+                    me.getCmp('btnVisualizar').internal.proyeccion=true;
+                    me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
+                    me.internal.ventanaVisualizar.setTitle("Visualizar Proyección - Resumen Presupuestario/Contable");
+                    me.internal.ventanaVisualizar.show();
+                  }
+                }
+              },
+              {
+                xtype: 'menuseparator',
+              },
+              {
+                text: 'Configurar',
+                listeners: {
+                  click: function(){
+                    me.internal.ventanaConfigurarProyeccion.show();
+                  }
+                }
+              }
+            ]
           },
 
         ]
@@ -4505,6 +4705,9 @@ siga.define('nomina', {
     else{
       me.getCmp("tipo_nomina_concepto_importar").fireEvent("change");
     }
+
+    //ACTUALIZAR DATA EN VENTANA CONFIGURAR PROYECCION
+    me.getCmp("identificador_proyeccion").getStore().setData(me.internal.data.preload["concepto_identificadores"]);
 
   },
 

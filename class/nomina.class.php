@@ -5,6 +5,18 @@ function nf($v){
   return number_format($v,2,".","");
 }
 class nomina{
+  public static $CONCEPTO_PROYECCION = NULL;
+  public static function init(){
+    if(SIGA::paramRequest("concepto_proyeccion") || SIGA::paramRequest("concepto_proyeccion_sw")){
+      //buscar la configuracion concepto::proyeccion
+      $db=SIGA::DBController();
+      $config=$db->Execute("SELECT valor FROM modulo_nomina.nomina_configuracion WHERE dato ilike 'concepto::proyeccion'");
+      if(isset($config[0]["valor"]) && $config[0]["valor"]){
+        self::$CONCEPTO_PROYECCION = json_decode($config[0]["valor"], true);
+        //print_r(self::$CONCEPTO_PROYECCION);exit;
+      }
+    }
+  }
 
   public static function cuenta_contable_abono(){
     return "211010100000";
@@ -267,14 +279,36 @@ class nomina{
                                   ORDER BY C.orden, C.codigo");
 
 
-
+    
 
     for($i=0;$i<count($ficha_concepto);$i++){
-      $definida[$ficha_concepto[$i]["identificador"]]=self::es_formula($ficha_concepto[$i]["definicion"])?$ficha_concepto[$i]["definicion"]:number_format($ficha_concepto[$i]["valor"],2,'.','');
+      if(self::es_formula($ficha_concepto[$i]["definicion"])){
+        if(self::$CONCEPTO_PROYECCION and in_array($ficha_concepto[$i]["identificador"],self::$CONCEPTO_PROYECCION["identificador"])){
+          $ficha_concepto[$i]["definicion"]="(".$ficha_concepto[$i]["definicion"]."+".$ficha_concepto[$i]["definicion"]."*".self::$CONCEPTO_PROYECCION["porcentaje"].")";
+        }
+        $definida[$ficha_concepto[$i]["identificador"]]=$ficha_concepto[$i]["definicion"];
+      }
+      else{
+        if(self::$CONCEPTO_PROYECCION and in_array($ficha_concepto[$i]["identificador"],self::$CONCEPTO_PROYECCION["identificador"])){
+          $ficha_concepto[$i]["valor"]=$ficha_concepto[$i]["valor"]+$ficha_concepto[$i]["valor"]*self::$CONCEPTO_PROYECCION["porcentaje"];
+        }
+        $definida[$ficha_concepto[$i]["identificador"]]=nf($ficha_concepto[$i]["valor"]);
+      }
+
+      //$definida[$ficha_concepto[$i]["identificador"]]=self::es_formula($ficha_concepto[$i]["definicion"])?$ficha_concepto[$i]["definicion"]:number_format($ficha_concepto[$i]["valor"],2,'.','');
       //si es aporte patronal, agregar la formula al listado para resolverla
       if($ficha_concepto[$i]["tipo"]=="AP"){
         $ficha_concepto[$i]["identificador_ap"]=$ficha_concepto[$i]["identificador"]."_AP";
-        $definida[$ficha_concepto[$i]["identificador_ap"]]=self::es_formula($ficha_concepto[$i]["definicion_ap"])?$ficha_concepto[$i]["definicion_ap"]:number_format($ficha_concepto[$i]["valor"],2,'.','');
+        //$definida[$ficha_concepto[$i]["identificador_ap"]]=self::es_formula($ficha_concepto[$i]["definicion_ap"])?$ficha_concepto[$i]["definicion_ap"]:number_format($ficha_concepto[$i]["valor"],2,'.','');
+        if(self::es_formula($ficha_concepto[$i]["definicion_ap"])){
+          if(self::$CONCEPTO_PROYECCION and in_array($ficha_concepto[$i]["identificador_ap"],self::$CONCEPTO_PROYECCION["identificador"])){
+            $ficha_concepto[$i]["definicion_ap"]="(".$ficha_concepto[$i]["definicion_ap"]."+".$ficha_concepto[$i]["definicion_ap"]."*".self::$CONCEPTO_PROYECCION["porcentaje"].")";
+          }
+          $definida[$ficha_concepto[$i]["identificador_ap"]]=$ficha_concepto[$i]["definicion_ap"];
+        }
+        else{
+          $definida[$ficha_concepto[$i]["identificador_ap"]]=nf($ficha_concepto[$i]["valor"]);
+        }
       }
     }
     $definida=self::formula_resolver($definida);
@@ -2698,5 +2732,37 @@ class nomina{
     return $return;
   }
 
+  public static function onListConceptoIdentificadores(){
+    $db=SIGA::DBController();
+    $return=$db->Execute("SELECT DISTINCT identificador FROM modulo_nomina.concepto");
+    return $return;
+  }
+
+  public static function onConfiguracionProyeccion_Get($access){
+    $db=SIGA::DBController();
+    $config=$db->Execute("SELECT valor FROM modulo_nomina.nomina_configuracion WHERE dato ilike 'concepto::proyeccion'");
+    $return=["identificador"=>[], "porcentaje"=>0];
+    if(isset($config[0]["valor"]) && $config[0]["valor"])
+      $return=json_decode($config[0]["valor"], true);
+    return $return;
+  }
+
+  public static function onConfiguracionProyeccion_Save($access, $identificador, $porcentaje){
+    $db=SIGA::DBController();
+
+    $db->Execute("DELETE FROM modulo_nomina.nomina_configuracion WHERE dato ilike 'concepto::proyeccion'");
+
+    $valor=["identificador"=>$identificador, "porcentaje"=>$porcentaje];
+
+    $db->Insert("modulo_nomina.nomina_configuracion",[
+      "dato"=>"'concepto::proyeccion'",
+      "valor"=>"'".json_encode($valor)."'"
+    ]);
+
+    return array("success"=>true, "message"=>"Configuración guardada con exito.");
+  }
+
 }
+
+nomina::init();
 ?>

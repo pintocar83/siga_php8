@@ -21,7 +21,7 @@ class MODULO extends nomina{
         $return["nomina"]          = self::onList("","","",0,"ALL",'[{"property": "tipo", "direction": "ASC"},{"property": "codigo_nomina", "direction": "ASC"}]')["result"];
         $return["cargo"]           = self::onList_Cargo("",0,"ALL",'[{"property": "cargo", "direction": "ASC"}]')["result"];
         $return["escala_salarial"] = nomina_escala_salarial::onList("",0,"ALL",'[{"property": "escala", "direction": "ASC"}]')["result"];
-
+        $return["concepto_identificadores"] = self::onListConceptoIdentificadores();
 
         print json_encode($return);
         break;
@@ -128,6 +128,14 @@ class MODULO extends nomina{
         print json_encode(self::onListConceptoPeriodo($access,
                                                       SIGA::param("id_nomina"),
                                                       SIGA::param("id_periodo")));
+        break;
+      case "onConfiguracionProyeccion_Get":
+        header('Content-Type: text/plain; charset=utf-8');
+          print json_encode(self::onConfiguracionProyeccion_Get($access));
+        break;
+      case "onConfiguracionProyeccion_Save":
+        header('Content-Type: text/plain; charset=utf-8');
+          print json_encode(self::onConfiguracionProyeccion_Save($access,SIGA::param("identificador",false),SIGA::param("porcentaje")));
         break;
     }
   }
