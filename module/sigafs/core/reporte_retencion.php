@@ -10,7 +10,7 @@
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entrada de datos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</h2>
 						<DIV id="MSG_RR" class="MensajesPestanas">&nbsp;</DIV>
-						
+
 						<table align="center" width="80%" >
 						<tbody>
 							<tr>
@@ -23,6 +23,10 @@
 												<td>Listado de Retenciones Emitidas.</td>
 											</tr>
 											<tr>
+												<td><input type="radio"  class="TextoCampoInput" name="OPCION_RR" id="OPCION_RR_D"/></td>
+												<td>Listado de Retenciones Emitidas (Excel Seniat).</td>
+											</tr>
+											<tr>
 												<td><input type="radio"  class="TextoCampoInput" name="OPCION_RR" id="OPCION_RR_B"/></td>
 												<td>Listado de Retenciones Efectuadas.</td>
 											</tr>
@@ -31,8 +35,8 @@
 												<td>Comprobantes Emitidos.</td>
 											</tr>
 										</table>
-										
-										 
+
+
 									</fieldset>
 								</td>
 							</tr>
@@ -48,7 +52,7 @@
 							</tr>
 						</tbody>
 						</table>
-						
+
 
 						<br>
 						<DIV class='TitulosCampos' style="text-align: center;">
@@ -59,8 +63,7 @@
 							<br>
 							<br>
 							<br>
-							<br>
-							
+
 							<BUTTON id="BOTON_ACEPTAR_RR" class="BotonesParaCampos" style="font-size : 14px; vertical-align : middle;"   onclick="reportes_retencion.onDisplay()">
 								<IMG id="IMG_ACEPTAR_RR" src='../../image/icon/icon-display.png' width='22' height='22' style="vertical-align : middle;">&nbsp;Visualizar&nbsp;
 							</BUTTON>
