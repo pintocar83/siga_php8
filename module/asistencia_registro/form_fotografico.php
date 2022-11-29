@@ -147,90 +147,10 @@ header('Content-Type: text/html; charset=utf-8');
           me.video.onloadedmetadata = function(e) {
             me.play();
           };
-/*
-          me.video.addEventListener('play', function(){
-            me.timeout_handler=setTimeout(function(){
-              //var canvas=document.getElementById("DISPLAY_STREAM");
-              var context=me.canvas.getContext('2d');
-              context.drawImage(WEBCAM.video, 0, 0, WEBCAM.width, WEBCAM.height);
-
-              //return;
-              //convertir la imagen en binaria
-              var limit=75;
-              var imageData = context.getImageData(0, 0, me.width,me.height);
-              var data = imageData.data;
-              for (var i=0; i<data.length; i+=4)
-                data[i] = data[i+1] = data[i+2] = (data[i]+data[i+1]+data[i+2])/3;
-              // overwrite original image
-              //context.putImageData(imageData, 0, 0);
-              //fin convertir la imagen en binaria
-
-              var result=parent.zbarProcessImageData(imageData);
-              console.log("zbarProcessImageData: ",result);
-              if (result.length>0) {
-                //me.openView(result);
-              }
-
-            },200);
-
-            //me.capture();
-          },false);
-*/
         })
         .catch(function(err) {
           console.log(err.name + ": " + err.message);
         });
-
-
-        return;
-
-        navigator.getMedia = ( navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
-        if(navigator.getMedia){
-          me.context="getusermedia";
-          navigator.getMedia(
-            {
-              video: true,
-              audio: false
-            },
-            function(stream){
-              if (navigator.mozGetUserMedia){
-                me.video.mozSrcObject = stream;
-              }
-              else{
-                var vendorURL = window.URL || window.webkitURL;
-                me.video.src = vendorURL.createObjectURL(stream);
-              }
-              me.video.play();
-            },
-            function(err) {
-              console.log("An error occured! " + err);
-            }
-          );
-
-          me.video.addEventListener('play', function(){
-            setInterval(function(){
-              var canvas=document.getElementById("DISPLAY_STREAM");
-              var context=canvas.getContext('2d');
-              context.drawImage(WEBCAM.video, 0, 0, WEBCAM.width, WEBCAM.height);
-
-              //return;
-              //convertir la imagen en binaria
-              var limit=75;
-              var imageData = context.getImageData(0, 0, me.width,me.height);
-              var data = imageData.data;
-              for (var i=0; i<data.length; i+=4)
-                data[i] = data[i+1] = data[i+2] = (data[i]+data[i+1]+data[i+2])/3;
-              // overwrite original image
-              context.putImageData(imageData, 0, 0);
-              //fin convertir la imagen en binaria
-            },200);
-
-            //me.capture();
-          },false);
-          return;
-        }
-
-        alert("El navegador no soporta la opción 'navigator.getUserMedia'");
       },
 
       start: function(){
@@ -268,18 +188,17 @@ header('Content-Type: text/html; charset=utf-8');
 
       stream: function(e){
         var me=this;
-        var context=me.canvas.getContext('2d');
+        var context=me.canvas.getContext('2d', { willReadFrequently: true });
         context.drawImage(e.video, 0, 0, me.width, me.height);
         var imageData = context.getImageData(0, 0, me.width, me.height);
 
-        for (var i=0; i<imageData.data.length; i+=4){
-          var grey = (imageData.data[i]+imageData.data[i+1]+imageData.data[i+2])/3;
-          imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = grey;
-        }
+        //for (var i=0; i<imageData.data.length; i+=4){
+        //  imageData.data[i] = imageData.data[i+1] = imageData.data[i+2] = (imageData.data[i]+imageData.data[i+1]+imageData.data[i+2])/3;
+        //}
 
         var result=parent.zbarProcessImageData(imageData);
-        console.log("zbarProcessImageData: ",result);
-        if (result.length>0 && result[0] &&result[0][2]) {
+        //console.log("zbarProcessImageData: ",result);
+        if(result.length>0 && result[0] &&result[0][2]) {
           console.log("result[2]:", result[0][2]);
           //verificar el valor obtnido para hacer el request para marcar la asistencia
           var query=String(result[0][2]).split("query/?");
@@ -294,8 +213,6 @@ header('Content-Type: text/html; charset=utf-8');
             else{
               WEBCAM.displayAsistencia(result);
             }
-
-
           }
         }
       },
@@ -463,9 +380,10 @@ header('Content-Type: text/html; charset=utf-8');
     }
 
     function onLoad(){
-      document.getElementById('codigo').focus();
+      //document.getElementById('codigo').focus();
       document.getElementById('logo').src="../../"+siga.value("folder")+"/logo_01.jpg";
       WEBCAM.init();
+      document.getElementById('codigo').focus();
     }
 
   </script>
@@ -480,13 +398,13 @@ header('Content-Type: text/html; charset=utf-8');
       <div style="width: 100%; height: 100%;">
         <!--Información de la barra superior-->
         <div style="background-color: #282828; color: #FFF; font: 10px sans-serif; padding: 2px; position: relative;">
-          Para marcar la asistencia ingrese el código asignado.
+          Para marcar la asistencia ingrese o escanee el código asignado.
           <div style="position: absolute; right: 0; top: 0; height: 100%; font-size: 12px; padding-right: 3px; cursor: pointer;" onclick="WEBCAM.cancelarAsistencia()">X</div>
         </div>
         <!--Donde se mostrará el video de la camara-->
         <div id="DISPLAY_CODIGO" style="width: 500px; height: 375px;">
           <!--<div id="DISPLAY_STREAM" style="width: 250px; height: 150px; background: black; margin: auto auto; margin-top: 5px;"></div>-->
-          <div style="width: 100%; height: 100%; padding-top: 0px; margin: auto auto; background: url(../../image/photo-default.png) no-repeat center top; background-size: contain;">
+          <div style="width: 100%; height: 100%; padding-top: 0px; margin: auto auto; background: url(image/no-signal.jpg) no-repeat center top; background-size: cover; background-position: center;">
             <!--<canvas id="DISPLAY_STREAM" width="250" height="150" style="display: nonex;"></canvas>-->
             <video id="DISPLAY_STREAM" width="250" height="150" style="width: 100%; height: 100%; object-fit: cover;"></video>
           </div>
@@ -495,7 +413,7 @@ header('Content-Type: text/html; charset=utf-8');
               <!--<td width="150"><img src='../images/dedometro.png' width='120' /></td>-->
               <td>
                 <div style="font-size: 9px; margin: 10px 0 5px 0; color: gray;">Código:</div>
-                
+
                 <br />
                 <br />
                 <input type="button" value="Registrar" onclick="onkeypressenter({keyCode:13})" style="display: none;" />
@@ -511,7 +429,7 @@ header('Content-Type: text/html; charset=utf-8');
             </tr>
           </table>
           <div style="display: flex; position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px 0 25px 0; align-items: center; justify-content: center; flex-direction: column;">
-            <img src='../../image/menu/icon-asistencia.png' width='40'  style='position: absolute; top: 10px; left: 145px;'/>
+            <img src='../../image/menu/icon-asistencia.png' width='50'  style='position: absolute; top: 5px; left: 130px;'/>
             <input id="codigo" type="text" placeholder="" value="" autocomplete="off" onkeypress="return onkeypressenter(event)" title="Ingrese el código de dedometro, para ingresar la asistencia." style='background-color: #FFF; font: 20px sans-serif; font-weight: 900; width: 120px; text-align: center; padding: 5px;'/>
           </div>
         </div>
