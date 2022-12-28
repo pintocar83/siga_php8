@@ -39,6 +39,9 @@
 				<BUTTON id="BOTON_ELIMINAR_FPCC" class="BotonesVentana" onclick="Form_PLAN_CUENTAS_CONTABLES__Eliminar();">
 					<IMG src="../../image/icon/icon-delete-sigafs.png" width="22" height="22" border="0"  id="IMG_ELIMINAR_FPCC"><br>Eliminar
 				</BUTTON>
+				<BUTTON id="BOTON_IMPRIMIR_FPCC" class="BotonesVentana" onclick="Form_PLAN_CUENTAS_CONTABLES__Visualizar();">
+					<IMG src="../../image/icon/icon-display.png" width="22" height="22" border="0" id="IMG_IMPRIMIR_FPCC"><br>Visualizar
+				</BUTTON>
 			</TD>
 		</tr>
 		<tr>

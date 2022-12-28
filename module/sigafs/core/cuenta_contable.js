@@ -33,7 +33,7 @@ function Form_PLAN_CUENTAS_CONTABLES__Mensaje(MSG,color){
 	if(color=="VERDE")
 		MSG="<DIV style='color:#006600'>"+MSG+"</DIV>";
 	else if(color=="ROJO")
-		MSG="<DIV style='color:#FF0000'>"+MSG+"</DIV>";	
+		MSG="<DIV style='color:#FF0000'>"+MSG+"</DIV>";
 	xGetElementById("MSG_FPCC").innerHTML=MSG;
 	}
 
@@ -64,10 +64,10 @@ function Form_PLAN_CUENTAS_CONTABLES__ActivarFormulario(){
 		xGetElementById("CODIGO_CC_FPCC").readOnly=false;
 		xGetElementById("CODIGO_CC_FPCC").setAttribute('class','TextoCampoInputObligatorios');
 		}
-	
-	xGetElementById("DENOMINACION_CC_FPCC").readOnly=false;	
+
+	xGetElementById("DENOMINACION_CC_FPCC").readOnly=false;
 	xGetElementById("DENOMINACION_CC_FPCC").setAttribute('class','TextoCampoInputObligatorios');
-	
+
 	//xGetElementById("PADRE_CC_FPCC").readOnly=false;
 	//xGetElementById("PADRE_CC_FPCC").disabled=false;
 	//xGetElementById("PADRE_CC_FPCC").setAttribute('class','TextoCampoInputObligatorios');
@@ -81,7 +81,7 @@ function Form_PLAN_CUENTAS_CONTABLES__DesactivarFormulario(){
 	xGetElementById("DENOMINACION_CC_FPCC").readOnly=true;
 	//xGetElementById("PADRE_CC_FPCC").readOnly=true;
 	//xGetElementById("PADRE_CC_FPCC").disabled=true;
-	
+
 	xGetElementById("CODIGO_CC_FPCC").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("DENOMINACION_CC_FPCC").setAttribute('class','TextoCampoInputDesactivado');
 	//xGetElementById("PADRE_CC_FPCC").setAttribute('class','TextoCampoInputDesactivado');
@@ -171,7 +171,7 @@ function Form_PLAN_CUENTAS_CONTABLES__GuardarVerificar(){
 					 'onSuccess':Form_PLAN_CUENTAS_CONTABLES__Guardar,
 					 'url':'../cuenta_contable/',
 					 'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
-					 });	
+					 });
 	}
 
 /**
@@ -179,7 +179,7 @@ function Form_PLAN_CUENTAS_CONTABLES__GuardarVerificar(){
 */
 function Form_PLAN_CUENTAS_CONTABLES__Guardar(req){
 	var respuesta = req.responseText;
-	var resultado = eval("(" + respuesta + ")");	
+	var resultado = eval("(" + respuesta + ")");
 
 	var Codigo = xTrim(strtoupper(xGetElementById("CODIGO_CC_FPCC").value));
 
@@ -214,11 +214,11 @@ function Form_PLAN_CUENTAS_CONTABLES__Guardar(req){
 		AjaxRequest.post({'parameters':{ 'action':"onSave",
 										'id_cuenta_contable':Codigo,
 										'id_cuenta_contable_seleccion':Form_PLAN_CUENTAS_CONTABLES__IDSeleccionActualLista,
-										'denominacion':Denominacion},										
+										'denominacion':Denominacion},
 						'onSuccess':Form_PLAN_CUENTAS_CONTABLES__GuardarMensaje,
 						'url':'../cuenta_contable/',
 						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
-						});		
+						});
 		}
 	}
 
@@ -254,7 +254,7 @@ function Form_PLAN_CUENTAS_CONTABLES__BuscarListado(){
 	Form_PLAN_CUENTAS_CONTABLES__DesactivarBotonModificar();
 	Form_PLAN_CUENTAS_CONTABLES__DesactivarBotonEliminar();
 	Form_PLAN_CUENTAS_CONTABLES__ActivarBotonGuardar();
-	
+
 	var CadenaBuscar=xTrim(strtoupper(xGetElementById("LISTADO_BUSCAR_FPCC").value));
 
 	if(CadenaBuscar!="")
@@ -265,7 +265,7 @@ function Form_PLAN_CUENTAS_CONTABLES__BuscarListado(){
 	xGetElementById("TABLA_LISTA_FPCC").innerHTML=IconoCargandoTabla;
 
 	var Prefijo="";
-	
+
 	var limit="ALL";
 	if(xGetElementById("MOSTRAR_FPCC").checked)
 		limit="50";
@@ -291,15 +291,15 @@ function Form_PLAN_CUENTAS_CONTABLES__MostrarListado(req){
 	var respuesta = req.responseText;
 	var resultado = eval("(" + respuesta + ")");
 	resultado=resultado["result"];
-	var n=resultado.length;	
+	var n=resultado.length;
 
 	//var tablaPrueba = xGetElementById("TABLA_LISTA_FPCC");
 
 	var CadAux1, CadAux2;
 
 	var TextoBuscar=quitarCodigoCeros(xTrim(strtoupper(xGetElementById("LISTADO_BUSCAR_FPCC").value)));
-	
-	
+
+
 
 	var Contenido="";
 	var FuncionOnclick="";
@@ -323,8 +323,8 @@ function Form_PLAN_CUENTAS_CONTABLES__MostrarListado(req){
 
 		Contenido+="<TD width='18%'>"+CadAux1+"</TD>";
 		Contenido+="<TD>"+CadAux2+"</TD>";
-		
-		
+
+
 		Contenido+="</TR>";
 		}
 
@@ -332,7 +332,7 @@ function Form_PLAN_CUENTAS_CONTABLES__MostrarListado(req){
 	}
 
 /**
-* Es llamada cuando se hace click sobre algun elemento de la tabla. 
+* Es llamada cuando se hace click sobre algun elemento de la tabla.
 * Esta manda los datos para el formulario que se encuentra en la pestaña 'entrada de datos'
 * @param {Integer} IDSeleccion Id del elemento seleccionado
 * @param {String} RIF Rif del proveedor seleccionado
@@ -371,7 +371,7 @@ function Form_PLAN_CUENTAS_CONTABLES__SeleccionarElementoTabla(IDSeleccion, Deno
 		}
 
 /**
-* Es llamada cuando se presiona sobre el boton limpiar. 
+* Es llamada cuando se presiona sobre el boton limpiar.
 * Este borra el contenido de INPUT TEXT buscar y muestra el listado completo
 */
 function Form_PLAN_CUENTAS_CONTABLES__LimpiarInputTextBuscarListado(){
@@ -407,7 +407,7 @@ function Form_PLAN_CUENTAS_CONTABLES__Eliminar(){
 					 'onSuccess':Form_PLAN_CUENTAS_CONTABLES__EliminarMensaje,
 					 'url':'../cuenta_contable/',
 					 'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
-					 });	
+					 });
 	}
 
 /**
@@ -421,7 +421,7 @@ function Form_PLAN_CUENTAS_CONTABLES__EliminarMensaje(req){
 		Form_PLAN_CUENTAS_CONTABLES__Nuevo();
 		Form_PLAN_CUENTAS_CONTABLES__Mensaje(respuesta.message,"VERDE");
 		Form_PLAN_CUENTAS_CONTABLES__MensajeListado(respuesta.message,"VERDE");
-		
+
 		}
 	else{
 		Form_PLAN_CUENTAS_CONTABLES__Mensaje(respuesta.message,"ROJO");
@@ -430,3 +430,7 @@ function Form_PLAN_CUENTAS_CONTABLES__EliminarMensaje(req){
 
 	}
 
+
+function Form_PLAN_CUENTAS_CONTABLES__Visualizar(){
+	window.open("../../report/contabilidad_plan_cuentas_xls.php");
+}
