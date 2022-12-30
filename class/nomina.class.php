@@ -2232,6 +2232,26 @@ class nomina{
     return array("success"=>true, "message"=>"Operación realizada con éxito.");
   }
 
+  public static function onPersona_Quitar($access,$id_ficha,$id_periodo,$id_nomina){
+    if($access!="rw"){
+      return array("success"=>false, "message"=>"No tiene permisos para realizar el cambio.");
+      exit;
+    }
+    $db=SIGA::DBController();
+
+    $sql="
+      DELETE FROM modulo_nomina.ficha_concepto FC
+      WHERE
+        FC.id_periodo='$id_periodo' AND
+        FC.id_nomina IN ($id_nomina) AND
+        FC.id_ficha IN ($id_ficha)
+    ";
+
+    $db->Execute($sql);
+
+    return array("success"=>true, "message"=>"Operación realizada con éxito.");
+  }
+
   public static function onPersona_CambiarNominaInactivo($access,$id_periodo,$id_nomina,$id_nomina_anterior){
     if($access!="rw"){
       return array("success"=>false, "message"=>"No tiene permisos para realizar el cambio.");

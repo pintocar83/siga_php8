@@ -1434,11 +1434,11 @@ siga.define('nomina', {
             menu: []
           },
           {
+            id: me._('btnPersonaQuitar'),
             text: 'Quitar',
-            hidden: true,
             listeners: {
               click: function(){
-
+                me.onPersonaQuitar();
               }
             }
           },
@@ -4082,8 +4082,10 @@ siga.define('nomina', {
               //console.log("operation: ",operation);
               store.suspendEvents();
 
-              console.log("operation.request: ",operation._response.responseJson["filtro_ficha_id"]);
-              me.filtro_ficha_id=operation._response.responseJson["filtro_ficha_id"];
+              //console.log("operation.request: ",operation._response.responseJson["filtro_ficha_id"]);
+              me.filtro_ficha_id="";
+              if(operation && operation._response && operation._response.responseJson && operation._response.responseJson["filtro_ficha_id"])
+                me.filtro_ficha_id=operation._response.responseJson["filtro_ficha_id"];
               //console.log("operation.request: ",store._response.responseJson["filtro_ficha_id"]);
               //console.log(operation.request.result);
               //var response_text = store.proxy.reader.rawData;
@@ -4767,6 +4769,7 @@ siga.define('nomina', {
     var me=this;
     if(o.disabled===true || o.disabled===false){
       me.getCmp('btnPersonaAgregar').setDisabled(o.disabled);
+      me.getCmp('btnPersonaQuitar').setDisabled(o.disabled);
       me.getCmp('btnPersonaCambiarCargo').setDisabled(o.disabled);
       me.getCmp('btnPersonaCambiarNomina').setDisabled(o.disabled);
       me.getCmp('btnPersonaCambiarEP').setDisabled(o.disabled);
@@ -4774,7 +4777,59 @@ siga.define('nomina', {
       me.getCmp('btnPersonalInactivoQuitar').setDisabled(o.disabled);
       me.getCmp('btnPersonalInactivoCambiarNomina').setDisabled(o.disabled);
     }
-  }
+  },
+
+  onPersonaQuitar: function(el){
+    var me=this;
+    var seleccion=me.getCmp("gridList").getSelection();
+    if(seleccion.length==0){
+      Ext.MessageBox.alert("Persona - Quitar","<b>Debe seleccionar la persona a la cual quitará de la nómina actual.</b>");
+      return;
+    }
+    if(seleccion.length!=1){
+      Ext.MessageBox.alert("Persona - Quitar","<b>Debe seleccionar solo una persona del listado.</b>");
+      return;
+    }
+
+    Ext.MessageBox.confirm(
+      "Persona - Quitar",
+      '<b>\u00BFEst\u00e1 seguro de quitar a la persona: "'+seleccion[0].data["nacionalidad"]+seleccion[0].data["cedula"]+" "+seleccion[0].data["nombre_apellido"]+'" de la nómina: "'+seleccion[0].data["nomina"]+'"?</b><br> ',
+      function(btn,text){
+        if(btn == 'yes'){
+          var id_ficha=seleccion[0].data["id_ficha"];
+          var id_periodo=me.getCmp("id_periodo").getValue();
+          var id_nomina=seleccion[0].data["id_nomina"];
+
+          me.menuPersona({disabled: true});
+          me.menuConcepto({disabled: true});
+          me.menuPeriodo({disabled: true});
+
+          var msgWait=Ext.Msg.wait('En proceso. Por favor espere...', me.getTitle(),{text:''});
+          msgWait.setAlwaysOnTop(true);
+          Ext.Ajax.request({
+            method: 'POST',
+            url:'module/nomina/',
+            params:{
+              action: 'onPersona_Quitar',
+              id_ficha: id_ficha,
+              id_periodo: id_periodo,
+              id_nomina: id_nomina
+            },
+            success:function(request){
+              msgWait.close();
+              var result=Ext.JSON.decode(request.responseText);
+              Ext.MessageBox.alert("Persona - Quitar",result["message"]);
+              me.onRecargar();
+            },
+            failure:function(request){
+              msgWait.close();
+              var result=Ext.JSON.decode(request.responseText);
+            }
+          });
+        }
+      });
+
+  },
 
 });
 

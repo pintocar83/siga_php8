@@ -97,6 +97,10 @@ class MODULO extends nomina{
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onPersona_QuitarInactivo($access,SIGA::param("id_periodo"),SIGA::param("id_nomina")));
         break;
+      case "onPersona_Quitar":
+        header('Content-Type: text/plain; charset=utf-8');
+        print json_encode(self::onPersona_Quitar($access,SIGA::param("id_ficha"),SIGA::param("id_periodo"),SIGA::param("id_nomina")));
+        break;
       case "onPersona_CambiarNominaInactivo":
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onPersona_CambiarNominaInactivo($access,SIGA::param("id_periodo"),SIGA::param("id_nomina"),SIGA::param("id_nomina_anterior")));
