@@ -31,42 +31,13 @@ siga.define('nomina', {
         ficha: []
       },
       columnaSeleccionada: null,
-      cerrado: null
-    });
-/*
-    me.storeNomina = Ext.create('Ext.data.Store', {
-      fields: ['id','codigo_nomina'],
-      autoLoad: true,
-      pageSize: 1000,
-      proxy: {
-        type:'ajax',
-        url: 'module/nomina/',
-        actionMethods:  {read: "POST"},//actionMethods:'POST',actionMethods:'POST',
-        timeout: 3600000,
-        reader: {
-          type: 'json',
-          rootProperty: 'result',
-          totalProperty:'total'
-        },
-        extraParams: {
-          action: 'onInit'
-        }
-      }
-    });
-*/
-/*
-    _tmp=Ext.Ajax.request({
-      async: false,
-      url:"module/nomina/",
-      params: {
-        action: 'onInit'
-      }
+      cerrado: null,
+      periodo_id: null,
+      periodo_denominacion: null,
+      nomina_id: null,
+      nomina_denominacion: null,
     });
 
-    if(_tmp.statusText=="OK"){
-      me.internal.data.preload=Ext.JSON.decode(_tmp.responseText);
-    }
-*/
     //VENTANA PARA CAMBIAR/SELECCIONAR NOMINA
     me.internal.ventanaSeleccionarNomina=Ext.create('Ext.window.Window', {
       title: 'Seleccionar Nómina',
@@ -144,62 +115,6 @@ siga.define('nomina', {
             }
           }
         },
-/*
-        {
-          xtype:'combobox',
-          id: me._('tipoVentanaSeleccionarNomina'),
-          name: 'tipoVentanaSeleccionarNomina',
-          fieldLabel: 'Tipo de Nómina/Periodo',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          anchor: '100%',
-          queryMode: "local",
-          store: {
-            fields: ['tipo','denominacion'],
-            autoLoad: true,
-            pageSize: 1000,
-            proxy: {
-              type:'ajax',
-              url: 'module/nomina_periodo_tipo/',
-              actionMethods: {read: "POST"},
-              timeout: 3600000,
-              reader: {
-                type: 'json',
-                rootProperty: 'result',
-                totalProperty:'total'
-              },
-              extraParams: {
-                action: 'onList_Activo',
-                text: '',
-                sort: '[{"property": "denominacion", "direction": "ASC"}]'
-              }
-            },
-            listeners: {
-              load: function(store, records, successful){
-                if(records.length>0)
-                  me.getCmp("tipoVentanaSeleccionarNomina").setValue(records[0].get("tipo"));
-              }
-            }
-          },
-          displayField: 'denominacion',
-          valueField: 'tipo',
-          allowBlank: false,
-          forceSelection: true,
-          editable: false,
-          value: '',
-          listeners: {
-            afterrender: function(e, eOpts ){
-              e.setValue("Q");
-            },
-            change: function(e, The, eOpts ){
-              me.getCmp('id_periodo').getStore().load();
-              me.getCmp('id_nomina').getStore().load();
-            }
-          }
-        },
-*/
-
         {
           xtype: 'combobox',
           id: me._('id_periodo'),
@@ -222,62 +137,6 @@ siga.define('nomina', {
           allowBlank: true,
           forceSelection: true,
         },
-/*
-        {
-          xtype: 'combobox',
-          id: me._('id_periodo'),
-          name: 'id_periodo',
-          anchor: '100%',
-          fieldLabel: 'Periodo',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          editable: false,
-          queryMode: "local",
-          displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
-          tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
-          store: {
-            fields: ['id','periodo'],
-            autoLoad: false,
-            pageSize: 1000,
-            proxy: {
-              type:'ajax',
-              url: 'module/nomina_periodo/',
-              actionMethods: {read: "POST"},//actionMethods:'POST',
-              timeout: 3600000,
-              reader: {
-                type: 'json',
-                rootProperty: 'result',
-                totalProperty:'total'
-              },
-              extraParams: {
-                action: 'onList',
-                text: '',
-                id: '',
-                sort: '[{"property": "codigo", "direction": "ASC"}]'
-              }
-            },
-            listeners: {
-              load: function(store, records, successful){
-                me.getCmp("id_periodo").reset();
-                if(records.length>0)
-                  me.getCmp("id_periodo").setValue(records[records.length-1].get("id"));
-
-                //if(!me.internal.ventanaSeleccionarNomina.id_periodo)
-                //  me.internal.ventanaSeleccionarNomina.id_periodo
-              },
-              beforeload: function(store,operation,eOpts){
-                store.proxy.extraParams.tipo=me.getCmp('tipoVentanaSeleccionarNomina').getValue();
-              }
-            }
-
-          },
-          displayField: 'periodo',
-          valueField: 'id',
-          allowBlank: false,
-          forceSelection: true,
-        },
-*/
         {
           xtype: 'tagfield',
           id: me._('id_nomina'),
@@ -308,70 +167,6 @@ siga.define('nomina', {
             }
           }
         },
-/*
-
-        {
-          xtype: 'tagfield',
-          id: me._('id_nomina'),
-          name: 'id_nomina',
-          anchor: '100%',
-          fieldLabel: 'Nómina',
-          labelAlign: 'top',
-          labelSeparator: '',
-          labelStyle: 'font-weight: bold;',
-          cls: 'seleccionar_nomina__nomina',
-          editable: false,
-          queryMode: "local",
-          multiSelect: true,
-          store: {
-            fields: ['id','codigo_nomina'],
-            autoLoad: false,
-            pageSize: 1000,
-            proxy: {
-              type:'ajax',
-              url: 'module/nomina/',
-              actionMethods: {read: "POST"},//actionMethods:'POST',
-              timeout: 3600000,
-              reader: {
-                type: 'json',
-                rootProperty: 'result',
-                totalProperty:'total'
-              },
-              extraParams: {
-                action: 'onList',
-                text: '',
-                //id_periodo: '',
-                sort: '[{"property": "codigo", "direction": "ASC"}]'
-              }
-            },
-            listeners: {
-              load: function(store, records, successful){
-                //seleccionar el primer elemento del select nómina
-
-                if(records.length>0)
-                  me.getCmp("id_nomina").setValue(records[0].get("id"));
-                return;
-                if(records.length>0 && !me.getCmp('id_nomina').getValue().join(","))
-                  me.getCmp("id_nomina").setValue(records[0].get("id"));
-              },
-              beforeload: function(store,operation,eOpts){
-                //store.proxy.extraParams.id_periodo=me.getCmp('id_periodo').getValue();
-                store.proxy.extraParams.tipo=me.getCmp('tipoVentanaSeleccionarNomina').getValue();
-              }
-            }
-          },
-          displayField: 'codigo_nomina',
-          valueField: 'id',
-          allowBlank: false,
-          forceSelection: true,
-          listeners:{
-            change: function(){
-              //me.getCmp('messageVentanaSeleccionarNomina').setText("&nbsp;",false);
-              //me.getCmp('id_periodo').getStore().load();
-            }
-          }
-        },
-*/
         {
           xtype: 'container',
           anchor: '100%',
@@ -827,82 +622,6 @@ siga.define('nomina', {
             },
           ]
         },
-
-        /*
-        {
-          xtype: 'container',
-          anchor: '100%',
-          layout: 'hbox',
-          style: 'padding-top: 25px;',
-          items: [
-            {
-              xtype: 'tbspacer',
-              flex: 1
-            },
-            {
-              xtype: 'button',
-              text: 'PDF',
-              width: 80,
-              listeners: {
-                click: function(){
-                  var tmp=me.getCmp('id_nomina_visualizar').getValue();
-                  tmp=tmp["id_nomina_visualizar"];
-
-                  var id_nomina="";
-                  if((typeof tmp)=="object"){
-                    for(var i=0;i<tmp.length;i++)
-                      id_nomina+=tmp[i]+((i<tmp.length-1)?",":"");
-                  }
-                  else
-                    id_nomina=tmp;
-
-                  window.open("modulo_nomina/reportes/pdf_"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina);
-                }
-              }
-            },
-            {
-              xtype: 'tbspacer',
-              flex: 1
-            },
-            {
-              xtype: 'button',
-              text: 'CSV',
-              width: 80,
-              listeners: {
-                click: function(){
-                  console.log(me.getCmp('id_nomina_visualizar').getValue());
-
-
-
-                }
-              }
-            },
-            {
-              xtype: 'tbspacer',
-              flex: 1
-            },
-            {
-              xtype: 'button',
-              text: 'TXT',
-              width: 80,
-              listeners: {
-                click: function(){
-                  var tmp=me.getCmp('id_nomina_visualizar').getValue();
-                  tmp=tmp["id_nomina_visualizar"];
-                  var id_nomina="";
-                  for(var i=0;i<tmp.length;i++)
-                    id_nomina+=tmp[i]+((i<tmp.length-1)?",":"");
-
-                  window.open("modulo_nomina/reportes/txt_"+me.getCmp('btnVisualizar').internal.reporte+".php?id_periodo="+me.getCmp('id_periodo_visualizar').getValue()+"&id_nomina="+id_nomina);
-                }
-              }
-            },
-            {
-              xtype: 'tbspacer',
-              flex: 1
-            }
-          ]
-        }*/
       ]
     });
     me.internal.ventanaVisualizar.setInternal({itemSelection:0});
@@ -1367,67 +1086,6 @@ siga.define('nomina', {
         iconAlign: 'top',
         tooltip: 'Persona',
         menu: [
-          /*
-          {
-            text: 'Agregar',
-            listeners: {
-              click: function(){
-                if(!me.onNominaSeleccionada())
-                  return;
-
-                var id_nomina=me.getCmp('id_nomina').getValue();
-                var id_periodo=me.getCmp('id_periodo').getValue();
-
-                var selector=Ext.create("siga.windowSelect", {
-                  internal:{
-                    parent: {
-                      fieldLabel: 'Agregar Persona',
-                      internal:{
-                        page:1,
-                        limit: 100,
-                        valueField: 'id',
-                        columns: {
-                          field: ["identificacion","denominacion"],
-                          title: ["Código","Concepto"],
-                          width: ['30%','60%'],
-                          sort:  ["ASC",'ASC'],
-                          align: ["left","left"],
-                        },
-                        url: 'module/ficha/',
-                        extraParams: {
-                          id_nomina: id_nomina,
-                          id_periodo: id_periodo
-                        },
-                        actionOnList: "onList_Agregar",
-                        actionOnGet: 'onGet',
-                      },
-                      setValue: function(id_ficha){
-                        console.log("id_ficha="+id_ficha);
-                        var resp=Ext.Ajax.request({
-                          async: false,
-                          url: 'module/ficha/',
-                          params: {
-                            action: "onAgregar",
-                            id_nomina: id_nomina,
-                            id_periodo: id_periodo,
-                            id_ficha: id_ficha
-
-                          }
-                        });
-                        if(resp.statusText=="OK"){
-                          me.onRecargar();
-                        }
-                        return true;
-                      }
-                    }
-                  }
-                });
-                selector.show();
-                selector.search();
-              }
-            }
-          },
-          */
           {
             id: me._('btnPersonaAgregar'),
             text: 'Agregar',
@@ -1722,12 +1380,6 @@ siga.define('nomina', {
         iconCls: 'siga-btn-base-icon icon-contabilizar',
         iconAlign: 'top',
         tooltip: 'Contabilizar Período',
-        /*listeners: {
-            click: function(){
-              //me.setMessage("");
-              me.onContabilizar();
-            }
-        }*/
         menu: [
           {
             id: me._('btnContabilizar_CCP'),
@@ -1827,14 +1479,6 @@ siga.define('nomina', {
               }
             }
           },
-          /*{
-            text: 'Constancias de Trabajo',
-            listeners: {
-              click: function(){
-                window.open("report/pdf_constancia_trabajo.php");
-              }
-            }
-          },*/
           {
             text: 'Listado de Firmas',
             listeners: {
@@ -1994,10 +1638,7 @@ siga.define('nomina', {
         width: 400,
         viewConfig: {
           markDirty: false
-        },/*
-        features: [{
-          ftype: 'summary'
-        }],*/
+        },
         features:[
           {
             ftype: 'grouping',//onclick=\"siga.getCmp('nomina').onAddPersona({id_nomina})\"
@@ -2029,46 +1670,9 @@ siga.define('nomina', {
                 var data=Ext.JSON.decode(_tmp.responseText);
                 me.onActualizarFilaFicha(e.record,data[0]);
               }
-            },/*
-            beforeedit: function(plugin, edit){
-              console.log('dont run second time edit.record: ',edit.record);
-              //plugin.completeEdit();
-              //return false;
-              if(edit.record.get('block')) {
-                console.log('this cell have been blocked');
-                //return false;
-              }
-            }*/
+            },
           }
         },
-        /*
-        plugins: [
-          Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 2,
-            pluginId: me._("celledit"),
-            listeners: {
-              edit: function(editor, e){
-                if(e.value*1.0==e.originalValue*1.0)
-                  return;
-                _tmp=Ext.Ajax.request({
-                  async: false,
-                  url:"module/nomina/",
-                  params: {
-                    action: 'onSave',
-                    id_nomina: me.getCmp("id_nomina").getValue(),
-                    id_periodo: me.getCmp("id_periodo").getValue(),
-                    data: Ext.JSON.encode([{id_ficha: e.record.get("id_ficha"), id_concepto: e.field, valor: e.value}])
-                  }
-                });
-
-                if(_tmp.statusText=="OK"){
-                  var data=Ext.JSON.decode(_tmp.responseText);
-                  me.onActualizarFilaFicha(e.record,data[0]);
-                }
-              }
-            }
-          })
-        ],*/
         selType : 'cellmodel',
         columnLines: true,
         enableLocking: true,
@@ -2098,27 +1702,7 @@ siga.define('nomina', {
           },
 
           columnmove: function(ct, column, fromIdx, toIdx, eOpts ){
-
-
-            //console.log(fromIdx+" -> "+toIdx);
-
-
-
-          },/*
-          afterrender:function(){
-            var me=this;
-            var view = this.getView();
-            //para corregir error al hacer scroll, prueba nuevamente con una version nueva de extjs para verficar coreccion de bug.
-            view.normalView.on("scroll", function (e, t) {
-              //Ext.getDom(view.lockedView.id).scrollTop = Ext.getDom(view.normalView.id).scrollTop;
-              view.lockedView.el.dom.scrollTop=view.normalView.el.dom.scrollTop;
-            });
-
-            view.lockedView.getEl().on("scroll", function (e, t) {
-              //Ext.getDom(view.normalView.id).scrollTop = Ext.getDom(view.lockedView.id).scrollTop;
-              view.normalView.el.dom.scrollTop=view.lockedView.el.dom.scrollTop;
-            });
-          },*/
+          },
           cellcontextmenu: function(dataview, td, cellIndex, record, tr, rowIndex, e, eOpts ){
             e.stopEvent();
             e.stopPropagation();
@@ -2159,29 +1743,6 @@ siga.define('nomina', {
                     }
                   }
                 },
-                /*
-                {
-                  text: 'Agregar (Según Escala Salarial)',
-                  handler: function() {
-                    _tmp=Ext.Ajax.request({
-                      async: false,
-                      url:"module/nomina/",
-                      params: {
-                        action: 'onAddEscala',
-                        id_nomina: id_nomina,
-                        id_periodo: id_periodo,
-                        id_ficha: Ext.JSON.encode([id_ficha]),
-                        id_concepto: id_concepto
-                      }
-                    });
-
-                    if(_tmp.statusText=="OK"){
-                      var data=Ext.JSON.decode(_tmp.responseText);
-                      me.onActualizarFilaFicha(record,data[0]);
-                    }
-                  }
-                },
-                */
                 {
                   text: 'Agregar (Valor Según Ficha)',
                   handler: function() {
@@ -2248,30 +1809,6 @@ siga.define('nomina', {
                     }
                   }
                 },
-                /*
-                {
-                  text: 'Agregar a Todos (Según Escala Salarial)',
-                  handler: function() {
-                    _tmp=Ext.Ajax.request({
-                      async: false,
-                      url:"module/nomina/",
-                      params: {
-                        action: 'onAddEscala',
-                        id_nomina: id_nomina,
-                        id_periodo: id_periodo,
-                        //id_ficha: Ext.JSON.encode(['*']),
-                        id_ficha: Ext.JSON.encode((me.filtro_ficha_id && me.filtro_ficha_id.length>0)?me.filtro_ficha_id:['*']),
-                        id_concepto: id_concepto
-                      }
-                    });
-
-                    if(_tmp.statusText=="OK"){
-                      var data=Ext.JSON.decode(_tmp.responseText);
-                      me.getCmp('gridList').getStore().load();
-                    }
-                  },
-                },
-                */
                 {
                   text: 'Agregar a Todos (Valor Según Ficha)',
                   handler: function() {
@@ -2318,10 +1855,7 @@ siga.define('nomina', {
 
               ]
             });
-            menu_celda.show();  //e.getXY()
-            //console.log("XY",e.getXY());
-            //console.log("Ext.get(td.id): ",Ext.get(td));
-            //menu_celda.showAt(Ext.get(td.id).getX(), Ext.get(td.id).getY()-menu_celda.getHeight());
+            menu_celda.show();
             menu_celda.showAt(Ext.get(td).getX(), Ext.get(td).getY()-menu_celda.getHeight());
           }
         }
@@ -2632,12 +2166,6 @@ siga.define('nomina', {
 
 
     me.callParent(arguments);
-    //me.setAccess(define['modulo_nomina/hoja_trabajo->access']);
-
-
-
-
-
   },
 
   onLoad_MenuPersonaCambiarCargo: function(){
@@ -3027,36 +2555,6 @@ siga.define('nomina', {
 
   },
 
-  //_: function(id){
-  //  var me=this;
-  //  return me.id+"-"+id;
-  //},
-  //
-  //getCmp: function(id){
-  //  var me=this;
-  //  return Ext.getCmp(me._(String(id)));
-  //},
-
-  //
-  //setMessage: function(_text,_color,_time){
-  //  var me=this;
-  //
-  //  window.clearTimeout(me.internal.messageTimeOutHandler);
-  //
-  //  if(!_text){
-  //    me.getCmp('message').setText('&nbsp;',false);
-  //    return;
-  //  }
-  //  if(!_color)
-  //    _color="black";
-  //  me.getCmp('message').setText("<div style='color: "+_color+";'>"+_text+"</div>",false);
-  //  if(!_time)
-  //    _time=10000;
-  //  me.internal.messageTimeOutHandler=setTimeout(function(){
-  //    me.setMessage();
-  //    },_time);
-  //},
-
   onNominaSeleccionada: function(){
     var me=this;
     if(!me.getCmp('id_periodo').getValue()) {
@@ -3106,438 +2604,8 @@ siga.define('nomina', {
     //registro.set('block',false);
   },
 
-  /*
   configurarColumnas: function(){
     var me=this;
-
-
-    var style='';
-    var style_tipo='';
-    var texto_tipo='';
-    var title='';
-
-    var columns=[];
-    var columns_calc=[];
-    var columns_asig=[];
-    var columns_deduc=[];
-    var columns_ap=[];
-    var fields=["id_ficha","persona","total_asignacion","total_deduccion","total_neto","mensaje","total_ap"];
-
-    columns.push(
-      {
-          xtype: 'rownumberer',
-          dataIndex: 'n',
-          text: "<b>Nº</b>",
-          width: 30,
-          sortable: false,
-          cls: "hoja_trabajo_header_fijo",
-          tdCls: "hoja_trabajo_cell_fijo",
-          locked: true,
-          lockable: true,
-          draggable: false,
-          resizable: false,
-          align: "center"
-      }
-    );
-    columns.push(
-        {
-          xtype: 'templatecolumn',
-          dataIndex: "persona",
-          text: "<b>PERSONA</b>",
-          tpl: "<div style='width: 100%;'><div style='width:80%; float: left;'>{persona}</div><tpl if='mensaje'><img style='float: right; width: 12px; cursor: pointer;' src='image/icon/icon-advertencia.png' onclick=\"siga.getCmp('"+Ext.getClassName(me)+"').alert('{mensaje}');\" title=\"alert('{mensaje}');\" /></tpl></div>",
-          width: 220,
-          menuDisabled: true,
-          sortable: false,
-          height: 181,
-          cls: "hoja_trabajo_header_fijo",
-          tdCls: "hoja_trabajo_cell_fijo",
-          locked: true,
-          lockable: true,
-          draggable: false,
-          resizable: false
-        }
-    );
-
-    for(var i=0;i<me.internal.data.concepto.length;i++){
-      style='';
-      style_tipo='';
-      texto_tipo='';
-
-      fields.push(me.internal.data.concepto[i]["id_concepto"]);
-
-      if(me.internal.data.concepto[i]["indefinido"]){
-        style='error_formula';
-        title=""+me.internal.data.concepto[i]["indefinido"]+" SE ENCUENTRA INDEFINIDA EN LA FORMULA.";
-      }
-
-      var _editor=null;
-      var _cls_formula="";
-      if(!me.internal.data.concepto[i]["es_formula"] && me.internal.cerrado==false) {
-        _editor={
-          xtype: 'numberfield',
-          minValue: 0,
-          allowBlank: false,
-          allowDecimals: true,
-          decimalPrecision: 2,
-          decimalSeparator: '.',
-          hideTrigger: true,
-          keyNavEnabled: false,
-          mouseWheelEnabled: false,
-          fieldStyle: "font-size: 9px; padding: 0px; text-align: right;"
-        };
-      }
-      else{
-        _cls_formula=" formula";
-      }
-
-      switch(me.internal.data.concepto[i]["tipo"]){
-        case "A":
-          texto_tipo='ASIGNACIÓN';
-          texto_tipo='[A]';
-          style_tipo='formula_tipo_asignacion';
-          break;
-        case "RD":
-          style_tipo='formula_tipo_asignacion';
-          texto_tipo='REINTEGRO DEDUCCÓN';
-          texto_tipo='[RD]';
-          break;
-        case "D":
-          texto_tipo='DEDUCCIÓN';
-          texto_tipo='[D]';
-          style_tipo='formula_tipo_deduccion';
-          break;
-        case "AP":
-          texto_tipo='APORTE PATRONAL';
-          texto_tipo='[AP]';
-          style_tipo='formula_tipo_deduccion';
-        case "RA":
-          texto_tipo='REINTEGRO ASIGNACIÓN';
-          texto_tipo='[RA]';
-          style_tipo='formula_tipo_deduccion';
-          break;
-      }
-
-      var column_tmp=
-        {
-          xtype: 'gridcolumn',
-          dataIndex: me.internal.data.concepto[i]["id_concepto"],
-          html: "<div class='columna_editar'><img src='image/icon/icon-edit.png' style='width: 16px; cursor: pointer;' onclick=\"siga.window.getCmp('"+me.self.getName()+"').onEditarConcepto("+me.internal.data.concepto[i]["id_concepto"]+")\" /></div><div class='text_vertical'>"+me.internal.data.concepto[i]["concepto"]+"<span class='"+style_tipo+"'> "+texto_tipo+"</span><div class='text_indeficador'>"+me.internal.data.concepto[i]["identificador"]+"</div><div class='text_formula "+style+"' title='"+title+"' onclick='alert(\""+me.internal.data.concepto[i]["id"]+"\")'>"+me.internal.data.concepto[i]["definicion"]+"</div></div>",
-          width: 53,
-          menuDisabled: true,
-          sortable: false,
-          height: 181,
-          locked: false,
-          lockable: false,
-          resizable: false,
-          align: 'right',
-          cls: "hoja_trabajo_header",
-          tdCls: 'hoja_trabajo_cell'+_cls_formula,
-          editor: _editor,
-          summaryType: function(record, data_index){
-            var suma=0;
-            for(var s=0;s<record.length;s++){
-              v=record[s].get(data_index);
-              if(v=="") continue;
-              suma+=v*1.00;
-            }
-            return suma;
-          },
-          summaryRenderer: function(value, summaryData, dataIndex) {
-            return Ext.util.Format.number(value, '0,0.00');
-          },
-          renderer: function(value) {
-            return Ext.util.Format.number(value, '0,0.00');
-          },
-          listeners: {
-            headerclick: function(ct, column, e, t, eOpts){
-              if(me.internal.cerrado==true){
-                return;
-              }
-              //console.log(ct);
-              //column.tdCls="nomina_columna_seleccionada";
-              if(me.internal.columnaSeleccionada!=null){
-                me.internal.columnaSeleccionada.removeCls("nomina_columna_seleccionada");
-                if(me.internal.columnaSeleccionada.dataIndex==column.dataIndex){
-                  me.internal.columnaSeleccionada=null;
-                  return;
-                }
-              }
-              column.addCls("nomina_columna_seleccionada");
-              me.internal.columnaSeleccionada=column;
-            }
-          }
-        };
-
-      switch(me.internal.data.concepto[i]["tipo"]){
-        case "A":
-        case "RD":
-          columns_asig.push(column_tmp);
-          break;
-        case "AP":
-          fields.push(me.internal.data.concepto[i]["id_concepto"]+"_ap");
-          columns_ap.push({
-            xtype: 'gridcolumn',
-            dataIndex: me.internal.data.concepto[i]["id_concepto"]+"_ap",
-            //disabled: true,
-            html: "<div class='columna_editar'><img src='image/icon/icon-edit.png' style='width: 16px; cursor: pointer;' /></div><div class='text_vertical'>"+me.internal.data.concepto[i]["concepto"]+"<span class='"+style_tipo+"'> "+texto_tipo+"</span><div class='text_formula "+style+"' title='"+title+"'>"+me.internal.data.concepto[i]["definicion_ap"]+"</div></div>",
-            width: 53,
-            menuDisabled: true,
-            sortable: false,
-            height: 181,
-            locked: false,
-            lockable: false,
-            resizable: false,
-            align: 'right',
-            cls: "hoja_trabajo_header",
-            tdCls: 'hoja_trabajo_cell'+_cls_formula,
-            summaryType: function(record, data_index){
-              var suma=0;
-              for(var s=0;s<record.length;s++){
-                v=record[s].get(data_index);
-                if (v=="") continue;
-                suma+=v*1.00;
-              }
-              return suma;
-            },
-            summaryRenderer: function(value, summaryData, dataIndex) {
-              return Ext.util.Format.number(value, '0,0.00');
-            },
-            renderer: function(value) {
-              return Ext.util.Format.number(value, '0,0.00');
-            }
-          });
-        case "D":
-        case "RA":
-          columns_deduc.push(column_tmp);
-          break;
-        default:
-          columns_calc.push(column_tmp);
-      }
-    }
-
-    if(columns_calc.length>0)
-      columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group_none", menuDisabled: true, text: "", sortable: false, draggable: false, sealed: true, columns: columns_calc});
-
-
-    if(columns_asig.length>0)
-      columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", style: 'overflow: hidden;', menuDisabled: true, text: columns_asig.length>1?"ASIGNACIONES":"ASIG.", sortable: false, draggable: false, sealed: true, columns: columns_asig});
-
-    //columna de totales
-    columns.push(
-      {
-        xtype: 'gridcolumn',
-        dataIndex: "total_asignacion",
-        html: "<div class='text_vertical'>TOTAL ASIGNACIONES</div>",
-        width: 60,
-        menuDisabled: true,
-        sortable: false,
-        height: 181,
-        disabled: true,
-        cls: "hoja_trabajo_header",
-        tdCls: 'hoja_trabajo_cell total_asignacion',
-        draggable: false,
-        resizable: false,
-        align: 'right',
-        summaryType: 'sum',
-        summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00');
-        },
-        renderer: function(value) {
-          return Ext.util.Format.number(value, '0,0.00');
-        }
-      }
-    );
-
-    if(columns_deduc.length>0)
-      columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", menuDisabled: true, text: columns_deduc.length>1?"DEDUCCIONES":"DEDUC.", style: 'font-size: 9px; font-weight: bold;', sortable: false, draggable: false, sealed: true, columns: columns_deduc});
-
-    columns.push(
-      {
-        xtype: 'gridcolumn',
-        dataIndex: "total_deduccion",
-        html: "<div class='text_vertical'>TOTAL DEDUCCIONES</div>",
-        width: 60,
-        menuDisabled: true,
-        sortable: false,
-        height: 181,
-        disabled: true,
-        cls: "hoja_trabajo_header",
-        tdCls: 'hoja_trabajo_cell total_deduccion',
-        draggable: false,
-        resizable: false,
-        align: 'right',
-        summaryType: 'sum',
-        summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00');
-        },
-        renderer: function(value) {
-          return Ext.util.Format.number(value, '0,0.00');
-        }
-      }
-    );
-
-    columns.push(
-      {
-        xtype: 'gridcolumn',
-        dataIndex: "total_neto",
-        html: "<div class='text_vertical'>TOTAL</div>",
-        width: 70,
-        menuDisabled: true,
-        sortable: false,
-        height: 181,
-        disabled: true,
-        cls: "hoja_trabajo_header",
-        tdCls: 'hoja_trabajo_cell total_neto',
-        draggable: false,
-        resizable: false,
-        align: 'right',
-        summaryType: 'sum',
-        summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00');
-        },
-        renderer: function(value) {
-          return Ext.util.Format.number(value, '0,0.00');
-        }
-      }
-    );
-
-    if(columns_ap.length>0)
-      columns.push({xtype: 'gridcolumn', cls: "hoja_trabajo_header_group", style: 'overflow: hidden;', menuDisabled: true, disabled: true, text: columns_ap.length>2?"APORTE PATRONAL":"AP", sortable: false, draggable: false, sealed: true, columns: columns_ap});
-
-    columns.push(
-      {
-        xtype: 'gridcolumn',
-        dataIndex: "total_ap",
-        html: "<div class='text_vertical'>TOTAL APORTES</div>",
-        width: 70,
-        menuDisabled: true,
-        sortable: false,
-        height: 181,
-        disabled: true,
-        cls: "hoja_trabajo_header",
-        tdCls: 'hoja_trabajo_cell total_neto',
-        draggable: false,
-        resizable: false,
-        align: 'right',
-        summaryType: 'sum',
-        summaryRenderer: function(value, summaryData, dataIndex) {
-          return Ext.util.Format.number(value, '0,0.00');
-        },
-        renderer: function(value) {
-          return Ext.util.Format.number(value, '0,0.00');
-        }
-      }
-    );
-
-
-    return {fields: fields, columns: columns};
-
-  },
-  */
-
-  /*
-  onCargarNomina: function(){
-    var me=this;
-    var id_periodo=me.getCmp('id_periodo').getValue();
-    var id_nomina=me.getCmp('id_nomina').getValue();
-
-    if(!me.onNominaSeleccionada())
-      return;
-
-    me.menuPersona({disabled: true});
-    me.getCmp('btnConcepto').setDisabled(true);
-    me.getCmp('btnCerrarPeriodo').setDisabled(true);
-    me.getCmp('btnNotas').setDisabled(true);
-    me.getCmp('btnContabilizar').setDisabled(true);
-
-    me.internal.columnaSeleccionada=null;
-    me.internal.cerrado=null;
-    me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Nómina:</b> "+me.getCmp('id_nomina').getRawValue()+". <b>Periodo:</b> "+me.getCmp('id_periodo').getRawValue()+".</div>",false);
-
-
-    me.getCmp('gridList').getStore().removeAll(true);
-    me.getCmp('gridList').reconfigure();
-
-
-
-    Ext.Ajax.request({
-      method: 'POST',
-      url:'module/nomina/',
-      params:{
-        action: 'onGet',
-        id_nomina: id_nomina,
-        id_periodo: id_periodo
-      },
-      success:function(request){
-        var result=Ext.JSON.decode(request.responseText);
-
-        me.internal.cerrado=result["cerrado"]=='t'?true:false;
-        me.internal.contabilizado=result["contabilizado"];
-        me.internal.data.concepto=result["concepto"];
-        me.internal.data.ficha=result["ficha"];
-
-        me.getCmp('btnPersona').setDisabled(me.internal.cerrado);
-        me.getCmp('btnConcepto').setDisabled(me.internal.cerrado);
-        me.getCmp('btnCerrarPeriodo').setDisabled(me.internal.cerrado);
-        me.getCmp('btnNotas').setDisabled(me.internal.cerrado);
-        me.getCmp('btnContabilizar').setDisabled(me.internal.contabilizado==null?false:true);
-
-
-        var config=me.configurarColumnas();
-
-        var _data=[];
-        for(var i=0;i<result["ficha"].length;i++){
-          _data[i]={};
-          _data[i]["mensaje"]="";
-          _data[i]["id_ficha"]=result["ficha"][i]["id"];
-          _data[i]["persona"]=result["ficha"][i]["nombre_apellido"]+" <span class='nomina_cargo'>("+result["ficha"][i]["cargo"]+")</span>";
-
-          for(var j=0;j<result["ficha"][i]["concepto"].length;j++){
-            _data[i][result["ficha"][i]["concepto"][j]["id"]]=result["ficha"][i]["concepto"][j]["valor_final"];
-            if(result["ficha"][i]["concepto"][j]["tipo"]=="AP")
-              _data[i][result["ficha"][i]["concepto"][j]["id"]+"_ap"]=result["ficha"][i]["concepto"][j]["valor_final_ap"];
-
-            //verificar si el concepto existe en config.fields
-            var encontro=false;
-            for(var k=0;k<config.fields.length;k++){
-              //console.log(result["ficha"][i]["concepto"][j]["id"]+"=="+config.fields[k]);
-              if(result["ficha"][i]["concepto"][j]["id"]==config.fields[k]) {
-                encontro=true;
-                break;
-              }
-            }
-            if(!encontro){
-              _data[i]["mensaje"]+=result["ficha"][i]["concepto"][j]["codigo"]+" "+result["ficha"][i]["concepto"][j]["concepto"]+".<br>";
-            }
-          }
-          if(_data[i]["mensaje"]){
-            _data[i]["mensaje"]="<b>La persona tiene los siguientes conceptos, lo cuales no se encuentran asociados a la nómina actual:<br></b><p style=\\'font-size: 10px; padding-left: 20px;\\'>"+_data[i]["mensaje"]+"</p>";
-          }
-
-          _data[i]["total_asignacion"]=result["ficha"][i]["total_asignacion"];
-          _data[i]["total_deduccion"]=result["ficha"][i]["total_deduccion"];
-          _data[i]["total_neto"]=result["ficha"][i]["total_neto"];
-          _data[i]["total_ap"]=result["ficha"][i]["total_ap"];
-        }
-
-        me.getCmp('gridList').reconfigure({
-          fields: config.fields,
-          data: _data
-        },config.columns);
-
-        me.getCmp('pagingList').bindStore(me.getCmp('gridList').getStore());
-
-
-      },
-      failure:function(request){
-        var result=Ext.JSON.decode(request.responseText);
-      }
-    });
-  },*/
-
-    configurarColumnas: function(){
-    var me=this;
-
 
     var style='';
     var style_tipo='';
@@ -3942,8 +3010,12 @@ siga.define('nomina', {
 
   onCargarNomina: function(){
     var me=this;
-    var id_periodo=me.getCmp('id_periodo').getValue();
-    var id_nomina=me.getCmp('id_nomina').getValue().join(",");
+
+    me.internal.periodo_id=me.getCmp('id_periodo').getValue();
+    me.internal.periodo_denominacion=me.getCmp('id_periodo').getRawValue();
+
+    me.internal.nomina_id=me.getCmp('id_nomina').getValue().join(",");
+    me.internal.nomina_denominacion=me.getCmp('id_nomina').getRawValue();
 
     if(!me.onNominaSeleccionada())
       return;
@@ -3952,11 +3024,10 @@ siga.define('nomina', {
     me.menuConcepto({disabled: true});
     me.menuPeriodo({disabled: true});
     me.getCmp('btnNotas').setDisabled(true);
-    //me.getCmp('btnContabilizar').setDisabled(true);
 
     me.internal.columnaSeleccionada=null;
     me.internal.cerrado=null;
-    me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Periodo:</b> "+me.getCmp('id_periodo').getRawValue()+". <b>Nómina:</b> "+me.getCmp('id_nomina').getRawValue()+".</div>",false);
+    me.getCmp('lblNominaActual').setText("<div style='font-size: 11px; line-height: 120%;'><b>Periodo:</b> "+me.internal.periodo_denominacion+". <b>Nómina:</b> "+me.internal.nomina_denominacion+".</div>",false);
 
     //me.getCmp('gridList').getStore().removeAll(true);
     me.getCmp('gridList').getStore().removeAll();
@@ -3967,8 +3038,8 @@ siga.define('nomina', {
       url:'module/nomina/',
       params:{
         action: 'onListConceptoPeriodo',
-        id_nomina: id_nomina,
-        id_periodo: id_periodo
+        id_nomina: me.internal.nomina_id,
+        id_periodo: me.internal.periodo_id
       },
       success:function(request){
         var result=Ext.JSON.decode(request.responseText);
@@ -3985,37 +3056,13 @@ siga.define('nomina', {
         me.menuPeriodo( {disabled: me.internal.cerrado});
         me.getCmp('btnNotas').setDisabled(me.internal.cerrado);
 
-        //me.getCmp('btnContabilizar').setDisabled(false);
-        //me.getCmp('btnContabilizarTodo').setDisabled(false);
-        //me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(false);
-        //me.getCmp('btnContabilizar_CPP_AP').setDisabled(false);
-
         me.getCmp('btnContabilizar_CCP').setDisabled(true);
         me.getCmp('btnContabilizar_CC').setDisabled(true);
         me.getCmp('btnContabilizar_P').setDisabled(true);
         me.getCmp('btnContabilizar_P_CXC').setDisabled(true);
         me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(false);
         me.getCmp('btnContabilizar_CPP_AP').setDisabled(false);
-        /*
-        if(me.internal.contabilizado && me.internal.contabilizado_ap){
-          me.getCmp('btnContabilizar').setDisabled(true);
-          me.getCmp('btnContabilizarTodo').setDisabled(true);
-        }
-        if(!me.internal.contabilizado && !me.internal.contabilizado_ap){
-          me.getCmp('btnContabilizar_CPP_AP').setDisabled(true);
-        }
 
-        if(me.internal.contabilizado){
-          me.getCmp('btnContabilizarTodo').setDisabled(true);
-          me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(true);
-        }
-
-        if(me.internal.contabilizado_ap){
-          me.getCmp('btnContabilizarTodo').setDisabled(true);
-          me.getCmp('btnContabilizar_CPP_AP').setDisabled(true);
-        }
-        //me.getCmp('btnContabilizar').setDisabled(me.internal.contabilizado==null?false:true);
-        */
         if(me.internal.contabilizado!==null){
           var comprobante=siga.onGetComprobante({id:[me.internal.contabilizado]});
           console.log(comprobante);
@@ -4120,68 +3167,16 @@ siga.define('nomina', {
             },
             beforeload: function(store,operation,eOpts){
               me.filtro_ficha_id="";
-              store.proxy.extraParams.id_nomina=me.getCmp('id_nomina').getValue().join(",");
-              store.proxy.extraParams.id_periodo=me.getCmp('id_periodo').getValue();
+              store.proxy.extraParams.id_nomina=me.internal.nomina_id;
+              store.proxy.extraParams.id_periodo=me.internal.periodo_id;
               store.proxy.extraParams.filtro_busqueda=Ext.JSON.encode(me.filtro_busqueda_data());
             }
           }
         });
 
         me.getCmp('gridList').reconfigure(store,config.columns);
-
         me.getCmp('pagingList').bindStore(store);
-
-
         me.getCmp('gridList').getStore().load();
-
-
-
-
-
-
-        /*var _data=[];
-        for(var i=0;i<result["ficha"].length;i++){
-          _data[i]={};
-          _data[i]["mensaje"]="";
-          _data[i]["id_ficha"]=result["ficha"][i]["id"];
-          _data[i]["persona"]=result["ficha"][i]["nombre_apellido"]+" <span class='nomina_cargo'>("+result["ficha"][i]["cargo"]+")</span>";
-
-          for(var j=0;j<result["ficha"][i]["concepto"].length;j++){
-            _data[i][result["ficha"][i]["concepto"][j]["id"]]=result["ficha"][i]["concepto"][j]["valor_final"];
-            if(result["ficha"][i]["concepto"][j]["tipo"]=="AP")
-              _data[i][result["ficha"][i]["concepto"][j]["id"]+"_ap"]=result["ficha"][i]["concepto"][j]["valor_final_ap"];
-
-            //verificar si el concepto existe en config.fields
-            var encontro=false;
-            for(var k=0;k<config.fields.length;k++){
-              //console.log(result["ficha"][i]["concepto"][j]["id"]+"=="+config.fields[k]);
-              if(result["ficha"][i]["concepto"][j]["id"]==config.fields[k]) {
-                encontro=true;
-                break;
-              }
-            }
-            if(!encontro){
-              _data[i]["mensaje"]+=result["ficha"][i]["concepto"][j]["codigo"]+" "+result["ficha"][i]["concepto"][j]["concepto"]+".<br>";
-            }
-          }
-          if(_data[i]["mensaje"]){
-            _data[i]["mensaje"]="<b>La persona tiene los siguientes conceptos, lo cuales no se encuentran asociados a la nómina actual:<br></b><p style=\\'font-size: 10px; padding-left: 20px;\\'>"+_data[i]["mensaje"]+"</p>";
-          }
-
-          _data[i]["total_asignacion"]=result["ficha"][i]["total_asignacion"];
-          _data[i]["total_deduccion"]=result["ficha"][i]["total_deduccion"];
-          _data[i]["total_neto"]=result["ficha"][i]["total_neto"];
-          _data[i]["total_ap"]=result["ficha"][i]["total_ap"];
-        }
-
-        me.getCmp('gridList').reconfigure({
-          fields: config.fields,
-          data: _data
-        },config.columns);
-
-        me.getCmp('pagingList').bindStore(me.getCmp('gridList').getStore());
-
-        */
       },
       failure:function(request){
         var result=Ext.JSON.decode(request.responseText);
@@ -4192,8 +3187,6 @@ siga.define('nomina', {
   onEditarConcepto: function(id_concepto) {
     var me=this;
     alert(id_concepto);
-
-
   },
 
   onCerrarPeriodo: function(){
@@ -4350,32 +3343,13 @@ siga.define('nomina', {
 
   alert: function(msj){
     var me=this;
-    //alert(msj);
-    //Ext.Msg.alert(me.title,msj,null,me.getId());return;
-    //var msg=Ext.Msg.alert(me.title,msj);
-    //console.log(msj);
-
-    //var msg=Ext.Msg.show({title: me.title});
-    /*var win=Ext.create("Ext.window.MessageBox",{
-      title: me.title,
-      width: 600,
-      height: 400,
-      renderTo: me.getId(),
-      //renderTo: Ext.getBody(),
-      modal: false,
-      html: msj
-    });*/
     Ext.Msg.show({
       renderTo: me.getId(),
       modal:false,
       message: msj,
       modal: true,
     });
-    //msg.toFront(true);
-    //msg.show();
-    //Ext.MessageBox.alert(me.title,msj).toFront();
   },
-
 
   onFiltroBusqueda: function(){
     var me=this;
@@ -4828,15 +3802,7 @@ siga.define('nomina', {
           });
         }
       });
-
   },
 
 });
-
-
-
-
-
-
-
 
