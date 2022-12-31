@@ -34,7 +34,7 @@ siga.define('nomina', {
       cerrado: null,
       periodo_id: null,
       periodo_denominacion: null,
-      nomina_id: null,
+      nomina_id: [],
       nomina_denominacion: null,
     });
 
@@ -43,7 +43,7 @@ siga.define('nomina', {
       title: 'Seleccionar Nómina',
       minimizable: false,
       maximizable: false,
-      closable: false,
+      closable: true,
       modal: true,
       width: 650,
       height: 270,
@@ -57,10 +57,11 @@ siga.define('nomina', {
         id_nomina: ''
       },
       listeners: {
+        beforeshow: function(){
+          me.getCmp('messageVentanaSeleccionarNomina').setText("<div>&nbsp;</div>",false);
+        },
         beforeclose: function(w,o){
-          me.onRecargar();
           me.internal.ventanaSeleccionarNomina.hide();
-          //me.onUpdate_MenuPersonaCambiarNomina();
           return false;
         },
         afterrender: function(){
@@ -103,7 +104,6 @@ siga.define('nomina', {
               var data_periodo=me.getDataPeriodo({tipo: tipo});
               me.getCmp('id_periodo').getStore().setData(data_periodo);
               if(data_periodo.length>0){
-                console.log(data_periodo, data_periodo[data_periodo.length-1]["id"]);
                 me.getCmp("id_periodo").setValue(data_periodo[data_periodo.length-1]["id"]);
               }
 
@@ -184,10 +184,17 @@ siga.define('nomina', {
               listeners: {
                 click: function(){
                   if(me.getCmp("id_periodo").getValue()){
-                    if(!me.getCmp("id_nomina").getValue()){
+                    if(!me.getCmp("id_nomina").getValue() || me.getCmp('id_nomina').getValue().length===0){
                       me.getCmp('messageVentanaSeleccionarNomina').setText("<div style='color: red;'>Debe seleccionar la nómina.</div>",false);
                       return;
                     }
+
+                    me.internal.periodo_id=me.getCmp('id_periodo').getValue();
+                    me.internal.periodo_denominacion=me.getCmp('id_periodo').getRawValue();
+
+                    me.internal.nomina_id=me.getCmp('id_nomina').getValue();
+                    me.internal.nomina_denominacion=me.getCmp('id_nomina').getRawValue();
+
                     me.onUpdate_MenuPersonaCambiarNomina();
                     me.onCargarNomina();
                     me.internal.ventanaSeleccionarNomina.hide();
@@ -697,7 +704,6 @@ siga.define('nomina', {
                   var data_periodo=me.getDataPeriodo({tipo: tipo});
                   me.getCmp('id_periodo_concepto_importar').getStore().setData(data_periodo);
                   if(data_periodo.length>0){
-                    console.log(data_periodo, data_periodo[data_periodo.length-1]["id"]);
                     me.getCmp("id_periodo_concepto_importar").setValue(data_periodo[data_periodo.length-1]["id"]);
                   }
 
@@ -923,14 +929,14 @@ siga.define('nomina', {
 
       listeners: {
         beforeclose: function(w,o){
-          
+
           me.internal.ventanaConfigurarProyeccion.hide();
           return false;
         },
         beforeshow: function(){
           var msgWait=Ext.Msg.wait('Cargando configuración. Por favor espere...', me.internal.ventanaConfigurarProyeccion.getTitle(),{text:''});
           msgWait.setAlwaysOnTop(true);
-    
+
           Ext.Ajax.request({
             method: 'POST',
             url:'module/nomina/',
@@ -1068,8 +1074,6 @@ siga.define('nomina', {
         tooltip: 'Seleccionar Nómina',
         listeners: {
             click: function(){
-              //me.getCmp('id_nomina').getStore().load();
-              //me.getCmp('id_periodo').getStore().load();
               me.internal.ventanaSeleccionarNomina.show();
             }
         }
@@ -1129,8 +1133,8 @@ siga.define('nomina', {
                       '<b>\u00BFEst\u00e1 seguro quitar a todo el personal inactivo de la nómina actual?</b><br> ',
                       function(btn,text){
                         if(btn == 'yes'){
-                          var id_nomina=me.getCmp('id_nomina').getValue().join(',');
-                          var id_periodo=me.getCmp('id_periodo').getValue();
+                          var id_nomina=me.internal.nomina_id.join(",");
+                          var id_periodo=me.internal.periodo_id;
 
                           me.menuPersona({disabled: true});
                           me.menuConcepto({disabled: true});
@@ -1230,8 +1234,8 @@ siga.define('nomina', {
                         actionOnGet: 'onGet',
                       },
                       setValue: function(id_concepto){
-                        var id_nomina=me.getCmp('id_nomina').getValue().join(",");
-                        var id_periodo=me.getCmp('id_periodo').getValue();
+                        var id_nomina=me.internal.nomina_id.join(",");
+                        var id_periodo=me.internal.periodo_id;
 
                         var resp=Ext.Ajax.request({
                           async: false,
@@ -1263,8 +1267,8 @@ siga.define('nomina', {
               click: function(){
                 if(me.internal.columnaSeleccionada==null)
                   return;
-                var id_nomina=me.getCmp('id_nomina').getValue().join(",");
-                var id_periodo=me.getCmp('id_periodo').getValue();
+                var id_nomina=me.internal.nomina_id.join(",");
+                var id_periodo=me.internal.periodo_id;
                 var id_concepto=me.internal.columnaSeleccionada.dataIndex;
 
                 var resp=Ext.Ajax.request({
@@ -1288,8 +1292,8 @@ siga.define('nomina', {
             id: me._('btnConceptoImportar'),
             listeners: {
               click: function(){
-                var id_nomina=me.getCmp('id_nomina').getValue().join(",");
-                var id_periodo=me.getCmp('id_periodo').getValue();
+                var id_nomina=me.internal.nomina_id.join(",");
+                var id_periodo=me.internal.periodo_id;
 
                 me.internal.ventanaConceptoImportar.show();
                 //me.onConceptoImportarCargarGrid();
@@ -1659,9 +1663,8 @@ siga.define('nomina', {
                 url:"module/nomina/",
                 params: {
                   action: 'onSave',
-                  //id_nomina: me.getCmp("id_nomina").getValue(),
                   id_nomina: e.record.get('id_nomina'),
-                  id_periodo: me.getCmp("id_periodo").getValue(),
+                  id_periodo: me.internal.periodo_id,
                   data: Ext.JSON.encode([{id_ficha: e.record.get("id_ficha"), id_concepto: e.field, valor: e.value}])
                 }
               });
@@ -1716,8 +1719,8 @@ siga.define('nomina', {
             if(!Ext.isNumeric(id_concepto)) {
               return;
             }
-            //var id_nomina=me.getCmp('id_nomina').getValue();
-            var id_periodo   = me.getCmp('id_periodo').getValue();
+
+            var id_periodo   = me.internal.periodo_id;
             var id_nomina    = record.get('id_nomina');
             var id_ficha     = record.get('id_ficha');
             var menu_celda = Ext.create('Ext.menu.Menu', {
@@ -2210,7 +2213,7 @@ siga.define('nomina', {
                   function(btn,text){
                     if(btn == 'yes'){
                       var id_ficha=seleccion[0].data["id_ficha"];
-                      var id_periodo=me.getCmp("id_periodo").getValue();
+                      var id_periodo=me.internal.periodo_id;
                       var id_cargo=el.internal.id;
 
 
@@ -2297,7 +2300,7 @@ siga.define('nomina', {
                   function(btn,text){
                     if(btn == 'yes'){
                       var id_ficha=seleccion[0].data["id_ficha"];
-                      var id_periodo=me.getCmp("id_periodo").getValue();
+                      var id_periodo=me.internal.periodo_id;
                       var id_accion_subespecifica=el.internal.id;
 
                       me.menuPersona({disabled: true});
@@ -2368,7 +2371,7 @@ siga.define('nomina', {
     for(var i=0;i<nomina.length;i++){
       //if(me.getCmp("id_nomina").getValue().join(",")==nomina[i].data["id"]) continue; //no mostrar la misma nómina seleccionada
       //console.log(nomina[i]);
-      if($.inArray(nomina[i]["id"],me.getCmp("id_nomina").getValue())>=0){
+      if($.inArray(nomina[i]["id"],me.internal.nomina_id)>=0){
         console.log("agregar persona");
         me.getCmp("btnPersonaAgregar").menu.add({
           text: nomina[i]["codigo_nomina"],
@@ -2380,7 +2383,7 @@ siga.define('nomina', {
                 return;
 
               var id_nomina=el.internal.id;
-              var id_periodo=me.getCmp('id_periodo').getValue();
+              var id_periodo=me.internal.periodo_id;
 
               var selector=Ext.create("siga.windowSelect", {
                 internal:{
@@ -2458,8 +2461,7 @@ siga.define('nomina', {
               function(btn,text){
                 if(btn == 'yes'){
                   var id_ficha=seleccion[0].data["id_ficha"];
-                  var id_periodo=me.getCmp("id_periodo").getValue();
-                  //var id_nomina_anterior=me.getCmp("id_nomina").getValue();
+                  var id_periodo=me.internal.periodo_id;
                   var id_nomina_anterior=seleccion[0].data["id_nomina"];
                   var id_nomina=el.internal.id;
 
@@ -2506,8 +2508,8 @@ siga.define('nomina', {
               //'<b>\u00BFEst\u00e1 seguro quitar a todo el personal inactivo de la nómina actual?</b><br> ',
               function(btn,text){
                 if(btn == 'yes'){
-                  var id_periodo=me.getCmp('id_periodo').getValue();
-                  var id_nomina_anterior=me.getCmp("id_nomina").getValue().join(",");
+                  var id_periodo=me.internal.periodo_id;
+                  var id_nomina_anterior=me.internal.nomina_id.join(",");
                   var id_nomina=el.internal.id;
 
                   me.menuPersona({disabled: true});
@@ -2557,7 +2559,7 @@ siga.define('nomina', {
 
   onNominaSeleccionada: function(){
     var me=this;
-    if(!me.getCmp('id_periodo').getValue()) {
+    if(!me.internal.periodo_id || me.internal.periodo_id.length===0) {
       Ext.Msg.alert(me.title,"Primero debe seleccionar la nómina y el periodo.");
       return false;
     }
@@ -3011,12 +3013,6 @@ siga.define('nomina', {
   onCargarNomina: function(){
     var me=this;
 
-    me.internal.periodo_id=me.getCmp('id_periodo').getValue();
-    me.internal.periodo_denominacion=me.getCmp('id_periodo').getRawValue();
-
-    me.internal.nomina_id=me.getCmp('id_nomina').getValue().join(",");
-    me.internal.nomina_denominacion=me.getCmp('id_nomina').getRawValue();
-
     if(!me.onNominaSeleccionada())
       return;
 
@@ -3033,15 +3029,19 @@ siga.define('nomina', {
     me.getCmp('gridList').getStore().removeAll();
     me.getCmp('gridList').reconfigure();
 
+    var msgWait=Ext.Msg.wait('Procesando. Por favor espere...', me.getTitle(),{text:''});
+    msgWait.setAlwaysOnTop(true);
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina/',
       params:{
         action: 'onListConceptoPeriodo',
-        id_nomina: me.internal.nomina_id,
+        id_nomina: me.internal.nomina_id.join(","),
         id_periodo: me.internal.periodo_id
       },
       success:function(request){
+        msgWait.close();
         var result=Ext.JSON.decode(request.responseText);
 
         me.internal.cerrado=result["cerrado"]=='t'?true:false;
@@ -3101,7 +3101,7 @@ siga.define('nomina', {
 
         var config=me.configurarColumnas();
 
-        var store= new Ext.data.Store({
+        var store = new Ext.data.Store({
           pageSize: 50,
           fields: config.fields,
           autoLoad: false,
@@ -3167,7 +3167,7 @@ siga.define('nomina', {
             },
             beforeload: function(store,operation,eOpts){
               me.filtro_ficha_id="";
-              store.proxy.extraParams.id_nomina=me.internal.nomina_id;
+              store.proxy.extraParams.id_nomina=me.internal.nomina_id.join(",");
               store.proxy.extraParams.id_periodo=me.internal.periodo_id;
               store.proxy.extraParams.filtro_busqueda=Ext.JSON.encode(me.filtro_busqueda_data());
             }
@@ -3179,6 +3179,7 @@ siga.define('nomina', {
         me.getCmp('gridList').getStore().load();
       },
       failure:function(request){
+        msgWait.close();
         var result=Ext.JSON.decode(request.responseText);
       }
     });
@@ -3194,10 +3195,10 @@ siga.define('nomina', {
     if(!me.onNominaSeleccionada())
       return;
 
-    var id_periodo=me.getCmp('id_periodo').getValue();
+    var id_periodo=me.internal.periodo_id;
 
     Ext.MessageBox.confirm( 'Cerrar Período',
-                            '<b>\u00BFEst\u00e1 seguro de cerrar el período?</b><br> '+me.getCmp('id_periodo').getRawValue()+'',
+                            '<b>\u00BFEst\u00e1 seguro de cerrar el período?</b><br> '+me.internal.periodo_denominacion+'',
                             function(btn,text){
                               if(btn == 'yes'){
                                 me.menuPersona({disabled: true});
@@ -3216,7 +3217,8 @@ siga.define('nomina', {
                                     var result=Ext.JSON.decode(request.responseText);
                                     Ext.MessageBox.alert("Cerrar Período",result["message"]);
                                     //recargar el listado de periodos, para mostrar el nuevo periodo creado
-                                    me.getCmp('id_periodo').getStore().load();
+                                    //me.getCmp('id_periodo').getStore().load();
+                                    me.onActualizarDataPreload();
                                     me.onRecargar();
                                     window.open("report/nomina_recibo_pago.php?id_periodo="+id_periodo+"&generar=1");
                                   },
@@ -3233,8 +3235,8 @@ siga.define('nomina', {
     if(!me.onNominaSeleccionada())
       return;
 
-    var id_periodo=me.getCmp('id_periodo').getValue();
-    var id_nomina=me.getCmp('id_nomina').getValue().join(",");
+    var id_periodo=me.internal.periodo_id;
+    var id_nomina=me.internal.nomina_id.join(",");
 
     Ext.Ajax.request({
       method: 'POST',
@@ -3252,7 +3254,6 @@ siga.define('nomina', {
         }
         var prompt=Ext.Msg.prompt(
           me.title,
-          //'<b>Notas para la nómina actual.</b><br>Nómina: '+me.getCmp('id_nomina').getRawValue()+'<br>Período: '+me.getCmp('id_periodo').getRawValue()+'.',
           '<b>Notas para la nómina actual.</b>',
           function(btn, text){
             if(btn == 'ok'){
@@ -3295,10 +3296,10 @@ siga.define('nomina', {
     if(!me.onNominaSeleccionada())
       return;
 
-    var id_periodo=me.getCmp('id_periodo').getValue();
+    var id_periodo=me.internal.periodo_id;
 
     Ext.MessageBox.confirm( 'Contabilizar Período',
-                            '<b>\u00BFEst\u00e1 seguro que desea contabilizar el período?</b><br> '+me.getCmp('id_periodo').getRawValue()+'',
+                            '<b>\u00BFEst\u00e1 seguro que desea contabilizar el período?</b><br> '+me.internal.periodo_denominacion+'',
                             function(btn,text){
                               if(btn == 'yes'){
                                 //pedir fecha de contabilizacion
@@ -3771,7 +3772,7 @@ siga.define('nomina', {
       function(btn,text){
         if(btn == 'yes'){
           var id_ficha=seleccion[0].data["id_ficha"];
-          var id_periodo=me.getCmp("id_periodo").getValue();
+          var id_periodo=me.internal.periodo_id;
           var id_nomina=seleccion[0].data["id_nomina"];
 
           me.menuPersona({disabled: true});
