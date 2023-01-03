@@ -301,10 +301,13 @@ for($p=0;$p<count($periodo);$p++):
 	$concepto=$periodo[$p]["concepto"];
 
 	$activeSheet = $excel->createSheet($p);
-	$titulo_hoja = remove_accent($periodo[$p]["descripcion"]);
+	$titulo_hoja = remove_accent($periodo[$p]["codigo"]." ".$periodo[$p]["descripcion"]);
 	$titulo_hoja = preg_replace('/[^A-Za-z0-9. -]/', '', $titulo_hoja);
+	$titulo_hoja = trim($titulo_hoja);
 	$titulo_hoja = substr($titulo_hoja, 0, 30);
-	$activeSheet->setTitle($titulo_hoja);
+	if($titulo_hoja){
+		$activeSheet->setTitle($titulo_hoja);
+	}
 	$activeSheet->setShowGridlines(false);
 	$activeSheet->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
 	$activeSheet->getPageSetup()->setFitToPage(true);
