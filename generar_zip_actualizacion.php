@@ -88,7 +88,6 @@ $files_history[]=[
   "class/nomina.class.php",
   "report/nomina_xls_v2.php",
   "module/nomina/index.php",
-  "module/nomina/index.php",
   "module/nomina/main.css",
   "module/nomina/main.js",
 ];
@@ -98,6 +97,16 @@ $files_history[]=[
   "module/sigafs/core/reporte_retencion.js",
   "module/sigafs/core/reporte_retencion.php",
   "report/retencion_emitida_xls.php"
+];
+
+//Hasta 2022-12-29 Pendiente generacion
+$files_history[]=[
+  "class/nomina.class.php",
+  "module/nomina/index.php",
+  "module/nomina/main.js",
+  "module/sigafs/core/cuenta_contable.js",
+  "module/sigafs/core/cuenta_contable.php",
+  "report/contabilidad_plan_cuentas_xls.php",
 ];
 
 
