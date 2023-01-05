@@ -2373,11 +2373,13 @@ class nomina{
           SELECT DISTINCT
             F.id
           FROM
-            modulo_nomina.nomina as N,
-            modulo_nomina.ficha_concepto as FC,
-            modulo_base.persona as P,
-            modulo_nomina.ficha AS F LEFT JOIN
-            modulo_nomina.cargo as C ON C.id=(
+            modulo_nomina.ficha_concepto as FC
+              INNER JOIN modulo_nomina.nomina as N ON FC.id_nomina=N.id
+              INNER JOIN modulo_nomina.ficha AS F ON F.id=FC.id_ficha
+              LEFT JOIN modulo_nomina.escala_salarial ES ON ES.id=F.id_escala_salarial
+              LEFT JOIN modulo_base.persona as P ON F.id_persona=P.id
+              LEFT JOIN modulo_base.persona_natural as PN ON P.id=PN.id_persona
+              LEFT JOIN modulo_nomina.cargo as C ON C.id=(
                                               select id_cargo
                                               from modulo_nomina.ficha_cargo
                                               where id_ficha=F.id and fecha <= '$fecha_culminacion'
@@ -2385,11 +2387,8 @@ class nomina{
                                               limit 1)
 
           WHERE
-            F.id_persona=P.id AND
-            F.id=FC.id_ficha AND
             FC.id_periodo=$id_periodo AND
-            FC.id_nomina in ($id_nomina) AND
-            FC.id_nomina=N.id
+            FC.id_nomina in ($id_nomina)
             $add_filtro
         ";
         //print $sql;
@@ -2458,14 +2457,15 @@ class nomina{
             F.id_escala_salarial,
             F.activo,
             PN.genero,
-            (select escala from modulo_nomina.escala_salarial as ES where ES.id=F.id_escala_salarial) as escala_salarial
+            ES.escala as escala_salarial
           FROM
-            modulo_nomina.nomina as N,
-            modulo_nomina.ficha_concepto as FC,
-            modulo_base.persona as P LEFT JOIN
-              modulo_base.persona_natural as PN ON P.id=PN.id_persona,
-            modulo_nomina.ficha AS F LEFT JOIN
-              modulo_nomina.cargo as C ON C.id=(
+            modulo_nomina.ficha_concepto as FC
+              INNER JOIN modulo_nomina.nomina as N ON FC.id_nomina=N.id
+              INNER JOIN modulo_nomina.ficha AS F ON F.id=FC.id_ficha
+              LEFT JOIN modulo_nomina.escala_salarial ES ON ES.id=F.id_escala_salarial
+              LEFT JOIN modulo_base.persona as P ON F.id_persona=P.id
+              LEFT JOIN modulo_base.persona_natural as PN ON P.id=PN.id_persona
+              LEFT JOIN modulo_nomina.cargo as C ON C.id=(
                                               select id_cargo
                                               from modulo_nomina.ficha_cargo
                                               where id_ficha=F.id and fecha <= '$fecha_culminacion'
@@ -2473,14 +2473,11 @@ class nomina{
                                               limit 1)
 
           WHERE
-            F.id_persona=P.id AND
-            F.id=FC.id_ficha AND
             FC.id_periodo=$id_periodo AND
-            FC.id_nomina in ($id_nomina) AND
-            FC.id_nomina=N.id
+            FC.id_nomina in ($id_nomina)
             $add
           ";
-
+    //print $sql." ORDER BY nomina, cedula  LIMIT $limit OFFSET $start";exit;
     $ficha=$db->Execute($sql." ORDER BY nomina, cedula  LIMIT $limit OFFSET $start");
 
     $result=array();
