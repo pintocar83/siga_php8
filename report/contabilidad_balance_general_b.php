@@ -961,6 +961,7 @@ $pdf->Cell($tam_monto,5,utf8_decode(number_format($TOTAL_PASIVO+$TOTAL_CAPITAL,2
 
 $pdf->AliasNbPages();
 ob_clean();
+if (ob_get_contents()) ob_end_clean();
 $pdf->Output("balance_general.pdf","I");
 
 ?>
