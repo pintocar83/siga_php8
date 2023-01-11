@@ -1,6 +1,8 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+error_reporting(0);
+ini_set('display_errors', 'Off');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
@@ -961,7 +963,6 @@ $pdf->Cell($tam_monto,5,utf8_decode(number_format($TOTAL_PASIVO+$TOTAL_CAPITAL,2
 
 $pdf->AliasNbPages();
 ob_clean();
-if (ob_get_contents()) ob_end_clean();
 $pdf->Output("balance_general.pdf","I");
 
 ?>
