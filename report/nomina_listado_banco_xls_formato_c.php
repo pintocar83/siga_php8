@@ -1,6 +1,9 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
+error_reporting(0);
+ini_set('display_errors', 'Off');
+
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
@@ -15,7 +18,7 @@ function nacionalidad_validar($nac){
 	if($nac=="P") return "P";
 	return "V";
 }
-    
+
 $db=SIGA::DBController();
 
 
@@ -30,6 +33,10 @@ if(count($id_periodo)!=1){
 $organismo=$db->Execute("SELECT P.identificacion_tipo||P.identificacion_numero as identificacion
                           FROM modulo_base.organismo AS O, modulo_base.persona as P
                           WHERE O.id_persona=P.id");
+
+$organismo_rif="";
+if(isset($organismo[0]["identificacion"]) and $organismo[0]["identificacion"])
+	$organismo_rif=$organismo[0]["identificacion"];
 
 $id_periodo=$id_periodo[0];
 
@@ -49,18 +56,20 @@ $data=[];
 $c=0;
 $total_neto=0;
 for($i=0;$i<count($id_nomina);$i++):
-	$ficha=nomina::fichas($id_nomina[$i],$id_periodo);		
-	
+	$ficha=nomina::fichas($id_nomina[$i],$id_periodo);
+
 	for($j=0;$j<count($ficha);$j++):
 		//print_r($ficha[$j]["concepto"]);exit;
 		$data[$c]=[];
 		$data[$c]["nacionalidad"]=$ficha[$j]["nacionalidad"];
 		$data[$c]["cedula"]=$ficha[$j]["cedula"];
-		$data[$c]["cuenta_nomina"]=$ficha[$j]["cuenta_nomina"];
+		$data[$c]["cuenta_nomina"]=str_repeat("0", 20);
+		if(isset($ficha[$j]["cuenta_nomina"]) && $ficha[$j]["cuenta_nomina"])
+			$data[$c]["cuenta_nomina"]=$ficha[$j]["cuenta_nomina"];
 
 		$suma_concepto=0;
-		if($formato=="1" || $formato=="2" || $formato=="3"){			
-			for($k=0; $k<count($ficha[$j]["concepto"]); $k++){ 
+		if($formato=="1" || $formato=="2" || $formato=="3"){
+			for($k=0; $k<count($ficha[$j]["concepto"]); $k++){
 				if(in_array($ficha[$j]["concepto"][$k]["id"],$id_concepto)){
 					$suma_concepto+=$ficha[$j]["concepto"][$k]["valor_final"];
 				}
@@ -77,16 +86,16 @@ for($i=0;$i<count($id_nomina);$i++):
 		else{
 			$data[$c]["total_neto"]=$ficha[$j]["total_neto"];
 		}
-		
+
 		$data[$c]["nombre_apellido"]=$ficha[$j]["nombre_apellido"];
 
 		if($data[$c]["total_neto"]<=0){
 			continue;
 		}
-		
+
 		$total_neto+=$data[$c]["total_neto"];
 		$c++;
-	endfor;	
+	endfor;
 endfor;
 
 
@@ -95,26 +104,25 @@ $ln=1;
 $excel = new PHPExcel();
 
 $excel->setActiveSheetIndex(0);
-$excel->removeSheetByIndex(0);	
+$excel->removeSheetByIndex(0);
 
 $activeSheet = $excel->createSheet(0);
 
-$activeSheet->setCellValueExplicit("A$ln","ONTNOM",PHPExcel_Cell_DataType::TYPE_STRING);	
-$activeSheet->setCellValueExplicit("B$ln","G200007320",PHPExcel_Cell_DataType::TYPE_STRING);	
-$activeSheet->setCellValueExplicit("C$ln",str_pad($c,7,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);	
-$activeSheet->setCellValueExplicit("D$ln",str_pad(number_format($total_neto,2,"",""),15,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);	
-$activeSheet->setCellValueExplicit("E$ln","VES",PHPExcel_Cell_DataType::TYPE_STRING);	
-$activeSheet->setCellValueExplicit("F$ln",date("Ymd"),PHPExcel_Cell_DataType::TYPE_STRING);	
+$activeSheet->setCellValueExplicit("A$ln","ONTNOM",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("B$ln",$organismo_rif,PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("C$ln",str_pad($c,7,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("D$ln",str_pad(number_format($total_neto,2,"",""),15,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("E$ln","VES",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("F$ln",date("Ymd"),PHPExcel_Cell_DataType::TYPE_STRING);
 $ln++;
 
 
-for($i=0; $i<$c; $i++) { 
+for($i=0; $i<$c; $i++) {
 	$activeSheet->setCellValueExplicit("A$ln",nacionalidad_validar($data[$i]["nacionalidad"]),PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("B$ln",str_pad($data[$i]["cedula"],8,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("C$ln",str_pad($data[$i]["cuenta_nomina"],20,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("D$ln",str_pad(number_format($data[$i]["total_neto"],2,"",""),11,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("E$ln",$data[$i]["nombre_apellido"],PHPExcel_Cell_DataType::TYPE_STRING);
-
 	$ln++;
 }
 

@@ -99,7 +99,7 @@ $files_history[]=[
   "report/retencion_emitida_xls.php"
 ];
 
-//Hasta 2022-12-29 Pendiente generacion
+//Hasta 2023-01-10 Pendiente generacion
 $files_history[]=[
   "class/nomina.class.php",
   "module/nomina/index.php",
@@ -107,6 +107,8 @@ $files_history[]=[
   "module/sigafs/core/cuenta_contable.js",
   "module/sigafs/core/cuenta_contable.php",
   "report/contabilidad_plan_cuentas_xls.php",
+  "report/nomina_xls_v2.php",
+  "report/omina_listado_banco_xls_formato_c.php",
 ];
 
 

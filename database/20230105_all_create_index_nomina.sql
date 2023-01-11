@@ -1,0 +1,2 @@
+CREATE INDEX ficha_concepto_periodo_nomina ON modulo_nomina.ficha_concepto(id_periodo,id_nomina);
+CREATE INDEX ficha_concepto_periodo_nomina_ficha ON modulo_nomina.ficha_concepto(id_periodo,id_nomina,id_ficha);
