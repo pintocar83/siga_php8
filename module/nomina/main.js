@@ -1139,7 +1139,7 @@ siga.define('nomina', {
                           me.menuPersona({disabled: true});
                           me.menuConcepto({disabled: true});
                           me.menuPeriodo({disabled: true});
-                          me.getCmp('btnContabilizar').setDisabled(true);
+                          //me.getCmp('btnContabilizar').setDisabled(true);
 
                           Ext.Ajax.request({
                             method: 'POST',
@@ -3029,8 +3029,8 @@ siga.define('nomina', {
     me.getCmp('gridList').getStore().removeAll();
     me.getCmp('gridList').reconfigure();
 
-    var msgWait=Ext.Msg.wait('Procesando. Por favor espere...', me.getTitle(),{text:''});
-    msgWait.setAlwaysOnTop(true);
+    var msgWait = new Ext.LoadMask({msg: 'Por favor espere...', target : me});
+    msgWait.show();
 
     Ext.Ajax.request({
       method: 'POST',
@@ -3041,7 +3041,7 @@ siga.define('nomina', {
         id_periodo: me.internal.periodo_id
       },
       success:function(request){
-        msgWait.close();
+        msgWait.destroy();
         var result=Ext.JSON.decode(request.responseText);
 
         me.internal.cerrado=result["cerrado"]=='t'?true:false;
@@ -3204,7 +3204,10 @@ siga.define('nomina', {
                                 me.menuPersona({disabled: true});
                                 me.menuConcepto({disabled: true});
                                 me.menuPeriodo({disabled: true});
-                                me.getCmp('btnContabilizar').setDisabled(true);
+                                //me.getCmp('btnContabilizar').setDisabled(true);
+
+                                var msgWait=Ext.Msg.wait('Cerrando periodo. Por favor espere...', me.getTitle(),{text:''});
+                                msgWait.setAlwaysOnTop(true);
 
                                 Ext.Ajax.request({
                                   method: 'POST',
@@ -3214,6 +3217,7 @@ siga.define('nomina', {
                                     id_periodo: id_periodo
                                   },
                                   success:function(request){
+                                    msgWait.close();
                                     var result=Ext.JSON.decode(request.responseText);
                                     Ext.MessageBox.alert("Cerrar Período",result["message"]);
                                     //recargar el listado de periodos, para mostrar el nuevo periodo creado
@@ -3223,6 +3227,7 @@ siga.define('nomina', {
                                     window.open("report/nomina_recibo_pago.php?id_periodo="+id_periodo+"&generar=1");
                                   },
                                   failure:function(request){
+                                    msgWait.close();
                                     var result=Ext.JSON.decode(request.responseText);
                                   }
                                 });
@@ -3318,7 +3323,10 @@ siga.define('nomina', {
                                 me.menuPersona({disabled: true});
                                 me.menuConcepto({disabled: true});
                                 me.menuPeriodo({disabled: true});
-                                me.getCmp('btnContabilizar').setDisabled(true);
+                                //me.getCmp('btnContabilizar').setDisabled(true);
+
+                                var msgWait=Ext.Msg.wait('Contabilizando. Por favor espere...', me.getTitle(),{text:''});
+                                msgWait.setAlwaysOnTop(true);
 
                                 Ext.Ajax.request({
                                   method: 'POST',
@@ -3330,12 +3338,16 @@ siga.define('nomina', {
                                     tipo: tipo_contabilizacion
                                   },
                                   success:function(request){
+                                    msgWait.close();
                                     var result=Ext.JSON.decode(request.responseText);
                                     Ext.MessageBox.alert("Contabilizar Período",result["message"]);
                                     me.onRecargar();
                                   },
                                   failure:function(request){
+                                    msgWait.close();
                                     var result=Ext.JSON.decode(request.responseText);
+                                    Ext.MessageBox.alert("Contabilizar Período",result["message"]);
+                                    me.onRecargar();
                                   }
                                 });
                               }
