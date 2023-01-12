@@ -1170,6 +1170,7 @@ siga.define('nomina', {
               },
             ]
           },
+          { xtype: 'menuseparator' },
           {
             text: 'Administrar Fichas',
             listeners: {
@@ -1300,6 +1301,7 @@ siga.define('nomina', {
               }
             }
           },
+          { xtype: 'menuseparator' },
           {
             text: 'Administrar',
             listeners: {
@@ -1364,6 +1366,7 @@ siga.define('nomina', {
               }
             }
           },
+          { xtype: 'menuseparator' },
           {
             text: 'Administrar',
             listeners: {
@@ -1394,6 +1397,7 @@ siga.define('nomina', {
               }
             }
           },
+          { xtype: 'menuseparator' },
           {
             id: me._('btnContabilizar_CC'),
             text: 'Generar Comprometido/Causado',
@@ -1421,6 +1425,7 @@ siga.define('nomina', {
               }
             }
           },
+          { xtype: 'menuseparator' },
           {
             id: me._('btnContabilizar_CPP_NO_AP'),
             text: 'Generar Comprometido/Causado/Pagado [Sin Aportes Patronales]',
