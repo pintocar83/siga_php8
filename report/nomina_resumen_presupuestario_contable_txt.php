@@ -23,14 +23,25 @@ $db=SIGA::DBController();
 
 //buscar detalles del periodo
 $periodo=$db->Execute("SELECT id, codigo, fecha_inicio, fecha_culminacion, tipo, descripcion FROM modulo_nomina.periodo WHERE id=$id_periodo");
+if(!isset($periodo[0])){
+	print "Seleccione el periodo.";
+	exit;
+}
 $periodo=$periodo[0];
 
 $id_nomina=explode(",",SIGA::paramGet("id_nomina"));
 $nomina=array();
 //buscar las nóminas asociadas al periodo
 for($i=0;$i<count($id_nomina);$i++){
-	$nomina[$i]=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE id=".$id_nomina[$i]);
-	$nomina[$i]=$nomina[$i][0];
+	$tmp=$db->Execute("SELECT id, codigo, nomina FROM modulo_nomina.nomina WHERE id=".$id_nomina[$i]);
+	if(isset($tmp[0])){
+		$nomina[]=$tmp[0];
+	}
+}
+
+if(count($nomina)===0){
+	print "Seleccione la(s) nomina(s).";
+	exit;
 }
 
 $retorno=nomina::detalle_presupuestario_contable($periodo,$nomina);
