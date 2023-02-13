@@ -62,6 +62,93 @@ siga.define('ficha', {
       })
     });*/
 
+
+    /*
+
+{
+        xtype: 'button',
+        id: me._('btnVisualizar'),
+        width: 65,
+        height: 45,
+        text: 'Visualizar',
+        cls: 'siga-btn-base',
+        iconCls: 'siga-btn-base-icon icon-display',
+        iconAlign: 'top',
+        tooltip: 'Visualizar',
+        internal: {
+          reporte: ""
+        },
+        menu: [
+          {
+            text: 'Nómina',
+            listeners: {
+              click: function(){
+                me.getCmp('btnVisualizar').internal.reporte="nomina_xls_v2";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
+                me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
+                me.internal.ventanaVisualizar.setTitle("Visualizar - Nómina");
+                me.internal.ventanaVisualizar.show();
+              }
+            }
+          },
+          {
+            text: 'Recibos de Pago',
+            listeners: {
+              click: function(){
+                me.getCmp('btnVisualizar').internal.reporte="nomina_recibo_pago";
+                me.getCmp('btnVisualizar').internal.proyeccion=false;
+                me.internal.ventanaVisualizar.setInternal({itemSelection: 1});
+                me.internal.ventanaVisualizar.setTitle("Visualizar - Recibos de Pago");
+                me.internal.ventanaVisualizar.show();
+              }
+            }
+          },
+
+    */
+    me.itemsToolbar=[
+      me.btnNew(),
+      me.btnSave(),
+      me.btnDelete(),
+      me.btnCopyPaste(),
+      {
+        xtype: 'button',
+        id: me._('btnVisualizar'),
+        width: 65,
+        height: 45,
+        text: 'Visualizar',
+        cls: 'siga-btn-base',
+        iconCls: 'siga-btn-base-icon icon-display',
+        iconAlign: 'top',
+        tooltip: 'Visualizar',
+        menu: [
+          {
+            text: 'Listado Personal Activo por Cuenta Bancaria',
+            listeners: {
+              click: function(){
+                window.open("report/ficha_cuenta_bancaria_xls.php");
+              }
+            }
+          },
+          //{
+          //  text: 'Recibos de Pago',
+          //  listeners: {
+          //    click: function(){
+          //      
+          //    }
+          //  }
+          //}
+        ]
+      },
+      {
+          xtype:'tbspacer',
+          flex:1
+      },
+      me.btnPrevious(),
+      me.btnNext()
+  ];
+
+
+
     me.storeParentesco = Ext.create('Ext.data.Store', {
       fields: ['id','parentesco'],
       autoLoad: true,
