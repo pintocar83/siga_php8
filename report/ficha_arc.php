@@ -94,7 +94,25 @@ $mes=array(
 
 
 $excluir=trim(SIGA::paramGet("excluir"),",");
-$excluir=explode(",",$excluir);
+$excluir=trim($excluir);
+if($excluir){
+  $excluir=explode(",",$excluir);
+}
+else{
+  $excluir=[];
+}
+
+if(count($excluir)===0){
+    $config=$db->Execute("SELECT valor FROM modulo_nomina.nomina_configuracion WHERE dato ilike 'ficha:arc_excluir'");
+    if(isset($config[0]["valor"])){
+      $excluir=explode(",",$config[0]["valor"]);
+    }
+}
+
+for($i=0; $i<count($excluir); $i++) {
+  $excluir[$i]=trim($excluir[$i]);
+}
+
 
 $add="";
 

@@ -99,7 +99,7 @@ $files_history[]=[
   "report/retencion_emitida_xls.php"
 ];
 
-//Hasta 2023-01-10 Pendiente generacion
+//Hasta 2023-01-10
 $files_history[]=[
   "class/nomina.class.php",
   "module/nomina/index.php",
@@ -108,7 +108,13 @@ $files_history[]=[
   "module/sigafs/core/cuenta_contable.php",
   "report/contabilidad_plan_cuentas_xls.php",
   "report/nomina_xls_v2.php",
-  "report/omina_listado_banco_xls_formato_c.php",
+  "report/nomina_listado_banco_xls_formato_c.php",
+];
+
+//Hasta 2023-02-13
+$files_history[]=[
+  "module/ficha/main.js",
+  "report/ficha_cuenta_bancaria_xls.php",
 ];
 
 

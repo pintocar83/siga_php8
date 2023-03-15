@@ -5178,4 +5178,5 @@ INSERT INTO modulo_nomina.nomina_configuracion(dato, valor) VALUES
 ('ficha:numero_hijos', 'NUMERO_HIJOS'),
 ('ficha:antiguedad_apn', 'TIEMPO_SERVICIO_AP'),
 ('ficha:antiguedad_total', 'TIEMPO_SERVICIO_TOTAL,ANTIGUEDAD_TOTAL'),
-('ficha:profesionalizacion_porcentaje', 'PORCENTAJE_PROFESIONALIZACION');
+('ficha:profesionalizacion_porcentaje', 'PORCENTAJE_PROFESIONALIZACION'),
+('ficha:arc_excluir', '');
