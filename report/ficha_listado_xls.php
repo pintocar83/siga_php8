@@ -1,5 +1,6 @@
 <?php
 error_reporting(0);
+//error_reporting(E_ALL);
 ini_set('display_errors', 'Off');
 set_time_limit(-1);
 include_once("../library/db.controller.php");
@@ -19,8 +20,16 @@ $organismo=$db->Execute("SELECT P.identificacion_tipo||P.identificacion_numero a
 
 
 
+$estatus=SIGA::paramGet("estatus");
+$add="";
+if($estatus=="inactivo"){
+  $add.="NOT F.activo AND";
+}
+else if($estatus=="activo"){
+  $add.="F.activo AND";
+}
 
-
+$fecha_actual=date("Y-m-d");
 
 $CONSULTA=$db->Execute("select
                           P.identificacion_tipo as nacionalidad,
@@ -29,19 +38,26 @@ $CONSULTA=$db->Execute("select
                           split_part(P.denominacion,';',3) || ' ' || split_part(P.denominacion,';',4) as apellidos,
                           PN.fecha_nacimiento,
                           PN.genero,
-                          substring(COALESCE(F.cuenta_nomina,''),1,4) codigo_banco,
+                          CASE F.activo WHEN TRUE THEN 'ACTIVO' ELSE 'INACTIVO' END estatus,
+                          C.cargo,
                           F.*
                         from
                           modulo_nomina.ficha F
                             INNER JOIN modulo_base.persona P ON P.id = F.id_persona
                             LEFT JOIN  modulo_base.persona_natural PN ON P.id=PN.id_persona
+                            LEFT JOIN modulo_nomina.cargo as C ON C.id=(
+                                              select id_cargo
+                                              from modulo_nomina.ficha_cargo
+                                              where id_ficha=F.id and fecha <= '$fecha_actual'
+                                              order by fecha desc
+                                              limit 1)
                         where
-                          F.activo
+                          $add
+                          TRUE
                         order by
-                          codigo_banco,
                           cedula
                         ");
-
+//print_r($CONSULTA);exit;
 if(count($CONSULTA)==0){
   print "No se encontraron datos.";
   exit;
@@ -64,8 +80,10 @@ $activeSheet->setCellValueExplicit("D$ln","FECHA NACIMIENTO",PHPExcel_Cell_DataT
 $activeSheet->setCellValueExplicit("E$ln","EDAD",PHPExcel_Cell_DataType::TYPE_STRING);
 $activeSheet->setCellValueExplicit("F$ln","GENERO",PHPExcel_Cell_DataType::TYPE_STRING);
 $activeSheet->setCellValueExplicit("G$ln","FECHA INGRESO",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("H$ln","CUENTA BANCARIA",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->getStyle("A$ln:H$ln")->getFont()->setBold(true);
+$activeSheet->setCellValueExplicit("H$ln","FECHA EGRESO",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("I$ln","CARGO",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("J$ln","ESTATUS",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->getStyle("A$ln:J$ln")->getFont()->setBold(true);
 
 $ln++;
 $codigo = "";
@@ -74,7 +92,14 @@ for($i=0; $i<count($CONSULTA); $i++) {
   if($CONSULTA[$i]["fecha_ingreso"]){
     $tmp=explode(",",$CONSULTA[$i]["fecha_ingreso"]);
     $CONSULTA[$i]["fecha_ingreso"]=end($tmp);
-    $CONSULTA[$i]["fecha_ingreso"]=formatDate($CONSULTA[$i]["fecha_ingreso"]);
+    $CONSULTA[$i]["fecha_ingreso"]=$CONSULTA[$i]["fecha_ingreso"]?formatDate($CONSULTA[$i]["fecha_ingreso"]):"";
+  }
+
+  $CONSULTA[$i]["fecha_egreso"]=str_replace(["{","}"],"",$CONSULTA[$i]["fecha_egreso"]);
+  if($CONSULTA[$i]["fecha_egreso"]){
+    $tmp=explode(",",$CONSULTA[$i]["fecha_egreso"]);
+    $CONSULTA[$i]["fecha_egreso"]=end($tmp);
+    $CONSULTA[$i]["fecha_egreso"]=$CONSULTA[$i]["fecha_egreso"]?formatDate($CONSULTA[$i]["fecha_egreso"]):"";
   }
 
   $CONSULTA[$i]["edad"]="";
@@ -87,26 +112,6 @@ for($i=0; $i<count($CONSULTA); $i++) {
   }
 
 
-
-  if($CONSULTA[$i]["codigo_banco"]!=$codigo){
-    $codigo=$CONSULTA[$i]["codigo_banco"];
-
-    if($codigo){
-      $sql="select * from modulo_base.banco where not eliminado and codigo='".$codigo."'";
-      $BANCO=$db->Execute($sql);
-      $banco_nombre="";
-      if(isset($BANCO[0])){
-        $banco_nombre=$BANCO[0]["banco"];
-      }
-      $activeSheet->setCellValueExplicit("A$ln","$codigo $banco_nombre",PHPExcel_Cell_DataType::TYPE_STRING);
-      $activeSheet->getStyle("A$ln")->getFont()->setBold(true);
-      $activeSheet->getStyle("A$ln")->getFont()->setSize(16);
-      $ln++;
-    }
-
-  }
-
-
   $activeSheet->setCellValueExplicit("A$ln",$CONSULTA[$i]["nacionalidad"].$CONSULTA[$i]["cedula"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("B$ln",$CONSULTA[$i]["nombres"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("C$ln",$CONSULTA[$i]["apellidos"],PHPExcel_Cell_DataType::TYPE_STRING);
@@ -114,11 +119,11 @@ for($i=0; $i<count($CONSULTA); $i++) {
   $activeSheet->setCellValueExplicit("E$ln",$CONSULTA[$i]["edad"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("F$ln",$CONSULTA[$i]["genero"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("G$ln",$CONSULTA[$i]["fecha_ingreso"],PHPExcel_Cell_DataType::TYPE_STRING);
-  $activeSheet->setCellValueExplicit("H$ln",$CONSULTA[$i]["cuenta_nomina"],PHPExcel_Cell_DataType::TYPE_STRING);
+  $activeSheet->setCellValueExplicit("H$ln",$CONSULTA[$i]["fecha_egreso"],PHPExcel_Cell_DataType::TYPE_STRING);
+  $activeSheet->setCellValueExplicit("I$ln",$CONSULTA[$i]["cargo"],PHPExcel_Cell_DataType::TYPE_STRING);
+  $activeSheet->setCellValueExplicit("J$ln",$CONSULTA[$i]["estatus"],PHPExcel_Cell_DataType::TYPE_STRING);
   $ln++;
 }
-
-
 
 $activeSheet->getColumnDimension("A")->setAutoSize(true);
 $activeSheet->getColumnDimension("B")->setAutoSize(true);
@@ -136,8 +141,6 @@ $activeSheet->getColumnDimension("M")->setAutoSize(true);
 $activeSheet->getColumnDimension("N")->setAutoSize(true);
 $activeSheet->getColumnDimension("O")->setAutoSize(true);
 $activeSheet->getColumnDimension("P")->setAutoSize(true);
-
-//$activeSheet->getStyle("G1:P{$ln}")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
 
 
 $activeSheet->freezePaneByColumnAndRow(0,2);
