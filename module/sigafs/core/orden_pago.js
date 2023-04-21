@@ -1253,6 +1253,10 @@ function Form_ORDEN_PAGO__Imprimir(){
 	window.open("../../report/orden_pago.php?id="+Form_ORDEN_PAGO__IDSeleccionActualLista);
 	}
 
+function Form_ORDEN_PAGO__Reportes(){
+	siga.open("reporte_orden_pago",{modal: true})
+	}
+
 function Form_ORDEN_PAGO__CambioTipoDocumento(){
 	Form_ORDEN_PAGO__RestablecerDetalles();
 	

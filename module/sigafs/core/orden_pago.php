@@ -42,6 +42,9 @@
 				<BUTTON id="BOTON_IMPRIMIR_FOP" class="BotonesVentana" onclick="Form_ORDEN_PAGO__Imprimir();">
 					<IMG src="../../image/icon/icon-display.png" width="22" height="22" border="0" id="IMG_IMPRIMIR_FOP"><br>Visualizar
 				</BUTTON>
+				<BUTTON id="BOTON_IMPRIMIR_XLS_FOP" class="BotonesVentana" onclick="Form_ORDEN_PAGO__Reportes();">
+					<IMG src="../../image/icon/icon-display.png" width="22" height="22" border="0" id="IMG_IMPRIMIR_FOP"><br>Reportes
+				</BUTTON>
 			</TD>
 		</tr>
 		<tr>

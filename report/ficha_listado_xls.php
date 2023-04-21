@@ -147,7 +147,7 @@ $activeSheet->freezePaneByColumnAndRow(0,2);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="listado_fichas_por_cuenta_bancaria.xlsx"');
+header('Content-Disposition: attachment;filename="listado_fichas.xlsx"');
 
 $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
 $writer->setPreCalculateFormulas(true);
