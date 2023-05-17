@@ -110,7 +110,7 @@ switch($method){
     print "Uploader...";
     // SERVER A - UPLOAD FILE VIA CURL POST
     // (A) SETTINGS
-    $url = "http://localhost/E/siga_php8/task/backup_receiver.php"; // where to upload file to
+    $url = "https://dsp.com.ve/administrativo/task/backup_receiver.php"; // where to upload file to
     $file = "{$path}/{$filename}"; // file to upload
     $upname = "$filename"; // file name to be uploaded as
 
@@ -121,6 +121,8 @@ switch($method){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POSTFIELDS, [
       "upload" => $cf, // attach file upload
       "key" => UPLOADER_KEY
