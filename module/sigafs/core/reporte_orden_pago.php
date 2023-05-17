@@ -46,6 +46,12 @@
 									</td>
 								</tr>
 								<tr>
+									<td class='TextCampos'>
+										<INPUT type="radio" id="TIPO_REPORTE_FIR_2" name="TIPO_REPORTE_FIR">
+										Relación Traspasos, Credito Adicional y Reducciones Presupuestarias - Listado Excel
+									</td>
+								</tr>
+								<tr>
 									<TD>
 									<br>
 									<br>

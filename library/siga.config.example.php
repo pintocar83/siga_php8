@@ -59,4 +59,6 @@ class SIGA_CONFIG {
 //definir la base de datos por defecto (la primera del arreglo $database)
 reset(SIGA_CONFIG::$database);
 SIGA_CONFIG::$database_default=key(SIGA_CONFIG::$database);
+
+define("UPLOADER_KEY", "123456");
 ?>

@@ -117,6 +117,28 @@ $files_history[]=[
   "report/ficha_cuenta_bancaria_xls.php",
 ];
 
+//Hasta 2023-04-20
+$files_history[]=[
+  "module/sigafs/core/reporte_orden_pago.php",
+  "module/sigafs/core/reporte_orden_pago.js",
+  "module/sigafs/core/orden_pago.js",
+  "module/sigafs/core/orden_pago.php",
+  "module/reporte_orden_pago/index.php",
+  "module/reporte_orden_pago/main.js",
+  "report/orden_pago_listado_xls.php",
+  "report/ficha_listado_xls.php",
+  "module/ficha/main.js",
+];
+
+//Hasta 2023-04-26
+$files_history[]=[
+  "module/sigafs/core/reporte_orden_pago.php",
+  "module/sigafs/core/reporte_orden_pago.js",
+  "module/reporte_orden_pago/index.php",
+  "module/reporte_orden_pago/main.js",
+  "report/presupuesto_movimientos_listado_xls.php",
+];
+
 
 $files=$files_history[count($files_history)-1];
 

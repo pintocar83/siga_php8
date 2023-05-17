@@ -1,7 +1,7 @@
 siga.define('reporte_orden_pago', {
     extend: 'siga.windowFrame',
-    title: 'Ordenes de Pago - Reportes',
-    width: 600,
+    title: 'Reportes',
+    width: 700,
     height: 350,
     
     initComponent: function(){
