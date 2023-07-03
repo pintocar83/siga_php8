@@ -63,6 +63,7 @@ $CONSULTA=$db->Execute("select
                           periodo_numero
                         ");
 
+//print_r($CONSULTA);exit;
 if(count($CONSULTA)==0){
   print "No se encontraron datos.";
   exit;
@@ -81,7 +82,7 @@ $activeSheet = $excel->createSheet(0);
 
 
 for($i=0; $i<count($CONSULTA); $i++) {
-  $exento = $CONSULTA[$i]["total"] - $CONSULTA[$i]["monto_base"] - $CONSULTA[$i]["retencion"];
+  $exento = $CONSULTA[$i]["total"] - $CONSULTA[$i]["monto_base"] - $CONSULTA[$i]["monto"];
   $activeSheet->setCellValueExplicit("A$ln",$organismo[0]["identificacion"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("B$ln",$CONSULTA[$i]["periodo"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("C$ln",$CONSULTA[$i]["fecha_factura"],PHPExcel_Cell_DataType::TYPE_STRING);

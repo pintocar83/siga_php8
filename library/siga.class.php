@@ -139,6 +139,7 @@ class SIGA extends SIGA_CONFIG {
     if(!$value){
       $dato="'".implode("','",$property)."'";
       $result=$db->Execute("select * from modulo_base.configuracion where dato in ($dato)");
+      if(!$result) return [];
       $return=array();
       for($i=0;$i<count($result);$i++)
         $return[$result[$i]["dato"]]=$result[$i]["valor"];
