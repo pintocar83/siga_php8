@@ -90,7 +90,7 @@
 						</table>
 						<DIV align="center"><INPUT type="checkbox" id="OCULTAR_FILAS_FFPDG_1" onchange="xGetElementById('OCULTAR_FILAS_FFPDG_2').checked=xGetElementById('OCULTAR_FILAS_FFPDG_1').checked; xGetElementById('OCULTAR_FILAS_FFPDG_3').checked=xGetElementById('OCULTAR_FILAS_FFPDG_1').checked;">Ocultar filas con montos cero.</DIV>
 						<br>
-						<DIV align="center" style="position : absolute; text-align : center; top : 390px; width : 100%;">
+						<DIV align="center" style="position : absolute; text-align : center; top : 340px; width : 100%;">
 							<BUTTON class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" onclick="Form_EJECUCION__Imprimir();">
 								<IMG id="IMG_IMPRIMIR_FPC" src='../../image/icon/icon-display.png' width='22' height='22' style="vertical-align : middle;">&nbsp;Visualizar
 							</BUTTON>
@@ -105,6 +105,11 @@
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<BUTTON class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" onclick="Form_EJECUCION__Imprimir('ejecucion_alcaldia_mejia');">
 								<IMG id="IMG_IMPRIMIR_FPC" src='../../image/icon/icon-display.png' width='22' height='22' style="vertical-align : middle;">&nbsp;Formato Alcald&iacute;a Mej&iacute;a
+							</BUTTON>
+							<br>
+							<br>
+							<BUTTON class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" onclick="Form_EJECUCION__Imprimir('ejecucion_alcaldia_mejia','&sw_pagado=off');">
+								<IMG id="IMG_IMPRIMIR_FPC" src='../../image/icon/icon-display.png' width='22' height='22' style="vertical-align : middle;">&nbsp;Formato Alcald&iacute;a Mej&iacute;a (Pagado)
 							</BUTTON>
 						</DIV>
 					</div>

@@ -139,6 +139,24 @@ $files_history[]=[
   "report/presupuesto_movimientos_listado_xls.php",
 ];
 
+//Hasta 2023-07-07
+$files_history[]=[
+  "library/siga.class.php",
+  "module/factura/main.js",
+  "module/pago/form.php",
+  "module/pago/main.js",
+  "module/sigafs/core/factura.js",
+  "module/sigafs/core/factura.php",
+  "module/sigafs/core/reporte_ejecucion.js",
+  "module/sigafs/core/reporte_ejecucion.php",
+  "report/ejecucion_alcaldia_mejia.php",
+  "report/orden_compra.php",
+  "report/orden_pago.php",
+  "report/requisicion_externa.php",
+  "report/contabilidad_balance_general_b.php",
+  "report/retencion_emitida_xls.php",
+];
+
 
 $files=$files_history[count($files_history)-1];
 

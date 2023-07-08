@@ -6,10 +6,10 @@ siga.define('pago', {
     extend: 'siga.windowBase',
     title: 'Banco - Pago por cheque o transferencia',
     width: 850,
-    height: 550,
-    
+    height: 570,
+
     initComponent: function(){
-        var me = this;        
+        var me = this;
         var response = Ext.Ajax.request({async: false,url: "module/pago/form.php"});
         me.itemsToolbar=[
           me.btnNew(),
@@ -25,21 +25,20 @@ siga.define('pago', {
             xtype: 'button',
             id: me._('btnCheque'),
             height: 45,
-            width: 70,
+            width: 80,
             text: 'Cheque',
             cls: 'siga-btn-base',
             focusCls: '',
             iconCls: 'siga-btn-base-icon icon-cheque',
             iconAlign: 'top',
             tooltip: 'Pago por cheque',
-            toggleGroup: "tipo_pago",            
+            toggleGroup: "tipo_pago",
             listeners: {
               click: function(){
                 me.getCmp('btnCheque').toggle(true);
-                //me.$$('PAGO_ADJUNTO').set({style: {'display': "none"}});
-                //me.getCmp('btnTransferencia').toggle(false);
                 me.onSearch();
-                //me.onSearch();
+
+                me.onCheque();
               }
             }
           },
@@ -47,49 +46,49 @@ siga.define('pago', {
             xtype: 'button',
             id: me._('btnTransferencia'),
             height: 45,
-            width: 70,
-            text: 'Transferencia',
+            width: 80,
+            text: 'Transf. / Otros',
             cls: 'siga-btn-base',
             focusCls: '',
             iconCls: 'siga-btn-base-icon icon-transferencia',
             iconAlign: 'top',
-            tooltip: 'Pago por Transferencia',
+            tooltip: 'Pago por Transferencia / Otros Metodos',
             toggleGroup: "tipo_pago",
             listeners: {
                 click: function(){
                   me.getCmp('btnTransferencia').toggle(true);
                   me.onSearch();
-                  //me.$$('PAGO_ADJUNTO').set({style: {'display': ""}});
-                  //me.onSearch();
+
+                  me.onTransferencia();
                 }
             }
           },
         ];
-        
+
         me.items=[
           {
             xtype: "component",
             html: response.responseText
-          }          
+          }
         ];
-        
+
         me.callParent(arguments);
     },
-    
+
     $: function(id){
-      var me = this;  
+      var me = this;
       return me.getEl().getById(id,true);
     },
-    
+
     $$: function(id){
       var me = this;
       return Ext.get(me.$(id));
     },
-    
+
     init: function(){
       var me = this;
-      me.getCmp('btnCheque').toggle(true);
-      
+      me.getCmp('btnTransferencia').toggle(true);
+
       me.IDSeleccionActualLista=-1;
       me.IDSeleccionActualArreglo=-1;
       me.Arreglo=[];
@@ -97,19 +96,19 @@ siga.define('pago', {
       me.SW_PERSONA="";
       me.IDComprobante="";
       me.ArregloDetalles=[];
-      
+
       me.ArregloTodos=[];
       me.ArregloTodosK=0;
       me.ArregloDetallesFiltrado=[];
       me.ArregloDetallesFiltradoK=0;
       me.NombreBanco="";
       me.BuscarListado_CadenaBuscar="";
-      
+
       me.TipoModificar=-1;
-      
+
       me.TabPane = new WebFXTabPane(me.$("TABPANE"), true);
-      
-      
+
+
       me.$$("BOTON_PROVEEDOR").on("click", function(){me.onProveedor();});
       me.$$("BOTON_BENEFICIARIO").on("click", function(){me.onBeneficiario();});
       me.$$("BOTON_PROVEEDOR_2").on("click", function(){me.onProveedor();});
@@ -117,7 +116,7 @@ siga.define('pago', {
       me.$$("BOTON_CONTABLIZAR").on("click", function(){me.onContabilizar();});
       me.$$("BOTON_REVERSAR").on("click", function(){me.onReversar();});
       me.$$("BOTON_ANULAR").on("click", function(){me.onAnular();});
-      
+
       me.$$("BOTON_SELECCIONAR_PERSONA").on("click", function(){
         siga.onPersona({
           tipo: me.SW_PERSONA,
@@ -130,13 +129,13 @@ siga.define('pago', {
           }
         });
       });
-      
+
       me.$$("BOTON_SELECCIONAR_CUENTA_BANCARIA").on("click", function(){
         siga.onCuentaBancaria({onAccept: function(result){
           me.$("ID_CTA").value=result[0]["id"];
           me.$("NCTA").value=result[0]["numero_cuenta"];
           me.$("DESCRIPCION_NCTA").value=result[0]["denominacion"];
-          
+
           me.$("CTA_CODIGO_CONTABLE").value=result[0]["id_cuenta_contable"];
           me.$("CUENTA_CONTABLE").value=result[0]["cuenta_contable"];
           me.$("CTA_DENOMINACION_CONTABLE").value=result[0]["denominacion_contable"];
@@ -144,29 +143,29 @@ siga.define('pago', {
           return true;
         }});
       });
-      
+
       me.$$("BOTON_CALENDARIO").on("click", function(){siga.onCalendar(me.$("FECHA"));});
       me.$$("SELECT_RETENCION").on("change", function(){me.CalcularMonto();});
       me.$$("SELECT_DETALLES").on("change", function(){me.CambioSelectDetalles();});
-      
+
       me.$$("VIEW_ALL").on("click", function(){me.onViewAll();});
       me.$$("CHECK_ALL").on("change", function(){me.onCheckAll();});
-      
+
       me.$$("LISTADO_TXT_BUSCAR").on("keyup", function(e,t,o){me.PresionarEnter(e);});
       me.$$("LISTADO_TXT_LIMPIAR").on("click", function(){me.LimpiarInputTextBuscarListado();});
       me.$$("LISTADO_MES_FILTRAR").on("change", function(){me.BuscarListado_CadenaBuscar=''; me.onSearch();})
-      
+
 
       me.$$("BOTON_ARCHIVO_BORRAR").on("click", function(){me.$("ARCHIVO_ADJUNTO").value="";});
       me.$$("BOTON_ARCHIVO_ADJUNTAR").on("change", function(){me.$("ARCHIVO_ADJUNTO").value=me.$("BOTON_ARCHIVO_ADJUNTAR").value;});
       me.$$("BOTON_ARCHIVO_MOSTRAR").on("click", function(){if(me.$("ARCHIVO_ADJUNTO").value) window.open("module/comprobante/?action=onGet_Archivo&archivo="+me.IDSeleccionActualLista+"/"+me.$("ARCHIVO_ADJUNTO").value)});
-      
-      
+
+
       me.$$("SIGAFS").set({style:{display:"block"}});
-      
+
       me.onNew();
     },
-    
+
     /**
     * Nueva definicion
     */
@@ -176,9 +175,15 @@ siga.define('pago', {
         me.onBeneficiario();
       else
         me.onProveedor();
-      me.TabPane.setSelectedIndex(0);	
+      if(me.getCmp('btnCheque').pressed){
+        me.onCheque();
+      }
+      else if(me.getCmp('btnTransferencia').pressed){
+        me.onTransferencia();
+      }
+      me.TabPane.setSelectedIndex(0);
     },
-    
+
     /**
     * Activa el boton modificar
     */
@@ -186,7 +191,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnEdit").enable();
     },
-    
+
     /**
     * Desactiva el boton modificar
     */
@@ -194,7 +199,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnEdit").disable();
     },
-    
+
     /**
     * Activa el boton guardar
     */
@@ -202,7 +207,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnSave").enable();
     },
-    
+
     /**
     * Desactiva el boton guardar
     */
@@ -210,7 +215,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnSave").disable();
     },
-    
+
     /**
     * Activa el boton guardar
     */
@@ -218,7 +223,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnDelete").enable();
     },
-    
+
     /**
     * Desactiva el boton guardar
     */
@@ -226,7 +231,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnDelete").disable();
     },
-    
+
     /**
     * Activa el boton imprimir
     */
@@ -234,7 +239,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnDisplay").enable();
     },
-    
+
     /**
     * Desactiva el boton imprimir
     */
@@ -242,7 +247,7 @@ siga.define('pago', {
       var me=this;
       me.getCmp("btnDisplay").disable();
     },
-    
+
     /**
     * Muestra los mensajes en la parte superior del formulario
     * @param {string} MSG Mensaje a mostrar
@@ -258,7 +263,7 @@ siga.define('pago', {
         MSG="<DIV style='color:#FF0000'>"+MSG+"</DIV>";
       me.$("MSG").innerHTML=MSG;
     },
-    
+
     /**
     * Muestra los mensajes en la parte superior del listado
     * @param {string} MSG Mensaje a mostrar
@@ -274,7 +279,7 @@ siga.define('pago', {
         MSG="<DIV style='color:#FF0000'>"+MSG+"</DIV>";
       me.$("MSG_LISTADO").innerHTML=MSG;
     },
-    
+
     /**
     * Activa todos los campos del formulario entrada de datos
     * @param {integer} sw Permite activar parte del formulario, p.j. dado el caso de modificar un cheque no modificar a quien va dirigido.
@@ -283,52 +288,74 @@ siga.define('pago', {
       var me = this;
       var v=true;
       if(!sw) {sw=1; v=false};
-      
-      me.$("BOTON_PROVEEDOR").disabled=v;      
+
+      me.$("BOTON_PROVEEDOR").disabled=v;
       me.$("BOTON_BENEFICIARIO").disabled=v;
       me.$("BOTON_SELECCIONAR_PERSONA").disabled=v;
       me.$("BOTON_SELECCIONAR_CUENTA_BANCARIA").disabled=(sw==1?false:true);
       me.$("BOTON_CALENDARIO").disabled=false;
-      me.$("BOTON_ARCHIVO_BORRAR").disabled=false;  
+      me.$("BOTON_ARCHIVO_BORRAR").disabled=false;
       me.$("BOTON_ARCHIVO_ADJUNTAR_MASCARA").disabled=false;
       me.$("SELECT_RETENCION").disabled=false;
-      
-      me.$("FECHA").readOnly=false;      
+
+      me.$("FECHA").readOnly=false;
       me.$("N_CHEQUE").readOnly=false;
-      me.$("CONCEPTO").readOnly=false;      
+      me.$("FORMA_PAGO").disabled=false;
+      me.$("CUENTA_DESTINO").readOnly=false;
+      me.$("CONCEPTO").readOnly=false;
       me.$("CHECK_ALL").disabled=false;
-      
+
       me.$("FECHA").setAttribute('class','TextoCampoInputObligatorios');
       me.$("SELECT_RETENCION").setAttribute('class','TextoCampoInput');
       me.$("N_CHEQUE").setAttribute('class','TextoCampoInputObligatorios');
+      me.$("CUENTA_DESTINO").setAttribute('class','TextoCampoInput');
+      me.$("FORMA_PAGO").setAttribute('class','TextoCampoInputObligatorios');
       me.$("CONCEPTO").setAttribute('class','TextoCampoInputObligatorios');
     },
-    
+
     /**
     * Desactiva todos los campos del formulario entrada de datos
     */
     DesactivarFormulario: function(){
       var me = this;
-      me.$("BOTON_PROVEEDOR").disabled=true;      
+      me.$("BOTON_PROVEEDOR").disabled=true;
       me.$("BOTON_BENEFICIARIO").disabled=true;
       me.$("BOTON_SELECCIONAR_PERSONA").disabled=true;
       me.$("BOTON_SELECCIONAR_CUENTA_BANCARIA").disabled=true;
       me.$("BOTON_CALENDARIO").disabled=true;
-      me.$("BOTON_ARCHIVO_BORRAR").disabled=true;   
+      me.$("BOTON_ARCHIVO_BORRAR").disabled=true;
       me.$("BOTON_ARCHIVO_ADJUNTAR_MASCARA").disabled=true;
       me.$("SELECT_RETENCION").disabled=true;
-      
-      me.$("FECHA").readOnly=true;      
+
+      me.$("FECHA").readOnly=true;
       me.$("N_CHEQUE").readOnly=true;
-      me.$("CONCEPTO").readOnly=true;      
+      me.$("FORMA_PAGO").disabled=true;
+      me.$("CUENTA_DESTINO").readOnly=true;
+      me.$("CONCEPTO").readOnly=true;
       me.$("CHECK_ALL").disabled=true;
-      
+
       me.$("FECHA").setAttribute('class','TextoCampoInputDesactivado');
       me.$("SELECT_RETENCION").setAttribute('class','TextoCampoInputDesactivado');
       me.$("N_CHEQUE").setAttribute('class','TextoCampoInputDesactivado');
+      me.$("CUENTA_DESTINO").setAttribute('class','TextoCampoInputDesactivado');
+      me.$("FORMA_PAGO").setAttribute('class','TextoCampoInputDesactivado');
       me.$("CONCEPTO").setAttribute('class','TextoCampoInputDesactivado');
     },
-    
+
+    onCheque: function(){
+      var me = this;
+      me.$("FORMA_PAGO").value = "cheque";
+      me.$("FORMA_PAGO").disabled = true;
+      me.$("FORMA_PAGO_cheque").disabled = false;
+    },
+
+    onTransferencia: function(){
+      var me = this;
+      me.$("FORMA_PAGO").value = "transferencia";
+      me.$("FORMA_PAGO").disabled = false;
+      me.$("FORMA_PAGO_cheque").disabled = true;
+    },
+
     /**
     * Permite trabajar el cheque en base a los beneficiarios
     */
@@ -353,7 +380,7 @@ siga.define('pago', {
       me.SW_PERSONA="N";
       me.LimpiarInputTextBuscarListado();
     },
-    
+
     /**
     * Permite trabajar el cheque en base a los proveedores
     */
@@ -378,7 +405,7 @@ siga.define('pago', {
       me.SW_PERSONA="J";
       me.LimpiarInputTextBuscarListado();
     },
-    
+
     /**
     * Carga las solicitudes pendientes/programadas a un proveedor/beneficiario escogido
     */
@@ -386,19 +413,19 @@ siga.define('pago', {
       var me = this;
       if(me.$("PERSONA_ID").value=="")
         return;
-    
-      //me.$("TABLA_LISTA_SOLICITUDES").innerHTML=IconoCargandoTabla;    
-      me.$("TABLA_LISTA_SOLICITUDES").innerHTML=""; //Mostrar icono cargando   
-      
+
+      //me.$("TABLA_LISTA_SOLICITUDES").innerHTML=IconoCargandoTabla;
+      me.$("TABLA_LISTA_SOLICITUDES").innerHTML=""; //Mostrar icono cargando
+
       var _id_comprobante="";
-      if(me.IDSeleccionActualLista>0) 
+      if(me.IDSeleccionActualLista>0)
         _id_comprobante=me.IDSeleccionActualLista;
-      
+
       var _mostrar={
         'id_persona': me.$("PERSONA_ID").value,
         'id': _id_comprobante
       };
-      
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
@@ -408,7 +435,7 @@ siga.define('pago', {
           text: '',
           start: '0',
           limit: 'ALL',
-          sort: '[{"property":"fecha","direction":"ASC"}]'	
+          sort: '[{"property":"fecha","direction":"ASC"}]'
         },
         success:function(request){
           me.PostCargarSolicitudes(request);
@@ -418,7 +445,7 @@ siga.define('pago', {
         }
       });
     },
-    
+
     /**
     * Carga los datos de la solicitudes en el arreglo me.Arreglo.
     * @param {Array} req Datos provenientes de la BD
@@ -444,12 +471,12 @@ siga.define('pago', {
           me.Arreglo[i][6]="0.00";
         else
           me.Arreglo[i][6]=formatNumberDec(resultado[i]['monto_pagado_acumulado'],2);
-        if(!resultado[i]['monto_pagado'] || resultado[i]['monto_pagado']=="null" || resultado[i]['monto_pagado']=="")	
+        if(!resultado[i]['monto_pagado'] || resultado[i]['monto_pagado']=="null" || resultado[i]['monto_pagado']=="")
           me.Arreglo[i][7]="0.00";
         else{
           me.Arreglo[i][0]=true;
           me.Arreglo[i][7]=formatNumberDec(resultado[i]['monto_pagado'],2);
-          
+
           me.Arreglo[i][6]=me.Arreglo[i][6]*1.0-me.Arreglo[i][7]*1.0;
           me.onGetDetallesOP(me.Arreglo[i][1]);
           }
@@ -457,7 +484,7 @@ siga.define('pago', {
       me.TipoModificar=1;
       me.MostrarListadoSolicitudes();
     },
-      
+
     /**
     * Carga los datos de la solicitudes en el arreglo me.Arreglo.
     * @param {Array} req Datos provenientes de la BD
@@ -480,22 +507,22 @@ siga.define('pago', {
           me.Arreglo[i][6]="0.00";
         else
           me.Arreglo[i][6]=formatNumberDec(resultado[i]['monto_pagado']-resultado[i]['monto_pagar'],2);
-    
+
         if(!resultado[i]['monto_pagado'] || resultado[i]['monto_pagado']=="null" || resultado[i]['monto_pagado']=="")
           me.Arreglo[i][7]="0.00"
         else
           me.Arreglo[i][7]=formatNumberDec(resultado[i]['monto_pagar'],2);//monto introducido por teclado
-    
+
         }
       me.MostrarListadoSolicitudes();
     },
-    
+
     /**
     * Muestra las solicitudes en la tabla.
     */
     MostrarListadoSolicitudes: function(){
       var me = this;
-      
+
       me.IDSeleccionActualArreglo=-1;
       var Contenido=" ";
       var FuncionOnclick="";
@@ -505,7 +532,7 @@ siga.define('pago', {
       var FuncionOnMouseOver="";
       var FuncionOnMouseOut="";
       var CadAux1, CadAux2, CadAux3, CadAux4, CadAux5, CadAux6, CadAux7;
-    
+
       for(var i=0;i<me.TamArreglo;i++){
         CadAux1=me.Arreglo[i][0];
         CadAux2=me.Arreglo[i][1];
@@ -515,7 +542,7 @@ siga.define('pago', {
         CadAux7=formatNumber(me.Arreglo[i][6]);
         CadAux8=formatNumber(me.Arreglo[i][7]);
         CadAux9=me.Arreglo[i][8];
-    
+
         Contenido+="<TR id='FCOP_S"+i+"' v='{\"index\":\""+i+"\"}' style='vertical-align: middle;'>";
         Contenido+="<TD width='1%' class='FilaEstilo' align='right'><img view_op class='BotonesParaCampos' src='image/icon/icon-display_16x16.png' style='border: none; background: none; margin-right: 3px; margin-left: 1px; width: 16px; height: 16px;' title='Visualizar'/></TD>";
         if(me.TipoModificar!=-1){
@@ -530,45 +557,45 @@ siga.define('pago', {
           else
             Contenido+="<TD width='1%' class='FilaEstilo valign' ><INPUT type='checkbox' disabled></TD>";
           }
-    
+
         Contenido+="<TD width='10%' class='FilaEstilo' align='left' cell_click>"+CadAux9+"</TD>";
         Contenido+="<TD width='10%' class='FilaEstilo' align='center' cell_click>"+CadAux3+"</TD>";
         Contenido+="<TD class='FilaEstiloContinua' style='font-size: 9px;' cell_click>"+CadAux5+"</TD>";
         Contenido+="<TD width='10%' class='FilaEstilo' align='right' cell_click>"+CadAux4+"</TD>";
         Contenido+="<TD width='10%' class='FilaEstilo' align='right' cell_click>"+CadAux7+"</TD>";
         Contenido+="<TD width='10%' class='FilaEstilo' align='right' id='td_celda_"+i+"' cell_monto>"+CadAux8+"</TD>";
-            
-    
+
+
         Contenido+="</TR>";
         }
-      
+
       me.$("TABLA_LISTA_SOLICITUDES").innerHTML=Contenido;
       if(me.TipoModificar!=-1)
         me.CalcularMonto();
-      
-      
-      
-      
-      
+
+
+
+
+
       //agregar las funciones onclick al listado
       Ext.each(me.getEl().query("#TABLA_LISTA_SOLICITUDES tr"),function(fila){
         var v=Ext.decode(fila.getAttribute("v"));
-        
+
         Ext.each(Ext.get(fila).query("td img[view_op]"),function(img){
           Ext.get(img).on("click", function(ev,el){
             me.onView(v.index);
-          });            
+          });
         });
-        
+
         //si es distinto a -1, se puede modificar
         if(me.TipoModificar!=-1){
           Ext.each(Ext.get(fila).query("td[cell_click]"),function(td){
             Ext.get(td).on("click", function(ev,el){
               me.SeleccionarElementoTablaSolicitudes(v.index);
-            });            
+            });
           });
-          
-          Ext.each(Ext.get(fila).query("td[cell_monto]"),function(td){            
+
+          Ext.each(Ext.get(fila).query("td[cell_monto]"),function(td){
             Ext.get(td).on("click", function(ev,el){
               me.SeleccionarElementoTablaSolicitudesMonto(v.index);
             });
@@ -576,45 +603,45 @@ siga.define('pago', {
               me.onEdit_Celda();
             });
           });
-          
+
           Ext.each(Ext.get(fila).query("td input[type='checkbox']"),function(input){
             Ext.get(input).on("change", function(ev,el){
               me.onCheck(v.index);
-            });            
+            });
           });
         }//fin me.TipoModificar!=-1
-        
+
 
       });
 
     },
-    
+
     /**
     * Permite seleccionar un elemento en la tabla solicitudes, la seleccion actual se guarda en me.IDSeleccionActualArreglo.
     */
     SeleccionarElementoTablaSolicitudesMonto: function(i){
       var me = this;
       me.IDSeleccionActualArreglo=i;
-    },    
-    
+    },
+
     /**
     * Permite seleccionar un elemento en la tabla solicitudes, a diferencia de que muestra la informacion del banco en los campos correspondiente y modifica la cuenta contable asociada al banco en los detalles del cheque.
     */
     SeleccionarElementoTablaSolicitudes: function(i){
       var me = this;
-      me.SeleccionarElementoTablaSolicitudesMonto(i);      
+      me.SeleccionarElementoTablaSolicitudesMonto(i);
 
       if(Ext.String.trim(me.$("CONCEPTO").value)=="")
         me.$("CONCEPTO").value=me.Arreglo[i][4];
-        
+
       me.$("CHECK_"+i).checked=!me.$("CHECK_"+i).checked;
       me.onCheck(i);
     },
-    
+
     /**
     * Al cambiar el un check de la tabla solicitudes, se debe modificar y recalcular el monto a pagar y los detalles del cheque
     * @param {Integer} i Indice marcado/desmarcado.
-    */    
+    */
     onCheck: function(i){
       var me = this;
       me.Arreglo[i][0]=me.$("CHECK_"+i).checked;
@@ -628,7 +655,7 @@ siga.define('pago', {
       else
         me.CalcularMonto();
     },
-    
+
     /**
     * Al hacer marcar/descmarcar el check que se encuentra en la cabecera de la tabla solicitudes, este debe recorrer todos todas las solicitudes para cambiar el estado al del padre.
     */
@@ -643,7 +670,7 @@ siga.define('pago', {
         }
       me.CalcularMonto();
     },
-    
+
     /**
     * Al hacer dobleclick sobre el monto de la solicitud apaperce el campo de texto para modificarlo.
     */
@@ -656,7 +683,7 @@ siga.define('pago', {
         return;
       Valor=me.Arreglo[index][7];
       Valor=formatNumberDec(Valor,2);
-    
+
       me.$(id_td_celda).innerHTML="<INPUT id='"+id_txt_celda+"' class='TextoCampoInputTabla' type='text' size='15' value='"+Valor+"'  style='text-align : right;'>";
 
       me.internal.event_blur_celda=me.$$(id_txt_celda).on({
@@ -667,10 +694,10 @@ siga.define('pago', {
       me.$$(id_txt_celda).on("keyup",function(event){
         me.onKeyPress_Celda(event)
       });
-      
+
       me.$(id_txt_celda).focus();
     },
-    
+
     /**
     * Al perder el foco el campo de texto del monto de la solicitud, eliminanos el campo de texto y escribimos sobre la tabla el monto escrito.
     * Y realizamos los calculos correspondientes.
@@ -680,7 +707,7 @@ siga.define('pago', {
       var index=me.IDSeleccionActualArreglo;
       var id_txt_celda="txt_celda_"+index;
       var id_td_celda="td_celda_"+index;
-      
+
       if(!me.$(id_txt_celda))
         return;
       //borrar el evento blur del txt antes de cargar el valor en el td de la tabla
@@ -701,12 +728,12 @@ siga.define('pago', {
       var Aux2=me.Arreglo[index][3]*1.0-me.Arreglo[index][6]*1.0;
       if(Aux*1.0>Aux2*1.0)
         Aux=Aux2;
-    
-    
+
+
       me.Arreglo[index][7]=formatNumberDec(Aux,2);
       me.$(id_td_celda).innerHTML=formatNumber(me.Arreglo[index][7]);
       me.CalcularMonto();
-    
+
       var SolicitudActual=me.Arreglo[index][1];
       if(me.ArregloDetalles[SolicitudActual] && me.ArregloDetallesFiltrado[SolicitudActual]){//si existen los arreglos
         //Busco el monto maximo real a pagar al proveedor en me.ArregloDetalles
@@ -723,7 +750,7 @@ siga.define('pago', {
                   if(me.ArregloDetallesFiltrado[SolicitudActual][j]['subcuenta']=="x"){
                     A=me.ArregloDetalles[SolicitudActual][i]['monto'];
                     B=me.ArregloDetallesFiltrado[SolicitudActual][j]['monto'];
-    
+
                     if(B*1.0+C*1.0>A*1.0){//si excede el monto a pagar al proveedor, pagar todo
                       me.Arreglo[index][7]=formatNumberDec(Aux2,2);
                       me.$(id_td_celda).innerHTML=formatNumber(me.Arreglo[index][7]);
@@ -735,13 +762,13 @@ siga.define('pago', {
               }
         }//fin si
     },
-    
+
     /**
     * Permite moverse por los montos de las solicitudes con el teclado, enter, tecla de direccion hacia abajo y hacia arriba.
     */
     onKeyPress_Celda: function(event){
       var me = this;
-      
+
       if(event.getKey()==13 || event.getKey()==40){//si es enter o tecla hacia abajo
         me.onBlur_Celda(me.IDSeleccionActualArreglo);//hacemos que pierda el foco
         if(String(me.IDSeleccionActualArreglo)==String(me.TamArreglo-1)){
@@ -760,22 +787,22 @@ siga.define('pago', {
         me.onEdit_Celda(me.IDSeleccionActualArreglo);
       }
     },
-    
-    
+
+
     onView: function(i){
       var me = this;
       window.open("report/orden_pago.php?id="+me.Arreglo[i][1]);
     },
-    
+
     onViewAll: function(){
       var me = this;
       if(me.TamArreglo==0) return;
       var ids=[];
       for(var i=0;i<me.TamArreglo;i++)
-        ids[i]=me.Arreglo[i][1];	
+        ids[i]=me.Arreglo[i][1];
       window.open("report/orden_pago.php?id="+ids.join());
     },
-    
+
     onGetDetallesOP: function(_id){
       var me = this;
       var _tmp=Ext.Ajax.request({
@@ -788,14 +815,14 @@ siga.define('pago', {
       });
       if(_tmp.statusText=="OK"){
         var resultado=Ext.decode(_tmp.responseText);
-    
+
         me.ArregloDetalles[resultado[0]["id"]]=[];
         var anio_op=resultado[0]["fecha"].split("/")[2];
-        
+
         K=0;
         //si la orden de pago corresponde al mismo año de trabajo, cargar los DP
         //en caso contrario omitirlos
-        if(String(anio_op)==String(siga.value("anio"))) {          
+        if(String(anio_op)==String(siga.value("anio"))) {
           for(var i=0;i<resultado[0]["detalle_presupuestario"].length;i++){
             me.ArregloDetalles[resultado[0]["id"]][K]=[];
             me.ArregloDetalles[resultado[0]["id"]][K]["id_solicitud_pago"]=resultado[0]["id"];
@@ -809,7 +836,7 @@ siga.define('pago', {
             K++;
           }
         }
-        
+
         var SUMA_DEBE=0;
         for(var i=0;i<resultado[0]["detalle_contable"].length;i++){
           if(resultado[0]["detalle_contable"][i]["operacion"]=="D") continue;
@@ -851,9 +878,9 @@ siga.define('pago', {
         me.ArregloDetalles[resultado[0]["id"]][K]["id_accion_subespecifica"]="";
       }
     },
-    
-    
-    
+
+
+
     /**
     * Calcula el monto a pagar para la solicitud en proceso.
     */
@@ -866,7 +893,7 @@ siga.define('pago', {
         me.$("td_celda_"+i).innerHTML=formatNumber(me.Arreglo[i][7]);
         }
     },
-    
+
     /**
     * Calcula el monto real por el cual se va a emitir el cheque
     */
@@ -879,10 +906,10 @@ siga.define('pago', {
           Cad+="<OPTION value='"+me.Arreglo[i][1]+"'>OP# "+me.Arreglo[i][8]+"</OPTION>";
           }
       me.$("SELECT_DETALLES").innerHTML=Cad;
-    
+
       //llenar tabla de los detalles (Especificamente todos)
       me.GenerarDetalles();
-    
+
       var MONTO=0;
       for(var i=0;i<me.ArregloTodosK;i++)
         if(me.ArregloTodos[i]['subcuenta']=="x"){
@@ -892,7 +919,7 @@ siga.define('pago', {
       me.$("MONTO").value=formatNumber(MONTO);
       return MONTO;
     },
-    
+
     /**
     * Muesta los detalles del cheque, dependiendo de la solicitud que se desea mostrar la información.
     */
@@ -901,7 +928,7 @@ siga.define('pago', {
       var SelectSolicitud=me.$("SELECT_DETALLES").value;
       var n=0;
       var ArregloImprimir=new Array();
-    
+
       if(SelectSolicitud==""){//todos
         ArregloImprimir=copy(me.ArregloTodos);
         n=me.ArregloTodosK;
@@ -910,7 +937,7 @@ siga.define('pago', {
         ArregloImprimir=copy(me.ArregloDetallesFiltrado[SelectSolicitud]);
         n=me.ArregloDetallesFiltrado[SelectSolicitud].length;
         }
-    
+
       var Aux=new Array();
       for(i=0;i<n-1;i++)
         for(j=i+1;j<n;j++)
@@ -925,15 +952,15 @@ siga.define('pago', {
             ArregloImprimir[j]=copy(ArregloImprimir[i]);
             ArregloImprimir[i]=copy(Aux);
             }
-    
-    
+
+
       var SUMA_P=0;
       var SUMA_D=0;
       var SUMA_C=0;
       var Contenido=" ";
       var CadAux1="";
       var CadAux2="";
-    
+
       for(i=0;i<n;i++){
         Contenido+="<TR>";
         Contenido+="<TD width='17%' class='FilaEstilo' style='font-size : 11px;' align='center'>"+ArregloImprimir[i]['cuenta']+"</TD>";
@@ -945,10 +972,10 @@ siga.define('pago', {
           CadAux1=me.$("CUENTA_CONTABLE").value;
           CadAux2=me.$("CTA_DENOMINACION_CONTABLE").value;
           }
-    
+
         Contenido+="<TD width='13%' class='FilaEstilo' align='center'>"+CadAux1+"</TD>";
         Contenido+="<TD width='33%' class='FilaEstiloContinua' align='left' style='font-size : 11px;'>&nbsp;"+CadAux2+"</TD>";
-    
+
         if(ArregloImprimir[i]['columna']=="P"){
           Contenido+="<TD width='11%' class='FilaEstilo' align='right'>"+formatNumber(ArregloImprimir[i]['monto'])+"</TD>";
           Contenido+="<TD width='11%' class='FilaEstilo' align='right'></TD>";
@@ -970,12 +997,12 @@ siga.define('pago', {
         Contenido+="</TR>";
         }
       me.$("TABLA_LISTA_DETALLES").innerHTML=Contenido;
-    
+
       me.$("TOTAL_PARCIALES").value=formatNumber(SUMA_P);
       me.$("TOTAL_DEBITOS").value=formatNumber(SUMA_D);
-      me.$("TOTAL_CREDITOS").value=formatNumber(SUMA_C);    
+      me.$("TOTAL_CREDITOS").value=formatNumber(SUMA_C);
     },
-    
+
     /**
     * Se calcula y se generan los detalles dependiendo del monto a pagar por solicitud y de las retenciones.
     * Calculos necesario para conocer el monto real del cheque.
@@ -988,23 +1015,23 @@ siga.define('pago', {
       var MontoPagar=0;
       var n=0;
       var ArregloImprimir=new Array();
-    
+
       var Porcentaje=0;
       var sw=false;
       var PosCtaBanco=-1;
       var Suma=0;
       var K=0;
-    
-    
-    
+
+
+
       me.ArregloTodos=[];
-    
+
       for(var w=0;w<me.TamArreglo;w++)
         if(me.Arreglo[w][0]==true){
           ArregloImprimir="";
           ArregloImprimir=new Array();
           n=0;
-    
+
           SelectSolicitud=me.Arreglo[w][1];
           MontoSolicitud=formatNumberDec(me.Arreglo[w][3],2);
           MontoPagado=formatNumberDec(me.Arreglo[w][6],2);
@@ -1024,7 +1051,7 @@ siga.define('pago', {
               if(MontoPagado*1.0>0)//si existen pagos realizados
                 sw=false;
               }
-    
+
             n=0;
             PosCtaBanco=-1;
             Suma=0;
@@ -1047,11 +1074,11 @@ siga.define('pago', {
                   }
                 }
               }//fin for
-    
+
             if(PosCtaBanco!=-1){
               ArregloImprimir[n]=new Array();
               ArregloImprimir[n]=copy(me.ArregloDetalles[SelectSolicitud][PosCtaBanco]);
-    
+
               if(sw==false)//si no estan incluidas las retenciones, cta banco = montopagar
                 ArregloImprimir[n]['monto']=MontoPagar;
               else
@@ -1059,9 +1086,9 @@ siga.define('pago', {
               n++;
               }
             }
-    
+
           me.ArregloDetallesFiltrado[SelectSolicitud]=copy(ArregloImprimir);
-    
+
           if(K==0){
             for(i=0;i<n;i++){
               me.ArregloTodos[K]=copy(ArregloImprimir[i]);
@@ -1082,13 +1109,13 @@ siga.define('pago', {
                 }
               }
             }
-    
+
           }
-    
+
       me.ArregloTodosK=K;
-      me.CambioSelectDetalles();    
-    },    
-    
+      me.CambioSelectDetalles();
+    },
+
     /**
     * Necesario para ordenar los detalles en el siguiente orden: P (Parciales=Mobimientos presupuestarios), D (Debitos), C (Creditos)
     * @param {Caracter}
@@ -1098,27 +1125,29 @@ siga.define('pago', {
       if(V=="P") return 0;
       if(V=="D") return 1;
       return 2;
-    },    
-    
-    
-    
+    },
+
+
+
     /**
     * Guarda los datos en la BD
     */
     onSave: function(){
       var me = this;
       var msg="";
-      
+
       var _id_persona							= Ext.String.trim(strtoupper(me.$("PERSONA_ID").value));
       var _id_banco_cuenta				= Ext.String.trim(strtoupper(me.$("ID_CTA").value));
       var _fecha									= Ext.String.trim(strtoupper(me.$("FECHA").value));
       var _numero									= Ext.String.trim(strtoupper(me.$("N_CHEQUE").value));
-      var _concepto								= Ext.String.trim(strtoupper(me.$("CONCEPTO").value));
+      var _concepto               = Ext.String.trim(strtoupper(me.$("CONCEPTO").value));
+      var _forma_pago             = Ext.String.trim(me.$("FORMA_PAGO").value);
+      var _cuenta_destino					= Ext.String.trim(strtoupper(me.$("CUENTA_DESTINO").value));
       var _monto=0;
       var _id_cuenta_contable			= "";
       //if(me.TipoModificar!=-1)
       //	_monto				= me.CalcularMonto();
-    
+
       if(!_id_persona){
         msg="Por favor seleccione el proveedor o beneficiario.";
         me.Mensaje(msg,"ROJO");
@@ -1143,11 +1172,11 @@ siga.define('pago', {
         return;
         }
       _fecha=unformatDate(_fecha);
-      
+
       if(!_numero){
         msg="Por favor introduzca el número del cheque.";
         if(me.getCmp('btnTransferencia').pressed)
-          msg="Por favor introduzca el número de transferencia.";        
+          msg="Por favor introduzca el número de transferencia.";
         me.Mensaje(msg,"ROJO");
         me.MensajeListado("");
         return;
@@ -1158,27 +1187,27 @@ siga.define('pago', {
         me.MensajeListado("");
         return;
         }
-      
+
       if(me.$("TOTAL_DEBITOS").value!=me.$("TOTAL_CREDITOS").value){
         msg="Error. No coinciden los totales contables en los detalles del cheque.";
         me.Mensaje(msg,"ROJO");
         me.MensajeListado("");
         return;
         }
-      
-      
+
+
       me.DesactivarFormulario();
-      
-      var _detalle={};	
-      
-      
-      
-      
+
+      var _detalle={};
+
+
+
+
       if(me.TipoModificar!=-1){
         _detalle.presupuestario=[];
         _detalle.contable=[];
         _detalle.comprobante_previo_monto_pagado=[];
-        
+
         //asociar el cheque a las ordedes de pago seleccionadas
         for(var i=0;i<me.TamArreglo;i++)
           if(me.Arreglo[i][0]==true)
@@ -1186,11 +1215,11 @@ siga.define('pago', {
               id_comprobante: me.Arreglo[i][1],
               monto_pagado: me.Arreglo[i][7]
             });
-        
-        
+
+
         //agregar detalles presupuestarios y contables
         for(i=0;i<me.ArregloTodosK;i++){
-          if(me.ArregloTodos[i]["columna"]=="P"){//presupuesto			
+          if(me.ArregloTodos[i]["columna"]=="P"){//presupuesto
             _detalle.presupuestario.push({
               id_accion_subespecifica: me.ArregloTodos[i]["id_accion_subespecifica"],
               id_cuenta_presupuestaria: me.ArregloTodos[i]["subcuenta"],
@@ -1204,47 +1233,52 @@ siga.define('pago', {
               _monto=me.ArregloTodos[i]["monto"];
               _id_cuenta_contable=me.$("CTA_CODIGO_CONTABLE").value;
             }
-            
+
             _detalle.contable.push({
               id_cuenta_contable: _id_cuenta_contable,
               operacion: me.ArregloTodos[i]["columna"]=="D"?"D":"H",
-              monto: me.ArregloTodos[i]["monto"]			
+              monto: me.ArregloTodos[i]["monto"]
             });
           }
         }
       }
-      
+
       var _id_banco_movimiento_tipo="";
       if(me.getCmp('btnCheque').pressed)
         _id_banco_movimiento_tipo=3;//cheque orden de pago
       else if(me.getCmp('btnTransferencia').pressed)
         _id_banco_movimiento_tipo=9;//transferencia orden de pago
-      
+
+      _detalle.extra={
+        forma_pago: _forma_pago,
+        cuenta_destino: _cuenta_destino
+      };
+
       _detalle.comprobante_bancario={
         id_banco_cuenta: _id_banco_cuenta,
         id_banco_movimiento_tipo: _id_banco_movimiento_tipo,//cheque orden de pago o transferencia orden de pago
         numero: _numero,
         monto: _monto
       };
-      
-      
-      
-      
+
+
+
+
       var _id_comprobante="";
-      if(me.IDSeleccionActualLista>0) 
+      if(me.IDSeleccionActualLista>0)
         _id_comprobante=me.IDSeleccionActualLista;
-      
+
       if(_id_comprobante){
         if(!confirm("¿Esta seguro que desea guardar los cambios?")){
           me.ActivarFormulario();
           return;
           }
         }
-      
+
       _detalle.file='t';
       if(Ext.String.trim(me.$("ARCHIVO_ADJUNTO").value)=="")
         _detalle.file='f';
-      
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
@@ -1257,7 +1291,7 @@ siga.define('pago', {
           fecha:_fecha,
           concepto:_concepto,
           contabilizado: 'f',
-          id_persona: _id_persona,          
+          id_persona: _id_persona,
           detalle: Ext.encode(_detalle)
         },
         success:function(request){
@@ -1269,7 +1303,7 @@ siga.define('pago', {
         }
       });
     },
-    
+
     /**
     * Muestra el mensaje despues de guardar los datos
     * @param {Array} req respuesta luego de guardar los datos 1=exito, !1=fracaso
@@ -1285,7 +1319,7 @@ siga.define('pago', {
       else
         me.Mensaje(respuesta.message,"ROJO");
     },
-    
+
     /*Al presionar enter buscamos directamente en el listado*/
     PresionarEnter: function(ev){
       var me = this;
@@ -1296,68 +1330,68 @@ siga.define('pago', {
         }
       me.onSearch();
     },
-    
+
     /**
     * Es llamada cuando se introduce texto en el INPUT TEXT buscar de la pestaña lista
     */
     onSearch: function(){
       var me = this;
-      
+
       var _operacion_codigo=['CH'];
       if(me.getCmp('btnCheque').pressed){
         _operacion_codigo=['CH'];
         me.$("PAGO_TIPO").innerHTML="Cheque&nbsp;No.&nbsp;";
-        me.$$('PAGO_ADJUNTO').set({style: {'display': "none"}});        
+        me.$$('PAGO_ADJUNTO').set({style: {'display': "none"}});
       }
       else if(me.getCmp('btnTransferencia').pressed){
         _operacion_codigo=['PT'];
-        me.$("PAGO_TIPO").innerHTML="Transferencia&nbsp;No.&nbsp;";
+        me.$("PAGO_TIPO").innerHTML="Referencia&nbsp;#&nbsp;";
         me.$$('PAGO_ADJUNTO').set({style: {'display': ""}});
-      }     
-      
-      
+      }
+
+
       me.OcultarBotones();
-    
+
       me.IDSeleccionActualLista=-1;
       me.TipoModificar=-1;
       me.$("FORMULARIO").reset();
       me.$("MONTO").value="0,00";
-    
+
       me.$("TABLA_LISTA_SOLICITUDES").innerHTML=" ";
       me.$("TABLA_LISTA_DETALLES").innerHTML=" ";
       me.$("SELECT_DETALLES").innerHTML="<OPTION value=''>CHEQUE</OPTION>";
       me.$("TOTAL_PARCIALES").value="0,00";
       me.$("TOTAL_DEBITOS").value="0,00";
       me.$("TOTAL_CREDITOS").value="0,00";
-    
-      
-      
-      
-    
+
+
+
+
+
       me.ActivarFormulario();
       me.DesactivarBotonModificar();
       me.DesactivarBotonEliminar();
       me.ActivarBotonGuardar();
-    
+
       var CadenaBuscar=Ext.String.trim(strtoupper(me.$("LISTADO_TXT_BUSCAR").value));
       if(CadenaBuscar!="")
         if(me.BuscarListado_CadenaBuscar==CadenaBuscar)
           return;
-      me.BuscarListado_CadenaBuscar=CadenaBuscar;    
-      
-      me.$("TABLA_LISTA").innerHTML=""; //Mostrar icono cargando   
-    
-      
+      me.BuscarListado_CadenaBuscar=CadenaBuscar;
+
+      me.$("TABLA_LISTA").innerHTML=""; //Mostrar icono cargando
+
+
       var _tipo_persona=me.SW_PERSONA;
-        
+
       var _mostrar={
-        'mes':me.$("LISTADO_MES_FILTRAR").value,		
+        'mes':me.$("LISTADO_MES_FILTRAR").value,
         'tipo':['MB'],
         'operacion_codigo': _operacion_codigo,
         'persona': 't',
         'tipo_persona': _tipo_persona
       };
-      
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
@@ -1367,7 +1401,7 @@ siga.define('pago', {
           text:CadenaBuscar,
           start: '0',
           limit : 'ALL',
-          sort:'[{"property":"fecha","direction":"DESC"},{"property":"correlativo","direction":"DESC"}]'	
+          sort:'[{"property":"fecha","direction":"DESC"},{"property":"correlativo","direction":"DESC"}]'
         },
         success:function(request){
           var result=Ext.JSON.decode(request.responseText);
@@ -1378,21 +1412,21 @@ siga.define('pago', {
         }
       });
     },
-      
+
     /**
     * Muestra el listado (Crea tabla dinamicamente)
     * @param {Array} req Datos provenientes de la BD
     */
     MostrarListado: function(req){
-      var me = this; 
+      var me = this;
       var respuesta = req.responseText;
       var resultado = eval("(" + respuesta + ")");
       resultado=resultado["result"];
-      
+
       var n=resultado.length;
-    
+
       var CadAux1, CadAux2;
-      
+
       var TextoBuscar=Ext.String.trim(strtoupper(me.$("LISTADO_TXT_BUSCAR").value));
       var Contenido=" ";
       var FuncionOnclick="";
@@ -1400,9 +1434,9 @@ siga.define('pago', {
       var FuncionOnMouseOver="";
       var FuncionOnMouseOut="";
       var CadAux1, CadAux2, CadAux3, CadAux4, CadAux5, CadAux6, Aux, Aux2;
-    
+
       for(var i=0;i< n; i++){
-        
+
         estado="";
         color_estado="";
         if(resultado[i]['contabilizado']=="t" && resultado[i]['anulado']=='t'){
@@ -1417,20 +1451,20 @@ siga.define('pago', {
           color_estado="#FF5454";//rojo (sin contabilizar)
           estado=0;
         }
-        
+
         //FuncionOnclick="me.SeleccionarElementoTabla('"+resultado[i]['id']+"',"+estado+")";
         //FuncionOnDblclick="me.TabPane.setSelectedIndex(0);";
         //FuncionOnMouseOver="pintarFila(\"FCOP"+resultado[i]['id']+"\")";
         //FuncionOnMouseOut="despintarFila(\"FCOP"+resultado[i]['id']+"\")";
-    
-    
+
+
         //Contenido+="<TR id='FCOP"+resultado[i]['id']+"' onclick=\""+FuncionOnclick+"\" ondblclick='"+FuncionOnDblclick+"' onmouseover='"+FuncionOnMouseOver+"' onmouseout='"+FuncionOnMouseOut+"'>";
         Contenido+="<TR id='FCOP"+resultado[i]['id']+"' v='{\"id\":\""+resultado[i]['id']+"\",\"estado\":\""+estado+"\"}'>";
-        
-        if(!resultado[i]['persona']) 
+
+        if(!resultado[i]['persona'])
           resultado[i]['persona']="";
-        
-        
+
+
         if(me.$("SOMBRA_CHECKBOX").checked && TextoBuscar!=""){
           //CadAux1=str_replace(completarCodigoCeros(resultado[i]['id_cheque'],NDigitos_Codigo_VoucherCheque),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
           CadAux2=str_replace(resultado[i]['numero'],"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
@@ -1449,33 +1483,33 @@ siga.define('pago', {
           }
     //		Aux="";
     // 		if(resultado[i]['entregado']=="t")	Aux="checked";
-        
+
         Contenido+="<TD class='FilaEstilo' style='width: 5px;'><DIV style='width: 5px; background-color: "+color_estado+";'>&nbsp;</DIV></TD>";
-    
+
         //Contenido+="<TD width='1%' class='FilaEstilo'><INPUT id='CBL"+resultado[i]['id']+"' type='checkbox' "+Aux+" onchange='me.ListadoAlternarCustoria("+resultado[i]['id']+")' title='"+me.MsgCustodia(resultado[i]['entregado']=="t"?1:0)+"'></TD>";
         Contenido+="<TD width='10%' >"+CadAux2+"</TD>";
         Contenido+="<TD width='10%' align='center'>"+CadAux3+"</TD>";
         Contenido+="<TD width='25%' class='continua'>"+CadAux5+"</TD>";
-        Contenido+="<TD class='continua' style='padding-left: 5px;'>"+CadAux4+"</TD>";		
+        Contenido+="<TD class='continua' style='padding-left: 5px;'>"+CadAux4+"</TD>";
         Contenido+="<TD width='10%' align='right'>"+CadAux6+"</TD>";
-    
+
         Contenido+="</TR>";
         }
-    
+
       me.$("TABLA_LISTA").innerHTML=Contenido;
-      
+
       //agregar las funciones onclick al listado
       Ext.each(me.getEl().query("#TABLA_LISTA tr"),function(fila){
         Ext.get(fila).on("click", function(){
           var v=Ext.decode(fila.getAttribute("v"));
           me.SeleccionarElementoTabla(v.id,v.estado);
-        });        
+        });
         Ext.get(fila).on("dblclick", function(){
           me.TabPane.setSelectedIndex(0);
-        }); 
-      });      
+        });
+      });
     },
-      
+
     /**
     * Es llamada cuando se hace click sobre algun elemento de la tabla.
     * Esta manda los datos para el formulario que se encuentra en la pestaña 'entrada de datos'
@@ -1485,48 +1519,48 @@ siga.define('pago', {
       if(me.IDSeleccionActualLista==IDSeleccion)
         return;
       if(me.IDSeleccionActualLista!=-1)
-        me.$("FCOP"+me.IDSeleccionActualLista).removeAttribute("selected");     
+        me.$("FCOP"+me.IDSeleccionActualLista).removeAttribute("selected");
       me.IDSeleccionActualLista=IDSeleccion;
-      me.$("FCOP"+me.IDSeleccionActualLista).setAttribute("selected",""); 
-      
+      me.$("FCOP"+me.IDSeleccionActualLista).setAttribute("selected","");
+
       me.$("SELECT_DETALLES").innerHTML="<OPTION value=''>CHEQUE</OPTION>";
-    
-      me.TipoModificar=-1;  
-    
-      
+
+      me.TipoModificar=-1;
+
+
       me.OcultarBotones();
-      
-      
+
+
       me.DesactivarFormulario();
       me.DesactivarBotonGuardar();
       me.DesactivarBotonModificar();
       me.DesactivarBotonEliminar();
       me.ActivarBotonImprimir();
-      
-      
+
+
       me.Mensaje("");
       me.MensajeListado("");
-      
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
         params:{
           action: 'onGet',
-          id: me.IDSeleccionActualLista	
+          id: me.IDSeleccionActualLista
         },
         success:function(request){
           var resultado=Ext.JSON.decode(request.responseText);
-          
+
           me.$("COMPROBANTE").innerHTML=resultado[0]["tipo"]+"-"+resultado[0]["correlativo"];
-          
+
           me.$("FECHA").value=resultado[0]["fecha"];
           me.$("CONCEPTO").value=resultado[0]["concepto"];
-          
+
           //cargar proveedor/beneficiario
           me.$("PERSONA_ID").value=resultado[0]["detalle_persona"][0]["id"];
           me.$("PERSONA_IDENTIFICACION").value=resultado[0]["detalle_persona"][0]["identificacion"];
           me.$("PERSONA_DENOMINACION").value=resultado[0]["detalle_persona"][0]["denominacion"];
-          
+
           //numero de cuenta
           me.$("ID_CTA").value=resultado[0]["detalle_comprobante_bancario"][0]["id_banco_cuenta"];
           me.$("NCTA").value=resultado[0]["detalle_comprobante_bancario"][0]["numero_cuenta"];
@@ -1536,21 +1570,41 @@ siga.define('pago', {
           me.$("CTA_DENOMINACION_CONTABLE").value=resultado[0]["detalle_comprobante_bancario"][0]["denominacion_contable"];
           me.$("TIPO_CTA").value=resultado[0]["detalle_comprobante_bancario"][0]["cuenta_tipo"];
           me.$("BANCO").value=resultado[0]["detalle_comprobante_bancario"][0]["banco"];
-          
+
           //otros datos del cheque
           me.$("N_CHEQUE").value=resultado[0]["detalle_comprobante_bancario"][0]["numero"];
           me.$("MONTO").value=resultado[0]["detalle_comprobante_bancario"][0]["monto"];
-          
+
           //mostrar archivos adjuntos
           me.$("ARCHIVO_ADJUNTO").value="";
-          if(resultado[0]["file"].length>0)            
+          if(resultado[0]["file"].length>0)
             me.$("ARCHIVO_ADJUNTO").value=resultado[0]["file"][0];
-          
+
+          //cargar informacion extra (forma de pago)
+          var _forma_pago = "";
+          var _cuenta_destino = "";
+          if(resultado[0]["detalle_extra"]){
+            for(var i=0;i<resultado[0]["detalle_extra"].length;i++){
+              switch(resultado[0]["detalle_extra"][i]["dato"]){
+                case "forma_pago":
+                  _forma_pago=resultado[0]["detalle_extra"][i]["valor"];
+                  break;
+                case "cuenta_destino":
+                  _cuenta_destino=resultado[0]["detalle_extra"][i]["valor"];
+                  break;
+              }
+            }
+          }
+
+          me.$("FORMA_PAGO").value = _forma_pago;
+          me.$("CUENTA_DESTINO").value = _cuenta_destino;
+
+
           //cargar ordenes de pago asociadas al cheque
           var _mostrar={
             id: resultado[0]["id"]
           };
-          
+
           _tmp=Ext.Ajax.request({
             async: false,
             url:"module/comprobante/",
@@ -1560,7 +1614,7 @@ siga.define('pago', {
               text:'',
               start: '0',
               limit : 'ALL',
-              sort:'[{"property":"fecha","direction":"ASC"}]'		
+              sort:'[{"property":"fecha","direction":"ASC"}]'
             }
           });
           if(_tmp.statusText=="OK"){
@@ -1579,12 +1633,12 @@ siga.define('pago', {
               me.Arreglo[i][6]=formatNumberDec(_retorno[i]['monto_pagado_acumulado'],2);
               me.Arreglo[i][7]=formatNumberDec(_retorno[i]['monto_pagado'],2);;
             }
-          me.TamArreglo=_retorno.length;								
+          me.TamArreglo=_retorno.length;
           me.MostrarListadoSolicitudes();
           }
-          
+
           //cargar y mostrar detalles presupuestarios y contables
-          me.ArregloTodos=[];								
+          me.ArregloTodos=[];
           K=0;
           for(var i=0;i<resultado[0]["detalle_presupuestario"].length;i++){
             me.ArregloTodos[K]=[];
@@ -1598,7 +1652,7 @@ siga.define('pago', {
             me.ArregloTodos[K]["id_accion_subespecifica"]=resultado[0]["detalle_presupuestario"][i]["id_accion_subespecifica"];
             K++;
           }
-          
+
           for(var i=0;i<resultado[0]["detalle_contable"].length;i++){
             me.ArregloTodos[K]=[];
             me.ArregloTodos[K]["id_solicitud_pago"]=resultado[0]["id"];
@@ -1613,14 +1667,14 @@ siga.define('pago', {
           }
           me.ArregloTodosK=K;
           me.CambioSelectDetalles();
-          
-          
+
+
           //segun el estado de la orden, activar los botones de contabilizar, reversar y anular
           me.OcultarBotones();
           switch(estado){
             //SIN CONTABILIZAR (ROJO)
             case 0://activar el boton de modificar, mostrar el boton de contabilizar
-            case '0':															
+            case '0':
               me.ActivarBotonModificar();
               me.$("BOTON_CONTABLIZAR").style.display="";
               break;
@@ -1631,7 +1685,7 @@ siga.define('pago', {
               me.$("BOTON_ANULAR").style.display="";
               break;
             case 3:
-              
+
               break;
           }
         },
@@ -1640,7 +1694,7 @@ siga.define('pago', {
         }
       });
     },
-    
+
     /**
     * Es llamada cuando se presiona sobre el boton limpiar.
     * Este borra el contenido de INPUT TEXT buscar y muestra el listado completo
@@ -1655,17 +1709,17 @@ siga.define('pago', {
       me.ActivarBotonGuardar();
       me.ActivarFormulario();
       me.$("FORMULARIO").reset();
-      
+
       me.$("CTA_CODIGO_CONTABLE").value="";
       me.$("CUENTA_CONTABLE").value="";
       me.$("CTA_DENOMINACION_CONTABLE").value="";
-      
+
       me.$("LISTADO_TXT_BUSCAR").value="";
       me.Mensaje("");
       me.MensajeListado("");
       me.onSearch();
     },
-    
+
     /**
     * Es llamada cuando se presiona el boton de modificar
     */
@@ -1674,14 +1728,14 @@ siga.define('pago', {
       me.OcultarBotones();
       me.DesactivarBotonModificar();
       me.ActivarBotonGuardar();
-      
+
       me.CargarSolicitudes();
-      
+
       me.TipoModificar=1;
       me.$("CHECK_ALL").disabled=false;
       me.ActivarFormulario(me.TipoModificar);
     },
-    
+
     /**
     * Es llamada cuando se presiona el boton de eliminar. Esta hace un borrado logico.
     */
@@ -1694,37 +1748,37 @@ siga.define('pago', {
       return;
       if(!confirm("¿Esta seguro que quiere eliminarlo?"))
         return;
-      
-      alert("La acción se encuentra deshabilitada. Consulte al administrador del sistema.");      
+
+      alert("La acción se encuentra deshabilitada. Consulte al administrador del sistema.");
     },
-    
-    
+
+
     OcultarBotones: function(){
       var me = this;
       me.$("BOTON_ANULAR").style.display="none";
       me.$("BOTON_CONTABLIZAR").style.display="none";
-      me.$("BOTON_REVERSAR").style.display="none";	
+      me.$("BOTON_REVERSAR").style.display="none";
     },
-    
+
     onContabilizar: function(){
       var me = this;
       me.Mensaje("");
       var _id_comprobante="";
-      if(me.IDSeleccionActualLista>0) 
+      if(me.IDSeleccionActualLista>0)
         _id_comprobante=me.IDSeleccionActualLista;
       else
         return;
-      
+
       //ocultar el boton de contabilizar
       me.OcultarBotones();
-      
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
         params:{
           action: 'onSet_Contabilizar',
           id: _id_comprobante,
-          contabilizado: 't'	
+          contabilizado: 't'
         },
         success:function(request){
           me.GuardarMensaje(request);
@@ -1734,26 +1788,26 @@ siga.define('pago', {
         }
       });
     },
-      
+
     onReversar: function(){
       var me = this;
       me.Mensaje("");
       var _id_comprobante="";
-      if(me.IDSeleccionActualLista>0) 
+      if(me.IDSeleccionActualLista>0)
         _id_comprobante=me.IDSeleccionActualLista;
       else
         return;
-      
+
       //ocultar el boton de contabilizar
       me.OcultarBotones();
-      
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
         params:{
           action: 'onSet_Contabilizar',
           id: _id_comprobante,
-          contabilizado: 'f'	
+          contabilizado: 'f'
         },
         success:function(request){
           me.GuardarMensaje(request);
@@ -1763,17 +1817,17 @@ siga.define('pago', {
         }
       });
     },
-      
+
     onAnular: function(){
       var me = this;
       me.Mensaje("");
       var _id_comprobante="";
-      if(me.IDSeleccionActualLista>0) 
+      if(me.IDSeleccionActualLista>0)
         _id_comprobante=me.IDSeleccionActualLista;
       else
         return;
-      
-    
+
+
       //pedir fecha de anulacion
       //var _fecha=me.$("FECHA_ACTUAL_SIGAFS").value;
       var _fecha=siga.get({action: "date", format: "d/m/Y"}).result;
@@ -1786,16 +1840,16 @@ siga.define('pago', {
         alert("La fecha introducida es invalida.");
         }
       _fecha=unformatDate(_fecha);
-      
+
       //dar la posibilidad de anular o no los compromisos previos
-      
+
       me.Mensaje("Anulando. Por favor espere...");
       me.OcultarBotones();
-    
+
       var _detalle={};
       _detalle.comprobante_previo='liberar';
-      
-      
+
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
@@ -1813,7 +1867,7 @@ siga.define('pago', {
         }
       });
     },
-    
+
     /**
     * Visualiza el cheque
     */
@@ -1823,5 +1877,5 @@ siga.define('pago', {
         return;
       window.open("report/pago.php?id="+me.IDSeleccionActualLista);
     },
-    
+
 });

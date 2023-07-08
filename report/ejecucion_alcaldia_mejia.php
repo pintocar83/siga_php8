@@ -1,8 +1,6 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 'Off');
-//error_reporting(E_ALL);
-//ini_set('display_errors', 'On');
+error_reporting(E_ALL);
+ini_set('display_errors', 'On');
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
@@ -539,9 +537,15 @@ $modificado_di=$db->Execute("SELECT
 															ORDER BY
 																DP.id_cuenta_presupuestaria");
 
+
+$sw_pagado=true;
+if(isset($_GET["sw_pagado"]) && $_GET["sw_pagado"]=="off"){
+	$sw_pagado=false;
+}
+
 $database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
 //CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
-if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
+if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name]) && $sw_pagado){
 	$pagado=$causado;
 	$pagado_acumulado=$causado_acumulado;
 }
@@ -824,7 +828,6 @@ switch($periodo_tipo){
 
 //busca el monto en el arreglo para el codigo dado
 function bm($A,$id_cuenta_presupuestaria,$col_monto="monto"){
-	if(!$A) return 0;
 	for($i=0;$i<count($A) and $A;$i++)
 		if($A[$i]["id_cuenta_presupuestaria"]==$id_cuenta_presupuestaria)
 				return $A[$i][$col_monto];

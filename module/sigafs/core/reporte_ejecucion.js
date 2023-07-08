@@ -153,7 +153,7 @@ function Form_EJECUCION__CargarOAE_6(){
 
 
 
-function Form_EJECUCION__Imprimir(formato){
+function Form_EJECUCION__Imprimir(formato,add){
 	if(!formato) formato="ejecucion";
 	var Opcion;
 	for(var i=1;i<=7;i++)
@@ -170,19 +170,22 @@ function Form_EJECUCION__Imprimir(formato){
 	var v=xGetElementById("TRIMESTRE_MES_FEI").value;
 	
 	var tipo=xGetElementById("NIVEL_DETALLE_FEI").value;
-	
+
+	var append="";
+	if(add)
+		append=add;
 
 
 	if(Opcion<=3)
-		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&ocultar="+sw_ocultar+"&periodotipo="+t+"&periodo="+v);
+		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&ocultar="+sw_ocultar+"&periodotipo="+t+"&periodo="+v+append);
 	else if(Opcion==4)
-		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v);
+		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v+append);
 	else if(Opcion==5)
-		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO2_FEI").value+"&id_accion_especifica="+xGetElementById("ID_ACCION_ESPECIFICA_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v);
+		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO2_FEI").value+"&id_accion_especifica="+xGetElementById("ID_ACCION_ESPECIFICA_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v+append);
 	else if(Opcion==6)
-		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_subespecifica="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA3_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v);
+		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_subespecifica="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA3_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v+append);
 	else if(Opcion==7)
-		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO4_FEI").value+"&id_fuente_recursos="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA4_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v);
+		window.open("../../report/"+formato+".php?tipo="+tipo+"&opcion="+Opcion+"&id_accion_centralizada="+xGetElementById("ID_PROYECTO4_FEI").value+"&id_fuente_recursos="+xGetElementById("ID_OTRA_ACCION_ESPECIFICA4_FEI").value+"&OCULTAR="+sw_ocultar+"&periodotipo="+t+"&periodo="+v+append);
 	}
 
 

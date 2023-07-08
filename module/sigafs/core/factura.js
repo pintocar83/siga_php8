@@ -502,7 +502,9 @@ function Form_FACTURA__CalcularIVA(){
 	var porcentaje_iva_retencion=xGetElementById("RETENCION_PIVA_FF").value;
 
 	xGetElementById("MONTO_IVA_FF").value=total_iva;
-	xGetElementById("RETENCION_IVA_FF").value=(porcentaje_iva_retencion*total_iva*1.00).toFixed(2);	
+	xGetElementById("RETENCION_IVA_FF").value=(porcentaje_iva_retencion*total_iva*1.00).toFixed(2);
+	var exento=xGetElementById("TOTAL_FF").value*1.00-(base_calculo*1.00+total_iva*1.00);
+	xGetElementById("EXENTO_FF").value=(exento>=0?exento:0).toFixed(2);	
 	
 	xGetElementById("TOTAL_PAGO_FF").value=(xGetElementById("TOTAL_FF").value*1.00-xGetElementById("RETENCION_IVA_FF").value*1.00).toFixed(2);
 }

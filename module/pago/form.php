@@ -1,7 +1,7 @@
 <DIV id="SIGAFS">
 	<div class="tab-pane" id="TABPANE">
 		<!-- ******************** ******************** Primera Pestaña ****************** *********************-->
-		<div class="tab-page"  style="height : 410px;">
+		<div class="tab-page"  style="height : 430px;">
 			<h2 class="tab">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entrada de datos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			</h2>
@@ -13,34 +13,33 @@
 				<tbody>
 					<tr>
 						<td></td>
-						<td>
+						<td colspan="2" style="display: flex;">
 							<BUTTON id="BOTON_PROVEEDOR" class="BotonesParaCampos" style="font-size : 11px; vertical-align : top;" type="BUTTON">
 								Proveedor
 							</BUTTON>
 							<BUTTON id="BOTON_BENEFICIARIO" class="BotonesParaCampos" style="font-size : 11px; vertical-align : top;" type="BUTTON">
 								Beneficiario
 							</BUTTON>
-							<span style="padding-left: 20px;">
+							<span style="padding-left: 20px; flex: 1;">
 								<BUTTON id="BOTON_CONTABLIZAR" class="BotonesParaCampos" style="vertical-align : top; font-size: 11px; white-space: nowrap;" type="BUTTON">Contabilizar</BUTTON>
 								<BUTTON id="BOTON_REVERSAR" class="BotonesParaCampos" style="vertical-align : top; font-size: 11px; white-space: nowrap;" type="BUTTON">Reversar</BUTTON>
 								<BUTTON id="BOTON_ANULAR" class="BotonesParaCampos" style="vertical-align : top; font-size: 11px; white-space: nowrap;" type="BUTTON">Anular</BUTTON>
 							</span>
+							<span class='TitulosCampos' style="font-size: 11px; vertical-align: bottom;" id="COMPROBANTE"></span>
 						</td>
-						<td class='TitulosCampos' style="font-size: 11px; vertical-align: bottom;" id="COMPROBANTE"></td>
-						<!--<td id="MSG_CUSTODIA" style="font-weight : bold;"></td>-->
 					</tr>
 					<tr>
 						<td class='TitulosCampos' id="PERSONA_TIPO"></td>
-						<td class='TextCampos' colspan="2">
-							<INPUT id='PERSONA_IDENTIFICACION' class='TextoCampoInputDesactivado' type='text' size='22' maxlength='15' value="" readonly="true"  style="width: 150px;"><INPUT id='PERSONA_DENOMINACION' class='TextoCampoInputDesactivado' readonly="true" type='text' size='65' value=""  style="width: 450px;"><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_PERSONA"><IMG src='image/icon/icon-find.png' /></button>
+						<td class='TextCampos' colspan="2" style="display: flex;">
+							<INPUT id='PERSONA_IDENTIFICACION' class='TextoCampoInputDesactivado' type='text' size='22' maxlength='15' value="" readonly="true"  style="width: 150px;"><INPUT id='PERSONA_DENOMINACION' class='TextoCampoInputDesactivado' readonly="true" type='text' size='65' value=""  style="width: 450px; flex: 1;"><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_PERSONA"><IMG src='image/icon/icon-find.png' /></button>
 							<INPUT type="hidden" id="PERSONA_ID" value="">
 						</td>
 					</tr>
 					<tr>
 						<td class='TitulosCampos'>Cuenta</td>
-						<td class='TextCampos' colspan="2">
+						<td class='TextCampos' colspan="2" style="display: flex;">
 							<INPUT id="ID_CTA" class='TextoCampoInputDesactivado' type="hidden" value="" size="4" readonly="true">
-							<INPUT id="NCTA" class='TextoCampoInputDesactivado' type='text' size='22' value="" readonly="true"  style="width: 150px;"><INPUT id="DESCRIPCION_NCTA" class='TextoCampoInputDesactivado' type='text' size='65' value="" readonly="true"  style="width: 450px;"><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_BANCARIA"><IMG src='image/icon/icon-find.png' /></button>
+							<INPUT id="NCTA" class='TextoCampoInputDesactivado' type='text' size='22' value="" readonly="true"  style="width: 150px;"><INPUT id="DESCRIPCION_NCTA" class='TextoCampoInputDesactivado' type='text' size='65' value="" readonly="true"  style="width: 450px; flex:1;"><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_BANCARIA"><IMG src='image/icon/icon-find.png' /></button>
 							<INPUT type="hidden" value="" id="CTA_CODIGO_CONTABLE">
 							<INPUT type="hidden" value="" id="CUENTA_CONTABLE">
 							<INPUT type="hidden" value="" id="CTA_DENOMINACION_CONTABLE">
@@ -54,16 +53,29 @@
 							<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tbody>
 								<tr>
-								<td class='TextCampos'><INPUT id='FECHA' class='TextoCampoInput' type='text' size='10' maxlength='10' value="<?php echo date("d/m/Y")?>"><button type="button" class="boton_campo" id="BOTON_CALENDARIO"><IMG src='image/icon/icon-calendar.png' /></button>
+								<td class='TextCampos'><INPUT id='FECHA' class='TextoCampoInput' type='text' size='10' maxlength='10' value="<?php echo date("d/m/Y")?>"><button type="button" class="boton_campo" id="BOTON_CALENDARIO"><IMG src='image/icon/icon-calendar.png' /></td>
+								<td class='TitulosCampos' style="">Forma&nbsp;de&nbsp;Pago&nbsp;</td>
+								<td class='TextCampos'>
+									<SELECT class="TextoCampoInput" id="FORMA_PAGO">
+										<option value="" disabled>&nbsp;</option>
+										<option value="cheque" id="FORMA_PAGO_cheque">Cheque</option>
+										<option value="transferencia">Transferencia</option>
+										<option value="deposito">Deposito</option>
+										<option value="pago_movil">Pago Movil</option>
+										<option value="efectivo">Efectivo</option>
+									</SELECT>
+								</td>
 								<td class='TitulosCampos' id="PAGO_TIPO" style="width: 100px;"></td>
-								<td class='TextCampos'><INPUT id='N_CHEQUE' class='TextoCampoInput' type='text' size='15' value=""></td>
-								<!--<td class='TitulosCampos' style=""></td>-->
-								<!--<td class='TextCampos' ></td>-->
-								<!--<td class='TitulosCampos' style="width: 30%; font-size: 11px; vertical-align: middle;" id="COMPROBANTE"></td>-->
+								<td class='TextCampos' style="width: 1%;"><INPUT id='N_CHEQUE' class='TextoCampoInput' type='text' size='15' value=""></td>
 								</tr>
-								<!--<tr><td colspan="2"></td></tr>-->
 							</tbody>
 							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class='TitulosCampos'>Cuenta&nbsp;Destino</td>
+						<td colspan="2">
+							<INPUT id='CUENTA_DESTINO' class='TextoCampoInput' type='text' size='100' value="" style='width: 100%;'>
 						</td>
 					</tr>
 					<tr>
@@ -111,7 +123,7 @@
 		</div>
 		<!-- ************************ ******************** fin ******************* *************************-->
 		<!-- ******************** ******************** Segunda Pestaña ****************** *********************-->
-		<div class="tab-page" style="height : 410px;">
+		<div class="tab-page" style="height : 430px;">
 			<h2 class="tab">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Detalles&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			</h2>
@@ -130,7 +142,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<DIV class="listado" style="height : 230px;">
+			<DIV class="listado" style="height : 240px;">
 				<table id="TABLA_LISTA_DETALLES" border="0" cellspacing="0" cellpadding="0" width="100%">
 				</table>
 			</DIV>
@@ -146,7 +158,7 @@
 		</div>
 		<!-- ************************************ fin ****************** ********************* ***************-->
 		<!-- ******************** ******************** Tercera Pestaña ****************** *********************-->
-		<div class="tab-page" style="height : 410px;">
+		<div class="tab-page" style="height : 430px;">
 			<h2 class="tab">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Listado&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			</h2>

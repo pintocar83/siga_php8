@@ -243,15 +243,19 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$pdf->Ln(3);
 				$SUBTOTAL=0;
 				$SUBTOTAL_IVA=0;
+				$EXENTO=0;
+				$IMPONIBLE_IVA=0;
 				CabeceraITEM();
 				$pdf->SetFillColor(255,255,255);
 				$pdf->SetFont('helvetica','',8);
-				
+				//print_r($ITEM);exit;
 				for($j=0;$j<count($ITEM) and $ITEM;$j++){
 						$total_item=$ITEM[$j]["cantidad"]*$ITEM[$j]["costo"];
 						$SUBTOTAL+=$total_item;
 						if($ITEM[$j]["aplica_iva"]=="t")
 								$SUBTOTAL_IVA+=$total_item;
+						else
+							$EXENTO+=$total_item;
 
 						$pdf->Cell($t_n_i,4,utf8_decode($j+1),'LTB',0,'C',1);
 						$pdf->Cell($t_codigo_i,4,utf8_decode($ITEM[$j]["codigo"]),'TB',0,'C',1);
@@ -302,9 +306,13 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$pdf->SetFont('helvetica','',8);
 				$pdf->Cell($t_post_total,4,utf8_decode(number_format($descuento_m,2,",",".")),'',1,'R',1);
 				$pdf->SetFont('helvetica','B',8);
+				$pdf->Cell($t_post_i,4,utf8_decode("EXENTO:"),'',0,'R',0);
+				$pdf->SetFont('helvetica','',8);
+				$pdf->Cell($t_post_total,4,utf8_decode(number_format($EXENTO,2,",",".")),'',1,'R',1);
+				$pdf->SetFont('helvetica','B',8);
 				$pdf->Cell($t_post_i,4,utf8_decode("BASE IMPONIBLE:"),'',0,'R',0);
 				$pdf->SetFont('helvetica','',8);
-				$pdf->Cell($t_post_total,4,utf8_decode(number_format($BASE_IMPONIBLE,2,",",".")),'',1,'R',1);
+				$pdf->Cell($t_post_total,4,utf8_decode(number_format($BASE_IMPONIBLE_IVA,2,",",".")),'',1,'R',1);
 				$pdf->SetFont('helvetica','B',8);
 				$pdf->Cell($t_post_i,4,utf8_decode("IMPUESTOS:"),'',0,'R',0);
 				$pdf->SetFont('helvetica','',8);

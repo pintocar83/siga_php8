@@ -42,7 +42,7 @@
 			<td valign="top" class="formulario">
 				<div class="tab-pane" id="TABPANE_FF">
 					<!-- ******************** ******************** Primera Pestaña ****************** *********************-->
-					<div class="tab-page"  style="height : 340px;">
+					<div class="tab-page"  style="height : 360px;">
 						<h2 class="tab">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entrada de datos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</h2>
@@ -150,6 +150,12 @@
 														<option value="1">100%</option>
 													</select>
 													<INPUT id='RETENCION_IVA_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_IVA_FF')" style="text-align: right;">
+												</TD>
+											</TR>
+											<TR>
+												<TD class='TitulosCampos'>Exento</TD>
+												<TD class='TextCampos' style="text-align: right;">													
+													<INPUT id='EXENTO_FF' class='TextoCampoInput' type='text' size='10' value="" style="text-align: right;">
 												</TD>
 											</TR>
 											<TR>

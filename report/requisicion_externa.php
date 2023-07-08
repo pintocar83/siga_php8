@@ -73,7 +73,7 @@ class PDF_P extends FPDF{
 		if($COMPROBANTE[0]["tipo"]=="OC") $tipo="REQUISICIÓN COMPRA";
 		else if($COMPROBANTE[0]["tipo"]=="OS") $tipo="REQUISICIÓN SERVICIO";
 		
-		$this->Cell(100,12,utf8_decode($tipo),'',0,'C',0);
+		$this->Cell(100,12,utf8_decode("    ".$tipo),'',0,'C',0);
 
 		$this->SetX($this->lMargin+100);
 		$this->SetFont('helvetica','B',12);
@@ -97,10 +97,15 @@ class PDF_P extends FPDF{
 		$this->Cell(27+2,4,utf8_decode(''),'',0,'L');
 		
 		$denominacion=$COMPROBANTE[0]['denominacion_centralizada'].".";
+		$database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
+        //CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA (no nreflejar el nombre del proyecto makro)
+        if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
+        	$denominacion="";
+        }
 		if($COMPROBANTE[0]['codigo_especifica']!=="00")
 				$denominacion.=" (".$COMPROBANTE[0]['codigo_especifica'].") ".trim($COMPROBANTE[0]['denominacion_especifica'],".").".";
 				
-		$this->MultiCell(180-27,4,utf8_decode($denominacion),'','L',1);
+		$this->MultiCell(180-27,4,utf8_decode(trim($denominacion)),'','L',1);
 		
 		$this->SetFont('helvetica','B',9);
 		$this->Cell(27,4,utf8_decode('CONCEPTO'),'',0,'L');

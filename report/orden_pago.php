@@ -7,6 +7,7 @@ include_once("../library/siga.class.php");
 include_once("../library/functions/letra_numero.php");
 
 include_once("../library/fpdf/1.84/fpdf.php");
+include_once("../class/comprobante.class.php");
 
 $db=SIGA::DBController();
 
@@ -30,7 +31,7 @@ function CabeceraDP(){
 		$pdf->SetFillColor(216,216,216);
 		$pdf->SetFont('helvetica','B',10);
 		$pdf->Cell($pdf->ANCHO,6,utf8_decode('DETALLES PRESUPUESTARIOS'),'LRT',1,'C',1);
-		
+
 		$pdf->SetFont('helvetica','B',9);
 		$pdf->Cell($t_acc_pro_mp,4,utf8_decode('ACC/PRO'),'LB',0,'C',1);
 		$pdf->Cell($t_cuenta_mp,4,utf8_decode('CUENTA'),'B',0,'C',1);
@@ -66,7 +67,7 @@ class PDF_P extends FPDF{
 		}
 	function Header(){
 		global $COMPROBANTE, $PERSONA_ID, $PERSONA_DENOMINACION, $PERSONA_TIPO, $MONTO_TOTAL, $organismo;
-		
+
 		$this->SetFillColor(255,255,255);
 		//$this->Image("../../images/logo_institucional_01.jpg",$this->MARGEN_LEFT+2,$this->MARGEN_TOP,45);
 		//$this->Image("../../images/cintillo_actual.jpg",$this->MARGEN_LEFT,$this->MARGEN_TOP,180);
@@ -76,7 +77,7 @@ class PDF_P extends FPDF{
 		//$this->SetFont('helvetica','',8);
 		//$this->Cell($this->ANCHO,10,utf8_decode('Página: '.$this->PageNo().' de {nb}'),'',1,'R');
 
-		
+
 		$this->Ln(13);
 		$this->SetFont('helvetica','B',18);
 		$this->Cell(100,18,utf8_decode("ORDEN DE PAGO"),'',0,'C',0);
@@ -95,28 +96,28 @@ class PDF_P extends FPDF{
 		$this->Cell(50,6,utf8_decode(number_format($MONTO_TOTAL,2,",",".")),'',1,'C',0);
 
 		$this->Ln(3);
-		
-		
+
+
 		if($PERSONA_TIPO=="N" or $PERSONA_TIPO=="J"){
 				$this->SetFont('helvetica','B',9);
 				$this->Cell(27,4,utf8_decode($PERSONA_TIPO=="N"?"CÉDULA":"RIF"),'',0,'L');
 				$this->Cell(2,4,utf8_decode(':'),'',0,'C');
 				$this->SetFont('helvetica','',9);
 				$this->Cell(150,4,utf8_decode($PERSONA_ID),'',1,'L');
-				
+
 				$this->SetFont('helvetica','B',9);
 				$this->Cell(27,4,utf8_decode($PERSONA_TIPO=="N"?"BENEFICIARIO":"PROVEEDOR"),'',0,'L');
 				$this->Cell(2,4,utf8_decode(':'),'',0,'C');
 				$this->SetFont('helvetica','',9);
 				$this->Cell(150,4,utf8_decode($PERSONA_DENOMINACION),'',1,'L');
 		}
-		
+
 		$this->SetFont('helvetica','B',9);
 		$this->Cell(27,4,utf8_decode('CONCEPTO'),'',0,'L');
 		$this->Cell(2,4,utf8_decode(':'),'',0,'C');
 		$this->SetFont('helvetica','',9);
 		$this->MultiCell(180-27,4,utf8_decode($COMPROBANTE[0]['concepto']),'','L',1);
-		
+
 		$this->SetFont('helvetica','B',9);
 		$this->Cell(27,4,utf8_decode('MONTO'),'',0,'L');
 		$this->Cell(2,4,utf8_decode(':'),'',0,'C');
@@ -159,16 +160,25 @@ $t_debe_mc=20;
 $t_haber_mc=20;
 $t_denom_mc=180-($t_cuenta_mc+$t_debe_mc+$t_haber_mc);
 
+$t_fecha_p=13;
+$t_beneficiario_p=40;
+$t_operacion_p=25;
+$t_referencia_p=15;
+$t_monto_p=18;
+$t_cuenta_origen_p=32;
+$t_cuenta_destino_p=180-($t_fecha_p+$t_cuenta_origen_p+$t_beneficiario_p+$t_operacion_p+$t_referencia_p+$t_monto_p);
+
+
 $MAX_Y=210;
 
 for($i=0;$i<count($IDComprobante);$i++){
 		//busco inf del comprobante
 		$_i=$i;
 		$_id=$IDComprobante[$i];
-	
+
 		$COMPROBANTE=$db->Execute("SELECT
 																		id,
-																		tipo,														
+																		tipo,
 																		lpad(text(correlativo),10,'0') as correlativo,
 																		to_char(fecha,'DD/MM/YYYY') as fecha,
 																		concepto,
@@ -176,8 +186,8 @@ for($i=0;$i<count($IDComprobante);$i++){
 															FROM modulo_base.comprobante WHERE id=$_id");
 		if(count($COMPROBANTE)==0)
 			continue;
-		
-		$PERSONA=$db->Execute("SELECT														
+
+		$PERSONA=$db->Execute("SELECT
 																	(case when identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
 																	replace(P.denominacion,';',' ') as denominacion,
 																	P.tipo
@@ -185,18 +195,18 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$PERSONA_ID="";
 		$PERSONA_DENOMINACION="";
 		$PERSONA_TIPO="";
-		
+
 		if(isset($PERSONA[0])){
 			$PERSONA_ID=$PERSONA[0][0];
 			$PERSONA_DENOMINACION=$PERSONA[0][1];
 			$PERSONA_TIPO=$PERSONA[0][2];
 		}
-		
-		
+
+
 		//comprobantes previos
 		$COMPROBANTE_PREVIO=$db->Execute("SELECT
 																				C.id,
-																				C.tipo,														
+																				C.tipo,
 																				lpad(text(C.correlativo),10,'0') as correlativo,
 																				to_char(C.fecha,'DD/MM/YYYY') as fecha
 																		 FROM
@@ -205,13 +215,19 @@ for($i=0;$i<count($IDComprobante);$i++){
 																		WHERE
 																				C.id=CP.id_comprobante_previo AND
 																				CP.id_comprobante='$_id'");
-		
+
 		if(count($COMPROBANTE_PREVIO)==0){
 				$COMPROBANTE_PREVIO=$COMPROBANTE;
 		}
-		
-		
-		
+
+
+		$COMPROBANTE_POSTERIOR=$db->Execute("SELECT id_comprobante as id_comprobante_posterior FROM modulo_base.comprobante_previo WHERE id_comprobante_previo='$_id'");
+		if($COMPROBANTE_POSTERIOR && count($COMPROBANTE_POSTERIOR)>0){
+			for($m=0; $m < count($COMPROBANTE_POSTERIOR); $m++) {
+				$COMPROBANTE_POSTERIOR[$m] = comprobante::onGet($COMPROBANTE_POSTERIOR[$m]["id_comprobante_posterior"]);
+			}
+		}
+
 		$CARGO=$db->Execute("SELECT
 										C.id as id_cargo,
 										lpad(text(C.id),3,'0') as correlativo,
@@ -219,10 +235,10 @@ for($i=0;$i<count($IDComprobante);$i++){
 										C.formula,
 										C.iva,
 										C.id_cuenta_presupuestaria,
-										CTC.monto                                                      
+										CTC.monto
 									FROM modulo_base.comprobante_tiene_cargo AS CTC, modulo_base.cargo as C
 									WHERE CTC.id_comprobante='$_id' AND CTC.id_cargo=C.id");
-		
+
 		$RETENCION=$db->Execute("SELECT
                                                       R.id as id_retencion,
                                                       lpad(text(R.id),3,'0') as correlativo,
@@ -240,14 +256,14 @@ for($i=0;$i<count($IDComprobante);$i++){
                                                       CTR.id_comprobante='$_id' AND
                                                       CTR.id_retencion=R.id AND
                                                       R.id_cuenta_contable=CC.id_cuenta_contable");
-		
-		
+
+
 
 
 		$MP=$db->Execute("SELECT
 												_formatear_estructura_presupuestaria(DP.id_accion_subespecifica) as estructura_presupuestaria,
 												_formatear_cuenta_presupuestaria(DP.id_cuenta_presupuestaria) as cuenta_presupuestaria,
-												DP.*,	
+												DP.*,
 												CP.denominacion as denominacion_presupuestaria
 											FROM
 												modulo_base.detalle_presupuestario AS DP,
@@ -257,7 +273,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 												DP.id_cuenta_presupuestaria=CP.id_cuenta_presupuestaria
 											ORDER BY
 												estructura_presupuestaria, DP.id_cuenta_presupuestaria");
-		
+
 		$MC=$db->Execute("SELECT
 				DC.id_cuenta_contable,
 				_formatear_cuenta_contable(DC.id_cuenta_contable) as cuenta_contable,
@@ -276,7 +292,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 				DC.operacion
 			ORDER BY
 				operacion, id_cuenta_contable");
-		
+
 		//calcular el monto de la orden
 		//1ero sumar el total por el haber
 		$TOTAL_H=0;
@@ -286,7 +302,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 						if($MC[$j]['operacion']=="H")
 								$TOTAL_H+=$MC[$j]['monto'];
 		}
-		
+
 		if(count($RETENCION)>0 and $RETENCION){
 				for($j=0;$j<count($RETENCION) and $RETENCION;$j++){
 						//$MONTO=1;
@@ -295,26 +311,26 @@ for($i=0;$i<count($IDComprobante);$i++){
 						$TOTAL_R+=$RETENCION[$j]['monto'];
 				}
 		}
-		
+
 		$MONTO_TOTAL=$TOTAL_H-$TOTAL_R;
-		
+
 		$pdf->AddPage();
-	
+
 		if(count($COMPROBANTE_PREVIO)>0 and $COMPROBANTE_PREVIO){
 				$pdf->Ln(3);
-				
+
 				$t_codigo_cp=180/6;
 				$t_fecha_cp=180/6;
 				$t_monto_cp=180/6;
 				$t_cargo_cp=180/6;
 				$t_retencion_cp=180/6;
 				$t_total_cp=180/6;
-				
-				
-				
+
+
+
 				$pdf->SetFillColor(216,216,216);
-				
-				
+
+
 				$pdf->SetFont('helvetica','B',9);
 				$pdf->Cell($t_codigo_cp,4,utf8_decode('DOCUMENTO'),'LTB',0,'C',1);
 				$pdf->Cell($t_fecha_cp,4,utf8_decode('FECHA'),'TB',0,'C',1);
@@ -322,10 +338,10 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$pdf->Cell($t_cargo_cp,4,utf8_decode('CARGO'),'TB',0,'C',1);
 				$pdf->Cell($t_retencion_cp,4,utf8_decode('RETENCIÓN'),'TB',0,'C',1);
 				$pdf->Cell($t_total_cp,4,utf8_decode('TOTAL'),'RTB',1,'C',1);
-				
+
 				$y_inicial=$pdf->GetY();
 				$x_inicial=$pdf->GetX();
-				
+
 				$pdf->SetFillColor(255,255,255);
 				for($j=0;$j<count($COMPROBANTE_PREVIO) and $COMPROBANTE_PREVIO;$j++){
 						$COMPROBANTE_PREVIO_MP_NOCARGO=$db->Execute("SELECT sum(DP.monto) as monto
@@ -345,7 +361,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 						$monto=0;
 						if(isset($COMPROBANTE_PREVIO_MP_NOCARGO[0][0]))
 								$monto=$COMPROBANTE_PREVIO_MP_NOCARGO[0][0];
-								
+
 						$COMPROBANTE_PREVIO_MP_CARGO=$db->Execute("SELECT sum(DP.monto) as monto
 																														FROM
 																															modulo_base.detalle_presupuestario AS DP,
@@ -360,11 +376,11 @@ for($i=0;$i<count($IDComprobante);$i++){
 																																where CG.id=CTC.id_cargo and CTC.id_comprobante=DP.id_comprobante
 																																)
 																														");
-						
+
 						$cargo=0;
 						if(isset($COMPROBANTE_PREVIO_MP_CARGO[0][0]))
 								$cargo=$COMPROBANTE_PREVIO_MP_CARGO[0][0];
-						
+
 						$pdf->SetFont('helvetica','',8);
 						$pdf->Cell($t_codigo_cp,4,utf8_decode($COMPROBANTE_PREVIO[$j]["tipo"].$COMPROBANTE_PREVIO[$j]["correlativo"]),'L',0,'C');
 						$pdf->Cell($t_fecha_cp,4,utf8_decode($COMPROBANTE_PREVIO[$j]["fecha"]),'',0,'C');
@@ -372,53 +388,53 @@ for($i=0;$i<count($IDComprobante);$i++){
 						$pdf->Cell($t_cargo_cp,4,utf8_decode(number_format($cargo,2,",",".")),'',1,'R');
 				}
 				$y_final=$pdf->GetY();
-				
-				
+
+
 				//colocar el total de retenciones
 				$pdf->SetXY($x_inicial+$t_codigo_cp+$t_fecha_cp+$t_monto_cp+$t_cargo_cp,$y_inicial);
 				$pdf->Cell($t_cargo_cp,4*count($COMPROBANTE_PREVIO),utf8_decode(number_format($TOTAL_R,2,",",".")),'',0,'R');
 				$pdf->SetFont('helvetica','B',10);
 				$pdf->Cell($t_cargo_cp,4*count($COMPROBANTE_PREVIO),utf8_decode(number_format($MONTO_TOTAL,2,",",".")),'R',1,'R');
-				
+
 				$pdf->Cell(180,1,'','T',1,'C');
-				
+
 		}
-		
-	
-		
+
+
+
 		if(count($CARGO)>0 and $CARGO){
 				$pdf->Ln(3);
-			
+
 				$pdf->SetFillColor(216,216,216);
 				$pdf->SetFont('helvetica','B',10);
 				$pdf->Cell($pdf->ANCHO,6,utf8_decode('CARGOS'),'LRT',1,'C',1);
-				
+
 				$pdf->SetFont('helvetica','B',9);
 				$pdf->Cell($t_codigo_c,4,utf8_decode('CODIGO'),'LB',0,'C',1);
 				$pdf->Cell($t_denom_c,4,utf8_decode('DENOMINACIÓN'),'B',0,'C',1);
 				//$pdf->Cell($t_base_c,4,utf8_decode('BASE DE CALCULO'),'B',0,'C',1);
 				$pdf->Cell($t_base_c,4,utf8_decode(''),'B',0,'C',1);
 				$pdf->Cell($t_monto_c,4,utf8_decode('MONTO'),'RB',1,'C',1);
-				
+
 				$SUMA_CARGO=0;
-				
+
 				$y_inicial=$pdf->GetY();
 				$x_inicial=$pdf->GetX();
-				
+
 				$pdf->SetFillColor(255,255,255);
 				$pdf->SetFont('helvetica','',8);
 				for($j=0;$j<count($CARGO) and $CARGO;$j++){
-					
+
 					$pdf->Cell($t_codigo_c,4,utf8_decode($CARGO[$j]['correlativo']),'',0,'C');
 					$y=$pdf->GetY();
 					$x=$pdf->GetX();
 					$pdf->Cell($t_denom_c,4,'','',0,'C');
-					
+
 					//$MONTO=1;
 					//$formula=str_replace("MONTO","\$MONTO",$CARGO[$j]["formula"]);
-					
+
 					//eval("\$BASE_CALCULO=(".$CARGO[$j]['monto']."/($formula));");
-					
+
 					//$pdf->Cell($t_base_c,4,utf8_decode(number_format($BASE_CALCULO,2,",",".")),'',0,'R');
 					$pdf->Cell($t_base_c,4,utf8_decode(""),'',0,'R');
 					$pdf->Cell($t_monto_c,4,utf8_decode(number_format($CARGO[$j]['monto'],2,",",".")),'',1,'R');
@@ -427,27 +443,27 @@ for($i=0;$i<count($IDComprobante);$i++){
 					$SUMA_CARGO+=$CARGO[$j]['monto'];
 				}
 				$y_final=$pdf->GetY();
-				
+
 				$pdf->Line($x_inicial,$y_inicial,$x_inicial,$y_final);
 				$pdf->Line($x_inicial+180,$y_inicial,$x_inicial+180,$y_final);
-				
-				
+
+
 				$pdf->Cell(180,1,'','T',1,'C');
 				$pdf->Cell($t_codigo_c+$t_denom_c+$t_base_c,4,utf8_decode(""),'',0,'C');
 				$pdf->SetFont('helvetica','B',8);
 				$pdf->Cell($t_monto_c,4,utf8_decode(number_format($SUMA_CARGO,2,",",".")),'',1,'R');
 		}
-	
+
 	//print_r($RETENCION);
-	
-		
+
+
 		if(count($RETENCION)>0 and $RETENCION){
 				$pdf->Ln(3);
-			
+
 				$pdf->SetFillColor(216,216,216);
 				$pdf->SetFont('helvetica','B',10);
 				$pdf->Cell($pdf->ANCHO,6,utf8_decode('RETENCIONES'),'LRT',1,'C',1);
-				
+
 				$pdf->SetFont('helvetica','B',9);
 				$pdf->Cell($t_codigo_r,4,utf8_decode('CODIGO'),'LB',0,'C',1);
 				$pdf->Cell($t_denom_r,4,utf8_decode('DENOMINACIÓN'),'B',0,'C',1);
@@ -455,12 +471,12 @@ for($i=0;$i<count($IDComprobante);$i++){
 				//$pdf->Cell($t_base_r,4,utf8_decode('BASE DE CALCULO'),'B',0,'C',1);
 				$pdf->Cell($t_base_r,4,utf8_decode(''),'B',0,'C',1);
 				$pdf->Cell($t_monto_r,4,utf8_decode('MONTO'),'RB',1,'C',1);
-				
+
 				$SUMA_RETENCION=0;
-				
+
 				$y_inicial=$pdf->GetY();
 				$x_inicial=$pdf->GetX();
-				
+
 				$pdf->SetFillColor(255,255,255);
 				for($j=0;$j<count($RETENCION) and $RETENCION;$j++){
 					$pdf->SetFont('helvetica','',8);
@@ -469,11 +485,11 @@ for($i=0;$i<count($IDComprobante);$i++){
 					$x=$pdf->GetX();
 					$pdf->Cell($t_denom_r,4,'','',0,'C');
 					$pdf->Cell($t_denom_contable_r,4,'','',0,'C');
-					
+
 					//$MONTO=1;
 					//$formula=str_replace("MONTO","\$MONTO",$RETENCION[$j]["formula"]);
 					//eval("\$BASE_CALCULO=(".$RETENCION[$j]['monto']."/($formula));");
-					
+
 					//$pdf->Cell($t_base_r,4,utf8_decode(number_format($BASE_CALCULO,2,",",".")),'',0,'R');
 					$pdf->Cell($t_base_r,4,utf8_decode(""),'',0,'R');
 					$pdf->Cell($t_monto_r,4,utf8_decode(number_format($RETENCION[$j]['monto'],2,",",".")),'',1,'R');
@@ -484,11 +500,11 @@ for($i=0;$i<count($IDComprobante);$i++){
 					$SUMA_RETENCION+=$RETENCION[$j]['monto'];
 				}
 				$y_final=$pdf->GetY();
-				
+
 				$pdf->Line($x_inicial,$y_inicial,$x_inicial,$y_final);
 				$pdf->Line($x_inicial+180,$y_inicial,$x_inicial+180,$y_final);
-				
-				
+
+
 				$pdf->Cell(180,1,'','T',1,'C');
 				$pdf->Cell($t_codigo_r+$t_denom_r+$t_denom_contable_r+$t_base_r,4,utf8_decode(""),'',0,'C');
 				$pdf->SetFont('helvetica','B',8);
@@ -496,19 +512,19 @@ for($i=0;$i<count($IDComprobante);$i++){
 		}
 //print_r($SUMA_RETENCION);
 	//buscar los movimientos P
-	
+
 
 	if(count($MP)>0 and $MP){
 		$pdf->Ln(3);
 		$sw=false;
-		
+
 		CabeceraDP();
 
 		$SUMA_PRESUP=0;
-		
+
 		$y_inicial=$pdf->GetY();
 		$x_inicial=$pdf->GetX();
-		
+
 		$pdf->SetFillColor(255,255,255);
 		for($j=0;$j<count($MP) and $MP;$j++){
 				$y_final=$pdf->GetY();
@@ -521,7 +537,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 						$y_inicial=$pdf->GetY();
 						$x_inicial=$pdf->GetX();
 				}
-				
+
 				$pdf->SetFont('helvetica','',8);
 				$pdf->Cell($t_acc_pro_mp,4,utf8_decode($MP[$j]['estructura_presupuestaria']),'',0,'C');
 				$pdf->Cell($t_cuenta_mp,4,utf8_decode($MP[$j]['cuenta_presupuestaria']),'',0,'C');
@@ -534,11 +550,11 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$SUMA_PRESUP+=$MP[$j]['monto'];
 		}
 		$y_final=$pdf->GetY();
-		
+
 		$pdf->Line($x_inicial,$y_inicial,$x_inicial,$y_final);
 		$pdf->Line($x_inicial+180,$y_inicial,$x_inicial+180,$y_final);
-		
-		
+
+
 		$pdf->Cell(180,1,'','T',1,'C');
 		$pdf->Cell($t_acc_pro_mp+$t_cuenta_mp+$t_denom_mp,4,utf8_decode(""),'',0,'C');
 		$pdf->SetFont('helvetica','B',8);
@@ -548,8 +564,8 @@ for($i=0;$i<count($IDComprobante);$i++){
 
 
 	//buscar los MC
-	
-	
+
+
 
 	$SUMA_DEBE=0;$SUMA_HABER=0;
 
@@ -573,14 +589,14 @@ for($i=0;$i<count($IDComprobante);$i++){
 						$y_inicial=$pdf->GetY();
 						$x_inicial=$pdf->GetX();
 				}
-				
-				
+
+
 				$pdf->SetFont('helvetica','',8);
 				$pdf->Cell($t_cuenta_mc,4,utf8_decode($MC[$j]['cuenta_contable']),'',0,'C');
 				$y=$pdf->GetY();
 				$x=$pdf->GetX();
 				$pdf->Cell($t_denom_mc,4,'','',0,'C');
-	
+
 				if($MC[$j]['operacion']=="D"){
 					$pdf->Cell($t_debe_mc,4,utf8_decode(number_format($MC[$j]['monto'],2,",",".")),'',0,'R');
 					$pdf->Cell($t_haber_mc,4,utf8_decode(''),'',1,'R');
@@ -598,8 +614,8 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$y_final=$pdf->GetY();
 		$pdf->Line($x_inicial,$y_inicial,$x_inicial,$y_final);
 		$pdf->Line($x_inicial+180,$y_inicial,$x_inicial+180,$y_final);
-		
-		
+
+
 		$pdf->Cell(180,1,utf8_decode(''),'T',1,'C');
 
 		$pdf->Cell($t_cuenta_mc+$t_denom_mc,1,utf8_decode(''),'',0,'C');
@@ -607,31 +623,31 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$pdf->Cell($t_debe_mc,4,utf8_decode(number_format($SUMA_DEBE,2,",",".")),'',0,'R');
 		$pdf->Cell($t_haber_mc,4,utf8_decode(number_format($SUMA_HABER,2,",",".")),'',1,'R');
 		}
-		
+
 		/*
 		//zona de firmas
 		$tam_ancho=180;
 		$tam_firma=$tam_ancho/3;
 		$pdf->SetY($MAX_Y);
-	
-	
+
+
 		$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
 		$pdf->SetFont('helvetica','',8);
 		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
 		$pdf->SetFont('helvetica','B',7);
-	
+
 		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
-	
+
 		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',1,'L',1);
-	
+
 		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',0,'C',1);
 		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',0,'C',1);
 		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',1,'C',1);
-	
+
 		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
 		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
 		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',1,'C',1);*/
@@ -639,27 +655,121 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$tam_ancho=180;
 		$tam_firma=$tam_ancho/4;
 		$pdf->SetY($MAX_Y);
-	
-	
+
+
 		$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
 		$pdf->SetFont('helvetica','',8);
 		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
 		$pdf->SetFont('helvetica','B',7);
-		
+
 		$pdf->Cell($tam_firma,4,utf8_decode("ELABORADO POR:"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("REVISADO POR:"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("VERIFICADO POR:"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("AUTORIZADO POR:"),'LRTB',1,'C',1);
-		
+
 		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',1,'C',1);
-		
+
 		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
 		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
+
+		if($COMPROBANTE_POSTERIOR && count($COMPROBANTE_POSTERIOR)>0){
+			$pdf->AddPage();
+			$pdf->Ln(5);
+
+			$pdf->SetFillColor(216,216,216);
+			$pdf->SetFont('helvetica','B',10);
+			$pdf->Cell($pdf->ANCHO,6,utf8_decode('EMISIÓN DE PAGOS'),'LRT',1,'C',1);
+
+			$pdf->SetFont('helvetica','B',8);
+			$pdf->Cell($t_fecha_p,4,utf8_decode('FECHA'),'LB',0,'C',1);
+			$pdf->Cell($t_cuenta_origen_p,4,utf8_decode('CUENTA ORIGEN'),'B',0,'L',1);
+			$pdf->Cell($t_cuenta_destino_p,4,utf8_decode('CUENTA DESTINO'),'B',0,'L',1);
+			$pdf->Cell($t_beneficiario_p,4,utf8_decode('BENEFICIARIO'),'B',0,'L',1);
+			$pdf->Cell($t_operacion_p,4,utf8_decode('FORMA DE PAGO'),'B',0,'C',1);
+			$pdf->Cell($t_referencia_p,4,utf8_decode('REF.'),'B',0,'C',1);
+			$pdf->Cell($t_monto_p,4,utf8_decode('MONTO'),'RB',1,'C',1);
+
+			$pdf->SetFont('helvetica','',7.5);
+			$pdf->SetFillColor(255,255,255);
+
+			for($m=0; $m < count($COMPROBANTE_POSTERIOR); $m++) {
+				//$COMPROBANTE_POSTERIOR[$i]
+				$COMPROBANTE_PAGO = $COMPROBANTE_POSTERIOR[$m][0];
+				$forma_pago="";
+				if($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['operacion_codigo']=='PT'){
+					$forma_pago="TRANSFERENCIA";
+				}
+				else if($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['operacion_codigo']=='CH'){
+					$forma_pago="CHEQUE";
+				}
+
+				$cuenta_destino="";
+				for($x=0; $x<count($COMPROBANTE_PAGO['detalle_extra']); $x++) {
+					switch($COMPROBANTE_PAGO['detalle_extra'][$x]['dato']){
+						case "forma_pago":
+						$forma_pago=str_replace("_"," ",strtoupper($COMPROBANTE_PAGO['detalle_extra'][$x]['valor']));
+						break;
+						case "cuenta_destino":
+						$cuenta_destino=$COMPROBANTE_PAGO['detalle_extra'][$x]['valor'];
+						break;
+					}
+				}
+
+				$banco_destino="";
+				if($cuenta_destino){
+					$cuenta_destino_codigo = substr($cuenta_destino,0,4);
+					$tmp=$db->Execute("SELECT * FROM modulo_base.banco where codigo like '$cuenta_destino_codigo'");
+					if(isset($tmp[0]['banco']) && $tmp[0]['banco'])
+						$banco_destino=$tmp[0]['banco'];
+				}
+
+				$pdf->Cell($t_fecha_p,4,utf8_decode($COMPROBANTE_PAGO['fecha']),'LT',0,'C',1);
+				$pdf->Cell($t_cuenta_origen_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['banco']),'T',0,'L',1);
+				$pdf->Cell($t_cuenta_destino_p,4,utf8_decode($banco_destino),'T',0,'L',1);
+				$pdf->Cell($t_beneficiario_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_persona'][0]['denominacion']),'T',0,'L',1);
+				$pdf->Cell($t_operacion_p,4,utf8_decode($forma_pago),'T',0,'C',1);
+				$pdf->Cell($t_referencia_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['numero']),'T',0,'C',1);
+				$pdf->Cell($t_monto_p,4,utf8_decode(number_format($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['monto'],2,",",".")),'RT',1,'R',1);
+
+				$pdf->Cell($t_fecha_p,4,utf8_decode(''),'LB',0,'C',1);
+				$pdf->Cell($t_cuenta_origen_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['numero_cuenta']),'B',0,'L',1);
+				$pdf->Cell($t_cuenta_destino_p,4,utf8_decode($cuenta_destino),'B',0,'L',1);
+				$pdf->Cell($t_beneficiario_p,4,utf8_decode(''),'B',0,'L',1);
+				$pdf->Cell($t_operacion_p,4,utf8_decode(''),'B',0,'C',1);
+				$pdf->Cell($t_referencia_p,4,utf8_decode(''),'B',0,'C',1);
+				$pdf->Cell($t_monto_p,4,utf8_decode(''),'RB',1,'C',1);
+
+
+			}
+
+		$pdf->SetY($MAX_Y);
+
+
+		$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
+		$pdf->SetFont('helvetica','',8);
+		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
+		$pdf->SetFont('helvetica','B',7);
+
+		$pdf->Cell($tam_firma,4,utf8_decode("ELABORADO POR:"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("REVISADO POR:"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("VERIFICADO POR:"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("AUTORIZADO POR:"),'LRTB',1,'C',1);
+
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',1,'C',1);
+
+		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
+		}
 }
 
 
