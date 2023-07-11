@@ -4,14 +4,14 @@ $siga_title_login="Bienvenido al Sistema Integrado para la<br>Gestión Administr
 $siga_title_logout="Sistema Integrado para la<br>Gestión Administrativa - Sector Público";
 
 $siga_apps_common=array(
-  //array("id"=>"asistencia_registro","icon"=>"image/menu/icon-asistencia_registro.png","name"=>"Registro de Asistencia","public"=>true),
+  array("id"=>"asistencia_registro","icon"=>"image/menu/icon-asistencia_registro.png","name"=>"Registro de Asistencia","public"=>true),
   array("id"=>"directorio","icon"=>"image/menu/icon-directorio.png","name"=>"Directorio<br>Telefónico","public"=>true),
   //array("id"=>"galeria","icon"=>"image/menu/icon-multimedia.png","name"=>"Galeria<br>Multimedia","public"=>true),  
   //array("id"=>"http://www.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-www.png","name"=>"Página web Institucional","public"=>true),
   //array("id"=>"https://www.zoho.com/mail/login.html#","icon"=>"image/menu/icon-mail.png","name"=>"Correo<br>Institucional","public"=>true),
   //array("id"=>"http://copernico.fundacite-sucre.gob.ve:631/printers/#","icon"=>"image/menu/icon-impresoras.png","name"=>"Servidor de Impresión","public"=>true),
   //array("id"=>"http://sigafs.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-sigafs.png","name"=>"SIGAFS<br>2009-2014","public"=>true),
-  array("id"=>"module/documentador/#","icon"=>"image/menu/icon-documentador.png","name"=>"Documentador de Sistemas","public"=>true),
+  //array("id"=>"module/documentador/#","icon"=>"image/menu/icon-documentador.png","name"=>"Documentador de Sistemas","public"=>true),
   array("id"=>"lector_qr","icon"=>"image/menu/icon-lector_qr.png","name"=>"Lector QR","public"=>true),
   );
 
@@ -20,7 +20,7 @@ if(SIGA::user()):
                         array("id"=>"module/administrador/phppgadmin/#","icon"=>"image/menu/icon-phppgadmin.png","name"=>"phpPgAdmin"),
                         array("id"=>"module/administrador/phpmyadmin/#","icon"=>"image/menu/icon-phpmyadmin.png","name"=>"phpMyAdmin"),
                         array("id"=>"modulo/administrador/codiad/#","icon"=>"image/menu/icon-codiad.png","name"=>"Codiad"),
-                        array("id"=>"servicio_tecnico","icon"=>"image/menu/icon-serviciotecnico.png","name"=>"Servicio Técnico"),
+                        //array("id"=>"servicio_tecnico","icon"=>"image/menu/icon-serviciotecnico.png","name"=>"Servicio Técnico"),
                         array("id"=>"usuario","icon"=>"image/menu/icon-usuarios.png","name"=>"Usuarios y Permisología"),
                         );
   $siga_apps_admin=array();
@@ -57,7 +57,7 @@ if(SIGA::user()):
                                           array("id"=>"banco_movimiento","icon"=>"image/menu/icon-banco_movimiento.png","name"=>"Movimientos<br>Bancarios"),
                                           array("id"=>"comprobante","icon"=>"image/menu/icon-comprobante.png","name"=>"Comprobante"),
                                           array("id"=>"comprobante_retencion","icon"=>"image/menu/icon-retencion_comprobante.png","name"=>"Comprobante de<br>Retención"),
-                                          //array("id"=>"nomina","icon"=>"image/menu/icon-nomina.png","name"=>"Nómina"),
+                                          array("id"=>"nomina","icon"=>"image/menu/icon-nomina.png","name"=>"Nómina"),
                                           array("id"=>"traspaso","icon"=>"image/menu/icon-traspaso.png","name"=>"Traspaso"),
                                           array("id"=>"credito_adicional","icon"=>"image/menu/icon-credito_adicional.png","name"=>"Crédito Adicional"),
                                           array("id"=>"reduccion","icon"=>"image/menu/icon-reduccion.png","name"=>"Reducción"),
@@ -78,19 +78,22 @@ if(SIGA::user()):
                           "Definiciones"=>array(
                                           array("id"=>"proveedor","icon"=>"image/menu/icon-proveedor.png","name"=>"Proveedores"),
                                           array("id"=>"beneficiario","icon"=>"image/menu/icon-beneficiario.png","name"=>"Beneficiarios"),
-                                          //array("id"=>"ficha","icon"=>"image/menu/icon-ficha.png","name"=>"Ficha del<br>Personal"),
+                                          array("id"=>"ficha","icon"=>"image/menu/icon-ficha.png","name"=>"Ficha del<br>Personal"),
                                           array("id"=>"materiales","icon"=>"image/menu/icon-materiales.png","name"=>"Materiales y/o<br>Suministros"),
                                           array("id"=>"bienes","icon"=>"image/menu/icon-bienes.png","name"=>"Bienes"),
                                           array("id"=>"servicios","icon"=>"image/menu/icon-servicios.png","name"=>"Servicios"),
                                           array("id"=>"factura","icon"=>"image/menu/icon-factura.png","name"=>"Facturas"),
+                                          array("id"=>"banco_cuenta","icon"=>"image/menu/icon-banco_cuenta.png","name"=>"Cuentas Bancaria"),
                                           array("id"=>"cuenta_presupuestaria","icon"=>"image/menu/icon-cuenta_presupuestaria.png","name"=>"Plan de Cuentas<br>Presupuestarias"),
                                           array("id"=>"cuenta_contable","icon"=>"image/menu/icon-cuenta_contable.png","name"=>"Plan de Cuentas<br>Contables"),
                                           array("id"=>"convertidor","icon"=>"image/menu/icon-convertidor.png","name"=>"Convertidor"),
                                           array("id"=>"estructura_presupuestaria","icon"=>"image/menu/icon-estructura_presupuestaria.png","name"=>"Estructura<br>Presupuestaria"),
+                                          array("id"=>"cargo","icon"=>"image/menu/icon-cargo.png","name"=>"Cargos / Impuestos"),
+                                          array("id"=>"retencion","icon"=>"image/menu/icon-retencion.png","name"=>"Retenciones"),
                                           ),
                         )),
-    /*
-      array("id"=>"academica","icon"=>"image/menu/icon-academica.png","name"=>"Academia de Software Libre",
+    
+      /*array("id"=>"academica","icon"=>"image/menu/icon-academica.png","name"=>"Academia de Software Libre",
           "option"=>array(
                           "Academia de Software Libre"=>array(
                                           array("id"=>"academia_dependencia","icon"=>"image/menu/icon-dependencia.png","name"=>"Dependencias e Instituciones"),
@@ -100,7 +103,7 @@ if(SIGA::user()):
                                           array("id"=>"academia_facilitador","icon"=>"image/menu/icon-facilitador.png","name"=>"Facilitadores"),
                                           array("id"=>"academia_reportes","icon"=>"image/menu/icon-reportes.png","name"=>"Reportes"),
                                           )
-                        )),
+                        )),*/
       
       array("id"=>"asistencia","icon"=>"image/menu/icon-asistencia.png","name"=>"Sistema de<br>Asistencia",
           "option"=>array(
@@ -114,19 +117,6 @@ if(SIGA::user()):
                                           array("id"=>"asistencia_visitante","icon"=>"image/menu/icon-asistencia_registro.png","name"=>"Registro de<br>Visitantes","public"=>true),
                                         )
                         )),
-      array("id"=>"planificacion","icon"=>"image/menu/icon-planificacion.png","name"=>"Planificación","users"=>array("admin"),
-          "option"=>array(
-                          "Definiciones"=>array(
-                                            array("id"=>"ficha","icon"=>"image/menu/icon-ficha.png","name"=>"Recurso<br>Humano"),
-                                            array("id"=>"estructura_presupuestaria","icon"=>"image/menu/icon-estructura_presupuestaria.png","name"=>"Acciones /<br> Proyectos"),
-                                            array("id"=>"unidad_coordinacion","icon"=>"image/menu/icon-unidad_coordinacion.png","name"=>"Unidad /<br>Coordinación"),
-                                          ),
-                          "Planificación"=>array(
-                                          array("id"=>"meta_fisica","icon"=>"image/menu/icon-meta_fisica.png","name"=>"Metas Físicas<br>y Actividades"),
-                                          array("id"=>"meta_fisica/informar","icon"=>"image/menu/icon-meta_fisica_informe.png","name"=>"Informar<br>Actividad"),
-                                        )
-                        )),
-                        */
     );
 else:
   $siga_apps=array(
