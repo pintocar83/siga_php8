@@ -262,6 +262,11 @@ for($i=0;$i<count($CUENTA_CONTABLE);$i++){
     }
   }
 
+  $Y=$pdf->GetY();
+  if($Y>250){
+    $pdf->AddPage();
+  }
+
   $pdf->CuentaContable();
   $pdf->CabeceraTabla();
 
