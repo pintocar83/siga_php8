@@ -11,6 +11,17 @@ include_once("../library/functions/unformatDate.php");
 
 include_once("../library/fpdf/1.84/fpdf.php");
 
+$config_report = SIGA::configuration(["moneda","report/moneda","report/contabilidad/moneda"]);
+$config = [
+	"moneda" => "BOLIVARES"
+];
+
+if($config_report){
+	if(isset($config_report["moneda"]) && $config_report["moneda"])	                                          $config["moneda"] = $config_report["moneda"];
+	if(isset($config_report["report/moneda"]) && $config_report["report/moneda"])	                            $config["moneda"] = $config_report["report/moneda"];
+	if(isset($config_report["report/contabilidad/moneda"]) && $config_report["report/contabilidad/moneda"])	  $config["moneda"] = $config_report["report/contabilidad/moneda"];
+}
+
 $db=SIGA::DBController();
 
 $organismo=$db->Execute("SELECT P.identificacion_tipo||P.identificacion_numero as identificacion
@@ -245,9 +256,11 @@ ksort($GENERAL);
 
 
 
+
+
 class PDF_P extends FPDF{
 	function Header(){
-		global $organismo, $tam_ancho;
+		global $organismo, $tam_ancho, $config;
 		$this->SetFont('helvetica','',10);
 
 		if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
@@ -264,7 +277,7 @@ class PDF_P extends FPDF{
 		$this->SetFont('helvetica','',10);
 		$this->Cell($GLOBALS['tam_ancho'],5,utf8_decode("AL ".formatDate($GLOBALS['fecha_final'])),'',1,'C',0);
 		$this->SetFont('helvetica','',8);
-		$this->Cell($GLOBALS['tam_ancho'],5,utf8_decode("(EN BOLIVARES)"),'',1,'C',0);
+		$this->Cell($GLOBALS['tam_ancho'],5,utf8_decode("(EN ".$config["moneda"].")"),'',1,'C',0);
 
 		$this->Ln(5);
 		$this->SetFont('helvetica','B',$GLOBALS['font_size_base']);

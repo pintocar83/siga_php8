@@ -115,7 +115,7 @@ class DBController{
 					return  sqlite_escape_string($str);
 				case "postgres":
 				case "pgsql":
-					return 	pg_escape_string($str);
+					return 	pg_escape_string($this->Connection, $str);
 				case "mysql":
 					return 	mysql_escape_string($str);
 			}
@@ -151,6 +151,19 @@ class DBController{
   public function Delete($tabla, $condicion="TRUE"){
 	  $sql='DELETE FROM '.$tabla.' WHERE '.$condicion;
 	  return $this->Execute($sql)===NULL?FALSE:TRUE;
+  }
+
+  public function Close(){
+		switch($this->DBDriver){
+				case "postgres":
+				case "pgsql":
+					return pg_close($this->Connection);
+				case "mysql":
+					return mysqli_close($this->Connection);
+				case "sqlite3":
+					return 	$this->Connection->close();
+			}
+			return NULL;
   }
 
   public function GetMsgError(){

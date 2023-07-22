@@ -27,16 +27,20 @@
 function Form_IMPRIMIR_REPORTE_Imprimir(){
 	
 	var sw_ocultar_c=0;
+	var forma_continua=0;
 	if(xGetElementById("OCULTAR_FILAS_FFCO_1").checked)
 		sw_ocultar_c=1;
+
+	if(xGetElementById("FORMA_CONTINUA_FFCO_1").checked)
+		forma_continua=1;
 		
 	if(xGetElementById("TIPO_REPORTE_FIR_1").checked)
 		window.open("../../report/contabilidad_diario.php?FI="+xGetElementById("FECHA_INICIO_FIR").value+"&FF="+xGetElementById("FECHA_FIN_FIR").value);
 	else if(xGetElementById("TIPO_REPORTE_FIR_2").checked){
 		if(xGetElementById("SELECT_MAYOR_FIR").value==1)
-			window.open('../../report/contabilidad_mayor_a.php?id_cuenta_contable='+xGetElementById("CODIGO_CONTABLE_FIR").value+"&FI="+xGetElementById("FECHA_INICIO_FIR").value+"&FF="+xGetElementById("FECHA_FIN_FIR").value);
+			window.open('../../report/contabilidad_mayor_a.php?id_cuenta_contable='+xGetElementById("CODIGO_CONTABLE_FIR").value+"&FI="+xGetElementById("FECHA_INICIO_FIR").value+"&FF="+xGetElementById("FECHA_FIN_FIR").value+"&forma_continua="+forma_continua);
 		else
-			window.open('../../report/contabilidad_mayor_b.php?id_cuenta_contable='+xGetElementById("CODIGO_CONTABLE_FIR").value+"&FI="+xGetElementById("FECHA_INICIO_FIR").value+"&FF="+xGetElementById("FECHA_FIN_FIR").value);
+			window.open('../../report/contabilidad_mayor_b.php?id_cuenta_contable='+xGetElementById("CODIGO_CONTABLE_FIR").value+"&FI="+xGetElementById("FECHA_INICIO_FIR").value+"&FF="+xGetElementById("FECHA_FIN_FIR").value+"&forma_continua="+forma_continua);
 		}
 	else if(xGetElementById("TIPO_REPORTE_FIR_3").checked)
 		window.open("../../report/contabilidad_balance_comprobacion.php?FI="+xGetElementById("FECHA_INICIO_FIR").value+"&FF="+xGetElementById("FECHA_FIN_FIR").value);
