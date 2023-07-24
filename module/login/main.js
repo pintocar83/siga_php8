@@ -8,7 +8,7 @@ siga.define('login', {
     renderTo: Ext.getBody(),
     layout: 'vbox',
     bodyStyle: {
-      "background-image": "url("+siga.value('folder')+"/login-bg.png)",
+      "background-image": "url("+(localStorage.getItem("login/database")?"data/"+localStorage.getItem("login/database")+"/config":siga.value('folder'))+"/login-bg.png)",
       "padding": "20px 20px 0px 200px",
       "background-repeat": "no-repeat",
       "background-position": "left top",
@@ -104,6 +104,14 @@ siga.define('login', {
                           listeners: {
                             load: function(store, records, successful){
                                 if(records.length>0){
+                                    var _database = localStorage.getItem("login/database");
+                                    for(var i=0; i<records.length && _database; i++){
+                                        if(_database === records[i].get("id")){
+                                            me.getCmp("database").setValue(_database);
+                                            return;
+                                        }
+                                    }
+
                                     me.getCmp("database").setValue(records[0].get("id"));
                                 }
                             }
@@ -120,10 +128,20 @@ siga.define('login', {
                                 me.getCmp('data').setValue("");
                                 var data=me.getCmp("database").getStore().getById(me.getCmp("database").getValue()).get("data");
                                 me.getCmp('data').setStore({fields: ['id', 'nombre'], data: data});
-                                if (data.length>0)
-                                    me.getCmp('data').setValue(data[data.length-1]["id"]);
 
                                 me.body.applyStyles({"background-image": "url(data/"+me.getCmp("database").getValue()+"/config/login-bg.png)"});
+
+                                if (data.length>0){
+                                    var _data = localStorage.getItem("login/data");
+                                    for(var i=0; i<data.length && _data; i++){
+                                        if(_data === data[i]["id"]){
+                                            me.getCmp("data").setValue(_data);
+                                            return;
+                                        }
+                                    }
+                                    me.getCmp('data').setValue(data[data.length-1]["id"]);
+                                }
+
                             }
                         }
                     },
@@ -234,6 +252,8 @@ siga.define('login', {
             success: function(response){
               var result=Ext.JSON.decode(response.responseText);
               if(result.success){
+                localStorage.setItem("login/database",_database);
+                localStorage.setItem("login/data",_data);
                 window.location.reload();
               }
 
