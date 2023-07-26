@@ -466,6 +466,90 @@ siga.calendar.open=function(){
   }
 };
 
+siga.database={
+  el: null
+};
+
+siga.database.open=function(ev){
+  if(siga.database.el==null){
+    const data_disponible=siga.value("data_disponible")||[];
+    var items=data_disponible.map((row)=>{
+      const check = +row["id"] === +siga.value('anio');
+      return {
+        xtype: check?'menucheckitem':'menuitem',
+        checked: check,
+        text: row['nombre'],
+        disabled: check,
+        handler: function(){
+          Ext.Msg.show({
+            title:'Año de Trabajo',
+            message: '¿Desea cambiar al año de trabajo '+row["id"]+'?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+              if (btn === 'yes') {
+                var msgWait=Ext.Msg.wait('Seleccionando año de trabajo '+row["id"]+'. Por favor espere...', "Año de Trabajo",{text:''});
+                msgWait.setAlwaysOnTop(true);
+                Ext.Ajax.request({
+                  method: 'POST',
+                  url:'module/anio_trabajo/',
+                  params:{
+                    action: 'onChange',
+                    data: row["id"],
+                  },
+                  success:function(request){
+                    var result=Ext.JSON.decode(request.responseText);
+                    if(result.success){
+                      window.location.reload();
+                    }
+                    else{
+                      msgWait.close();
+                      alert(result.message);
+                    }
+                  },
+                  failure:function(request){
+                    msgWait.close();
+                    var result=Ext.JSON.decode(request.responseText);
+                  }
+                });
+              }
+            }
+          });
+        }
+      }
+    });
+
+    items.push({
+      xtype: 'menuseparator'
+    });
+
+    items.push({
+      text: 'Cerrar Sesión',
+      handler: function(){
+        siga.open("logout");
+      }
+    });
+
+    siga.database.el=Ext.create("Ext.menu.Menu",{
+      renderTo: Ext.getBody(),
+      floating: true,
+      ignoreParentClicks: true,
+      items: items
+    });
+    siga.database.el.alignTo("siga-infodatabase",'tr-br?',[0,5]);
+  }
+
+
+  if(siga.calendar.el && siga.calendar.el.isVisible())
+    siga.calendar.el.hide();
+
+  if(siga.database.el.isVisible())
+    siga.database.el.hide();
+  else{
+    siga.database.el.show();
+  }
+};
+
 siga.desktopIcon.add=function(name,icon,onclick){
   var app=document.createElement("div");
   Ext.get(app).set({cls: 'icon-desktop'});

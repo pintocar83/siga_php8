@@ -66,7 +66,7 @@ class SIGA extends SIGA_CONFIG {
   }
 
   //retorna los años disponibles para una base de datos
-  public static function dataAvailable($value=NULL){
+  public static function dataAvailableOld($value=NULL){
     $connection_name=$value===NULL?self::session_value("SIGA::database"):$value;
     if($connection_name===NULL or !isset(self::$database[$connection_name]) or !isset(self::$database[$connection_name]["data"])) return NULL;
     $database_data=self::$database[$connection_name]["data"];
@@ -79,6 +79,34 @@ class SIGA extends SIGA_CONFIG {
           continue;
         }
     return $return;
+  }
+
+  //retorna los años disponibles para una base de datos
+  public static function dataAvailable($value=NULL){
+    $connection_name=$value===NULL?self::session_value("SIGA::database"):$value;
+    if($connection_name===NULL or !isset(self::$database[$connection_name])) return NULL;
+    $tmp=[];
+    if(isset(self::$database[$connection_name]["data"])){
+      $tmp=self::$database[$connection_name]["data"];
+    }
+    else{
+      $db=self::DBController($connection_name);
+      $sql="SELECT anio FROM modulo_base.anio_detalle order by anio";
+      $result=$db->Execute($sql);
+      for($i=0;$i<count($result);$i++)
+        $tmp[]=$result[$i]["anio"];
+      $db->Close();
+    }
+
+    $data=[];
+    for($i=0;$i<count($tmp);$i++)
+      for($j=0;$j<count(self::$data);$j++)
+        if($tmp[$i]==self::$data[$j]["id"]){
+          $data[]=self::$data[$j];
+          break;
+        }
+
+    return $data;
   }
 
   public static function database($value=NULL){
@@ -98,26 +126,7 @@ class SIGA extends SIGA_CONFIG {
     $return=array();
     foreach(self::$database as $key => $value){
       if($value["display"]=="t"){
-        $tmp=[];
-        if(isset($value["data"]) && count($value["data"])>0){//tomar los años definidos en la siga.config.php
-          $tmp=$value["data"];
-        }
-        else{//buscar los años en la tabla anio_detalle
-          $db=self::DBController($key);
-          $sql="SELECT anio FROM modulo_base.anio_detalle order by anio";
-          $result=$db->Execute($sql);
-          for($i=0;$i<count($result);$i++)
-            $tmp[]=$result[$i]["anio"];
-          $db->Close();
-        }
-        //buscar en nombre correspondiente segun el año
-        $data=[];
-        for($i=0;$i<count($tmp);$i++)
-          for($j=0;$j<count(self::$data);$j++)
-            if($tmp[$i]==self::$data[$j]["id"]){
-              $data[]=self::$data[$j];
-              break;
-            }
+        $data=self::dataAvailable($key);
 
         $return[]=array("id"=>"$key","description"=>$value["description"],"data"=>$data);
       }

@@ -109,7 +109,7 @@ include_once(SIGA::databasePath()."/config/config.php");
         <span class="data">
           <?php if(SIGA::user()):?>
           <span><b>Usuario:</b> <?php echo SIGA::userName();?></span>
-          <span><b>Datos:</b> <?php echo SIGA::dataName();?></span>
+          <span id="siga-infodatabase" style="cursor: pointer;" onclick="siga.database.open(event)"><b>Datos:</b> <?php echo SIGA::dataName();?></span>
           <?php endif;?>
           <span id="siga-infotime" style="padding-left: 10px; cursor: pointer;" onclick="siga.calendar.open()">&nbsp;</span>
         </span>
@@ -172,6 +172,7 @@ include_once(SIGA::databasePath()."/config/config.php");
   siga.value("title_logout","<?php print $siga_title_logout;?>");
   siga.value("folder","<?php print SIGA::databasePath(false)."/config";?>");
   siga.value("datos",<?php print json_encode(SIGA::$data);?>);
+  siga.value("data_disponible",<?php print json_encode(SIGA::dataAvailable());?>);
   siga.value("anio","<?php print (SIGA::data()?SIGA::data():date("Y"));?>");
   siga.value("sesion_abierta",<?php print SIGA::user()?'true':'false';?>);
   siga.value("meses",<?php print json_encode(meses());?>);
