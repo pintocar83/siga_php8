@@ -3080,6 +3080,9 @@ SELECT pg_catalog.setval('retencion_id_seq', 8, true);
 INSERT INTO configuracion VALUES ('version', current_setting('global_siga.anio')||'-01-01');
 INSERT INTO configuracion VALUES ('ciudad', '');
 INSERT INTO configuracion VALUES ('report/pago/ciudad', '');
+INSERT INTO configuracion VALUES ('moneda', 'BOLIVARES');
+INSERT INTO configuracion VALUES ('report/moneda', '');
+INSERT INTO configuracion VALUES ('report/contabilidad/moneda', '');
 INSERT INTO configuracion VALUES ('public/site', 'http://localhost/public/');
 
 

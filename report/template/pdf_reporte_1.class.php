@@ -30,10 +30,14 @@ class PDF_REPORTE_1 extends FPDF{
     global $MARGEN_LEFT, $MARGEN_TOP, $ANCHO, $TITULO_PRINCIPAL, $TITULO_SECUNDARIO, $CABECERA;
     global $organismo;
     
-    if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
-      $this->Image(SIGA::databasePath()."/config/cintillo_actual.jpg",$MARGEN_LEFT,$MARGEN_TOP,$ANCHO);
-    elseif(SIGA::databasePath()."/config/logo_02.jpg")
-      $this->Image(SIGA::databasePath()."/config/logo_02.jpg",$MARGEN_LEFT,$MARGEN_TOP,40);
+    if($this->CurOrientation=="L")
+      $this->Image(SIGA::databasePath()."/config/plantilla_horizontal.jpg",0,0,280);
+    else
+      $this->Image(SIGA::databasePath()."/config/plantilla_vertical.jpg",0,0,215);
+    //if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
+    //  $this->Image(SIGA::databasePath()."/config/cintillo_actual.jpg",$MARGEN_LEFT,$MARGEN_TOP,$ANCHO);
+    //elseif(SIGA::databasePath()."/config/logo_02.jpg")
+    //  $this->Image(SIGA::databasePath()."/config/logo_02.jpg",$MARGEN_LEFT,$MARGEN_TOP,40);
 		    
     $this->Ln(18);
     $this->SetFont('helvetica','',8);

@@ -218,7 +218,7 @@ for($i=0;$i<count($id);$i++){
 
 
 	$tam_ancho=175;
-	$tam_cuenta=40;
+	$tam_cuenta=48;
 	$tam_montos1=20;
 	$tam_montos2=27;
 	$tam_montos3=27;
@@ -226,18 +226,18 @@ for($i=0;$i<count($id);$i++){
 
 	for($j=0;$j<count($DETALLE_PRESUPUESTARIO);$j++){
 		$pdf->Ln(2);
-		$pdf->SetFont('helvetica','',9);
+		$pdf->SetFont('helvetica','',8.5);
 
 		$pdf->Cell(5,4,"",'',0,'',1);
 
 		$Y=$pdf->GetY();
-		$pdf->Cell($tam_cuenta,4,utf8_decode($DETALLE_PRESUPUESTARIO[$j]["cuenta_presupuestaria"]),'',0,'R',1);
+		$pdf->Cell($tam_cuenta,4,utf8_decode($DETALLE_PRESUPUESTARIO[$j]["estructura_presupuestaria"]." / ".$DETALLE_PRESUPUESTARIO[$j]["cuenta_presupuestaria"]),'',0,'R',1);
 		$pdf->MultiCell($tam_denominacion,4,utf8_decode($DETALLE_PRESUPUESTARIO[$j]["denominacion"]."."),'','',1);
 		$Y2=$pdf->GetY();
 
 		$pdf->SetXY($pdf->lMargin+5+$tam_cuenta+$tam_denominacion,$Y);
 
-		$pdf->SetFont('helvetica','',12);
+		$pdf->SetFont('helvetica','',11);
 		$pdf->Cell($tam_montos1,4,utf8_decode(number_format($DETALLE_PRESUPUESTARIO[$j]["monto"],2,",",".")),'',0,'R',1);
 		$pdf->Cell($tam_montos2,4,utf8_decode(""),'',0,'R',1);
 		$pdf->Cell($tam_montos3,4,utf8_decode(""),'',1,'R',1);
@@ -246,7 +246,7 @@ for($i=0;$i<count($id);$i++){
 
 	for($j=0;$j<count($DETALLE_CONTABLE);$j++){
 		$pdf->Ln(2);
-		$pdf->SetFont('helvetica','',9);
+		$pdf->SetFont('helvetica','',8.5);
 
 		$pdf->Cell(5,4,"",'',0,'',1);
 
@@ -255,7 +255,7 @@ for($i=0;$i<count($id);$i++){
 		$X=$pdf->GetX();
 		$pdf->Cell($tam_denominacion,4,utf8_decode(""),'',0,'R',1);
 		$pdf->Cell($tam_montos1,4,utf8_decode(""),'',0,'R',1);
-		$pdf->SetFont('helvetica','',12);
+		$pdf->SetFont('helvetica','',11);
 		$monto_debe="";
 		$monto_haber="";
 		if($DETALLE_CONTABLE[$j]["operacion"]=="D") $monto_debe=number_format($DETALLE_CONTABLE[$j]["monto"],2,",",".");
