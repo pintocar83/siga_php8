@@ -53,6 +53,60 @@ function CabeceraDC(){
 		$pdf->SetFillColor(255,255,255);
 }
 
+function Footer(){
+	global $pdf, $tam_ancho, $tam_firma;
+	$database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
+	//CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
+  if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
+  	$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
+		$pdf->SetFont('helvetica','',8);
+		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
+		$pdf->SetFont('helvetica','B',7);
+	
+		$pdf->Cell($tam_firma,4,utf8_decode("ALCALDE"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
+                $pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("BENEFICIARIO"),'LRTB',1,'C',1);
+	
+		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',1,'L',1);
+	
+		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',0,'C',1);
+		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',0,'C',1);
+		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',0,'C',1);
+		$pdf->Cell($tam_firma,20,utf8_decode(""),'LRT',1,'C',1);
+	
+		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
+		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
+		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
+		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',1,'C',1);
+  }
+  else{
+  	$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
+		$pdf->SetFont('helvetica','',8);
+		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
+		$pdf->SetFont('helvetica','B',7);
+
+		$pdf->Cell($tam_firma,4,utf8_decode("ELABORADO POR:"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("REVISADO POR:"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("VERIFICADO POR:"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("AUTORIZADO POR:"),'LRTB',1,'C',1);
+
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',1,'C',1);
+
+		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
+		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
+  }
+
+}
+
 class PDF_P extends FPDF{
 	var $MARGEN_LEFT;
 	var $MARGEN_TOP;
@@ -96,6 +150,14 @@ class PDF_P extends FPDF{
 		$this->Cell(50,6,utf8_decode(number_format($MONTO_TOTAL,2,",",".")),'',1,'C',0);
 
 		$this->Ln(3);
+
+		$database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
+		//CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
+    if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
+    	$this->SetFont('helvetica','B',8);
+			$this->MultiCell(180-27,3,utf8_decode("CIUDADANO: TESORERO(A) MUNICIPAL\nSIRVASE A EFECTUAR EL SIGUIENTE PAGO A:"),'','L',1);
+			$this->Ln(3);
+    }
 
 
 		if($PERSONA_TIPO=="N" or $PERSONA_TIPO=="J"){
@@ -657,25 +719,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$pdf->SetY($MAX_Y);
 
 
-		$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
-		$pdf->SetFont('helvetica','',8);
-		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
-		$pdf->SetFont('helvetica','B',7);
-
-		$pdf->Cell($tam_firma,4,utf8_decode("ELABORADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("REVISADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("VERIFICADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("AUTORIZADO POR:"),'LRTB',1,'C',1);
-
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',1,'C',1);
-
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
+		Footer();
 
 		if($COMPROBANTE_POSTERIOR && count($COMPROBANTE_POSTERIOR)>0){
 			$pdf->AddPage();
@@ -750,29 +794,14 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$pdf->SetY($MAX_Y);
 
 
-		$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
-		$pdf->SetFont('helvetica','',8);
-		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
-		$pdf->SetFont('helvetica','B',7);
-
-		$pdf->Cell($tam_firma,4,utf8_decode("ELABORADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("REVISADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("VERIFICADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("AUTORIZADO POR:"),'LRTB',1,'C',1);
-
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',1,'C',1);
-
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
+		Footer();
 		}
 }
 
 
 $pdf->AliasNbPages();
 $pdf->Output("comprobante_".$COMPROBANTE[0]["tipo"].$COMPROBANTE[0]["correlativo"].".pdf","I");
+
+
+
 ?>

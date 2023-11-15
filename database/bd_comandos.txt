@@ -1,0 +1,2 @@
+-Restaurar BD generada desde phppgadmin
+.\psql.exe -U siga -d siga_alcaldia_mejia -f "C:\Users\pinto\Downloads\siga_alcaldia_mejia_20231018.sql"
