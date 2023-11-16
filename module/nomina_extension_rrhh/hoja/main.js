@@ -150,26 +150,52 @@ siga.define("nomina_extension_rrhh/hoja",{
         }
       },
       {
-        xtype:'combobox',
-        id: me._('activo'),
-        name: 'activo',
-        flex: 1,
-        anchor: "25%",
-        fieldLabel: 'Activo',
-        store: {
-          fields: ['id', 'nombre'],
-          data : [
-            {"id":"t", "nombre":"SI"},
-            {"id":"f", "nombre":"NO"}
-          ]
+        xtype: 'container',
+        defaults: _defaults,
+        layout: {
+          type: 'hbox',
+          align: 'end'
         },
-        editable: false,
-        displayField: 'nombre',
-        valueField: 'id',
-        allowBlank: false,
-        forceSelection: true,
-        value: 't'
-      }
+        items: [
+          {
+            xtype:'combobox',
+            id: me._('activo'),
+            name: 'activo',
+            width: 100,
+            fieldLabel: 'Activo',
+            store: {
+              fields: ['id', 'nombre'],
+              data : [
+                {"id":"t", "nombre":"SI"},
+                {"id":"f", "nombre":"NO"}
+              ]
+            },
+            editable: false,
+            displayField: 'nombre',
+            valueField: 'id',
+            allowBlank: false,
+            forceSelection: true,
+            value: 't',
+            margin: '5px 0 0 0px',
+          },
+          {
+            xtype: 'tbspacer',
+            flex: 1
+          },
+          {
+            xtype: 'button',
+            id: me._('btnReGenerar'),
+            text: '<b>Re-Generar</b>',
+            tooltip: 'Re-Generar contenido de la hoja',
+            margin: '5px 0 0 0px',
+            listeners: {
+              click: function(){
+                me.onReGenerar();
+              }
+            }
+          },
+        ]
+      },
     ];
 
     me.callParent(arguments);
@@ -283,6 +309,7 @@ siga.define("nomina_extension_rrhh/hoja",{
     me.getCmp('tab_data').getForm().reset();
     me.getCmp("tipo").setValue("Q");
     me.getCmp("tipo").fireEvent("change");
+    me.getCmp("btnReGenerar").hide();
 
     me.getCmp('tabs').setActiveTab(0);
 
@@ -330,6 +357,7 @@ siga.define("nomina_extension_rrhh/hoja",{
         me.getCmp("descripcion").setValue(result[0]["descripcion"]);
         me.getCmp("tipo").setValue(result[0]["tipo"]);
         me.getCmp("tipo").fireEvent("change");
+        me.getCmp("btnReGenerar").show();
 
         var id_periodo = String(result[0]["id_periodo"]).replace(/[{}]/gi,'').split(',');
         var id_nomina = String(result[0]["id_nomina"]).replace(/[{}]/gi,'').split(',');
@@ -410,9 +438,6 @@ siga.define("nomina_extension_rrhh/hoja",{
         me.setMessage(result.message,"red");
       }
     });
-
-
-
   },
 
   getDataNomina: function(o){
@@ -440,4 +465,33 @@ siga.define("nomina_extension_rrhh/hoja",{
     }
     return me.internal.data.preload["periodo"];
   },
+
+  onReGenerar: function(){
+    var me=this;
+    var _id = me.getCmp("id").getValue();
+
+    var msgWait=Ext.Msg.wait('Re-Generando Contenido de la Hoja. Por favor espere...', me.getTitle(),{text:''});
+    msgWait.setAlwaysOnTop(true);
+
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina_extension_rrhh/',
+      params:{
+        action: 'onGenerar',
+        id_hoja: _id
+      },
+      success: function(request){
+        msgWait.close();
+        var result=Ext.JSON.decode(request.responseText);
+        console.log(result);
+
+      },
+      failure:function(request){
+        msgWait.close();
+        var result=Ext.JSON.decode(request.responseText);
+        me.setMessage(result.message,"red");
+      }
+    });
+  },
+
 });

@@ -10,8 +10,30 @@ siga.define('nomina_extension_rrhh', {
 
   initComponent: function(){
     var me = this;
+
+    me.setInternal({
+      id_hoja: '',
+      data: [],
+    });
+
     //var response = Ext.Ajax.request({async: false,url: "module/nomina_extension_rrhh/form.php"});
     me.itemsToolbar=[
+      {
+        xtype: 'button',
+        id: me._('btnSeleccionar'),
+        height: 45,
+        width: 65,
+        text: 'Seleccionar',
+        cls: 'siga-btn-base',
+        iconCls: 'siga-btn-base-icon icon-nomina_extension_rrhh_seleccionar',
+        iconAlign: 'top',
+        tooltip: 'Seleccionar Hoja',
+        listeners: {
+          click: function(){
+            me.onSeleccionar();
+          }
+        }
+      },
       me.btnNew(),
       me.btnSave(),
       me.btnEdit(),
@@ -125,5 +147,78 @@ siga.define('nomina_extension_rrhh', {
       });
 
   },
+
+  onSeleccionar: function(){
+    var me=this;
+
+    var campo={
+      fieldLabel: 'Hojas de Trabajo',
+      setValue: function(v){
+        me.onGet(v);
+      },
+      internal:{
+        page:1,
+        limit: 100,
+        valueField: 'id',
+        columns: {field: ["codigo","descripcion"], title: ["Código","Descripción"], width: ['15%','85%'], sort: ["ASC",'NULL']},
+        url: 'module/nomina_extension_rrhh/hoja/',
+        actionOnList:'onList',
+        actionOnGet:'onGet',
+      }
+    };
+
+    var _opt={};
+    _opt.internal={};
+    _opt.internal.parent=campo;
+    var selector=Ext.create("siga.windowSelect",_opt);
+    selector.show();
+    selector.search();
+  },
+
+  onGet: function(id_hoja){
+    var me=this;
+    me.internal.id_hoja = id_hoja;
+
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina_extension_rrhh/',
+      params:{
+        action: 'onGet',
+        id_hoja: id_hoja,
+      },
+      success:function(request){
+        var result=Ext.JSON.decode(request.responseText);
+        me.internal.data = result;
+        me.onRecargar();
+      },
+      failure:function(request){
+        var result=Ext.JSON.decode(request.responseText);
+      }
+    });
+  },
+
+  onRecargar: function(){
+    var me=this;
+
+    console.log(me.internal.data);
+
+    me.internal.gridOptions = {
+      columnDefs: me.internal.data["columna"],
+      defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        resizable: true,
+      },
+      groupDisplayType: 'groupRows',
+      animateRows: true,
+    };
+
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, me.internal.gridOptions);
+
+    me.internal.gridOptions.api.setRowData(me.internal.data["data"]);
+  },
+
 
 });

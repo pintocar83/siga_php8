@@ -3,10 +3,22 @@ include("../../library/include.php");
 if(!isset($_REQUEST["action"]))
   exit;
 
-class MODULO{
+include_once("../../class/nomina_extension_rrhh.class.php");
+
+class MODULO extends nomina_extension_rrhh{
   public static function onInit(){
-    $access=SIGA::access("pago");//null,r,rw,a    
+    $access=SIGA::access("nomina");//null,r,rw,a    
     switch($_REQUEST["action"]){
+      case "onGenerar":
+        header('Content-Type: text/plain; charset=utf-8');
+        print json_encode(self::onGenerar($access, SIGA::param("id_hoja")));
+        break;
+      case "onGet":
+        header('Content-Type: text/plain; charset=utf-8');
+        print json_encode(self::onGet($access, SIGA::param("id_hoja")));
+        break;
+
+
       case "onCss":
       case "css":
         header('Content-Type: text/css; charset=utf-8');

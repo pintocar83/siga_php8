@@ -69,3 +69,11 @@ CREATE INDEX extension_rrhh_hoja_valor_hoja_nomina_ficha
 
 CREATE INDEX extension_rrhh_hoja_valor_nomina
     ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_nomina);
+
+
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna(nombre, cls, tipo, operacion, valor, orden, visible, ancho, alinear) VALUES
+('SUELDO MENSUAL', '', 'concepto', 'MAX', '[89, 94]', 1, 1, NULL, 'right'),
+('TIEMPO DE SERVICIO<BR>(ADMINISTRACIÓN PUBLICA)', '', 'concepto', 'MAX_SUM', '[76, 93]', 2, 1, 52, 'right'),
+('% PROFESIONALIZACIÓN', '', 'concepto', 'MAX', '[85]', 3, 1, NULL, 'right'),
+('CONTRATOS 2022', 'yellow', 'select', '', '["SI","NO"]', 4, 1, 55, 'center'),
+('TIEMPO', 'yellow', 'texto', '', '',  5, 1, 108, 'right');
