@@ -34,11 +34,11 @@ siga.define('nomina_extension_rrhh', {
           }
         }
       },
-      me.btnNew(),
       me.btnSave(),
-      me.btnEdit(),
-      me.btnDelete(),
-      me.btnDisplay(),
+      //me.btnNew(),
+      //me.btnEdit(),
+      //me.btnDelete(),
+      //me.btnDisplay(),
       {
         xtype: "tbspacer",
         flex:1
@@ -48,7 +48,26 @@ siga.define('nomina_extension_rrhh', {
     me.items=[
       {
         xtype: "component",
-        html: `<div id="myGrid" class="ag-theme-alpine" style="height: 100%">`
+        html: `
+          <style>
+            .ag-theme-alpine {
+              --ag-grid-size: 4px;
+              --ag-list-item-height: 25px;
+              --ag-font-size: 12px;
+            }
+            .ag-theme-alpine .ag-row-group-expanded.ag-row.ag-row-level-0,
+            .ag-theme-alpine .ag-row-group-contracted.ag-row.ag-row-level-0 {
+              background-color: #434343;
+              color: white;
+              font-weight: 600;
+            }
+            .ag-theme-alpine .ag-row-group-expanded.ag-row.ag-row-level-0 .ag-group-expanded,
+            .ag-theme-alpine .ag-row-group-contracted.ag-row.ag-row-level-0 .ag-group-contracted {
+              color: white;
+            }
+          </style>
+          <div id="myGrid" class="ag-theme-alpine" style="height: 100%">
+        `
       }
     ];
 
@@ -209,16 +228,155 @@ siga.define('nomina_extension_rrhh', {
         minWidth: 100,
         sortable: true,
         resizable: true,
+        enableRowGroup: true,
+        enablePivot: true,
+        enableValue: true,
+        filter: true,
+        floatingFilter: true,
       },
+      sideBar: {
+        toolPanels: ['columns'],
+      },
+      rowGroupPanelShow: 'always',
+      pivotPanelShow: 'always',
       groupDisplayType: 'groupRows',
+      groupDefaultExpanded: -1,
       animateRows: true,
+      rowData: me.internal.data["data"],
+      enableRangeSelection: true,
+      //editType: 'fullRow',
+      onGridReady: (params) => {
+        //me.autoSizeAllColumns();
+      },
+      //onCellEditRequest: (event) => {
+      //  console.log('onCellEditRequest', event);
+      //},
+      onCellValueChanged: (event) => {
+        var data = event.data;
+        if(!me.internal.dataModified){
+          me.internal.dataModified={};
+        }
+
+        const rowId      = event.data.id;
+        const id_columna = String(event.column.colId).substring(7);
+        const id_nomina  = event.data.id_nomina;
+        const id_ficha   = event.data.id_ficha;
+        const value      = event.value;
+
+        const hash = rowId + "|" + id_columna;
+
+        me.internal.dataModified[hash] = {
+          id_nomina: id_nomina,
+          id_ficha: id_ficha,
+          id_columna: id_columna,
+          valor: value
+        };
+      },
+      onRowValueChanged: (event) => {
+        var data = event.data;
+        console.log(
+          'onRowValueChanged:', event
+        );
+      }
     };
 
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, me.internal.gridOptions);
 
-    me.internal.gridOptions.api.setRowData(me.internal.data["data"]);
+    //me.internal.gridOptions.api.setRowData(me.internal.data["data"]);
+    me.autoSizeAllColumns();
+  },
+
+  autoSizeAllColumns: function(skipHeader) {
+    var me=this;
+    const allColumnIds = [];
+    me.internal.gridOptions.columnApi.getColumns().forEach((column) => {
+      allColumnIds.push(column.getId());
+    });
+
+    me.internal.gridOptions.columnApi.autoSizeColumns(allColumnIds, skipHeader);
+  },
+
+  onSave: function(){
+    var me=this;
+
+    if(!me.internal.id_hoja){
+      return;
+    }
+
+    var msgWait=Ext.Msg.wait('Guardando. Por favor espere...', me.getTitle(),{text:''});
+    msgWait.setAlwaysOnTop(true);
+
+    var data = [];
+    if(me.internal.dataModified){
+      for(key in me.internal.dataModified){
+        data.push(me.internal.dataModified[key]);
+      }
+    }
+
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina_extension_rrhh/',
+      params:{
+        action: 'onSave',
+        id_hoja: me.internal.id_hoja,
+        data: Ext.JSON.encode(data),
+        ag_grid_state: []
+      },
+      success: function(request){
+        msgWait.close();
+        var result=Ext.JSON.decode(request.responseText);
+
+        if(result.success){
+          //me.setMessage(result.message,"green");
+          me.internal.dataModified = [];
+          me.onNew();
+        }
+        else{
+          //me.setMessage(result.message,"red");
+          alert(result.message);
+        }
+      },
+      failure:function(request){
+        msgWait.close();
+        var result=Ext.JSON.decode(request.responseText);
+        me.setMessage(result.message,"red");
+      }
+    });
+
+
+
   },
 
 
 });
+
+
+/*
+
+GUARDAR Y RESTAURAR ESTADO DE LAS COLUMNAS
+
+function saveState() {
+  window.colState = gridOptions.columnApi.getColumnState();
+  console.log('column state saved');
+}
+
+function restoreState() {
+  if (!window.colState) {
+    console.log('no columns state to restore by, you must save state first');
+    return;
+  }
+  gridOptions.columnApi.applyColumnState({
+    state: window.colState,
+    applyOrder: true,
+  });
+  console.log('column state restored');
+}
+
+function resetState() {
+  gridOptions.columnApi.resetColumnState();
+  console.log('column state reset');
+}
+
+*/
+

@@ -210,7 +210,9 @@ class nomina_extension_rrhh {
     $fila = $db->Execute($sql);
     for($i=0; $i<count($fila); $i++) {
       $data[$i] = [
-        "id" => $fila[$i]["id"]
+        "id"        => $fila[$i]["id"],
+        "id_nomina" => $fila[$i]["id_nomina"],
+        "id_ficha"  => $fila[$i]["id_ficha"]
       ];
 
       for($j=0; $j<count($columna); $j++) {
@@ -252,12 +254,79 @@ class nomina_extension_rrhh {
   public static function ag_grid_column($columna){
     $return = [];
     for($i=0; $i<count($columna); $i++) {
-      $return[] = [
+      $ag_grid_state = $columna[$i]["ag_grid_state"] ? json_decode($columna[$i]["ag_grid_state"], true) : [];
+      $return[$i] = array_merge([
         "field" => "column_".$columna[$i]["id"],
         "headerName" => $columna[$i]["nombre"]
-      ];
+      ], $ag_grid_state);
+
+      if(!isset($return[$i]["floatingFilterComponentParams"]))
+        $return[$i]["floatingFilterComponentParams"]=[];
+
+      switch($columna[$i]["tipo"]){
+        case "ficha":
+          $return[$i]["editable"]=false;
+          $return[$i]["filter"]="agTextColumnFilter";
+          $return[$i]["floatingFilterComponentParams"]["suppressFilterButton"] = true;
+        case "text":
+          $return[$i]["editable"]=true;
+          $return[$i]["filter"]="agTextColumnFilter";
+        break;
+        case "select":
+          $return[$i]["editable"]=true;
+          $return[$i]["filter"]="agSetColumnFilter";
+        break;
+        case "concepto":
+          $return[$i]["editable"]=false;
+          $return[$i]["filter"]="agNumberColumnFilter";
+        break;
+      }
+
     }
     return $return;
+  }
+
+  public static function onSave($access, $id_hoja, $data, $ag_grid_state){
+    SIGA::$DBMode=PGSQL_ASSOC;
+    $db=SIGA::DBController();
+
+    for($i=0; $i<count($data); $i++) {
+      $id_nomina   = $data[$i]['id_nomina'];
+      $id_ficha    = $data[$i]['id_ficha'];
+      $id_columna  = $data[$i]['id_columna'];
+      $valor       = $data[$i]['valor'];
+
+      $sql="
+        SELECT id
+        FROM modulo_nomina.extension_rrhh_hoja_valor
+        WHERE 
+          id_hoja='$id_hoja' AND
+          id_nomina='$id_nomina' AND
+          id_ficha='$id_ficha' AND
+          id_columna='$id_columna'
+      ";
+
+      $tmp = $db->Execute($sql);
+      $id = isset($tmp[0]["id"]) ? $tmp[0]["id"] : NULL;
+
+      if($id){
+        $db->Update("modulo_nomina.extension_rrhh_hoja_valor",[
+          "valor"=>"'".$db->EscapeString($valor)."'"
+        ],"id=$id");
+      }
+      else{
+        $db->Insert("modulo_nomina.extension_rrhh_hoja_valor",[
+          "id_hoja"    => "$id_hoja",
+          "id_nomina"  => "$id_nomina",
+          "id_ficha"   => "$id_ficha",
+          "id_columna" => "$id_columna",
+          "valor"      =>"'".$db->EscapeString($valor)."'"
+        ]);
+      }
+
+    }
+
+    return ["success" => true];
   }
 
 }

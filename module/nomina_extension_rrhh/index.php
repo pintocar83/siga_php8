@@ -17,6 +17,12 @@ class MODULO extends nomina_extension_rrhh{
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onGet($access, SIGA::param("id_hoja")));
         break;
+      case "onSave":
+        header('Content-Type: text/plain; charset=utf-8');
+        $data=json_decode(SIGA::param("data",false),true);
+        $ag_grid_state=json_decode(SIGA::param("ag_grid_state",false),true);
+        print json_encode(self::onSave($access, SIGA::param("id_hoja"), $data, $ag_grid_state));
+        break;
 
 
       case "onCss":
