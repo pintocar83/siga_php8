@@ -1,4 +1,7 @@
 <?php
+set_time_limit(-1);
+include_once(SIGA::path()."/library/functions/formatDate.php");
+include_once(SIGA::path()."/class/ficha.class.php");
 include_once(SIGA::path()."/class/nomina.class.php");
 
 class nomina_extension_rrhh {
@@ -76,6 +79,7 @@ class nomina_extension_rrhh {
         if($columna[$c]["tipo"] == "concepto"){
           $valor = self::columna_concepto($columna[$c]["operacion"], json_decode($columna[$c]["valor"], true), $fila[$f]["concepto_periodo"]);
         }
+
 
         if($valor !== NULL){
           $db->Insert("modulo_nomina.extension_rrhh_hoja_valor", [
@@ -209,6 +213,43 @@ class nomina_extension_rrhh {
 
     $fila = $db->Execute($sql);
     for($i=0; $i<count($fila); $i++) {
+      $tmp=$db->Execute("SELECT
+                                _formatear_estructura_presupuestaria(FEP.id_accion_subespecifica) as estructura_presupuestaria,
+                                ASE.denominacion_subespecifica,
+                                AE.denominacion_especifica,
+                                A.denominacion_centralizada
+                              FROM
+                                modulo_nomina.ficha_estructura_presupuestaria FEP,
+                                modulo_base.accion_subespecifica ASE,
+                                modulo_base.accion_especifica AE,
+                                modulo_base.accion_centralizada A
+                              WHERE FEP.id_accion_subespecifica=ASE.id AND ASE.id_accion_especifica=AE.id AND AE.id_accion_centralizada=A.id AND
+                                id_ficha=".$fila[$i]["id_ficha"]." AND
+                                fecha<='$fecha_culminacion'
+                              ORDER BY fecha
+                              DESC LIMIT 1");
+      $fila[$i]["estructura_presupuestaria"]=isset($tmp[0]["estructura_presupuestaria"])?$tmp[0]["estructura_presupuestaria"]:"";
+      $fila[$i]["denominacion_especifica"]=isset($tmp[0]["estructura_presupuestaria"])?$tmp[0]["denominacion_especifica"]:"";
+      $fila[$i]["denominacion_subespecifica"]=isset($tmp[0]["estructura_presupuestaria"])?$tmp[0]["denominacion_subespecifica"]:"";
+      $fila[$i]["denominacion_centralizada"]=isset($tmp[0]["estructura_presupuestaria"])?$tmp[0]["denominacion_centralizada"]:"";
+
+      $fila[$i]["fecha_ingreso"]=str_replace(["{","}"],"",$fila[$i]["fecha_ingreso"]);
+      $fila[$i]["ffecha_ingreso"]="";
+      if($fila[$i]["fecha_ingreso"]){
+        $tmp=explode(",",$fila[$i]["fecha_ingreso"]);
+        $fila[$i]["fecha_ingreso"]=end($tmp);
+        $fila[$i]["ffecha_ingreso"]=formatDate($fila[$i]["fecha_ingreso"]);
+      }
+
+      $ficha_antiguedad=ficha::onGet_Antiguedad($fila[$i]["id_ficha"], $fecha_culminacion);
+      $fila[$i]["antiguedad_anio"] = "";
+      $fila[$i]["antiguedad_dia"] = "";
+      if($ficha_antiguedad["antiguedad_anio_dia"]){
+        $fila[$i]["antiguedad_anio"] = $ficha_antiguedad["antiguedad_anio_dia"][0];
+        $fila[$i]["antiguedad_dia"] = $ficha_antiguedad["antiguedad_anio_dia"][1];
+      }
+
+
       $data[$i] = [
         "id"        => $fila[$i]["id"],
         "id_nomina" => $fila[$i]["id_nomina"],
@@ -240,7 +281,8 @@ class nomina_extension_rrhh {
       $columna_valor = $db->Execute($sql);
       for($j=0; $j<count($columna_valor); $j++) { 
         $field = "column_".$columna_valor[$j]["id_columna"];
-        $data[$i]["$field"] = $columna_valor[$j]["valor"];
+        $data[$i]["$field"] = is_numeric($columna_valor[$j]["valor"]) ? $columna_valor[$j]["valor"]*1 : $columna_valor[$j]["valor"];
+        //$data[$i]["$field"] = $columna_valor[$j]["valor"];
       }
     }
 
@@ -257,7 +299,8 @@ class nomina_extension_rrhh {
       $ag_grid_state = $columna[$i]["ag_grid_state"] ? json_decode($columna[$i]["ag_grid_state"], true) : [];
       $return[$i] = array_merge([
         "field" => "column_".$columna[$i]["id"],
-        "headerName" => $columna[$i]["nombre"]
+        "headerName" => $columna[$i]["nombre"],
+        "cellClass" => $columna[$i]["cls"]
       ], $ag_grid_state);
 
       if(!isset($return[$i]["floatingFilterComponentParams"]))
@@ -265,9 +308,10 @@ class nomina_extension_rrhh {
 
       switch($columna[$i]["tipo"]){
         case "ficha":
-          $return[$i]["editable"]=false;
+          //$return[$i]["editable"]=false;
           $return[$i]["filter"]="agTextColumnFilter";
           $return[$i]["floatingFilterComponentParams"]["suppressFilterButton"] = true;
+        break;
         case "text":
           $return[$i]["editable"]=true;
           $return[$i]["filter"]="agTextColumnFilter";
@@ -277,8 +321,9 @@ class nomina_extension_rrhh {
           $return[$i]["filter"]="agSetColumnFilter";
         break;
         case "concepto":
-          $return[$i]["editable"]=false;
+          //$return[$i]["editable"]=false;
           $return[$i]["filter"]="agNumberColumnFilter";
+          //$return[$i]["cellDataType"]="number";
         break;
       }
 

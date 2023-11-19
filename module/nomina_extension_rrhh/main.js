@@ -51,9 +51,10 @@ siga.define('nomina_extension_rrhh', {
         html: `
           <style>
             .ag-theme-alpine {
+              --ag-borders: solid 1px;
               --ag-grid-size: 4px;
-              --ag-list-item-height: 25px;
-              --ag-font-size: 12px;
+              --ag-list-item-height: 20px;
+              --ag-font-size: 11px;
             }
             .ag-theme-alpine .ag-row-group-expanded.ag-row.ag-row-level-0,
             .ag-theme-alpine .ag-row-group-contracted.ag-row.ag-row-level-0 {
@@ -64,6 +65,17 @@ siga.define('nomina_extension_rrhh', {
             .ag-theme-alpine .ag-row-group-expanded.ag-row.ag-row-level-0 .ag-group-expanded,
             .ag-theme-alpine .ag-row-group-contracted.ag-row.ag-row-level-0 .ag-group-contracted {
               color: white;
+            }
+            .ag-theme-alpine .ag-header-cell-label {
+              font-size: 10px;
+            }
+            .ag-cell-value.align-center,
+            .ag-cell-value.align-center input.ag-input-field-input {
+              text-align: center;
+            }
+            .ag-cell-value.align-right,
+            .ag-cell-value.align-right input.ag-input-field-input {
+              text-align: right;
             }
           </style>
           <div id="myGrid" class="ag-theme-alpine" style="height: 100%">
@@ -97,31 +109,6 @@ siga.define('nomina_extension_rrhh', {
   onNew: function(){
     var me = this;
 
-    const gridOptions1 = {
-      columnDefs: [
-        // set filters
-        { field: 'athlete', filter: 'agSetColumnFilter'},
-        {
-          field: 'country',
-          filter: 'agSetColumnFilter',
-          filterParams: {
-            applyMiniFilterWhileTyping: true,
-          },
-        },
-
-        // number filters
-        { field: 'gold', filter: 'agNumberColumnFilter' },
-        { field: 'silver', filter: 'agNumberColumnFilter' },
-        { field: 'bronze', filter: 'agNumberColumnFilter' },
-      ],
-      defaultColDef: {
-        flex: 1,
-        minWidth: 200,
-        resizable: true,
-        floatingFilter: true,
-      },
-    };
-
     const gridOptions = {
       columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
@@ -143,9 +130,12 @@ siga.define('nomina_extension_rrhh', {
         minWidth: 100,
         sortable: true,
         resizable: true,
+        columnHoverHighlight: true,
       },
       groupDisplayType: 'groupRows',
       animateRows: true,
+      //suppressRowHoverHighlight: true,
+      columnHoverHighlight: true,
     };
 
     /*var gridDiv = document.querySelector('#myGrid');
@@ -233,6 +223,8 @@ siga.define('nomina_extension_rrhh', {
         enableValue: true,
         filter: true,
         floatingFilter: true,
+        wrapHeaderText: true,
+        autoHeaderHeight: true,
       },
       sideBar: {
         toolPanels: ['columns'],
