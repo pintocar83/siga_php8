@@ -1,6 +1,7 @@
 siga.require.js("library/ag-grid/ag-grid-enterprise.min.js");
 
 siga.define('nomina_extension_rrhh', {
+  cls: 'nomina_extension_rrhh',
   extend: 'siga.windowBase',
   title: 'Nómina - Extensión RRHH',
   width: 850,
@@ -34,7 +35,40 @@ siga.define('nomina_extension_rrhh', {
           }
         }
       },
-      me.btnSave(),
+      {
+        xtype: 'button',
+        id: me._('btnSave'),
+        height: 45,
+        width: 65,
+        text: 'Guardar',
+        cls: 'siga-btn-base',
+        focusCls: '',
+        disabledCls: 'siga-btn-disabled',
+        iconCls: 'siga-btn-base-icon icon-save',
+        iconAlign: 'top',
+        listeners: {
+            click: function(){
+                me.setMessage();
+                me.onSave();
+            }
+        }
+      },
+      {
+        xtype: 'button',
+        id: me._('btnAdministrarHoja'),
+        height: 45,
+        width: 65,
+        text: 'Hojas',
+        cls: 'siga-btn-base',
+        iconCls: 'siga-btn-base-icon icon-nomina_extension_rrhh_administrar_hoja',
+        iconAlign: 'top',
+        tooltip: 'Administrar Hojas',
+        listeners: {
+          click: function(){
+            siga.open("nomina_extension_rrhh/hoja");
+          }
+        }
+      },
       //me.btnNew(),
       //me.btnEdit(),
       //me.btnDelete(),
@@ -42,6 +76,23 @@ siga.define('nomina_extension_rrhh', {
       {
         xtype: "tbspacer",
         flex:1
+      },
+      {
+        xtype: 'button',
+        id: me._('btnDescargarXLS'),
+        height: 45,
+        width: 65,
+        text: 'XLS',
+        cls: 'siga-btn-base',
+        iconCls: 'siga-btn-base-icon icon-nomina_extension_rrhh_xls',
+        iconAlign: 'top',
+        tooltip: 'Descargar en formato Excel',
+        listeners: {
+          click: function(){
+            if(!me.internal.gridOptions) return;
+            me.internal.gridOptions.api.exportDataAsExcel();
+          }
+        }
       },
     ];
 
@@ -69,16 +120,25 @@ siga.define('nomina_extension_rrhh', {
             .ag-theme-alpine .ag-header-cell-label {
               font-size: 10px;
             }
-            .ag-cell-value.align-center,
-            .ag-cell-value.align-center input.ag-input-field-input {
+            .ag-theme-alpine .ag-cell-value.align-center,
+            .ag-theme-alpine .ag-cell-value.align-center input.ag-input-field-input {
               text-align: center;
             }
-            .ag-cell-value.align-right,
-            .ag-cell-value.align-right input.ag-input-field-input {
+            .ag-theme-alpine .ag-cell-value.align-right,
+            .ag-theme-alpine .ag-cell-value.align-right input.ag-input-field-input {
               text-align: right;
             }
+           .ag-theme-alpine .column-editable {
+              background-color: #ffeb3b0f;
+            }
+            .ag-theme-alpine {
+                --ag-row-hover-color: rgb(255 229 0 / 10%);;
+            }
+            .ag-theme-alpine .ag-cell:not(:first-child) {
+              border-left: 1px solid #dde2eb;
+            }
           </style>
-          <div id="myGrid" class="ag-theme-alpine" style="height: 100%">
+          <div id="agGridExtensionRRHH" class="ag-theme-alpine" style="height: 100%">
         `
       }
     ];
@@ -100,6 +160,12 @@ siga.define('nomina_extension_rrhh', {
     var me = this;
     me.maximize();
 
+    $(window).bind("beforeunload", function(){
+      if(me.internal.dataModified && Object.keys(me.internal.dataModified).length > 0){
+        return confirm("Existen cambios sin guardar y se perderan. Desea continuar?");
+      }
+    });
+
     //me.onNew();
   },
 
@@ -109,51 +175,6 @@ siga.define('nomina_extension_rrhh', {
   onNew: function(){
     var me = this;
 
-    const gridOptions = {
-      columnDefs: [
-        { field: 'country', rowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, hide: true },
-        {
-          field: 'athlete',
-          minWidth: 250,
-          cellRenderer: (params) => {
-            return `<span style="margin-left: 60px">${params.value}</span>`;
-          },
-        },
-        { field: 'sport', minWidth: 200 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-      ],
-      defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-        sortable: true,
-        resizable: true,
-        columnHoverHighlight: true,
-      },
-      groupDisplayType: 'groupRows',
-      animateRows: true,
-      //suppressRowHoverHighlight: true,
-      columnHoverHighlight: true,
-    };
-
-    /*var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-      .then((response) => response.json())
-      .then((data) => gridOptions.api.setRowData(data));
-
-    */
-    var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-      .then((response) => response.json())
-      .then(function (data) {
-        gridOptions.api.setRowData(data);
-      });
 
   },
 
@@ -188,6 +209,13 @@ siga.define('nomina_extension_rrhh', {
     var me=this;
     me.internal.id_hoja = id_hoja;
 
+    if(me.internal && me.internal.gridOptions && me.internal.gridOptions.api && me.internal.gridOptions.api.destroy){
+      me.internal.gridOptions.api.destroy();
+    }
+
+    var msgWait=Ext.Msg.wait('Cargando. Por favor espere...', me.getTitle(),{text:''});
+    msgWait.setAlwaysOnTop(true);
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina_extension_rrhh/',
@@ -196,11 +224,13 @@ siga.define('nomina_extension_rrhh', {
         id_hoja: id_hoja,
       },
       success:function(request){
+        msgWait.close();
         var result=Ext.JSON.decode(request.responseText);
         me.internal.data = result;
         me.onRecargar();
       },
       failure:function(request){
+        msgWait.close();
         var result=Ext.JSON.decode(request.responseText);
       }
     });
@@ -263,6 +293,7 @@ siga.define('nomina_extension_rrhh', {
           id_columna: id_columna,
           valor: value
         };
+        me.setGuardarCambios(true);
       },
       onRowValueChanged: (event) => {
         var data = event.data;
@@ -272,11 +303,11 @@ siga.define('nomina_extension_rrhh', {
       }
     };
 
-    var gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#agGridExtensionRRHH');
     new agGrid.Grid(gridDiv, me.internal.gridOptions);
 
     //me.internal.gridOptions.api.setRowData(me.internal.data["data"]);
-    me.autoSizeAllColumns();
+    //me.autoSizeAllColumns();
   },
 
   autoSizeAllColumns: function(skipHeader) {
@@ -306,6 +337,8 @@ siga.define('nomina_extension_rrhh', {
       }
     }
 
+    var ag_grid_state = me.internal.gridOptions.columnApi.getColumnState();
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina_extension_rrhh/',
@@ -313,7 +346,7 @@ siga.define('nomina_extension_rrhh', {
         action: 'onSave',
         id_hoja: me.internal.id_hoja,
         data: Ext.JSON.encode(data),
-        ag_grid_state: []
+        ag_grid_state: Ext.JSON.encode(ag_grid_state)
       },
       success: function(request){
         msgWait.close();
@@ -322,7 +355,7 @@ siga.define('nomina_extension_rrhh', {
         if(result.success){
           //me.setMessage(result.message,"green");
           me.internal.dataModified = [];
-          me.onNew();
+          me.setGuardarCambios(false);
         }
         else{
           //me.setMessage(result.message,"red");
@@ -341,7 +374,20 @@ siga.define('nomina_extension_rrhh', {
   },
 
 
+  setGuardarCambios: function(sw){
+    var me=this;
+    if(sw===true){
+      me.getCmp("btnSave").setText("<b>Guardar</b>");
+      me.getCmp("btnSave").addCls("btn_blink");
+    }
+    else if(sw===false){
+      me.getCmp("btnSave").setText("Guardar");
+      me.getCmp("btnSave").removeCls("btn_blink");
+    }
+
+  },
 });
+
 
 
 /*

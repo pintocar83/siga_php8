@@ -21,6 +21,7 @@ siga.define("nomina_extension_rrhh/hoja",{
 
     //ACTUALIZAR CAMPOS DEL TAB ENTRADA DE DATOS
     me.getCmp("tipo").getStore().setData(me.internal.data.preload["periodo_tipo"]);
+    me.getCmp("id_hoja_plantilla").getStore().setData(me.internal.data.preload["hoja_plantilla"]);
 
 
   },
@@ -35,6 +36,19 @@ siga.define("nomina_extension_rrhh/hoja",{
     });
 
     _defaults=me.getInternal("field_defaults");
+
+    me.itemsToolbar=[
+      me.btnNew(),
+      me.btnSave(),
+      me.btnDelete(),
+      me.btnDuplicar(),
+      {
+          xtype:'tbspacer',
+          flex:1
+      },
+      me.btnPrevious(),
+      me.btnNext()
+  ];
 
     me.items=[
       {
@@ -183,11 +197,55 @@ siga.define("nomina_extension_rrhh/hoja",{
             flex: 1
           },
           {
+            xtype:'combobox',
+            id: me._('id_hoja_plantilla'),
+            name: 'id_hoja_plantilla',
+            fieldLabel: 'Hoja Plantilla (copia los valores editables a la hoja actual)',
+            width: 350,
+            margin: '5px 0px 0 0px',
+            queryMode: "local",
+            displayTpl: '<tpl for=".">{codigo} / {descripcion}</tpl>',
+            tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item" data-qtip="{codigo}"><div style="width:100%;overflow:hidden;white-space:nowrap;position:relative;"><div style="white-space:nowrap;padding-right:30px;font-weight:bold;width:100%;overflow:hidden;text-overflow:ellipsis;">{codigo}</div> <small style="position:absolute; right:0; top:0;">{descripcion}</small></div></li></tpl></ul>',
+            /*store: {
+              fields: ['id','codigo_descripcion'],
+              autoLoad: true,
+              pageSize: 1000,
+              proxy: {
+                type:'ajax',
+                url: 'module/nomina_extension_rrhh/hoja/',
+                actionMethods: {read: "POST"},
+                timeout: 3600000,
+                reader: {
+                  type: 'json',
+                  rootProperty: 'result',
+                  totalProperty:'total'
+                },
+                extraParams: {
+                  action: 'onList',
+                  text: '',
+                  start: 0,
+                  limit: 'ALL',
+                  sort: '[{"property": "codigo", "direction": "DESC"}]'
+                }
+              },
+            },*/
+            store: {
+              fields: ['id','codigo_descripcion'],
+              data: []
+            },
+            //displayField: 'codigo_descripcion',
+            valueField: 'id',
+            allowBlank: true,
+            forceSelection: false,
+            editable: false,
+            //value: '',
+          },
+          {
             xtype: 'button',
             id: me._('btnReGenerar'),
             text: '<b>Re-Generar</b>',
             tooltip: 'Re-Generar contenido de la hoja',
-            margin: '5px 0 0 0px',
+            margin: '5px 0 20px 0px',
             listeners: {
               click: function(){
                 me.onReGenerar();
@@ -364,6 +422,7 @@ siga.define("nomina_extension_rrhh/hoja",{
 
         me.getCmp("id_periodo").setValue(id_periodo);
         me.getCmp("id_nomina").setValue(id_nomina);
+        me.getCmp("id_hoja_plantilla").setValue(result[0]["id_hoja_plantilla"]);
         me.getCmp("activo").setValue(result[0]["activo"]);
       },
       failure:function(request){
@@ -401,6 +460,7 @@ siga.define("nomina_extension_rrhh/hoja",{
     var _id_periodo=me.getCmp("id_periodo").getValue();
     var _id_nomina=me.getCmp("id_nomina").getValue();
     var _activo=me.getCmp("activo").getValue();
+    var _id_hoja_plantilla=me.getCmp("id_hoja_plantilla").getValue();
 
     var msgWait=Ext.Msg.wait('Guardando. Por favor espere...', me.getTitle(),{text:''});
     msgWait.setAlwaysOnTop(true);
@@ -416,6 +476,7 @@ siga.define("nomina_extension_rrhh/hoja",{
         tipo: _tipo,
         id_periodo: _id_periodo.join(","),
         id_nomina: _id_nomina.join(","),
+        id_hoja_plantilla: _id_hoja_plantilla,
         activo: _activo
       },
       success: function(request){
@@ -469,6 +530,7 @@ siga.define("nomina_extension_rrhh/hoja",{
   onReGenerar: function(){
     var me=this;
     var _id = me.getCmp("id").getValue();
+    var _id_hoja_plantilla = me.getCmp("id_hoja_plantilla").getValue();
 
     var msgWait=Ext.Msg.wait('Re-Generando Contenido de la Hoja. Por favor espere...', me.getTitle(),{text:''});
     msgWait.setAlwaysOnTop(true);
@@ -478,7 +540,8 @@ siga.define("nomina_extension_rrhh/hoja",{
       url:'module/nomina_extension_rrhh/',
       params:{
         action: 'onGenerar',
-        id_hoja: _id
+        id_hoja: _id,
+        id_hoja_plantilla: _id_hoja_plantilla
       },
       success: function(request){
         msgWait.close();
@@ -488,6 +551,101 @@ siga.define("nomina_extension_rrhh/hoja",{
       },
       failure:function(request){
         msgWait.close();
+        var result=Ext.JSON.decode(request.responseText);
+        me.setMessage(result.message,"red");
+      }
+    });
+  },
+
+  onDelete: function(){
+    var me=this;
+    var _id=me.getCmp("id").getValue().trim();
+    if(!_id) return;
+
+    Ext.MessageBox.wait('Eliminando... por favor espere!');
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina_extension_rrhh/hoja/',
+      params:{
+        action: 'onDelete',
+        id: _id
+      },
+      success:function(request){
+        Ext.MessageBox.hide();
+        var result=Ext.JSON.decode(request.responseText);
+        if(result.success){
+          me.onNew();
+          me.setMessage(result.message,"green");
+        }
+        else{
+          me.setMessage(result.message,"red");
+        }
+      },
+      failure:function(request){
+        Ext.MessageBox.hide();
+        var result=Ext.JSON.decode(request.responseText);
+        me.setMessage(result.message,"red");
+      }
+    });
+  },
+
+  btnDuplicar: function(){
+    var me=this;
+    return {
+      xtype: 'button',
+      id: me._('btnCopyPaste'),
+      height: 45,
+      width: 57,
+      text: 'Duplicar',
+      cls: 'siga-btn-base',
+      focusCls: '',
+      disabledCls: 'siga-btn-disabled',
+      iconCls: 'siga-btn-base-icon icon-copypaste',
+      iconAlign: 'top',
+      tooltip: 'Duplicar periodo.',
+      listeners: {
+        click: function(){
+          if(!me.getCmp('gridList').getSelectionModel().hasSelection())
+            return;
+          me.setMessage();
+          Ext.MessageBox.confirm( 'Duplicar',
+                                  'Se duplicará la hoja seleccionada.<br>\u00BFDesea continuar?',
+                                  function(btn,text){
+                                      if (btn == 'yes')
+                                          me.onDuplicar();
+                                      }
+                                  );
+        }
+      }
+    };
+  },
+
+  onDuplicar: function(){
+    var me=this;
+    var _id=me.getCmp("id").getValue().trim();
+    if(!_id) return;
+
+    Ext.MessageBox.wait('Procesando... por favor espere!');
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina_extension_rrhh/hoja/',
+      params:{
+        action: 'onDuplicar',
+        id: _id
+      },
+      success:function(request){
+        Ext.MessageBox.hide();
+        var result=Ext.JSON.decode(request.responseText);
+        if(result.success){
+          me.onNew();
+          me.setMessage(result.message,"green");
+        }
+        else{
+          me.setMessage(result.message,"red");
+        }
+      },
+      failure:function(request){
+        Ext.MessageBox.hide();
         var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }

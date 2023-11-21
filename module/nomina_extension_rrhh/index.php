@@ -11,7 +11,7 @@ class MODULO extends nomina_extension_rrhh{
     switch($_REQUEST["action"]){
       case "onGenerar":
         header('Content-Type: text/plain; charset=utf-8');
-        print json_encode(self::onGenerar($access, SIGA::param("id_hoja")));
+        print json_encode(self::onGenerar($access, SIGA::param("id_hoja"), SIGA::param("id_hoja_plantilla")));
         break;
       case "onGet":
         header('Content-Type: text/plain; charset=utf-8');

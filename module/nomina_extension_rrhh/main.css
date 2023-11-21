@@ -2,3 +2,46 @@
     background-image: url(image/icon-seleccionar.png);
 }
 
+.icon-nomina_extension_rrhh_administrar_hoja{
+    background-image: url(image/icon-administrar_hoja.png);
+}
+
+.icon-nomina_extension_rrhh_xls {
+    background-image: url(image/icon-xls.png);
+}
+
+.ag-ltr .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
+.ag-ltr .ag-cell-range-single-cell,
+.ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle,
+.ag-ltr .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
+.ag-ltr .ag-full-width-row.ag-row-focus:focus .ag-cell-wrapper.ag-row-group,
+.ag-rtl .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
+.ag-rtl .ag-cell-range-single-cell,
+.ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle,
+.ag-rtl .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
+.ag-rtl .ag-full-width-row.ag-row-focus:focus .ag-cell-wrapper.ag-row-group {
+    border: 1px var(--ag-range-selection-border-style) var(--ag-range-selection-border-color) !important;
+}
+
+
+.nomina_extension_rrhh .btn_blink{
+    color: black;
+    animation: parpadeo 2s;
+    -webkit-animation: parpadeo 2s;
+    -moz-animation: parpadeo 2s;
+    animation-iteration-count:infinite;
+    -webkit-animation-iteration-count:infinite;
+    -moz-animation-iteration-count:infinite;
+}
+
+@keyframes parpadeo {
+    0% {opacity: 0.5}
+    50% {opacity: 1}
+    100%{opacity: 0.5}
+}
+/*
+@-webkit-keyframes parpadeo {
+    0% {background-color: #FFFFC1}
+    50% {background-color: #FFFF89}
+    100%{background-color: #FFFFC1}
+}*/

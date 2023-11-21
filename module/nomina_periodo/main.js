@@ -1,18 +1,18 @@
 siga.define("nomina_periodo",{
   extend: 'siga.window',
-  title: 'Nómina - Período', 
+  title: 'Nómina - Período',
   width: 850,
   height: 600,
-  
+
   initComponent: function(){
     var me = this;
     _defaults=me.getInternal("field_defaults");
     /*_defaults=me.getInternal("field_defaults");
     me.internal._defaults=_defaults;
-    
-    
+
+
     me.setInternal({
-      field_defaults: {        
+      field_defaults: {
       }
     });*/
 
@@ -36,8 +36,8 @@ siga.define("nomina_periodo",{
         collapsible : false,
     }];
     me.internal.gridList.groupField='tipo_denominacion';
-    
-    
+
+
     me.items=[
       {
         xtype:'hidden',
@@ -56,7 +56,7 @@ siga.define("nomina_periodo",{
             name: 'codigo',
             fieldLabel: 'Código',
             value: '',
-            width: 180, 
+            width: 180,
             margin: "5 0 0 0",
           },
           {
@@ -75,17 +75,17 @@ siga.define("nomina_periodo",{
               data : [
                 {"id":"t", "nombre":"CERRADO"},
                 {"id":"f", "nombre":"ABIERTO"}
-              ]                      
+              ]
             },
             displayField: 'nombre',
             valueField: 'id',
             allowBlank: false,
             editable: false,
-            forceSelection: true,                    
-            value: 'f'            
-          },          
+            forceSelection: true,
+            value: 'f'
+          },
         ]
-      },         
+      },
       {
         xtype: "container",
         layout: "hbox",
@@ -100,7 +100,7 @@ siga.define("nomina_periodo",{
             submitFormat: 'Y-m-d',
             value: '',
             width: 180,
-          },                 
+          },
           {
             xtype:'datefield',
             id: me._('fecha_culminacion'),
@@ -110,7 +110,7 @@ siga.define("nomina_periodo",{
             submitFormat: 'Y-m-d',
             value: '',
             width: 180,
-          },          
+          },
           {
             xtype:'combobox',
             id: me._('tipo'),
@@ -146,7 +146,7 @@ siga.define("nomina_periodo",{
                   if(records.length>0)
                     me.getCmp("tipo").setValue(records[0].get("tipo"));
                 },
-                beforeload: function(store,operation,eOpts){                
+                beforeload: function(store,operation,eOpts){
                 }
               }
             },
@@ -163,7 +163,7 @@ siga.define("nomina_periodo",{
             }
           },
         ]
-      },  
+      },
 
       {
         xtype:'textfield',
@@ -172,19 +172,19 @@ siga.define("nomina_periodo",{
         fieldLabel: 'Periodo',
         fieldStyle: "text-transform: uppercase;",
         value: ''
-      },    
-      
-      
-      
+      },
+
+
+
     ];
-    
+
     me.callParent(arguments);
-    
-    
+
+
     //me.setAccess(siga.getAccess("modulo_base/usuarios"));
-    
+
     me.internal.sort=[{property: 'tipo', direction: 'ASC'},{property: 'codigo', direction: 'ASC'}];
-    
+
     var store= new Ext.data.Store({
       pageSize: 100,
       fields: ['id','codigo','descripcion','estatus'],
@@ -215,9 +215,9 @@ siga.define("nomina_periodo",{
           store.proxy.extraParams.text=me.getCmp('txtSearch').getValue();
         }
       }
-    });    
-    
-    var columns=[      
+    });
+
+    var columns=[
       {
         xtype: 'gridcolumn',
         dataIndex: 'codigo',
@@ -251,7 +251,7 @@ siga.define("nomina_periodo",{
         xtype: 'gridcolumn',
         dataIndex: 'fecha_inicio',
         text: '<b>Inicio</b>',
-        width: '12%',        
+        width: '12%',
         menuDisabled: true,
         sortable: false,
         align: 'center',
@@ -269,7 +269,7 @@ siga.define("nomina_periodo",{
         xtype: 'gridcolumn',
         dataIndex: 'fecha_culminacion',
         text: '<b>Culminación</b>',
-        width: '12%',        
+        width: '12%',
         menuDisabled: true,
         sortable: false,
         align: 'center',
@@ -301,24 +301,24 @@ siga.define("nomina_periodo",{
           }
         },
       }
-      
+
     ];
-    
+
     me.getCmp('gridList').reconfigure(store,columns);
     me.getCmp('pagingList').bindStore(store);
-    
+
   },
-  
+
   init: function(){
     var me=this;
-    
+
     me.onNew();
-    
-    
-    
-    
+
+
+
+
   },
-    
+
   onNew: function(){
     var me=this;
 
@@ -330,13 +330,13 @@ siga.define("nomina_periodo",{
     me.getCmp("fecha_culminacion").setValue("");
     me.getCmp("tipo").setValue("Q");
     me.getCmp("cerrado").setValue("f");
-    
+
     me.onSearch();
-    
+
     me.onGet_Codigo();
-    
+
   },
-  
+
   onGet_Codigo: function(){
     var me=this;
     return;
@@ -352,16 +352,16 @@ siga.define("nomina_periodo",{
       },
       failure:function(request){
         Ext.MessageBox.hide();
-        var result=Ext.JSON.decode(request.responseText);  
+        var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }
     });
   },
-  
+
   onGet: function(dataview, record, item, index, e){
-    var me=this;    
+    var me=this;
     var _id=record.get("id");
-    
+
     Ext.Ajax.request({
       method: 'POST',
       url:'module/nomina_periodo/',
@@ -370,9 +370,9 @@ siga.define("nomina_periodo",{
         id: _id
       },
       success: function(request){
-        var result=Ext.JSON.decode(request.responseText);        
-        
-        
+        var result=Ext.JSON.decode(request.responseText);
+
+
         me.getCmp("id").setValue(result[0]["id"]);
         me.getCmp("codigo").setValue(result[0]["codigo"]);
         me.getCmp("descripcion").setValue(result[0]["descripcion"]);
@@ -380,23 +380,23 @@ siga.define("nomina_periodo",{
         me.getCmp("fecha_culminacion").setValue(result[0]["fecha_culminacion"]);
         me.getCmp("tipo").setValue(result[0]["tipo"]);
         me.getCmp("cerrado").setValue(result[0]["cerrado"]);
-        
-        
-        
+
+
+
       },
       failure:function(request){
         Ext.MessageBox.hide();
-        var result=Ext.JSON.decode(request.responseText);  
+        var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }
     });
   },
-  
-  
+
+
   onSave: function(){
-    var me=this;    
+    var me=this;
     var _id=Ext.String.trim(me.getCmp("id").getValue());
-    
+
     if(_id){
       Ext.MessageBox.confirm("Guardar",
                              "¿Desea modificar el registro actual?",
@@ -409,7 +409,7 @@ siga.define("nomina_periodo",{
       me.save();
     }
   },
-  
+
   save: function(){
     var me=this;
     var _id=Ext.String.trim(me.getCmp("id").getValue());
@@ -418,8 +418,8 @@ siga.define("nomina_periodo",{
     var _fecha_inicio=me.getCmp("fecha_inicio").getValue();
     var _fecha_culminacion=me.getCmp("fecha_culminacion").getValue();
     var _tipo=Ext.String.trim(me.getCmp("tipo").getValue());
-    var _cerrado=Ext.String.trim(me.getCmp("cerrado").getValue());    
-    
+    var _cerrado=Ext.String.trim(me.getCmp("cerrado").getValue());
+
     Ext.MessageBox.wait();
     Ext.Ajax.request({
       method: 'POST',
@@ -437,7 +437,7 @@ siga.define("nomina_periodo",{
       success: function(request){
         var result=Ext.JSON.decode(request.responseText);
         Ext.MessageBox.hide();
-        
+
         if(result.success){
           me.setMessage(result.message,"green");
           me.onNew();
@@ -450,7 +450,7 @@ siga.define("nomina_periodo",{
       },
       failure:function(request){
         Ext.MessageBox.hide();
-        var result=Ext.JSON.decode(request.responseText);  
+        var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }
     });
@@ -468,7 +468,7 @@ siga.define("nomina_periodo",{
       focusCls: '',
       disabledCls: 'siga-btn-disabled',
       iconCls: 'siga-btn-base-icon icon-delete',
-      iconAlign: 'top',        
+      iconAlign: 'top',
       listeners: {
         click: function(){
           if(!me.getCmp('gridList').getSelectionModel().hasSelection())
@@ -490,7 +490,7 @@ siga.define("nomina_periodo",{
     var me=this;
     var _id=me.getCmp("id").getValue().trim();
     if(!_id) return;
-    
+
     Ext.MessageBox.wait('Eliminando... por favor espere!');
     Ext.Ajax.request({
       method: 'POST',
@@ -508,11 +508,11 @@ siga.define("nomina_periodo",{
         }
         else{
           me.setMessage(result.message,"red");
-        }          
+        }
       },
       failure:function(request){
         Ext.MessageBox.hide();
-        var result=Ext.JSON.decode(request.responseText);      
+        var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }
     });
@@ -531,7 +531,7 @@ siga.define("nomina_periodo",{
       disabledCls: 'siga-btn-disabled',
       iconCls: 'siga-btn-base-icon icon-copypaste',
       iconAlign: 'top',
-      tooltip: 'Duplicar periodo.',  
+      tooltip: 'Duplicar periodo.',
       listeners: {
         click: function(){
           if(!me.getCmp('gridList').getSelectionModel().hasSelection())
@@ -544,8 +544,8 @@ siga.define("nomina_periodo",{
                                           me.onDuplicar();
                                       }
                                   );
-        } 
-      } 
+        }
+      }
     };
   },
 
@@ -553,7 +553,7 @@ siga.define("nomina_periodo",{
     var me=this;
     var _id=me.getCmp("id").getValue().trim();
     if(!_id) return;
-    
+
     Ext.MessageBox.wait('Procesando... por favor espere!');
     Ext.Ajax.request({
       method: 'POST',
@@ -571,11 +571,11 @@ siga.define("nomina_periodo",{
         }
         else{
           me.setMessage(result.message,"red");
-        }          
+        }
       },
       failure:function(request){
         Ext.MessageBox.hide();
-        var result=Ext.JSON.decode(request.responseText);      
+        var result=Ext.JSON.decode(request.responseText);
         me.setMessage(result.message,"red");
       }
     });

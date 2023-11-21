@@ -44,7 +44,8 @@ class nomina_extension_rrhh_hoja{
     }
 
     $sql="SELECT
-            *
+            C.*,
+            C.codigo || ' - ' || C.descripcion codigo_description
           FROM
             modulo_nomina.extension_rrhh_hoja as C
           WHERE
@@ -60,7 +61,7 @@ class nomina_extension_rrhh_hoja{
     return $return;
   }
 
-  public static function onSave($access,$id,$codigo,$descripcion,$tipo,$id_periodo,$id_nomina,$activo){
+  public static function onSave($access,$id,$codigo,$descripcion,$tipo,$id_periodo,$id_nomina,$activo,$id_hoja_plantilla=NULL){
     $db=SIGA::DBController();
 
     //validación de la información
@@ -94,13 +95,66 @@ class nomina_extension_rrhh_hoja{
       if(!($access=="rw" or $access=="a"))//solo el acceso 'rw' y 'a' es permitido
         return array("success"=>false,"message"=>"Error. El usuario no tiene permiso para guardar datos.");
       //Insertar registro
-      $result=$db->Insert("modulo_nomina.extension_rrhh_hoja",$data);
+      //$result=$db->Insert("modulo_nomina.extension_rrhh_hoja",$data);
+      $result=$db->Execute("INSERT INTO modulo_nomina.extension_rrhh_hoja(codigo,descripcion,tipo,id_periodo,id_nomina,activo)
+                           VALUES('$codigo','$descripcion','$tipo',ARRAY[$id_periodo],ARRAY[$id_nomina],'$activo') RETURNING id");
+      if(isset($result[0]["id"])){
+        $id = $result[0]["id"];
+
+        include_once(SIGA::path()."/class/nomina_extension_rrhh.class.php");
+        nomina_extension_rrhh::onGenerar($access, $id, $id_hoja_plantilla);
+      }
     }
     //Si hay error al modificar o insertar
     if(!$result)
       return array("success"=>false,"message"=>"Error al guardar en la tabla: 'modulo_nomina.extension_rrhh_hoja'", "error"=>$db->GetMsgErrorClear());
 
     return array("success"=>true,"message"=>"Datos guardados con exito.");
+  }
+
+  public static function onDelete($access,$id){
+    $db=SIGA::DBController();
+    if(!($access=="rw")){//solo el acceso 'rw' es permitido
+      print "{success: false, message: 'Error. El usuario no tiene permiso para eliminar datos.'}";
+      return;
+    }
+
+    $db->Delete("modulo_nomina.extension_rrhh_hoja_fila", "id_hoja='$id'");
+    $db->Delete("modulo_nomina.extension_rrhh_hoja_valor ", "id_hoja='$id'");
+
+    $result=$db->Delete("modulo_nomina.extension_rrhh_hoja","id='$id'");
+    if(!$result){
+      return array("success"=>false,"message"=>"Error al borrar en la tabla: 'modulo_nomina.extension_rrhh_hoja'","error"=>$db->GetMsgError());
+    }
+    return ["success"=> true, "message" =>"Registro eliminado con éxito."];
+  }
+
+  public static function onDuplicar($access,$id){
+    $db=SIGA::DBController();
+    if(!($access=="rw")){//solo el acceso 'rw' es permitido
+      print "{success: false, message: 'Error. El usuario no tiene permiso para realizar esta acción.'}";
+      return;
+    }
+
+    $codigo = self::onCorrelativo();
+
+
+    $result=$db->Execute("INSERT INTO modulo_nomina.extension_rrhh_hoja(codigo,descripcion,tipo,id_periodo,id_nomina,id_hoja_plantilla,activo)
+                           SELECT '$codigo', descripcion || ' (DUPLICADO)', tipo, id_periodo, id_nomina, id_hoja_plantilla, activo
+                           FROM modulo_nomina.extension_rrhh_hoja WHERE id='$id'
+                           RETURNING id");
+    if(!isset($result[0]["id"])){
+      return ["success"=> false, "message" =>"Error al duplicar registro."];
+    }
+    $id_duplicado = $result[0]["id"];
+
+    $db->Execute("INSERT INTO modulo_nomina.extension_rrhh_hoja_fila(id_hoja, id_nomina, id_ficha)
+                  SELECT '$id_duplicado', id_nomina, id_ficha FROM modulo_nomina.extension_rrhh_hoja_fila WHERE id_hoja='$id'");
+
+    $db->Execute("INSERT INTO modulo_nomina.extension_rrhh_hoja_valor(id_hoja, id_nomina, id_ficha, id_columna, valor)
+                  SELECT '$id_duplicado', id_nomina, id_ficha, id_columna, valor FROM modulo_nomina.extension_rrhh_hoja_valor WHERE id_hoja='$id'");
+
+    return ["success"=> true, "message" =>"Registro duplicado con éxito.", "id" => $id_duplicado];
   }
 }
 ?>

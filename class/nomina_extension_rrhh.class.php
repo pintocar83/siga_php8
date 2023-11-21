@@ -5,7 +5,7 @@ include_once(SIGA::path()."/class/ficha.class.php");
 include_once(SIGA::path()."/class/nomina.class.php");
 
 class nomina_extension_rrhh {
-  public static function onGenerar($access, $id_hoja){
+  public static function onGenerar($access, $id_hoja, $id_hoja_plantilla = NULL){
     SIGA::$DBMode=PGSQL_ASSOC;
     $db=SIGA::DBController();
 
@@ -37,7 +37,7 @@ class nomina_extension_rrhh {
                         FROM modulo_nomina.extension_rrhh_hoja_columna
                         WHERE tipo ILIKE 'concepto' )
     ";
-    $db->Execute($sql);
+    $db->Execute($sql);    
 
     //borrar las filas para regenerarlas
     $sql = "
@@ -59,6 +59,31 @@ class nomina_extension_rrhh {
         id_nomina IN ($id_nomina)
     ";
     $db->Execute($sql);
+
+    //copiar los valores editables (tipo!=concepto) desde id_hoja_plantilla
+    if($id_hoja_plantilla){
+      $sql = "
+        INSERT INTO modulo_nomina.extension_rrhh_hoja_valor(id_hoja, id_nomina, id_ficha, id_columna, valor)
+        SELECT 
+          $id_hoja id_hoja,
+          V.id_nomina,
+          V.id_ficha,
+          V.id_columna,
+          V.valor
+        FROM
+          modulo_nomina.extension_rrhh_hoja_valor V,
+          modulo_nomina.extension_rrhh_hoja_columna C
+        WHERE
+          V.id_hoja = '$id_hoja_plantilla' AND
+          V.id_columna=C.id AND
+          C.tipo <> 'concepto'
+      ";
+      $db->Execute($sql);
+
+      $db->Update("modulo_nomina.extension_rrhh_hoja",[
+          "id_hoja_plantilla"=>"'$id_hoja_plantilla'"
+        ],"id='$id_hoja'");
+    }
 
     $sql = "SELECT * FROM modulo_nomina.extension_rrhh_hoja_columna ORDER BY orden, id";
     $columna = $db->Execute($sql);
@@ -261,6 +286,9 @@ class nomina_extension_rrhh {
         if($columna[$j]["tipo"]=="ficha"){
           $field_value = $columna[$j]["valor"];
           $data[$i]["$field"] = $fila[$i]["$field_value"];
+          if($field_value == "cedula"){
+            $data[$i]["$field"] = intval($data[$i]["$field"]);
+          }
         }
         else if($columna[$j]["tipo"]=="#"){
           $data[$i]["$field"] = $i + 1;
@@ -327,6 +355,10 @@ class nomina_extension_rrhh {
         break;
       }
 
+      if(isset($return[$i]["editable"]) && $return[$i]["editable"]){
+        $return[$i]["cellClass"].=" column-editable";
+      }
+
     }
     return $return;
   }
@@ -365,10 +397,23 @@ class nomina_extension_rrhh {
           "id_nomina"  => "$id_nomina",
           "id_ficha"   => "$id_ficha",
           "id_columna" => "$id_columna",
-          "valor"      =>"'".$db->EscapeString($valor)."'"
+          "valor"      => "'".$db->EscapeString($valor)."'"
         ]);
       }
+    }
 
+
+    for($i=0; $i<count($ag_grid_state); $i++) { 
+      $id_columna = substr($ag_grid_state[$i]["colId"],7);
+      $orden = $i+1;
+      unset($ag_grid_state[$i]["colId"]);
+
+      $data = [
+        "orden" => $i+1,
+        "ag_grid_state" => "'".$db->EscapeString(json_encode($ag_grid_state[$i]))."'"
+      ];
+
+      $db->Update("modulo_nomina.extension_rrhh_hoja_columna", $data, "id=$id_columna");
     }
 
     return ["success" => true];

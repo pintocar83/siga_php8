@@ -20,6 +20,8 @@ class MODULO extends nomina_extension_rrhh_hoja{
         $return["nomina"]          = nomina::onList("","","",0,"ALL",'[{"property": "tipo", "direction": "ASC"},{"property": "codigo_nomina", "direction": "ASC"}]')["result"];
         $return["periodo"]         = nomina_periodo::onList(NULL,NULL,"",0,"ALL",'[{"property": "codigo", "direction": "ASC"}]')["result"];
         $return["periodo_tipo"]    = nomina_periodo_tipo::onList_Activo("",0,"ALL",'[{"property": "denominacion", "direction": "ASC"}]')["result"];
+        $return["hoja_plantilla"]  = self::onList("",0,"ALL",'[{"property": "codigo", "direction": "DESC"}]')["result"];
+        array_unshift( $return["hoja_plantilla"], ["id" => "", "codigo" => "00000", "descripcion"=> "NO APLICAR"]);
 
         print json_encode($return);
         break;
@@ -49,8 +51,17 @@ class MODULO extends nomina_extension_rrhh_hoja{
                                        SIGA::paramUpper("tipo"),
                                        SIGA::param("id_periodo"),
                                        SIGA::param("id_nomina"),
-                                       SIGA::param("activo")
+                                       SIGA::param("activo"),
+                                       SIGA::param("id_hoja_plantilla")
                                        ));
+        break;
+      case "onDelete":
+        header('Content-Type: text/plain; charset=utf-8');
+        print json_encode(self::onDelete($access, SIGA::param("id")));
+        break;
+      case "onDuplicar":
+        header('Content-Type: text/plain; charset=utf-8');
+        print json_encode(self::onDuplicar($access, SIGA::param("id")));
         break;
 
       case "onCss":
