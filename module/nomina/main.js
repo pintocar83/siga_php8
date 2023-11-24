@@ -1591,6 +1591,14 @@ siga.define('nomina', {
             }
           },
           {
+            text: 'Consolidado x Mes (Concepto Sueldo Normal)',
+            listeners: {
+              click: function(){
+                window.open("report/nomina_concepto_x_mes.php");
+              }
+            }
+          },
+          {
             text: 'Proyección',
             menu: [
               {

@@ -134,6 +134,12 @@ class ficha{
   }
 
   public static function onGet_Antiguedad($id, $fecha_culminacion=NULL){
+    $database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
+    //CASO ESPECIFICO PARA LA FUNDACITE SUCRE
+    if($database_name && preg_grep("/siga_fundacite_sucre*/i",[$database_name])){
+      return self::onGet_AntiguedadLegacy($id, $fecha_culminacion);
+    }
+
     $db=SIGA::DBController();
     $sql="SELECT fecha_ingreso, fecha_egreso FROM modulo_nomina.ficha WHERE id=$id";
     $result=$db->Execute($sql);
@@ -147,24 +153,7 @@ class ficha{
     $return["antiguedad_simple"]="";
     //$return["antiguedad"]="";
     $return["antiguedad"]=["y"=>0,"m"=>0,"d"=>0, "days"=>0];
-    /*
-    if(isset($result[0]["fecha_ingreso"])){
-      $fecha_ingreso=str_replace("}","",str_replace("{","",$result[0]["fecha_ingreso"]));
-      $fecha_ingreso=explode(",",$fecha_ingreso);
-      $fecha_egreso=str_replace("}","",str_replace("{","",$result[0]["fecha_egreso"]));
-      $fecha_egreso=explode(",",$fecha_egreso);
 
-      $dias=0;
-      for($i=0;$i<count($fecha_ingreso);$i++){
-        if(!isset($fecha_egreso[$i]) or $fecha_egreso[$i]=="") $fecha_egreso[$i]=$fecha_culminacion;
-        $dias+=floor((strtotime($fecha_egreso[$i])-strtotime($fecha_ingreso[$i]))/(60*60*24));
-      }
-      $return["antiguedad_dia"]=$dias;
-      $return["antiguedad_anio"]=floor($dias/365);
-      $return["antiguedad_anio_dia"]=array(floor($dias/365),$dias%365);
-      $return["antiguedad_simple"]=$dias>=365?(floor($dias/365)." año".(floor($dias/365)==1?"":"s")." y ".($dias%365)." día".($dias%365==1?"":"s")):"$dias Día".($dias==1?"":"s");
-      $return["antiguedad"]=$dias>=365?("$dias Días = ".floor($dias/365)." años y ".($dias%365)." días."):"$dias Días";
-    }*/
     if(isset($result[0]["fecha_ingreso"])){
       $fecha_ingreso=str_replace("}","",str_replace("{","",$result[0]["fecha_ingreso"]));
       $fecha_ingreso=explode(",",$fecha_ingreso);
@@ -222,6 +211,48 @@ class ficha{
     }
 
 
+    return $return;
+  }
+
+  public static function onGet_AntiguedadLegacy($id, $fecha_culminacion=NULL){
+    $db=SIGA::DBController();
+    $sql="SELECT fecha_ingreso, fecha_egreso FROM modulo_nomina.ficha WHERE id=$id";
+    $result=$db->Execute($sql);
+    
+    if($fecha_culminacion===NULL) $fecha_culminacion=date("Y-m-d");
+    
+    $return=array();
+    $return["antiguedad_dia"]=0;
+    $return["antiguedad_anio"]=0;
+    $return["antiguedad_anio_dia"]=0;
+    $return["antiguedad_simple"]="";
+    $return["antiguedad"]="";
+    
+    if(isset($result[0]["fecha_ingreso"])){
+      $fecha_ingreso=str_replace("}","",str_replace("{","",$result[0]["fecha_ingreso"]));
+      $fecha_ingreso=explode(",",$fecha_ingreso);
+      $fecha_egreso=str_replace("}","",str_replace("{","",$result[0]["fecha_egreso"]));
+      $fecha_egreso=explode(",",$fecha_egreso);
+      
+      $dias=0;
+      for($i=0;$i<count($fecha_ingreso);$i++){
+        if(!isset($fecha_egreso[$i]) or $fecha_egreso[$i]=="") $fecha_egreso[$i]=$fecha_culminacion;      
+        $dias+=floor((strtotime($fecha_egreso[$i])-strtotime($fecha_ingreso[$i]))/(60*60*24));
+      }
+      $return["antiguedad_dia"]=$dias%365;
+      $return["antiguedad_dias"]=$dias;
+      $return["antiguedad_anio"]=floor($dias/365);
+      $return["antiguedad_anio_dia"]=array(floor($dias/365),$dias%365);
+      $return["antiguedad_simple"]=$dias>=365?(floor($dias/365)." año".(floor($dias/365)==1?"":"s")." y ".($dias%365)." día".($dias%365==1?"":"s")):"$dias Día".($dias==1?"":"s");
+      $return["antiguedad[]"]=[
+        "y"=>$return["antiguedad_anio"],
+        "m"=>0,
+        "d"=>$return["antiguedad_dia"], 
+        "days"=>$dias
+      ];
+      $return["antiguedad"]=$dias>=365?("$dias Días = ".floor($dias/365)." años y ".($dias%365)." días."):"$dias Días";
+      
+    }
     return $return;
   }
 

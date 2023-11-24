@@ -135,8 +135,8 @@ class nomina_extension_rrhh {
     for($p=0; $p<count($concepto_periodo); $p++) {
       for($c=0; $c<count($concepto_periodo[$p]["concepto"]); $c++) {
         if(in_array($concepto_periodo[$p]["concepto"][$c]["id_concepto"], $id_concepto) &&
-          $concepto_periodo[$p]["concepto"][$c]["valor"] > $max){
-          $max = $concepto_periodo[$p]["concepto"][$c]["valor"];
+          $concepto_periodo[$p]["concepto"][$c]["valor_final"] > $max){
+          $max = $concepto_periodo[$p]["concepto"][$c]["valor_final"];
         }
       }
     }
@@ -149,7 +149,7 @@ class nomina_extension_rrhh {
       $sum = 0;
       for($c=0; $c<count($concepto_periodo[$p]["concepto"]); $c++) {
         if(in_array($concepto_periodo[$p]["concepto"][$c]["id_concepto"], $id_concepto)){
-          $sum += $concepto_periodo[$p]["concepto"][$c]["valor"];
+          $sum += $concepto_periodo[$p]["concepto"][$c]["valor_final"];
         }
       }
 
@@ -165,7 +165,7 @@ class nomina_extension_rrhh {
     for($p=0; $p<count($concepto_periodo); $p++) {
       for($c=0; $c<count($concepto_periodo[$p]["concepto"]); $c++) {
         if(in_array($concepto_periodo[$p]["concepto"][$c]["id_concepto"], $id_concepto)){
-          $sum += $concepto_periodo[$p]["concepto"][$c]["valor"];
+          $sum += $concepto_periodo[$p]["concepto"][$c]["valor_final"];
         }
       }
     }

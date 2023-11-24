@@ -9,6 +9,16 @@ siga.define('nomina_extension_rrhh', {
   maximizable:true,
   resizable: true,
 
+  listeners: {
+    beforeclose: function(w,o){
+      var me=this;
+      if(me.internal.dataModified && Object.keys(me.internal.dataModified).length > 0){
+        return confirm("Existen cambios realizados sin guardar. Desea salir sin guardarlos?");
+      }
+      return true;
+    },
+  },
+
   initComponent: function(){
     var me = this;
 
@@ -212,6 +222,7 @@ siga.define('nomina_extension_rrhh', {
     if(me.internal && me.internal.gridOptions && me.internal.gridOptions.api && me.internal.gridOptions.api.destroy){
       me.internal.gridOptions.api.destroy();
     }
+    me.internal.dataModified={};
 
     var msgWait=Ext.Msg.wait('Cargando. Por favor espere...', me.getTitle(),{text:''});
     msgWait.setAlwaysOnTop(true);
@@ -240,6 +251,7 @@ siga.define('nomina_extension_rrhh', {
     var me=this;
 
     console.log(me.internal.data);
+    me.internal.dataModified={};
 
     me.internal.gridOptions = {
       columnDefs: me.internal.data["columna"],
