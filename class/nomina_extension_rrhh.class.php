@@ -328,8 +328,14 @@ class nomina_extension_rrhh {
       $return[$i] = array_merge([
         "field" => "column_".$columna[$i]["id"],
         "headerName" => $columna[$i]["nombre"],
+        "headerTooltip" => $columna[$i]["nombre"],
         "cellClass" => $columna[$i]["cls"]
       ], $ag_grid_state);
+
+      if($columna[$i]["format"]){
+        $return[$i]["valueFormatter"]=$columna[$i]["format"];
+      }
+
 
       if(!isset($return[$i]["floatingFilterComponentParams"]))
         $return[$i]["floatingFilterComponentParams"]=[];

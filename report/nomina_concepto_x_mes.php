@@ -1,4 +1,5 @@
 <?php
+set_time_limit(-1);
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'On');
 error_reporting(E_ALL);
@@ -90,6 +91,8 @@ for($f=0; $f<count($fila); $f++){
 
   for($m=0; $m<12; $m++) {
     $mes=$m+1;
+    if(!isset($periodo_mes[$mes]))
+      continue;
     $suma_concepto = 0;
     for($p=0; $p<count($periodo_mes[$mes]); $p++){
       $concepto_periodo = nomina::ficha_concepto($fila[$f]["id_nomina"],$periodo_mes[$mes][$p],$fila[$f]["id_ficha"]);

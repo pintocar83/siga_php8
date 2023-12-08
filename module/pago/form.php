@@ -74,8 +74,8 @@
 					</tr>
 					<tr>
 						<td class='TitulosCampos'>Cuenta&nbsp;Destino</td>
-						<td colspan="2">
-							<INPUT id='CUENTA_DESTINO' class='TextoCampoInput' type='text' size='100' value="" style='width: 100%;'>
+						<td colspan="2" style="display: flex;">
+							<INPUT id='CUENTA_DESTINO' class='TextoCampoInput' type='text' size='100' value="" style='width: 450px; flex: 1;'><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_DESTINO"><IMG src='image/icon/icon-find.png' /></button>
 						</td>
 					</tr>
 					<tr>

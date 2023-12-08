@@ -70,6 +70,8 @@ function Form_PROVEEDOR__ActivarFormulario(){
 	xGetElementById("TELEFONO_FP").readOnly=false;
 	xGetElementById("CORREO_FP").readOnly=false;
 	xGetElementById("DIRECCION_FP").readOnly=false;
+	xGetElementById("CUENTA_BANCARIA_1_FP").readOnly=false;
+	xGetElementById("CUENTA_BANCARIA_2_FP").readOnly=false;
 
 
 	xGetElementById("RIF_TIPO_FP").setAttribute('class','TextoCampoInputObligatorios');
@@ -78,6 +80,9 @@ function Form_PROVEEDOR__ActivarFormulario(){
 	xGetElementById("TELEFONO_FP").setAttribute('class','TextoCampoInput');
 	xGetElementById("CORREO_FP").setAttribute('class','TextoCampoInput');
 	xGetElementById("DIRECCION_FP").setAttribute('class','TextoCampoInput');
+	xGetElementById("DIRECCION_FP").setAttribute('class','TextoCampoInput');
+	xGetElementById("CUENTA_BANCARIA_1_FP").setAttribute('class','TextoCampoInput');
+	xGetElementById("CUENTA_BANCARIA_2_FP").setAttribute('class','TextoCampoInput');
 	}
 
 /**
@@ -90,6 +95,8 @@ function Form_PROVEEDOR__DesactivarFormulario(){
 	xGetElementById("TELEFONO_FP").readOnly=true;
 	xGetElementById("CORREO_FP").readOnly=true;
 	xGetElementById("DIRECCION_FP").readOnly=true;
+	xGetElementById("CUENTA_BANCARIA_1_FP").readOnly=true;
+	xGetElementById("CUENTA_BANCARIA_2_FP").readOnly=true;
 
 
 	xGetElementById("RIF_TIPO_FP").setAttribute('class','TextoCampoInputDesactivado');
@@ -98,6 +105,8 @@ function Form_PROVEEDOR__DesactivarFormulario(){
 	xGetElementById("TELEFONO_FP").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("CORREO_FP").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("DIRECCION_FP").setAttribute('class','TextoCampoInputDesactivado');
+	xGetElementById("CUENTA_BANCARIA_1_FP").setAttribute('class','TextoCampoInputDesactivado');
+	xGetElementById("CUENTA_BANCARIA_2_FP").setAttribute('class','TextoCampoInputDesactivado');
 	}
 
 /**
@@ -168,6 +177,8 @@ function Form_PROVEEDOR__GuardarVerificar(){
 	var Telefono  = xTrim(strtoupper(xGetElementById("TELEFONO_FP").value));
 	var Correo  = xTrim(xGetElementById("CORREO_FP").value);
 	var Direccion  = xTrim(strtoupper(xGetElementById("DIRECCION_FP").value));
+	var CuentaBancaria1  = xTrim(strtoupper(xGetElementById("CUENTA_BANCARIA_1_FP").value));
+	var CuentaBancaria2  = xTrim(strtoupper(xGetElementById("CUENTA_BANCARIA_2_FP").value));
 
 	if(!RifNumero){
 		var msg="Por favor introduzca el número de RIF."
@@ -207,7 +218,10 @@ function Form_PROVEEDOR__GuardarVerificar(){
 										'denominacion':Denominacion,
 										'telefono':Telefono,
 										'correo':Correo,
-										'direccion':Direccion},
+										'direccion':Direccion,
+										'cuenta_bancaria_principal': CuentaBancaria1,
+										'cuenta_bancaria_secundaria': CuentaBancaria2,
+									},
 						'onSuccess':Form_PROVEEDOR__GuardarMensaje,
 						'url':'../persona/',
 						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
@@ -354,6 +368,8 @@ function Form_PROVEEDOR__SeleccionarElementoTabla(IDSeleccion){
 							xGetElementById("TELEFONO_FP").value=resultado[0]["telefono"];
 							xGetElementById("CORREO_FP").value=resultado[0]["correo"];
 							xGetElementById("DIRECCION_FP").value=resultado[0]["direccion"];
+							xGetElementById("CUENTA_BANCARIA_1_FP").value=resultado[0]["cuenta_bancaria_principal"];
+							xGetElementById("CUENTA_BANCARIA_2_FP").value=resultado[0]["cuenta_bancaria_secundaria"];
 						},
 						'url':'../persona/',
 						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}

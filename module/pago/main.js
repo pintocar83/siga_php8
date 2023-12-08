@@ -106,6 +106,9 @@ siga.define('pago', {
 
       me.TipoModificar=-1;
 
+      me.internal.cuenta_destino=[];
+      me.internal.cuenta_destino_menu=null;
+
       me.TabPane = new WebFXTabPane(me.$("TABPANE"), true);
 
 
@@ -125,6 +128,10 @@ siga.define('pago', {
             me.$("PERSONA_ID").value=result[0]["id"];
             me.$("PERSONA_IDENTIFICACION").value=result[0]["identificacion"];
             me.$("PERSONA_DENOMINACION").value=result[0]["denominacion"];
+            me.internal.cuenta_destino=[
+              result[0]["cuenta_bancaria_principal"],
+              result[0]["cuenta_bancaria_secundaria"]
+            ];
             me.CargarSolicitudes();
           }
         });
@@ -142,6 +149,41 @@ siga.define('pago', {
           me.CambioSelectDetalles();
           return true;
         }});
+      });
+
+      me.$$("BOTON_SELECCIONAR_CUENTA_DESTINO").on("click", function(){
+        if(!me.internal.cuenta_destino || me.internal.cuenta_destino.length===0)
+          return;
+
+        if(!me.internal.cuenta_destino_menu){
+          var items=me.internal.cuenta_destino.map((row)=>{
+            return {
+              xtype: 'menuitem',
+              text: row,
+              handler: function(){
+                me.$("CUENTA_DESTINO").value=row;
+              }
+            }
+          });
+
+          me.internal.cuenta_destino_menu=Ext.create("Ext.menu.Menu",{
+            renderTo: Ext.getBody(),
+            floating: true,
+            ignoreParentClicks: true,
+            items: items
+          });
+          me.internal.cuenta_destino_menu.alignTo("BOTON_SELECCIONAR_CUENTA_DESTINO",'tr-br?',[0,0]);
+
+        }
+
+        if(me.internal.cuenta_destino_menu && me.internal.cuenta_destino_menu.isVisible())
+          me.internal.cuenta_destino_menu.hide();
+
+        if(me.internal.cuenta_destino_menu.isVisible())
+          me.internal.cuenta_destino_menu.hide();
+        else{
+          me.internal.cuenta_destino_menu.show();
+        }
       });
 
       me.$$("BOTON_CALENDARIO").on("click", function(){siga.onCalendar(me.$("FECHA"));});
@@ -369,6 +411,9 @@ siga.define('pago', {
       me.$("PERSONA_DENOMINACION").value="";
       me.$("MONTO").value="0,00";
       me.TamArreglo=0;
+      me.internal.cuenta_destino=[];
+      me.internal.cuenta_destino_menu=null;
+
       if(me.SW_PERSONA=="J"){
         me.SW_PERSONA="N";
         me.CargarSolicitudes();
@@ -394,6 +439,9 @@ siga.define('pago', {
       me.$("PERSONA_DENOMINACION").value="";
       me.$("MONTO").value="0,00";
       me.TamArreglo=0;
+      me.internal.cuenta_destino=[];
+      me.internal.cuenta_destino_menu=null;
+
       if(me.SW_PERSONA=="N"){
         me.SW_PERSONA="J";
         me.CargarSolicitudes();

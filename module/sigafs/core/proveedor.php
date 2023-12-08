@@ -86,7 +86,15 @@
 									<td class='TextCampos'>
 										<textarea id="DIRECCION_FP" class='TextoCampoInput' cols="40" rows="4" style="resize: none;"></textarea>
 									</td>
-								</tr>	
+								</tr>
+								<tr>
+									<td class='TitulosCampos'>Cuenta Bancaria - Principal</td>
+									<td class='TextCampos'><INPUT id="CUENTA_BANCARIA_1_FP" class='TextoCampoInput' type='text' size='30' maxlength="50" style="text-transform: none;"></td>
+								</tr>
+								<tr>
+									<td class='TitulosCampos'>Alternativa</td>
+									<td class='TextCampos'><INPUT id="CUENTA_BANCARIA_2_FP" class='TextoCampoInput' type='text' size='30' maxlength="50" style="text-transform: none;"></td>
+								</tr>
 							</tbody>
 							</table>
 

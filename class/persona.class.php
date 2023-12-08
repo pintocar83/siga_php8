@@ -78,8 +78,13 @@ class persona{
             P.denominacion,
             P.telefono,
             P.correo,
-            P.direccion
-          FROM modulo_base.persona as P WHERE P.id='$id'";
+            P.direccion,
+            PJ.cuenta_bancaria[1] cuenta_bancaria_principal,
+            PJ.cuenta_bancaria[2] cuenta_bancaria_secundaria
+          FROM modulo_base.persona as P
+            LEFT JOIN modulo_base.persona_juridica PJ ON P.id=PJ.id_persona
+          WHERE P.id='$id'
+    ";
     $return=$db->Execute($sql);
     return $return;
   }
@@ -163,7 +168,9 @@ class persona{
                                                 $denominacion,
                                                 $telefono,
                                                 $correo,
-                                                $direccion){
+                                                $direccion,
+                                                $cuenta_bancaria_principal = NULL,
+                                                $cuenta_bancaria_secundaria = NULL){
     $db=SIGA::DBController();
 
     //buscar si existe el registro
@@ -177,29 +184,54 @@ class persona{
     if($existe[0][0]>0)
       return array("success"=>false, "message"=>"Error. El número de rif $identificacion_tipo-$identificacion_numero ya existe.");
 
-    $data=array("tipo"=>"'J'",
-                "identificacion_tipo"=>"'$identificacion_tipo'",
-                "identificacion_numero"=>"'$identificacion_numero'",
-                "denominacion"=>"'$denominacion'",
-                "telefono"=>"'$telefono'",
-                "correo"=>"'$correo'",
-                "direccion"=>"'$direccion'");
-
     if($id!=""){//si es modificar un registro
       if(!($access=="rw"))//solo el acceso 'rw' es permitido
         return array("success"=>false, "message"=>"Error. El usuario no tiene permiso para modificar datos.");
+
+      $data=array("tipo"=>"'J'",
+                  "identificacion_tipo"=>"'$identificacion_tipo'",
+                  "identificacion_numero"=>"'$identificacion_numero'",
+                  "denominacion"=>"'$denominacion'",
+                  "telefono"=>"'$telefono'",
+                  "correo"=>"'$correo'",
+                  "direccion"=>"'$direccion'");
+
       //Modificar registro
       $result=$db->Update("modulo_base.persona",$data,"id='$id'");
+
+      //Si hay error al modificar o insertar
+      if(!$result)
+        return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_base.persona","messageDB"=>$db->GetMsgErrorClear());
     }
     else{//si es nuevo
       if(!($access=="rw" or $access=="a"))//solo el acceso 'rw' y 'a' es permitido
         return array("success"=>false, "message"=>"Error. El usuario no tiene permiso para guardar datos.");
       //Insertar registro
-      $result=$db->Insert("modulo_base.persona",$data);
+      //$result=$db->Insert("modulo_base.persona",$data);
+        //Insertar registro
+      $result=$db->Execute("INSERT INTO modulo_base.persona(tipo,identificacion_tipo,identificacion_numero,denominacion,telefono,correo,direccion)
+                            VALUES('J','$identificacion_tipo','$identificacion_numero','$denominacion','$telefono','$correo','$direccion') RETURNING id");
+
+      //Si hay error al modificar o insertar
+      if(!$result)
+        return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_base.persona","messageDB"=>$db->GetMsgErrorClear());
+
+      if(!isset($result[0][0]))
+        return array("success"=>false, "message"=>"Error al obtener el identificador de la persona.");
+      $id=$result[0][0];
     }
-    //Si hay error al modificar o insertar
-    if(!$result)
-      return array("success"=>false, "message"=>"Error al guardar en la tabla: modulo_base.persona","messageDB"=>$db->GetMsgErrorClear());
+    
+
+    $db->Delete("modulo_base.persona_juridica","id_persona=$id");
+    if($cuenta_bancaria_principal || $cuenta_bancaria_secundaria){
+      $db->Insert("modulo_base.persona_juridica",array(
+                                                        "id_persona"=>"$id",
+                                                        "cuenta_bancaria"=> "ARRAY['$cuenta_bancaria_principal','$cuenta_bancaria_secundaria']"
+                                                        ));
+    }
+
+
+
     return array("success"=>true, "message"=>'Datos guardados con exito.');
   }
 
@@ -211,9 +243,13 @@ class persona{
             (case when P.identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
             replace(P.denominacion,';',' ') as denominacion,
             (case when P.identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero || ' ' || replace(P.denominacion,';',' ') as display,
-            PT.id_cuenta_contable
+            PT.id_cuenta_contable,
+            PJ.cuenta_bancaria[1] cuenta_bancaria_principal,
+            PJ.cuenta_bancaria[2] cuenta_bancaria_secundaria
           FROM
-            modulo_base.persona as P, modulo_base.persona_tipo as PT
+            modulo_base.persona as P
+              LEFT JOIN modulo_base.persona_juridica PJ ON P.id=PJ.id_persona,
+            modulo_base.persona_tipo as PT
           WHERE
             P.id='$id' AND
             P.tipo=PT.tipo";

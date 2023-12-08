@@ -82,7 +82,9 @@ class MODULO extends persona{
                                        SIGA::paramUpper("denominacion"),
                                        SIGA::param("telefono"),
                                        SIGA::param("correo"),
-                                       SIGA::paramUpper("direccion")));
+                                       SIGA::paramUpper("direccion"),
+                                       SIGA::paramUpper("cuenta_bancaria_principal"),
+                                       SIGA::paramUpper("cuenta_bancaria_secundaria")));
         break;
       
       

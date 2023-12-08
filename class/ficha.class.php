@@ -137,6 +137,7 @@ class ficha{
     $database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
     //CASO ESPECIFICO PARA LA FUNDACITE SUCRE
     if($database_name && preg_grep("/siga_fundacite_sucre*/i",[$database_name])){
+      //Calculo de antiguedad basado en dias. Este calculo es inexacto para los años de antiguedad.
       return self::onGet_AntiguedadLegacy($id, $fecha_culminacion);
     }
 

@@ -77,3 +77,8 @@ INSERT INTO modulo_nomina.extension_rrhh_hoja_columna(nombre, cls, tipo, operaci
 ('% PROFESIONALIZACIÓN', '', 'concepto', 'MAX', '[85]', 3, 1, NULL, 'right'),
 ('CONTRATOS 2022', 'yellow', 'select', '', '["SI","NO"]', 4, 1, 55, 'center'),
 ('TIEMPO', 'yellow', 'texto', '', '',  5, 1, 108, 'right');
+
+
+
+
+ALTER TABLE modulo_base.persona_juridica ADD cuenta_bancaria VARCHAR(50)[];

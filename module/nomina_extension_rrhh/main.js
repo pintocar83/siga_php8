@@ -113,9 +113,10 @@ siga.define('nomina_extension_rrhh', {
           <style>
             .ag-theme-alpine {
               --ag-borders: solid 1px;
-              --ag-grid-size: 4px;
+              --ag-grid-size: 3px;
               --ag-list-item-height: 20px;
-              --ag-font-size: 11px;
+              --ag-font-size: 10px;
+              --ag-font-family: tahoma, arial, verdana, sans-serif;
             }
             .ag-theme-alpine .ag-row-group-expanded.ag-row.ag-row-level-0,
             .ag-theme-alpine .ag-row-group-contracted.ag-row.ag-row-level-0 {
@@ -249,15 +250,53 @@ siga.define('nomina_extension_rrhh', {
 
   onRecargar: function(){
     var me=this;
+    me.internal.dataModified={};
+
+    for(var i=0; i<me.internal.data["columna"].length; i++) {
+      if(me.internal.data["columna"][i]["valueFormatter"]){
+        let format = me.internal.data["columna"][i]["valueFormatter"].split("|");
+        switch(format[0]){
+          case "numeric":
+            me.internal.data["columna"][i]["valueFormatter"] = (params) => {
+              return formatNumber(params.value)
+            }
+            break;
+          case "%":
+          case "percent":
+            me.internal.data["columna"][i]["valueFormatter"] = (params) => {
+              return params.value > 0 ? params.value+"%" : params.value
+            }
+            break;
+          case "date":
+            me.internal.data["columna"][i]["valueFormatter"] = (params) => {
+              if(format.length===2){
+                return params.value ? Ext.Date.format(new Date(params.value + " 00:00:00"), format[1]) : params.value
+              }
+              return params.value ? formatDate(params.value) : params.value
+            }
+            //me.internal.data["columna"][i]["cellDataType"] = "dateString";
+            //me.internal.data["columna"][i]["filter"] = "agDateColumnFilter";
+            //me.internal.data["columna"][i]["floatingFilterComponentParams"] = false;
+            /*
+            me.internal.data["columna"][i]["filter"] = "agSetColumnFilter";
+            me.internal.data["columna"][i]["filterParams"] = {
+              textFormatter: (value) => {
+                console.log("value",value);
+                return value;
+              }
+            };*/
+            break;
+        }
+      }
+    }
 
     console.log(me.internal.data);
-    me.internal.dataModified={};
 
     me.internal.gridOptions = {
       columnDefs: me.internal.data["columna"],
       defaultColDef: {
         flex: 1,
-        minWidth: 100,
+        minWidth: 30,
         sortable: true,
         resizable: true,
         enableRowGroup: true,
