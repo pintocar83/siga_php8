@@ -1444,6 +1444,16 @@ siga.define('nomina', {
               }
             }
           },
+          { xtype: 'menuseparator' },
+          {
+            id: me._('btnReversar'),
+            text: 'Reversar',
+            listeners: {
+              click: function(){
+                me.onReversar();
+              }
+            }
+          },
         ]
       },
       {
@@ -3075,8 +3085,10 @@ siga.define('nomina', {
         me.getCmp('btnContabilizar_P_CXC').setDisabled(true);
         me.getCmp('btnContabilizar_CPP_NO_AP').setDisabled(false);
         me.getCmp('btnContabilizar_CPP_AP').setDisabled(false);
+        me.getCmp('btnReversar').setDisabled(true);
 
         if(me.internal.contabilizado!==null){
+          me.getCmp('btnReversar').setDisabled(false);
           var comprobante=siga.onGetComprobante({id:[me.internal.contabilizado]});
           console.log(comprobante);
           if(comprobante.length>0){
@@ -3360,6 +3372,49 @@ siga.define('nomina', {
                                     msgWait.close();
                                     var result=Ext.JSON.decode(request.responseText);
                                     Ext.MessageBox.alert("Contabilizar Período",result["message"]);
+                                    me.onRecargar();
+                                  }
+                                });
+                              }
+                            });
+  },
+
+  onReversar: function(){
+    var me=this;
+    if(!me.onNominaSeleccionada())
+      return;
+
+    var id_periodo=me.internal.periodo_id;
+
+    Ext.MessageBox.confirm( 'Reversar Contabilización',
+                            '<b>\u00BFEst\u00e1 seguro que desea reversar la contabilización del período?</b><br> '+me.internal.periodo_denominacion+'',
+                            function(btn,text){
+                              if(btn == 'yes'){
+                                me.menuPersona({disabled: true});
+                                me.menuConcepto({disabled: true});
+                                me.menuPeriodo({disabled: true});
+                                //me.getCmp('btnContabilizar').setDisabled(true);
+
+                                var msgWait=Ext.Msg.wait('Reversando. Por favor espere...', me.getTitle(),{text:''});
+                                msgWait.setAlwaysOnTop(true);
+
+                                Ext.Ajax.request({
+                                  method: 'POST',
+                                  url:'module/nomina/',
+                                  params:{
+                                    action: 'onReversar',
+                                    id_periodo: id_periodo,
+                                  },
+                                  success:function(request){
+                                    msgWait.close();
+                                    var result=Ext.JSON.decode(request.responseText);
+                                    Ext.MessageBox.alert("Reversar Contabilización",result["message"]);
+                                    me.onRecargar();
+                                  },
+                                  failure:function(request){
+                                    msgWait.close();
+                                    var result=Ext.JSON.decode(request.responseText);
+                                    Ext.MessageBox.alert("Reversar Contabilización",result["message"]);
                                     me.onRecargar();
                                   }
                                 });

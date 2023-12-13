@@ -1,4 +1,8 @@
 <?php
+/*
+Obtener archivos modificados desde un commit especifico a la actualidad
+git diff d276cd5d24bf2a939d70e60181b8fe8e3f446bd4..HEAD --name-only
+*/
 //Desde 01/06/2022 al 03/10/2022
 $files_history=[];
 
@@ -155,6 +159,50 @@ $files_history[]=[
   "report/requisicion_externa.php",
   "report/contabilidad_balance_general_b.php",
   "report/retencion_emitida_xls.php",
+];
+
+//Hasta 2023-12-08
+$files_history[]=[
+  "class/comprobante.class.php",
+  "class/nomina.class.php",
+  "class/ficha.class.php",
+  "class/nomina_extension_rrhh.class.php",
+  "class/nomina_extension_rrhh_hoja.class.php",
+  "class/persona.class.php",
+  "database/202310_create_tables_nomina_extension_rrhh.sql",
+  "database/bd_comandos.txt",
+  "database/database_data_inicial.sql",
+  "image/menu/icon-nomina_extension_rrhh.png",
+  "index.php",
+  "library/ag-grid/ag-grid-enterprise.min.js",
+  "library/phpexcel/PHPExcel/NamedRange.php",
+  "library/siga.class.php",
+  "library/siga.js",
+  "module/anio_trabajo/index.php",
+  "module/nomina/index.php",
+  "module/nomina/main.js",
+  "module/nomina_extension_rrhh/hoja/index.php",
+  "module/nomina_extension_rrhh/hoja/main.css",
+  "module/nomina_extension_rrhh/hoja/main.js",
+  "module/nomina_extension_rrhh/image/icon-administrar_hoja.png",
+  "module/nomina_extension_rrhh/image/icon-seleccionar.png",
+  "module/nomina_extension_rrhh/image/icon-xls.png",
+  "module/nomina_extension_rrhh/index.php",
+  "module/nomina_extension_rrhh/main.css",
+  "module/nomina_extension_rrhh/main.js",
+  "module/nomina_periodo/main.js",
+  "module/pago/form.php",
+  "module/pago/main.js",
+  "module/persona/index.php",
+  "module/sigafs/core/proveedor.js",
+  "module/sigafs/core/proveedor.php",
+  "report/cheque.php",
+  "report/contabilidad_balance_general_c.php",
+  "report/nomina_concepto_x_mes.php",
+  "report/orden_pago.php",
+  "report/pago.php",
+  "report/presupuesto_movimientos_listado_xls.php",
+  "report/template/pdf_reporte_1.class.php",
 ];
 
 

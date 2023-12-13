@@ -1257,6 +1257,37 @@ class comprobante{
     return $result_1;
   }
 
+  public static function onComprobanteAsociado($id){
+    $db=SIGA::DBController();
+
+    $ids = [$id];
+
+    //buscar comprobantes previos
+    for($id_buscar = $id; $id_buscar;) {
+      $comprobante=$db->Execute("SELECT id_comprobante_previo FROM modulo_base.comprobante_previo WHERE id_comprobante=$id_buscar");
+      if(isset($comprobante[0]["id_comprobante_previo"]) && $comprobante[0]["id_comprobante_previo"]){
+        $id_buscar = $comprobante[0]["id_comprobante_previo"];
+        $ids[] = $id_buscar;
+      }
+      else{
+        $id_buscar = NULL;
+      }
+    }
+
+    //buscar comprobantes posteriores
+    for($id_buscar = $id; $id_buscar;) {
+      $comprobante=$db->Execute("SELECT id_comprobante FROM modulo_base.comprobante_previo WHERE id_comprobante_previo=$id_buscar");
+      if(isset($comprobante[0]["id_comprobante"]) && $comprobante[0]["id_comprobante"]){
+        $id_buscar = $comprobante[0]["id_comprobante"];
+        $ids[] = $id_buscar;
+      }
+      else{
+        $id_buscar = NULL;
+      }
+    }
+
+    return array_unique($ids);
+  }
 }
 
 ?>

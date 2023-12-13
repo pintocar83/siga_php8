@@ -2154,6 +2154,42 @@ class nomina{
     return array("success"=>true, "message"=>"La nómina se contabilizó sin problemas.");
   }
 
+  public static function onReversar($access,$id_periodo){
+    if($access!="rw"){
+      return array("success"=>false, "message"=>"No tiene permisos para contabilizar el período.");
+    }
+    include_once("comprobante.class.php");
+
+    $db=SIGA::DBController();
+
+    //buscar periodo información del periodo
+    $periodo=$db->Execute("SELECT contabilizado, contabilizado_ap FROM modulo_nomina.periodo WHERE id=$id_periodo");
+
+    $id_comprobante = [];
+    if($periodo[0]["contabilizado"]){
+      $id_comprobante = comprobante::onComprobanteAsociado($periodo[0]["contabilizado"]);
+    }
+
+    $id_comprobante_ap = [];
+    if($periodo[0]["contabilizado_ap"]){
+      $id_comprobante_ap = comprobante::onComprobanteAsociado($periodo[0]["contabilizado_ap"]);
+    }
+
+    $db->Update("modulo_nomina.periodo",[
+      "contabilizado"=>"NULL",
+      "contabilizado_ap"=>"NULL"
+    ],"id=$id_periodo");
+
+    $id_comprobante = array_unique(array_merge($id_comprobante, $id_comprobante_ap));
+    $db->Execute("DELETE FROM modulo_base.comprobante_previo WHERE id_comprobante IN (".implode(",",$id_comprobante).") OR id_comprobante_previo IN (".implode(",",$id_comprobante).")");
+
+    for($i=0; $i<count($id_comprobante); $i++) {
+      comprobante::onDelete($access,$id_comprobante[$i]);
+    }
+
+    return array("success"=>false, "message"=>"Reverso realizado con éxito.", "id_comprobante" => $id_comprobante);
+  }
+
   public static function onList($id_periodo,$tipo,$text,$start,$limit,$sort=''){
     $db=SIGA::DBController();
     $sql="

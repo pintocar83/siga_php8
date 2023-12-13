@@ -77,6 +77,11 @@ class MODULO extends nomina{
         $access=SIGA::access("nomina_contabilizar");
         print json_encode(self::onContabilizar($access,SIGA::param("id_periodo"),SIGA::param("fecha"),SIGA::param("tipo")));
         break;
+      case "onReversar":
+        header('Content-Type: text/plain; charset=utf-8');
+        $access=SIGA::access("nomina_contabilizar");
+        print json_encode(self::onReversar($access,SIGA::param("id_periodo")));
+        break;
       case "onList_Cargo":
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onList_Cargo(SIGA::paramUpper("text"),SIGA::param("start"),SIGA::param("limit"),SIGA::param("sort",false)));

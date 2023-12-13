@@ -2235,12 +2235,16 @@
 				// Due to annoying PHP bugs, shell arguments cannot be escaped
 				// (command simply fails), so we cannot allow complex objects
 				// to be dumped.
+				return $str;
+				/*
+				Removido para poder respaldar tablas -> pintocar83
 				if (preg_match('/^[_.[:alnum:]]+$/', $str))
 					return $str;
 				else {
 					echo $lang['strcannotdumponwindows'];
 					exit;
 				}
+				*/
 			}
 			else
 				return escapeshellarg($str);
