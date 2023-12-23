@@ -1,5 +1,4 @@
-CREATE TABLE modulo_nomina.extension_rrhh_hoja
-(
+CREATE TABLE modulo_nomina.extension_rrhh_hoja (
     id SERIAL,
     codigo character varying(10),
     descripcion character varying(200),
@@ -7,6 +6,7 @@ CREATE TABLE modulo_nomina.extension_rrhh_hoja
     id_periodo integer[],
     id_nomina integer[],
     activo boolean DEFAULT true,
+    id_hoja_plantilla integer,
     PRIMARY KEY (id),
     FOREIGN KEY (tipo) REFERENCES modulo_nomina.periodo_tipo (tipo)
 );
@@ -20,9 +20,8 @@ CREATE TABLE modulo_nomina.extension_rrhh_hoja_columna
     operacion character varying(10),
     valor text,
     orden integer DEFAULT 1,
-    visible integer DEFAULT 1,
-    ancho integer,
-    alinear character varying(10) DEFAULT 'right',
+    ag_grid_state text,
+    format character varying(20),
     PRIMARY KEY (id)
 );
 
@@ -71,13 +70,27 @@ CREATE INDEX extension_rrhh_hoja_valor_nomina
     ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_nomina);
 
 
-INSERT INTO modulo_nomina.extension_rrhh_hoja_columna(nombre, cls, tipo, operacion, valor, orden, visible, ancho, alinear) VALUES
-('SUELDO MENSUAL', '', 'concepto', 'MAX', '[89, 94]', 1, 1, NULL, 'right'),
-('TIEMPO DE SERVICIO<BR>(ADMINISTRACIÓN PUBLICA)', '', 'concepto', 'MAX_SUM', '[76, 93]', 2, 1, 52, 'right'),
-('% PROFESIONALIZACIÓN', '', 'concepto', 'MAX', '[85]', 3, 1, NULL, 'right'),
-('CONTRATOS 2022', 'yellow', 'select', '', '["SI","NO"]', 4, 1, 55, 'center'),
-('TIEMPO', 'yellow', 'texto', '', '',  5, 1, 108, 'right');
 
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (11, 'ESCALA SALARIAL', '', 'ficha', '', 'escala_salarial', 5, '{"width":167,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (17, 'DIRECCION ADSCRITO', '', 'text', '', '', 16, '{"width":165,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (12, 'ESTRUCTURA PRESUPUESTARIA
+', 'align-center', 'ficha', '', 'estructura_presupuestaria', 6, '{"width":115,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (18, 'COMUNIDAD/SECTOR', '', 'text', '', '', 17, '{"width":164,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (1, 'SUELDO MENSUAL', 'align-right', 'concepto', 'MAX', '[89, 94]', 11, '{"width":67,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', 'numeric');
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (3, '% PROFESIONALIZACIÓN', 'align-center', 'concepto', 'MAX', '[85]', 13, '{"width":63,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', '%');
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (13, 'GENERO', 'align-center', 'ficha', '', 'genero', 7, '{"width":45,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (15, 'AÑOS', 'align-center', 'ficha', '', 'antiguedad_anio', 9, '{"width":48,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (10, 'NÓMINA', '', 'ficha', '', 'nomina', 1, '{"width":341,"hide":true,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":true,"rowGroupIndex":0,"pivot":false,"pivotIndex":null,"flex":1}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (7, 'CÉDULA', '', 'ficha', '', 'cedula', 2, '{"width":100,"hide":false,"pinned":"left","sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (8, 'NOMBRES Y APELLIDOS', '', 'ficha', '', 'nombres_apellidos', 3, '{"width":256,"hide":false,"pinned":null,"sort":"asc","sortIndex":0,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (9, 'CARGO', '', 'ficha', '', 'cargo', 4, '{"width":168,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (16, 'DIAS', 'align-center', 'ficha', '', 'antiguedad_dia', 10, '{"width":48,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (2, 'TIEMPO DE SERVICIO
+(ADMINISTRACIÓN PUBLICA)', 'align-center', 'concepto', 'MAX_SUM', '[76, 93]', 12, '{"width":67,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (4, 'CONTRATOS 2022', 'yellow align-center', 'select', '', '["SI","NO"]', 14, '{"width":123,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (14, 'FECHA INGRESO', 'align-center', 'ficha', '', 'fecha_ingreso', 8, '{"width":81,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', 'date');
+INSERT INTO modulo_nomina.extension_rrhh_hoja_columna VALUES (5, 'TIEMPO', 'yellow align-center', 'text', '', '', 15, '{"width":100,"hide":false,"pinned":null,"sort":null,"sortIndex":null,"aggFunc":null,"rowGroup":false,"rowGroupIndex":null,"pivot":false,"pivotIndex":null,"flex":null}', NULL);
+SELECT pg_catalog.setval('modulo_nomina.extension_rrhh_hoja_columna_id_seq', 18, true);
 
 
 

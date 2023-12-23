@@ -160,7 +160,7 @@ function Form_COMPROBANTE_RETENCION__ModificarCeldaPierdeFoco(){
 	AjaxRequest.post({
 					'parameters':{
 								'action':"onUpdate_Fecha",
-								'fecha':Valor,
+								'fecha':DesFormatearFecha(Valor),
 								'id':Form_COMPROBANTE_RETENCION__IDSeleccionActualLista
 								},
 					'onSuccess':
