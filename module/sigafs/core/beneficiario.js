@@ -178,6 +178,8 @@ function Form_BENEFICIARIO__GuardarVerificar(){
 	var SegundoApellido  = xTrim(strtoupper(xGetElementById("SEGUNDO_APELLIDO_FB").value));
 	var Telefono  = xTrim(strtoupper(xGetElementById("TELEFONO_FB").value));
 	var Correo  = xTrim(xGetElementById("CORREO_FB").value);
+	var CuentaBancaria1  = xTrim(strtoupper(xGetElementById("CUENTA_BANCARIA_1_FB").value));
+	var CuentaBancaria2  = xTrim(strtoupper(xGetElementById("CUENTA_BANCARIA_2_FB").value));
 
 	if(!Cedula){
 		var msg="Por favor introduzca el número de cedula."
@@ -225,7 +227,10 @@ function Form_BENEFICIARIO__GuardarVerificar(){
 										'primer_apellido':PrimerApellido,
 										'segundo_apellido':SegundoApellido,
 										'telefono':Telefono,
-										'correo':Correo},
+										'correo':Correo,
+										'cuenta_bancaria_principal': CuentaBancaria1,
+										'cuenta_bancaria_secundaria': CuentaBancaria2,
+									},
 						'onSuccess':Form_BENEFICIARIO__GuardarMensaje,
 						'url':'../persona/',
 						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
@@ -376,6 +381,8 @@ function Form_BENEFICIARIO__SeleccionarElementoTabla(IDSeleccion){
 							xGetElementById("SEGUNDO_APELLIDO_FB").value=resultado[0]["segundo_apellido"];
 							xGetElementById("TELEFONO_FB").value=resultado[0]["telefono"];
 							xGetElementById("CORREO_FB").value=resultado[0]["correo"];
+							xGetElementById("CUENTA_BANCARIA_1_FB").value=resultado[0]["cuenta_bancaria_principal"];
+							xGetElementById("CUENTA_BANCARIA_2_FB").value=resultado[0]["cuenta_bancaria_secundaria"];
 						},
 						'url':'../persona/',
 						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}

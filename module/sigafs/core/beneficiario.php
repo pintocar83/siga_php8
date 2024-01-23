@@ -96,7 +96,15 @@
 								<tr>
 									<td class='TitulosCampos'>Correo</td>
 									<td class='TextCampos'><INPUT id="CORREO_FB" class='TextoCampoInput' type='text' size='30' style="text-transform: none;"></td>
-								</tr>	
+								</tr>
+								<tr>
+									<td class='TitulosCampos'>Cuenta Bancaria - Principal</td>
+									<td class='TextCampos'><INPUT id="CUENTA_BANCARIA_1_FB" class='TextoCampoInput' type='text' size='30' maxlength="50" style="text-transform: none;"></td>
+								</tr>
+								<tr>
+									<td class='TitulosCampos'>Alternativa</td>
+									<td class='TextCampos'><INPUT id="CUENTA_BANCARIA_2_FB" class='TextoCampoInput' type='text' size='30' maxlength="50" style="text-transform: none;"></td>
+								</tr>
 							</tbody>
 							</table>
 

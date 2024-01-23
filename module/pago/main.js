@@ -132,6 +132,7 @@ siga.define('pago', {
               result[0]["cuenta_bancaria_principal"],
               result[0]["cuenta_bancaria_secundaria"]
             ];
+            me.internal.cuenta_destino_menu=null;
             me.CargarSolicitudes();
           }
         });
@@ -483,7 +484,7 @@ siga.define('pago', {
           text: '',
           start: '0',
           limit: 'ALL',
-          sort: '[{"property":"fecha","direction":"ASC"}]'
+          sort: '[{"property":"fecha","direction":"DESC"}]'
         },
         success:function(request){
           me.PostCargarSolicitudes(request);
@@ -510,7 +511,7 @@ siga.define('pago', {
         me.Arreglo[i][0]=false;//check
         me.Arreglo[i][1]=resultado[i]['id'];
         me.Arreglo[i][8]=resultado[i]['correlativo'];
-        me.Arreglo[i][2]=resultado[i]['fecha'];
+        me.Arreglo[i][2]=resultado[i]['ffecha'];
         me.Arreglo[i][3]=formatNumberDec(resultado[i]['monto'],2);
         me.Arreglo[i][4]=strtoupper(resultado[i]['concepto']);
         //me.Arreglo[i][5]=resultado[i]['id_cta_bancaria']+"&%?~"+resultado[i]['numero_cta_bancaria']+"&%?~"+resultado[i]['nombre_tipo_cta_bancaria']+"&%?~"+resultado[i]['nombre_banco']+" ("+resultado[i]['direccion_banco']+")&%?~"+resultado[i]['id_codigo_contable'];

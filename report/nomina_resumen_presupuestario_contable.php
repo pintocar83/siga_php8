@@ -85,7 +85,9 @@ class PDF_P extends FPDF{
 		global $sw, $ancho, $tp_accpro, $tp_cuenta, $tp_nombre, $tp_monto, $periodo, $nomina, $concepto;
 		$this->SetFillColor(200,200,200);
 
-		if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
+		if(file_exists(SIGA::databasePath()."/config/plantilla_vertical.jpg"))
+			$this->Image(SIGA::databasePath()."/config/plantilla_vertical.jpg",0,0,215);
+		else if(file_exists(SIGA::databasePath()."/config/cintillo_actual.jpg"))
 			$this->Image(SIGA::databasePath()."/config/cintillo_actual.jpg",$this->MARGEN_LEFT,$this->MARGEN_TOP,180);
 		else if(file_exists(SIGA::databasePath()."/config/logo_01.jpg"))
 			$this->Image(SIGA::databasePath()."/config/logo_01.jpg",$this->MARGEN_LEFT,$this->MARGEN_TOP,40);

@@ -20,7 +20,9 @@ class persona{
             replace(denominacion,';',' ') as denominacion,
             P.telefono,
             P.correo,
-            P.direccion
+            P.direccion,
+            P.cuenta_bancaria[1] cuenta_bancaria_principal,
+            P.cuenta_bancaria[2] cuenta_bancaria_secundaria
           FROM modulo_base.persona as P WHERE P.id='$id'";
     $return=$db->Execute($sql);
     return $return;
@@ -79,8 +81,8 @@ class persona{
             P.telefono,
             P.correo,
             P.direccion,
-            PJ.cuenta_bancaria[1] cuenta_bancaria_principal,
-            PJ.cuenta_bancaria[2] cuenta_bancaria_secundaria
+            P.cuenta_bancaria[1] cuenta_bancaria_principal,
+            P.cuenta_bancaria[2] cuenta_bancaria_secundaria
           FROM modulo_base.persona as P
             LEFT JOIN modulo_base.persona_juridica PJ ON P.id=PJ.id_persona
           WHERE P.id='$id'
@@ -100,7 +102,9 @@ class persona{
                                                $telefono,
                                                $correo,
                                                $fecha_nacimiento=NULL,
-                                               $genero=NULL){
+                                               $genero=NULL,
+                                               $cuenta_bancaria_principal = NULL,
+                                               $cuenta_bancaria_secundaria = NULL){
     $db=SIGA::DBController();
 
     //buscar si existe el registro
@@ -145,6 +149,10 @@ class persona{
       if(!isset($result[0][0]))
         return array("success"=>false, "message"=>"Error al obtener el identificador de la persona.");
       $id=$result[0][0];
+    }
+
+    if($cuenta_bancaria_principal || $cuenta_bancaria_secundaria){
+      $db->Update("modulo_base.persona",["cuenta_bancaria"=> "ARRAY['$cuenta_bancaria_principal','$cuenta_bancaria_secundaria']"],"id='$id'");
     }
 
 
@@ -220,17 +228,10 @@ class persona{
         return array("success"=>false, "message"=>"Error al obtener el identificador de la persona.");
       $id=$result[0][0];
     }
-    
 
-    $db->Delete("modulo_base.persona_juridica","id_persona=$id");
     if($cuenta_bancaria_principal || $cuenta_bancaria_secundaria){
-      $db->Insert("modulo_base.persona_juridica",array(
-                                                        "id_persona"=>"$id",
-                                                        "cuenta_bancaria"=> "ARRAY['$cuenta_bancaria_principal','$cuenta_bancaria_secundaria']"
-                                                        ));
+      $db->Update("modulo_base.persona",["cuenta_bancaria"=> "ARRAY['$cuenta_bancaria_principal','$cuenta_bancaria_secundaria']"],"id='$id'");
     }
-
-
 
     return array("success"=>true, "message"=>'Datos guardados con exito.');
   }
@@ -244,8 +245,8 @@ class persona{
             replace(P.denominacion,';',' ') as denominacion,
             (case when P.identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero || ' ' || replace(P.denominacion,';',' ') as display,
             PT.id_cuenta_contable,
-            PJ.cuenta_bancaria[1] cuenta_bancaria_principal,
-            PJ.cuenta_bancaria[2] cuenta_bancaria_secundaria
+            P.cuenta_bancaria[1] cuenta_bancaria_principal,
+            P.cuenta_bancaria[2] cuenta_bancaria_secundaria
           FROM
             modulo_base.persona as P
               LEFT JOIN modulo_base.persona_juridica PJ ON P.id=PJ.id_persona,

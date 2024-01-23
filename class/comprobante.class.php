@@ -414,7 +414,8 @@ class comprobante{
               C.id,
               C.tipo,
               lpad(text(C.correlativo),10,'0') as correlativo,
-              to_char(C.fecha,'DD/MM/YYYY') as fecha,
+              to_char(C.fecha,'DD/MM/YYYY') as ffecha,
+              C.fecha,
               C.concepto,
               (select sum(DC.monto) from modulo_base.detalle_contable as DC where C.id=DC.id_comprobante and DC.operacion='H') as monto,
               (

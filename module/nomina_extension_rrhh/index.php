@@ -7,7 +7,9 @@ include_once("../../class/nomina_extension_rrhh.class.php");
 
 class MODULO extends nomina_extension_rrhh{
   public static function onInit(){
-    $access=SIGA::access("nomina");//null,r,rw,a    
+    $access=SIGA::access("nomina");//null,r,rw,a
+    if($access!="rw")
+      $access=SIGA::access("nomina_extension_rrhh");//null,r,rw,a    
     switch($_REQUEST["action"]){
       case "onGenerar":
         header('Content-Type: text/plain; charset=utf-8');

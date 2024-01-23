@@ -39,6 +39,16 @@ class banco_cuenta{
   
   public static function onList($text,$start,$limit,$sort){
     $db=SIGA::DBController();
+
+    $add="";
+    $access_banco_cuenta = SIGA::access("banco_cuenta");
+    if($access_banco_cuenta){
+      $tmp=explode("|",$access_banco_cuenta);
+      if(isset($tmp[1])){
+        $add.=" BC.id IN (".$tmp[1].") AND ";
+      }
+    }
+
     $sql="SELECT
             BC.*,
             lpad(text(BC.id),3,'0') as correlativo,
@@ -52,6 +62,7 @@ class banco_cuenta{
             modulo_base.banco as B,
             modulo_base.banco_cuenta_tipo as BCT
           WHERE
+            $add
             BC.activo AND
             BC.id_cuenta_contable=CC.id_cuenta_contable AND
             BC.id_banco=B.id AND
