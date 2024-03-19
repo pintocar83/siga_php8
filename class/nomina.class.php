@@ -1724,7 +1724,7 @@ class nomina{
                               LEFT JOIN modulo_base.convertidor as C ON CP.id_cuenta_presupuestaria = C.id_cuenta_presupuestaria
                             WHERE
                               CP.id_cuenta_presupuestaria='$id_cuenta_presupuestaria'");
-      if($tipo=="P"){
+      if($tipo=="P" || $tipo=="P-CXC"){
         if(!isset($detalle[self::cuenta_contable_abono()]))
           $detalle[self::cuenta_contable_abono()]=array("D"=>0,"H"=>0);
         $detalle[self::cuenta_contable_abono()]["D"]+=$valor;
@@ -2146,7 +2146,7 @@ class nomina{
       return array("success"=>false, "message"=>$result_comprobante["message"]);
 
     $id_comprobante=$result_comprobante["id"];
-    if($contabilizacion_tipo==="CCP-AP")
+    if($tipo==="CCP-AP")
       $db->Update("modulo_nomina.periodo",array("contabilizado_ap"=>"$id_comprobante"),"id=$id_periodo");
     else if($tipo!="P")
       $db->Update("modulo_nomina.periodo",array("contabilizado"=>"$id_comprobante"),"id=$id_periodo");

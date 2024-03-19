@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 'On');
 /*
 Obtener archivos modificados desde un commit especifico a la actualidad
 git diff d276cd5d24bf2a939d70e60181b8fe8e3f446bd4..HEAD --name-only
@@ -203,10 +205,27 @@ $files_history[]=[
   "report/pago.php",
   "report/presupuesto_movimientos_listado_xls.php",
   "report/template/pdf_reporte_1.class.php",
+  "module/sigafs/core/comprobante_retencion.js",
 ];
 
+//Hasta 2024-01-22
+$files_history[]=[
+  "class/banco_cuenta.class.php",
+  "class/comprobante.class.php",
+  "class/persona.class.php",
+  "module/pago/main.js",
+  "module/persona/index.php",
+  "module/sigafs/core/beneficiario.js",
+  "module/sigafs/core/beneficiario.php",
+];
 
-$files=$files_history[count($files_history)-1];
+//Hasta 2024-01-23
+$files_history[]=[
+  "class/banco_movimiento_tipo.class.php",
+  "module/comprobante/index.php",
+];
+
+$files=array_values(array_unique($files_history[count($files_history)-1], SORT_REGULAR));
 
 $path=".";
 $filename="actualizacion_archivos_".date("Ymd_His");

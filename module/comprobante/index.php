@@ -6,7 +6,7 @@ include_once("../../class/comprobante.class.php");
 
 class MODULO extends comprobante{
   public static function onInit(){
-    $access=SIGA::access("comprobante");//null,r,rw,a    
+    $access=SIGA::access("comprobante");//null,r,rw,a
     switch($_REQUEST["action"]){
       case "onGet":
         header('Content-Type: text/plain; charset=utf-8');
@@ -67,7 +67,15 @@ class MODULO extends comprobante{
         break;
       case "onSave":
         header('Content-Type: text/plain; charset=utf-8');
-        
+
+        if(!$access){
+          switch(SIGA::paramUpper("tipo")){
+            case "MB":
+              $access=SIGA::access("banco_movimiento");
+              break;
+          }
+        }
+
         $detalle=json_decode(SIGA::param("detalle",false),true);
         print json_encode(self::onSave( $access,
                                         SIGA::param("id"),
@@ -94,18 +102,18 @@ class MODULO extends comprobante{
         break;
       case "onJavascript":
       case "js":
-      case "javascript":  
+      case "javascript":
         header('Content-Type: text/javascript; charset=utf-8');
         print self::onJavascript($access);
         break;
-    }    
-  }  
-  
+    }
+  }
+
   public static function onCss($access){
     if(!$access) return;
     return SIGA::css("main.css");
   }
-  
+
   public static function onJavascript($access){
     if(!$access) return;
     return SIGA::js("main.js");

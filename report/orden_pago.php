@@ -25,6 +25,10 @@ $IDComprobante=explode(",",SIGA::paramGet("id"));
 
 $MONTO_TOTAL=0;
 
+function formatear_rif($tipo,$numero){
+  $len=strlen($numero)-1;
+  return $tipo."-".str_pad(substr($numero,0,$len),8, "0", STR_PAD_LEFT )."-".$numero[$len];
+}
 
 function CabeceraDP(){
 		global $pdf, $t_acc_pro_mp, $t_cuenta_mp, $t_denom_mp, $t_monto_mp;
@@ -252,7 +256,9 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$PERSONA=$db->Execute("SELECT
 																	(case when identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
 																	replace(P.denominacion,';',' ') as denominacion,
-																	P.tipo
+																	P.tipo,
+																	P.identificacion_tipo,
+																	P.identificacion_numero
 															FROM modulo_base.persona as P WHERE P.id='".$COMPROBANTE[0]['id_persona']."'");
 		$PERSONA_ID="";
 		$PERSONA_DENOMINACION="";
@@ -262,6 +268,9 @@ for($i=0;$i<count($IDComprobante);$i++){
 			$PERSONA_ID=$PERSONA[0][0];
 			$PERSONA_DENOMINACION=$PERSONA[0][1];
 			$PERSONA_TIPO=$PERSONA[0][2];
+			if($PERSONA_TIPO=="J"){
+				$PERSONA_ID=formatear_rif($PERSONA[0]["identificacion_tipo"],$PERSONA[0]["identificacion_numero"]);
+			}
 		}
 
 

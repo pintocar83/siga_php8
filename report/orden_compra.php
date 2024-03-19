@@ -22,6 +22,10 @@ $IDComprobante=explode(",",SIGA::paramGet("id"));
 
 $MONTO_TOTAL=0;
 
+function formatear_rif($tipo,$numero){
+  $len=strlen($numero)-1;
+  return $tipo."-".str_pad(substr($numero,0,$len),8, "0", STR_PAD_LEFT )."-".$numero[$len];
+}
 
 function CabeceraDP(){
 		global $pdf, $t_acc_pro_mp, $t_cuenta_mp, $t_denom_mp, $t_monto_mp;
@@ -36,7 +40,7 @@ function CabeceraDP(){
 }
 
 function CabeceraITEM(){
-		global $pdf, $t_n_i, $t_codigo_i, $t_denom_i, $t_cantidad_i, $t_unidad_i, $t_precio_i, $t_total_i;
+		global $pdf, $t_n_i, $t_codigo_i, $t_denom_i, $t_cantidad_i, $t_unidad_i, $t_precio_i, $t_total_i, $t_descuento, $sw_descuento_item;
 		$pdf->SetFillColor(216,216,216);
 		$pdf->SetFont('helvetica','B',8);
 		$pdf->Cell($t_n_i,4,utf8_decode('Nº'),'LTB',0,'C',1);
@@ -45,6 +49,8 @@ function CabeceraITEM(){
 		$pdf->Cell($t_cantidad_i,4,utf8_decode('CANTIDAD'),'TB',0,'C',1);
 		$pdf->Cell($t_unidad_i,4,utf8_decode('PRESENTACIÓN'),'TB',0,'C',1);
 		$pdf->Cell($t_precio_i,4,utf8_decode('PRECIO'),'TB',0,'C',1);
+		if($sw_descuento_item)
+			$pdf->Cell($t_descuento,4,utf8_decode('DESC.'),'TB',0,'C',1);
 		$pdf->Cell($t_total_i,4,utf8_decode('TOTAL'),'RTB',1,'C',1);
 		$pdf->SetFillColor(255,255,255);
 }
@@ -131,9 +137,11 @@ $t_n_i=5;
 $t_codigo_i=15;
 $t_cantidad_i=15;
 $t_unidad_i=30;
-$t_precio_i=20;
+
+$t_precio_i=18;
+$t_descuento=18;
 $t_total_i=20;
-$t_denom_i=180-($t_n_i+$t_codigo_i+$t_cantidad_i+$t_unidad_i+$t_precio_i+$t_total_i);
+$t_denom_i=180-($t_n_i+$t_codigo_i+$t_cantidad_i+$t_unidad_i+$t_precio_i+$t_total_i+$t_descuento);
 
 $t_acc_pro_mp=30;
 $t_cuenta_mp=20;
@@ -165,17 +173,20 @@ for($i=0;$i<count($IDComprobante);$i++){
 		if(count($COMPROBANTE)==0)
 			continue;
 		
-		$PERSONA=$db->Execute("SELECT														
+		$PERSONA=$db->Execute("SELECT	
 																	(case when identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
 																	replace(P.denominacion,';',' ') as denominacion,
-																	P.tipo
+																	P.tipo,
+																	P.identificacion_tipo,
+																	P.identificacion_numero
 															FROM modulo_base.persona as P WHERE P.id='".$COMPROBANTE[0]['id_persona']."'");
 		$PERSONA_ID="";
 		$PERSONA_DENOMINACION="";
 		$PERSONA_TIPO="";
 		
 		if(isset($PERSONA[0])){
-			$PERSONA_ID=$PERSONA[0][0];
+			//$PERSONA_ID=$PERSONA[0][0];
+			$PERSONA_ID=formatear_rif($PERSONA[0]["identificacion_tipo"],$PERSONA[0]["identificacion_numero"]);
 			$PERSONA_DENOMINACION=$PERSONA[0][1];
 			$PERSONA_TIPO=$PERSONA[0][2];
 		}
@@ -230,8 +241,42 @@ for($i=0;$i<count($IDComprobante);$i++){
 											ORDER BY
 												estructura_presupuestaria, DP.id_cuenta_presupuestaria");
 		
+		$sw_descuento_item = false;
+		if($ITEM){
+			for($j=0;$j<count($ITEM) and $ITEM;$j++){
+				if($ITEM[$j]["descuento"]){
+					$sw_descuento_item = true;
+					break;
+				}
+			}			
+		}
 		
-		
+		$t_n_i=5;
+		$t_codigo_i=15;
+		$t_cantidad_i=15;
+		$t_unidad_i=30;
+		$t_precio_i=20;
+		$t_descuento=0;
+		if($sw_descuento_item){
+			$t_precio_i=15;
+			$t_descuento=15;
+		}
+		$t_total_i=20;
+		$t_denom_i=180-($t_n_i+$t_codigo_i+$t_cantidad_i+$t_unidad_i+$t_precio_i+$t_total_i+$t_descuento);
+
+		$t_acc_pro_mp=30;
+		$t_cuenta_mp=20;
+		$t_operacion_mp=0;
+		$t_monto_mp=20;
+		$t_denom_mp=180-($t_acc_pro_mp+$t_cuenta_mp+$t_operacion_mp+$t_monto_mp);
+
+
+		$t_cuenta_mc=30;
+		$t_debe_mc=20;
+		$t_haber_mc=20;
+		$t_denom_mc=180-($t_cuenta_mc+$t_debe_mc+$t_haber_mc);
+
+		$MAX_Y=210;
 		
 		
 		
@@ -250,7 +295,20 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$pdf->SetFont('helvetica','',8);
 				//print_r($ITEM);exit;
 				for($j=0;$j<count($ITEM) and $ITEM;$j++){
-						$total_item=$ITEM[$j]["cantidad"]*$ITEM[$j]["costo"];
+						$total_item = $ITEM[$j]["cantidad"]*$ITEM[$j]["costo"];
+						$descuento_item = 0;
+						$descuento_item_mostrar = "";
+						if($ITEM[$j]["descuento"]){
+							$tmp = json_decode($ITEM[$j]["descuento"], true);
+							if($tmp["porcentaje"])
+								$descuento_item_mostrar = number_format($tmp["porcentaje"],2,",",".")."%";
+							if($tmp["monto"])
+								$descuento_item_mostrar = number_format($tmp["monto"],2,",",".");
+							$descuento_item = ($tmp["porcentaje"]*$total_item/100) + $tmp["monto"];
+							$total_item = number_format($total_item - $descuento_item,4,".","");
+						}
+
+						//$total_item=$ITEM[$j]["cantidad"]*$ITEM[$j]["costo"];
 						$SUBTOTAL+=$total_item;
 						if($ITEM[$j]["aplica_iva"]=="t")
 								$SUBTOTAL_IVA+=$total_item;
@@ -263,6 +321,8 @@ for($i=0;$i<count($IDComprobante);$i++){
 						$pdf->Cell($t_cantidad_i,4,utf8_decode(number_format($ITEM[$j]["cantidad"],2,",",".")),'TB',0,'C',1);
 						$pdf->Cell($t_unidad_i,4,utf8_decode($ITEM[$j]["medida"]),'TB',0,'C',1);						
 						$pdf->Cell($t_precio_i,4,utf8_decode(number_format($ITEM[$j]["costo"],2,",",".")),'TB',0,'R',1);
+						if($sw_descuento_item)
+							$pdf->Cell($t_precio_i,4,utf8_decode($descuento_item_mostrar),'TB',0,'R',1);
 						$pdf->Cell($t_total_i,4,utf8_decode(number_format($total_item,2,",",".")),'RTB',1,'R',1);
 				}
 				

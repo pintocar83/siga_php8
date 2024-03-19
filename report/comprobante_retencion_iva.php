@@ -176,7 +176,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(65,7,utf8_decode($denominacion_ente),'R',0,'C',0);
   $pdf->Cell(30,7,utf8_decode($rif_ente),'LR',0,'C',0);
   $pdf->SetFont('helvetica','',7);
-  $pdf->Cell($ANCHO-(65+30),3,utf8_decode(" ".$direccion_ente."."),'L',1,'L',0);
+  $pdf->MultiCell($ANCHO-(65+30),3,utf8_decode("".$direccion_ente."."),'L','L',0);
   
   $pdf->SetXY($MARGEN_LEFT+65+30,$MARGEN_TOP+25+3+3);
   $pdf->Cell($ANCHO-(65+30),4,utf8_decode(trim(" $ciudad_ente $codigo_postal_ente.",".")),'',1,'L',0);
@@ -203,7 +203,8 @@ for($N=0;$N<count($ids);$N++):
   $pdf->SetFont('helvetica','',7);
   $pdf->Cell($ANCHO-(25+100+20+30),4,utf8_decode(formatear_rif($COMPROBANTE[0]["identificacion_tipo"],$COMPROBANTE[0]["identificacion_numero"])."      "),'RTB',0,'R',0);
   $pdf->Cell(20,4,utf8_decode($fecha_comprobante[2]."/".$fecha_comprobante[1]."/".$fecha_comprobante[0]),'LRTB',0,'C',0);
-  $pdf->Cell(30,4,utf8_decode($fecha_comprobante[0]."-".$fecha_comprobante[1]."-".$COMPROBANTE[0]["numero"]),'LRTB',1,'C',0);
+
+  $pdf->Cell(30,4,utf8_decode($fecha_comprobante[0]."".$fecha_comprobante[1]."".$COMPROBANTE[0]["numero"]),'LRTB',1,'C',0);
   
   
   
