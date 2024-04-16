@@ -30,7 +30,8 @@ class MODULO extends factura{
                                         SIGA::paramUpper("numero_control"),
                                         SIGA::param("total"),
                                         SIGA::param("informacion_iva",false),
-                                        SIGA::param("informacion_islr",false)));
+                                        SIGA::param("informacion_islr",false),
+                                        SIGA::param("informacion_1x1000",false)));
         break;
       case "onDelete":
         header('Content-Type: text/css; charset=utf-8');

@@ -382,5 +382,7 @@ function Form_COMPROBANTE_RETENCION__Imprimir(){
 		window.open("../../report/comprobante_retencion_iva.php?id="+Form_COMPROBANTE_RETENCION__IDSeleccionActualLista*1);
 	else if(xGetElementById("SELECT_TIPO_COMPROBANTE_RETENCION_FCR").value=="2")
 		window.open("../../report/comprobante_retencion_islr.php?id="+Form_COMPROBANTE_RETENCION__IDSeleccionActualLista*1);
+	else if(xGetElementById("SELECT_TIPO_COMPROBANTE_RETENCION_FCR").value=="3")
+		window.open("../../report/comprobante_retencion_1x1000.php?id="+Form_COMPROBANTE_RETENCION__IDSeleccionActualLista*1);
 	}
 

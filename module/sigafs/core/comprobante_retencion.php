@@ -55,6 +55,7 @@
 								<SELECT class="TextoCampoInput" id="SELECT_TIPO_COMPROBANTE_RETENCION_FCR" onchange="Form_COMPROBANTE_RETENCION__BuscarListado_CadenaBuscar='';Form_COMPROBANTE_RETENCION__BuscarListado();">
 									<OPTION value="1">I.V.A.</OPTION>
 									<OPTION value="2">I.S.L.R.</OPTION>
+									<OPTION value="3">1x1000</OPTION>
 								</SELECT>
 								</TD>
 								<TD>

@@ -1,7 +1,7 @@
 siga.define('factura', {
     extend: 'siga.windowFrame',
     title: 'Factura',
-    width: 700,
+    width: 900,
     height: 520,
     
     initComponent: function(){

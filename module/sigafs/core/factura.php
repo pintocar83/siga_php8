@@ -179,23 +179,36 @@
 										<TABLE align="center">
 											<TR><TD class='TitulosCampos'>Monto base</TD><TD class='TextCampos'><INPUT id='BASE_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'BASE_ISLR_FF')" style="text-align: right;"></TD></TR>
 											<TR><TD class='TitulosCampos'>% ISLR</TD><TD class='TextCampos'><INPUT id='PORCENTAJE_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'PORCENTAJE_ISLR_FF')" style="text-align: right;"></TD></TR>
-											<TR><TD class='TitulosCampos'>ISLR</TD><TD class='TextCampos'><INPUT id='MONTO_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_ISLR_FF')" style="text-align: right;"></TD></TR>
+											<TR style='display: none;'><TD class='TitulosCampos'>ISLR</TD><TD class='TextCampos'><INPUT id='MONTO_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_ISLR_FF')" style="text-align: right;"></TD></TR>
 											<TR><TD class='TitulosCampos'>Retenci&oacute;n</TD><TD class='TextCampos'><INPUT id='RETENCION_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_ISLR_FF')" style="text-align: right;"></TD></TR>
+											<TR>
+												<td></td>
+												<td style="text-align: right;">
+													<input type="BUTTON" value="Calcular" class="BotonesParaCampos" onclick='Form_FACTURA__CalcularISLR()'>
+												</td>
+											</TR>
+										</TABLE>
+										</FIELDSET>
+									</TD>
+									<TD>
+										<FIELDSET>
+										<LEGEND><strong>Informaci&oacute;n 1x1000</strong></LEGEND>
+										<TABLE align="center">
+											<TR><TD class='TitulosCampos'>Monto base</TD><TD class='TextCampos'><INPUT id='BASE_1X1000_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'BASE_1X1000_FF')" style="text-align: right;"></TD></TR>
+											<TR><TD class='TitulosCampos'>% 1x1000</TD><TD class='TextCampos'><INPUT id='PORCENTAJE_1X1000_FF' class='TextoCampoInput' type='text' size='10' value="0.10" onkeypress="return AcceptNum(event,'PORCENTAJE_1X1000_FF')" style="text-align: right;"></TD></TR>
+											<TR style='display: none;'><TD class='TitulosCampos'>1x1000</TD><TD class='TextCampos'><INPUT id='MONTO_1X1000_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_1X1000_FF')" style="text-align: right;"></TD></TR>
+											<TR><TD class='TitulosCampos'>Retenci&oacute;n</TD><TD class='TextCampos'><INPUT id='RETENCION_1X1000_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_1X1000_FF')" style="text-align: right;"></TD></TR>
+											<TR>
+												<td></td>
+												<td style="text-align: right;">
+													<input type="BUTTON" value="Calcular" class="BotonesParaCampos" onclick='Form_FACTURA__Calcular1x1000()'>
+												</td>
+											</TR>
 										</TABLE>
 										</FIELDSET>
 									</TD>
 								</TR>
 							</table>
-
-
-
-
-
-
-
-
-
-
 						</FORM>
 					</div>
 					<!-- ************************ ******************** fin ******************* *************************-->

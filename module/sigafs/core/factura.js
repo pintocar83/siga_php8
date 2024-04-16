@@ -84,6 +84,11 @@ function Form_FACTURA__ActivarFormulario(){
 	xGetElementById("MONTO_ISLR_FF").setAttribute('class','TextoCampoInput');
 	xGetElementById("RETENCION_ISLR_FF").setAttribute('class','TextoCampoInput');
 
+	xGetElementById("BASE_1X1000_FF").setAttribute('class','TextoCampoInput');
+	xGetElementById("PORCENTAJE_1X1000_FF").setAttribute('class','TextoCampoInput');
+	xGetElementById("MONTO_1X1000_FF").setAttribute('class','TextoCampoInput');
+	xGetElementById("RETENCION_1X1000_FF").setAttribute('class','TextoCampoInput');
+
 	xGetElementById("IMG_FECHA_FF").setAttribute('onclick',"showCalendar('FECHA_FF','%d/%m/%Y')");
 	xGetElementById("FECHA_FF").setAttribute('ondblclick',"showCalendar('FECHA_FF','%d/%m/%Y')");
 
@@ -132,6 +137,11 @@ function Form_FACTURA__DesactivarFormulario(){
 	xGetElementById("PORCENTAJE_ISLR_FF").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("MONTO_ISLR_FF").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("RETENCION_ISLR_FF").setAttribute('class','TextoCampoInputDesactivado');
+
+	xGetElementById("BASE_1X1000_FF").setAttribute('class','TextoCampoInputDesactivado');
+	xGetElementById("PORCENTAJE_1X1000_FF").setAttribute('class','TextoCampoInputDesactivado');
+	xGetElementById("MONTO_1X1000_FF").setAttribute('class','TextoCampoInputDesactivado');
+	xGetElementById("RETENCION_1X1000_FF").setAttribute('class','TextoCampoInputDesactivado');
 
 	xGetElementById("IMG_FECHA_FF").setAttribute('onclick',"");
 	xGetElementById("FECHA_FF").setAttribute('ondblclick',"");
@@ -237,21 +247,37 @@ function Form_FACTURA__Guardar()
 	var informacion_iva_2	=	xGetElementById("PORCENTAJE_IVA_FF").value;
 	var informacion_iva_3	=	xGetElementById("MONTO_IVA_FF").value;
 	var informacion_iva_4	=	xGetElementById("RETENCION_IVA_FF").value;
+	var informacion_iva_5	=	xGetElementById("RETENCION_PIVA_FF").value;
+	var informacion_iva_6	=	xGetElementById("EXENTO_FF").value;
+	var informacion_iva_7	=	xGetElementById("TOTAL_PAGO_FF").value;
 	
 	var informacion_islr_1=	xGetElementById("BASE_ISLR_FF").value;
 	var informacion_islr_2=	xGetElementById("PORCENTAJE_ISLR_FF").value;
 	var informacion_islr_3=	xGetElementById("MONTO_ISLR_FF").value;
 	var informacion_islr_4=	xGetElementById("RETENCION_ISLR_FF").value;
+
+	var informacion_1x1000_1=	xGetElementById("BASE_1X1000_FF").value;
+	var informacion_1x1000_2=	xGetElementById("PORCENTAJE_1X1000_FF").value;
+	var informacion_1x1000_3=	xGetElementById("MONTO_1X1000_FF").value;
+	var informacion_1x1000_4=	xGetElementById("RETENCION_1X1000_FF").value;
 	
 	informacion_iva_1=(informacion_iva_1>0?informacion_iva_1:0);
 	informacion_iva_2=informacion_iva_2>0?informacion_iva_2:0;
 	informacion_iva_3=informacion_iva_3>0?informacion_iva_3:0;
 	informacion_iva_4=informacion_iva_4>0?informacion_iva_4:0;
+	informacion_iva_5=informacion_iva_5>0?informacion_iva_5:0;
+	informacion_iva_6=informacion_iva_6>0?informacion_iva_6:0;
+	informacion_iva_7=informacion_iva_7>0?informacion_iva_7:0;
 	
 	informacion_islr_1=informacion_islr_1>0?informacion_islr_1:0;
 	informacion_islr_2=informacion_islr_2>0?informacion_islr_2:0;
 	informacion_islr_3=informacion_islr_3>0?informacion_islr_3:0;
 	informacion_islr_4=informacion_islr_4>0?informacion_islr_4:0;
+
+	informacion_1x1000_1=informacion_1x1000_1>0?informacion_1x1000_1:0;
+	informacion_1x1000_2=informacion_1x1000_2>0?informacion_1x1000_2:0;
+	informacion_1x1000_3=informacion_1x1000_3>0?informacion_1x1000_3:0;
+	informacion_1x1000_4=informacion_1x1000_4>0?informacion_1x1000_4:0;
 	
 	if(!_id_persona){
 		Form_FACTURA__Mensaje("Por favor seleccione el proveedor o beneficiario.","ROJO");
@@ -287,7 +313,10 @@ function Form_FACTURA__Guardar()
 														informacion_iva_1+","+
 														informacion_iva_2+","+
 														informacion_iva_3+","+
-														informacion_iva_4+
+														informacion_iva_4+","+
+														informacion_iva_5+","+
+														informacion_iva_6+","+
+														informacion_iva_7+
 														"]";
 	
 	var _informacion_islr="ARRAY["+
@@ -295,6 +324,13 @@ function Form_FACTURA__Guardar()
 														informacion_islr_2+","+
 														informacion_islr_3+","+
 														informacion_islr_4+
+														"]";
+
+	var _informacion_1x1000="ARRAY["+
+														informacion_1x1000_1+","+
+														informacion_1x1000_2+","+
+														informacion_1x1000_3+","+
+														informacion_1x1000_4+
 														"]";
 	
 	var _id_factura="";
@@ -318,7 +354,8 @@ function Form_FACTURA__Guardar()
 										'numero_control': _numero_control,
 										'total': _total,										
 										'informacion_iva': _informacion_iva,
-										'informacion_islr': _informacion_islr
+										'informacion_islr': _informacion_islr,
+										'informacion_1x1000': _informacion_1x1000
 										},
 							'onSuccess':Form_FACTURA__GuardarMensaje,
 							'url':'../factura/',
@@ -485,10 +522,42 @@ function Form_FACTURA__SeleccionarElementoTabla(IDSeleccion){
 								xGetElementById("PORCENTAJE_IVA_FF").value=resultado[0]["informacion_iva_2"];
 								xGetElementById("MONTO_IVA_FF").value=resultado[0]["informacion_iva_3"];
 								xGetElementById("RETENCION_IVA_FF").value=resultado[0]["informacion_iva_4"];
+								xGetElementById("EXENTO_FF").value="0.00";
+								xGetElementById("TOTAL_PAGO_FF").value="0.00";
+
+								if(resultado[0]["informacion_iva_5"]){
+									xGetElementById("RETENCION_PIVA_FF").value=resultado[0]["informacion_iva_5"]*1;
+								}
+
+								if(resultado[0]["informacion_iva_6"]){
+									xGetElementById("EXENTO_FF").value=resultado[0]["informacion_iva_6"];
+								}
+
+								if(resultado[0]["informacion_iva_7"]){
+									xGetElementById("TOTAL_PAGO_FF").value=resultado[0]["informacion_iva_7"];
+								}
+
+
 								xGetElementById("BASE_ISLR_FF").value=resultado[0]["informacion_islr_1"];
 								xGetElementById("PORCENTAJE_ISLR_FF").value=resultado[0]["informacion_islr_2"];
 								xGetElementById("MONTO_ISLR_FF").value=resultado[0]["informacion_islr_3"];
 								xGetElementById("RETENCION_ISLR_FF").value=resultado[0]["informacion_islr_4"];
+
+								xGetElementById("BASE_1X1000_FF").value=resultado[0]["informacion_1x1000_1"];
+								if(resultado[0]["informacion_1x1000_2"])
+									xGetElementById("PORCENTAJE_1X1000_FF").value=resultado[0]["informacion_1x1000_2"];
+								else
+									xGetElementById("PORCENTAJE_1X1000_FF").value="0.10";
+								xGetElementById("MONTO_1X1000_FF").value=resultado[0]["informacion_1x1000_3"];
+								xGetElementById("RETENCION_1X1000_FF").value=resultado[0]["informacion_1x1000_4"];
+
+								if(xGetElementById("TOTAL_PAGO_FF").value=="0.00"){
+									var base_calculo=xGetElementById("BASE_IVA_FF").value;
+									var total_iva=xGetElementById("MONTO_IVA_FF").value;
+									var exento=xGetElementById("TOTAL_FF").value*1.00-(base_calculo*1.00+total_iva*1.00);
+									xGetElementById("EXENTO_FF").value=(exento>=0?exento:0).toFixed(2);
+									xGetElementById("TOTAL_PAGO_FF").value=(xGetElementById("TOTAL_FF").value*1.00-xGetElementById("RETENCION_IVA_FF").value*1.00).toFixed(2);
+								}
 								},
 						'url':'../factura/',
 						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
@@ -516,11 +585,17 @@ function Form_FACTURA__SetIVA(){
 }
 
 
+function Form_FACTURA__CalcularISLR(){
+	var base_calculo=xGetElementById("BASE_ISLR_FF").value;
+	var porcentaje=xGetElementById("PORCENTAJE_ISLR_FF").value;
+	var total=(base_calculo*porcentaje/100.00).toFixed(2);
+	xGetElementById("RETENCION_ISLR_FF").value=total;
+}
 
-
-
-
-
-
-
+function Form_FACTURA__Calcular1x1000(){
+	var base_calculo=xGetElementById("BASE_1X1000_FF").value;
+	var porcentaje=xGetElementById("PORCENTAJE_1X1000_FF").value;
+	var total=(base_calculo*porcentaje/100.00).toFixed(2);
+	xGetElementById("RETENCION_1X1000_FF").value=total;
+}
 

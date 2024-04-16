@@ -1,0 +1,1 @@
+ALTER TABLE modulo_base.factura ADD informacion_1x1000 NUMERIC(20,2)[];

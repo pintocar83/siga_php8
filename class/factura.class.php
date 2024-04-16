@@ -8,10 +8,17 @@ class factura{
                             F.informacion_iva[2] as informacion_iva_2,
                             F.informacion_iva[3] as informacion_iva_3,
                             F.informacion_iva[4] as informacion_iva_4,
+                            F.informacion_iva[5] as informacion_iva_5,
+                            F.informacion_iva[6] as informacion_iva_6,
+                            F.informacion_iva[7] as informacion_iva_7,
                             F.informacion_islr[1] as informacion_islr_1,
                             F.informacion_islr[2] as informacion_islr_2,
                             F.informacion_islr[3] as informacion_islr_3,
                             F.informacion_islr[4] as informacion_islr_4,
+                            F.informacion_1x1000[1] as informacion_1x1000_1,
+                            F.informacion_1x1000[2] as informacion_1x1000_2,
+                            F.informacion_1x1000[3] as informacion_1x1000_3,
+                            F.informacion_1x1000[4] as informacion_1x1000_4,
                             P.tipo,
                             (case when P.identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
                             replace(P.denominacion,';',' ') as denominacion  
@@ -62,7 +69,8 @@ class factura{
                                 $numero_control,
                                 $total,
                                 $informacion_iva,
-                                $informacion_islr){
+                                $informacion_islr,
+                                $informacion_1x1000){
     $db=SIGA::DBController();
 
     //buscar si la factura se encuentra registrada
@@ -78,7 +86,8 @@ class factura{
                 "numero_control"=>"'$numero_control'",
                 "total"=>"'$total'",
                 "informacion_iva"=>"$informacion_iva",
-                "informacion_islr"=>"$informacion_islr"
+                "informacion_islr"=>"$informacion_islr",
+                "informacion_1x1000"=>"$informacion_1x1000"
                 );
 
     
