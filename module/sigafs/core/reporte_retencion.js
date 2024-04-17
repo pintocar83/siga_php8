@@ -31,6 +31,7 @@ var reportes_retencion={
       var _archivo="";
       if(tipo==1) _archivo="comprobante_retencion_iva.php";
       else if(tipo==2) _archivo="comprobante_retencion_islr.php";
+      else if(tipo==3) _archivo="comprobante_retencion_1x1000.php";
       else return;
       window.open("../../report/"+_archivo+"?id_persona="+id_persona+"&fecha_inicio="+fecha_inicio+"&fecha_culminacion="+fecha_culminacion);
     }

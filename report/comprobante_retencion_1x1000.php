@@ -13,6 +13,8 @@ $db=SIGA::DBController();
 
 $organismo=$db->Execute("SELECT
                             P.identificacion_tipo||P.identificacion_numero as identificacion,
+                            P.identificacion_tipo,
+                            P.identificacion_numero,
                             P.denominacion,
                             P.direccion
                           FROM
@@ -48,7 +50,7 @@ else{
                             FROM
                               modulo_base.retencion_comprobante
                             WHERE
-                              id_retencion_tipo=2 and
+                              id_retencion_tipo=3 and
                               not id_persona is null and
                               fecha BETWEEN '".unformatDate($fecha_inicio)."' AND '".unformatDate($fecha_culminacion)."'
                               $add
@@ -68,8 +70,7 @@ else{
 
 
 $denominacion_ente=$organismo[0]["denominacion"];
-$len=strlen($organismo[0]["identificacion"])-2;
-$rif_ente=$organismo[0]["identificacion"][0]."-".substr($organismo[0]["identificacion"],1,$len)."-".$organismo[0]["identificacion"][$len];
+$rif_ente=formatear_rif($organismo[0]["identificacion_tipo"],$organismo[0]["identificacion_numero"]);
 $direccion_ente=$organismo[0]["direccion"];
 $ciudad_ente="";
 $estado_ente="";
@@ -238,7 +239,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(20,3,utf8_decode("BASE"),'LR',0,'C',0);
   $pdf->Cell(11,3,utf8_decode("%"),'LR',0,'C',0);
   //$pdf->Cell(20,3,"IMPUESTO",'LR',0,'C',0);
-  $pdf->Cell(20,3,utf8_decode("ISLR"),'',1,'C',0);
+  $pdf->Cell(20,3,utf8_decode("1x1000"),'',1,'C',0);
   
   //CABECERA TABLA P2
   $pdf->Cell(8,3,utf8_decode("Nº"),'R',0,'C',0);

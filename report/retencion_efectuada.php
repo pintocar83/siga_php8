@@ -22,6 +22,7 @@ $fecha_culminacion=SIGA::paramGet("fecha_culminacion");
 $tipo_col="";
 if($tipo==1) $tipo_col="iva";
 else if($tipo==2) $tipo_col="islr";
+else if($tipo==3) $tipo_col="1x1000";
 if($tipo_col=="") exit;
 
 

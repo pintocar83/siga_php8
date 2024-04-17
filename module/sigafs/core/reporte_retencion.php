@@ -16,7 +16,11 @@
 							<tr>
 								<td>
 									<fieldset style="border: 1px solid #A5A5A5;">
-										<legend><b>Retención</b> <SELECT id="TIPO_RR"  class="TextoCampoInput"><OPTION value="1">I.V.A.</OPTION><OPTION value="2">I.S.L.R.</OPTION></SELECT></legend>
+										<legend><b>Retención</b> <SELECT id="TIPO_RR"  class="TextoCampoInput">
+											<OPTION value="1">I.V.A.</OPTION>
+											<OPTION value="2">I.S.L.R.</OPTION>
+											<OPTION value="3">1x1000</OPTION>
+										</SELECT></legend>
 										<table style="vertical-align: middle;">
 											<tr>
 												<td><input type="radio"  class="TextoCampoInput" checked="checked" name="OPCION_RR" id="OPCION_RR_A"/></td>

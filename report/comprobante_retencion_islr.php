@@ -13,6 +13,8 @@ $db=SIGA::DBController();
 
 $organismo=$db->Execute("SELECT
                             P.identificacion_tipo||P.identificacion_numero as identificacion,
+                            P.identificacion_tipo,
+                            P.identificacion_numero,
                             P.denominacion,
                             P.direccion
                           FROM
@@ -68,8 +70,7 @@ else{
 
 
 $denominacion_ente=$organismo[0]["denominacion"];
-$len=strlen($organismo[0]["identificacion"])-2;
-$rif_ente=$organismo[0]["identificacion"][0]."-".substr($organismo[0]["identificacion"],1,$len)."-".$organismo[0]["identificacion"][$len];
+$rif_ente=formatear_rif($organismo[0]["identificacion_tipo"],$organismo[0]["identificacion_numero"]);
 $direccion_ente=$organismo[0]["direccion"];
 $ciudad_ente="";
 $estado_ente="";

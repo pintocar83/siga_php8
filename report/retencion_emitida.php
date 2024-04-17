@@ -21,8 +21,18 @@ $fecha_inicio=SIGA::paramGet("fecha_inicio");
 $fecha_culminacion=SIGA::paramGet("fecha_culminacion");
 
 $tipo_col="";
-if($tipo==1) $tipo_col="iva";
-else if($tipo==2) $tipo_col="islr";
+if($tipo==1){
+  $tipo_col="iva";
+  $t_monto=15;
+}
+else if($tipo==2){
+  $tipo_col="islr";
+  $t_monto=0;
+}
+else if($tipo==3){
+  $tipo_col="1x1000";
+  $t_monto=0;
+}
 if($tipo_col=="") exit;
 
 
@@ -76,8 +86,8 @@ $t_numero=18;
 $t_control=18;
 $t_total=15;
 $t_base=15;
-$t_porcentaje=12;
-$t_monto=15;
+$t_porcentaje=14;
+//$t_monto=15;
 $t_retencion=15;
 $t_persona=$ANCHO-($t_n+$t_rif+$t_comprobante+$t_fecha+$t_numero+$t_control+$t_total+$t_base+$t_porcentaje+$t_monto+$t_retencion);
 
@@ -89,20 +99,23 @@ $CABECERA[0]=array(
                    array("nombre"=>"FACTURA","ancho"=>($t_fecha+$t_numero+$t_control+$t_total+$t_base+$t_porcentaje+$t_monto))
                   );
 
-$CABECERA[1]=array(
-                   array("id"=>"#","nombre"=>"Nº","ancho"=>$t_n,"alinear"=>"C"),
-                   array("id"=>"identificacion","nombre"=>"RIF","ancho"=>$t_rif,"alinear"=>"L"),
-                   array("id"=>"persona","nombre"=>"Proveedor","ancho"=>$t_persona,"alinear"=>"L"),
-                   array("id"=>"numero","nombre"=>"Comprobante","ancho"=>$t_comprobante,"alinear"=>"C"),
-                   array("id"=>"fecha","nombre"=>"Fecha","ancho"=>$t_fecha,"alinear"=>"C"),
-                   array("id"=>"numero_factura","nombre"=>"Número","ancho"=>$t_numero,"alinear"=>"C"),
-                   array("id"=>"numero_control","nombre"=>"Nº Control","ancho"=>$t_control,"alinear"=>"C"),
-                   array("id"=>"total","nombre"=>"Total","ancho"=>$t_total,"alinear"=>"R","formato"=>"numerico"),
-                   array("id"=>"monto_base","nombre"=>"Base Imp.","ancho"=>$t_base,"alinear"=>"R","formato"=>"numerico"),
-                   array("id"=>"porcentaje","nombre"=>"% ".strtoupper($tipo_col),"ancho"=>$t_porcentaje,"alinear"=>"R","formato"=>"numerico"),
-                   array("id"=>"monto","nombre"=>strtoupper($tipo_col),"ancho"=>$t_monto,"alinear"=>"R","formato"=>"numerico"),
-                   array("id"=>"retencion","nombre"=>"Retención","ancho"=>$t_retencion,"alinear"=>"R","formato"=>"numerico")
-                  );
+$CABECERA[1]=[
+  ["id"=>"#","nombre"=>"Nº","ancho"=>$t_n,"alinear"=>"C"],
+  ["id"=>"identificacion","nombre"=>"RIF","ancho"=>$t_rif,"alinear"=>"L"],
+  ["id"=>"persona","nombre"=>"Proveedor","ancho"=>$t_persona,"alinear"=>"L"],
+  ["id"=>"numero","nombre"=>"Comprobante","ancho"=>$t_comprobante,"alinear"=>"C"],
+  ["id"=>"fecha","nombre"=>"Fecha","ancho"=>$t_fecha,"alinear"=>"C"],
+  ["id"=>"numero_factura","nombre"=>"Número","ancho"=>$t_numero,"alinear"=>"C"],
+  ["id"=>"numero_control","nombre"=>"Nº Control","ancho"=>$t_control,"alinear"=>"C"],
+  ["id"=>"total","nombre"=>"Total","ancho"=>$t_total,"alinear"=>"R","formato"=>"numerico"],
+  ["id"=>"monto_base","nombre"=>"Base Imp.","ancho"=>$t_base,"alinear"=>"R","formato"=>"numerico"],
+  ["id"=>"porcentaje","nombre"=>"% ".strtoupper($tipo_col),"ancho"=>$t_porcentaje,"alinear"=>"R","formato"=>"numerico"]
+];
+
+if($tipo==1){
+  $CABECERA[1][]=["id"=>"monto","nombre"=>strtoupper($tipo_col),"ancho"=>$t_monto,"alinear"=>"R","formato"=>"numerico"];
+}
+$CABECERA[1][]=["id"=>"retencion","nombre"=>"Retención","ancho"=>$t_retencion,"alinear"=>"R","formato"=>"numerico"];
 
 include("template/pdf_reporte_1.class.php");
 
