@@ -27,7 +27,9 @@ class comprobante{
                                                     P.tipo,
                                                     (case when P.identificacion_tipo='' then 'S/N' else P.identificacion_tipo end) || '-' || P.identificacion_numero as identificacion,
                                                     replace(P.denominacion,';',' ') as denominacion,
-                                                    PT.id_cuenta_contable
+                                                    PT.id_cuenta_contable,
+                                                    P.cuenta_bancaria[1] cuenta_bancaria_principal,
+                                                    P.cuenta_bancaria[2] cuenta_bancaria_secundaria
                                                   FROM modulo_base.persona as P, modulo_base.persona_tipo as PT
                                                   WHERE P.id='".$return[0]["id_persona"]."' AND P.tipo=PT.tipo");
 

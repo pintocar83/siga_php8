@@ -225,6 +225,42 @@ $files_history[]=[
   "module/comprobante/index.php",
 ];
 
+//Hasta 2024-04-15
+$files_history[]=[
+  "class/factura.class.php",
+  "database/20240317_factura_add_1x1000.sql",
+  "module/factura/index.php",
+  "module/factura/main.js",
+  "module/sigafs/core/comprobante_retencion.js",
+  "module/sigafs/core/comprobante_retencion.php",
+  "module/sigafs/core/factura.js",
+  "module/sigafs/core/factura.php",
+  "report/comprobante_retencion_1x1000.php",
+];
+
+//Hasta 2024-04-17
+$files_history[]=[
+  "module/sigafs/core/reporte_retencion.js",
+  "module/sigafs/core/reporte_retencion.php",
+  "report/comprobante_retencion_1x1000.php",
+  "report/comprobante_retencion_islr.php",
+  "report/comprobante_retencion_iva.php",
+  "report/retencion_efectuada.php",
+  "report/retencion_emitida.php",
+  "report/retencion_emitida_xls.php",
+];
+
+//Hasta 2024-04-26
+$files_history[]=[
+  "report/comprobante_retencion_1x1000.php",
+];
+
+//Hasta 2024-06-03
+$files_history[]=[
+  "module/pago/main.js",
+  "class/comprobante.class.php"
+];
+
 $files=array_values(array_unique($files_history[count($files_history)-1], SORT_REGULAR));
 
 $path=".";

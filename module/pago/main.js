@@ -131,7 +131,7 @@ siga.define('pago', {
             me.internal.cuenta_destino=[
               result[0]["cuenta_bancaria_principal"],
               result[0]["cuenta_bancaria_secundaria"]
-            ];
+            ].filter(Boolean);
             me.internal.cuenta_destino_menu=null;
             me.CargarSolicitudes();
           }
@@ -1590,6 +1590,9 @@ siga.define('pago', {
       me.Mensaje("");
       me.MensajeListado("");
 
+      me.internal.cuenta_destino=[];
+      me.internal.cuenta_destino_menu=null;
+
       Ext.Ajax.request({
         method: 'POST',
         url:'module/comprobante/',
@@ -1609,6 +1612,11 @@ siga.define('pago', {
           me.$("PERSONA_ID").value=resultado[0]["detalle_persona"][0]["id"];
           me.$("PERSONA_IDENTIFICACION").value=resultado[0]["detalle_persona"][0]["identificacion"];
           me.$("PERSONA_DENOMINACION").value=resultado[0]["detalle_persona"][0]["denominacion"];
+          me.internal.cuenta_destino=[
+            resultado[0]["detalle_persona"][0]["cuenta_bancaria_principal"],
+            resultado[0]["detalle_persona"][0]["cuenta_bancaria_secundaria"]
+          ].filter(Boolean);
+          me.internal.cuenta_destino_menu=null;
 
           //numero de cuenta
           me.$("ID_CTA").value=resultado[0]["detalle_comprobante_bancario"][0]["id_banco_cuenta"];
