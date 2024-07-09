@@ -1,4 +1,5 @@
-__**Convertidor**__
+[[inicio|Inicio]]
+==== Convertidor ====
 
 Para ingresar al módulo de corversión debemos seleccionar la opción "Convertidor" en el menú principal del sistema.
 

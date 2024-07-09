@@ -1,49 +1,52 @@
 <?php
+
+use dokuwiki\Extension\ActionPlugin;
+use dokuwiki\Extension\EventHandler;
+use dokuwiki\Extension\Event;
+
 /** DokuWiki Plugin extension (Action Component)
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  Andreas Gohr <andi@splitbrain.org>
  */
-
-// must be run within Dokuwiki
-if(!defined('DOKU_INC')) die();
-
-class action_plugin_extension extends DokuWiki_Action_Plugin {
-
+class action_plugin_extension extends ActionPlugin
+{
     /**
      * Registers a callback function for a given event
      *
-     * @param Doku_Event_Handler $controller DokuWiki's event controller object
+     * @param EventHandler $controller DokuWiki's event controller object
      * @return void
      */
-    public function register(Doku_Event_Handler $controller) {
-
+    public function register(EventHandler $controller)
+    {
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'info');
-
     }
 
     /**
      * Create the detail info for a single plugin
      *
-     * @param Doku_Event $event
-     * @param            $param
+     * @param Event $event
+     * @param $param
      */
-    public function info(Doku_Event &$event, $param) {
+    public function info(Event $event, $param)
+    {
         global $USERINFO;
         global $INPUT;
 
-        if($event->data != 'plugin_extension') return;
+        if ($event->data != 'plugin_extension') return;
         $event->preventDefault();
         $event->stopPropagation();
 
-        if(empty($_SERVER['REMOTE_USER']) || !auth_isadmin($_SERVER['REMOTE_USER'], $USERINFO['grps'])) {
+        /** @var admin_plugin_extension $admin */
+        $admin = plugin_load('admin', 'extension');
+        if (!$admin->isAccessibleByCurrentUser()) {
             http_status(403);
             echo 'Forbidden';
             exit;
         }
 
         $ext = $INPUT->str('ext');
-        if(!$ext) {
+        if (!$ext) {
             http_status(400);
             echo 'no extension given';
             return;
@@ -54,22 +57,26 @@ class action_plugin_extension extends DokuWiki_Action_Plugin {
         $extension->setExtension($ext);
 
         $act = $INPUT->str('act');
-        switch($act) {
+        switch ($act) {
             case 'enable':
             case 'disable':
-                $json = new JSON();
-                $extension->$act(); //enables/disables
+                if (getSecurityToken() != $INPUT->str('sectok')) {
+                    http_status(403);
+                    echo 'Security Token did not match. Possible CSRF attack.';
+                    return;
+                }
 
+                $extension->$act(); //enables/disables
                 $reverse = ($act == 'disable') ? 'enable' : 'disable';
 
-                $return = array(
-                    'state'   => $act.'d', // isn't English wonderful? :-)
+                $return = [
+                    'state'   => $act . 'd', // isn't English wonderful? :-)
                     'reverse' => $reverse,
-                    'label'   => $extension->getLang('btn_'.$reverse)
-                );
+                    'label'   => $extension->getLang('btn_' . $reverse),
+                ];
 
                 header('Content-Type: application/json');
-                echo $json->encode($return);
+                echo json_encode($return, JSON_THROW_ON_ERROR);
                 break;
 
             case 'info':
@@ -77,9 +84,7 @@ class action_plugin_extension extends DokuWiki_Action_Plugin {
                 /** @var helper_plugin_extension_list $list */
                 $list = plugin_load('helper', 'extension_list');
                 header('Content-Type: text/html; charset=utf-8');
-                echo $list->make_info($extension);
+                echo $list->makeInfo($extension);
         }
     }
-
 }
-

@@ -249,3 +249,17 @@ servicios:listado_seleccion.png
 servicios:editar_confirmar.png
 servicios:eliminar_confirmar.png
 menu_principal_administrativo.svg
+facturas:opcion_menu.png
+facturas:principal.png
+facturas:guardar.png
+facturas:guardar_mensaje.png
+facturas:listado.png
+facturas:listado_buscar.png
+facturas:eliminar.png
+plan_de_cuentas_presupuestarias:opcion_menu.png
+plan_de_cuentas_presupuestarias:principal.png
+plan_de_cuentas_presupuestarias:guardar.png
+plan_de_cuentas_presupuestarias:buscar.png
+plan_de_cuentas_presupuestarias:editar.png
+plan_de_cuentas_presupuestarias:eliminar.png
+plan_de_cuentas_presupuestarias:eliminar_confirmar.png

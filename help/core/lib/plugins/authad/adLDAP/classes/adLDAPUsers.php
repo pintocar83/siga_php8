@@ -37,6 +37,8 @@
 require_once(dirname(__FILE__) . '/../adLDAP.php');
 require_once(dirname(__FILE__) . '/../collections/adLDAPUserCollection.php');
 
+use dokuwiki\Utf8\Sort;
+
 /**
 * USER FUNCTIONS
 */
@@ -314,14 +316,14 @@ class adLDAPUsers {
     * 
     * @param string $username The username to query
     * @param book $isGUID Is the username passed a GUID or a samAccountName
-    * @requires bcmath http://www.php.net/manual/en/book.bc.php
+    * @requires bcmath http://php.net/manual/en/book.bc.php
     * @return array
     */
     public function passwordExpiry($username, $isGUID = false) 
     {
         if ($username === NULL) { return "Missing compulsory field [username]"; }
         if (!$this->adldap->getLdapBind()) { return false; }
-        if (!function_exists('bcmod')) { throw new adLDAPException("Missing function support [bcmod] http://www.php.net/manual/en/book.bc.php"); };
+        if (!function_exists('bcmod')) { throw new adLDAPException("Missing function support [bcmod] http://php.net/manual/en/book.bc.php"); };
         
         $userInfo = $this->info($username, array("pwdlastset", "useraccountcontrol"), $isGUID);
         $pwdLastSet = $userInfo[0]['pwdlastset'][0];
@@ -517,7 +519,7 @@ class adLDAPUsers {
     {
         $password="\"".$password."\"";
         $encoded="";
-        for ($i=0; $i <strlen($password); $i++){ $encoded.="{$password{$i}}\000"; }
+        for ($i=0; $i <strlen($password); $i++){ $encoded.="{$password[$i]}\000"; }
         return $encoded;
     }
      
@@ -568,7 +570,7 @@ class adLDAPUsers {
             }
         }
         if ($sorted) { 
-            asort($usersArray); 
+            Sort::asort($usersArray); 
         }
         return $usersArray;
     }
@@ -631,7 +633,7 @@ class adLDAPUsers {
             }
         }
         if ($sorted){ 
-          asort($usersArray); 
+          Sort::asort($usersArray); 
         }
         return ($usersArray);
     }

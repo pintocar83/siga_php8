@@ -1,4 +1,5 @@
-__**Ingresar al Sistema**__
+[[inicio|Inicio]]
+==== Ingresar al Sistema ====
 
 Para ingresar al sitema es necesario tener instalado algunos de los siguientes navegadores web 
 en el computador cliente.
@@ -18,7 +19,7 @@ en el computador cliente.
 1. Ingresar al navegador web de preferencia.
 
 
-2. Ingresar en la direccion web: http://aplicaciones.fundacite-sucre.gob.ve/
+2. Ingresar en la direccion web: [[http://dsp.com.ve/administrativo/]]
 
 3. Pulsar el botón "iniciar seccion" en la esquina superior izquierda.
 

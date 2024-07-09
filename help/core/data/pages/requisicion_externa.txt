@@ -1,4 +1,5 @@
-__**Requisición Externa**__
+[[inicio|Inicio]]
+==== Requisición Externa ====
 
 Para ingresar al módulo de Requisición Externa, debemos seleccionar la opción "Requisición Externa" desde el menú principal del sistema administrativo.
 

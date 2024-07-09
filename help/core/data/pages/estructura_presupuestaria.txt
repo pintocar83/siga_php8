@@ -1,4 +1,5 @@
-__**Estructura Presupuestaria**__
+[[inicio|Inicio]]
+==== Estructura Presupuestaria ====
 
 Para ingresar al módulo de estructura presupuestaria debemos seleccionar la opción "Estructura Presupuestaria" en el menú principal del sistema.
 

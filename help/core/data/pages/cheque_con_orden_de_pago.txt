@@ -1,4 +1,5 @@
-__**Cheque Orden de Pago**__
+[[inicio|Inicio]]
+==== Cheque Orden de Pago ====
 
 Para ingresar al módulo de cheque con orden de pago, debemos seleccionar la opción Cheque Orden de Pago desde el menú principal del sistema administrativo.
 

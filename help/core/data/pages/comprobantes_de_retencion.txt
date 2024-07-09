@@ -1,4 +1,5 @@
-__**Comprobantes de Retención**__
+[[inicio|Inicio]]
+==== Comprobantes de Retención ====
 
 Para ingresar al módulo de comprobantes de retención, debemos seleccionar la opción "Comprobantes de Retención" desde el menú principal del sistema administrativo.
 

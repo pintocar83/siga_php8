@@ -69,16 +69,19 @@ $lang['status_bundled']               = 'bundled';
 
 $lang['msg_enabled']                  = 'Plugin %s enabled';
 $lang['msg_disabled']                 = 'Plugin %s disabled';
-$lang['msg_delete_success']           = 'Extension uninstalled';
+$lang['msg_delete_success']           = 'Extension %s uninstalled';
+$lang['msg_delete_failed']            = 'Uninstalling Extension %s failed';
 $lang['msg_template_install_success'] = 'Template %s installed successfully';
 $lang['msg_template_update_success']  = 'Template %s updated successfully';
 $lang['msg_plugin_install_success']   = 'Plugin %s installed successfully';
 $lang['msg_plugin_update_success']    = 'Plugin %s updated successfully';
 $lang['msg_upload_failed']            = 'Uploading the file failed';
+$lang['msg_nooverwrite']              = 'Extension %s already exists so it is not being overwritten; to overwrite, tick the overwrite option';
 
 $lang['missing_dependency']           = '<strong>Missing or disabled dependency:</strong> %s';
 $lang['security_issue']               = '<strong>Security Issue:</strong> %s';
 $lang['security_warning']             = '<strong>Security Warning:</strong> %s';
+$lang['update_message']               = '<strong>Update Message:</strong> %s';
 $lang['update_available']             = '<strong>Update:</strong> New version %s is available.';
 $lang['wrong_folder']                 = '<strong>Plugin installed incorrectly:</strong> Rename plugin directory "%s" to "%s".';
 $lang['url_change']                   = '<strong>URL changed:</strong> Download URL has changed since last download. Check if the new URL is valid before updating the extension.<br />New: %s<br />Old: %s';
@@ -94,8 +97,16 @@ $lang['noperms']                      = 'Extension directory is not writable';
 $lang['notplperms']                   = 'Template directory is not writable';
 $lang['nopluginperms']                = 'Plugin directory is not writable';
 $lang['git']                          = 'This extension was installed via git, you may not want to update it here.';
+$lang['auth']                         = 'This auth plugin is not enabled in configuration, consider disabling it.';
 
 $lang['install_url']                  = 'Install from URL:';
 $lang['install_upload']               = 'Upload Extension:';
 
+$lang['repo_badresponse']             = 'The plugin repository returned an invalid response.';
 $lang['repo_error']                   = 'The plugin repository could not be contacted. Make sure your server is allowed to contact www.dokuwiki.org and check your proxy settings.';
+$lang['nossl']                        = 'Your PHP seems to miss SSL support. Downloading will not work for many DokuWiki extensions.';
+
+$lang['js']['display_viewoptions']    = 'View Options:';
+$lang['js']['display_enabled']        = 'enabled';
+$lang['js']['display_disabled']       = 'disabled';
+$lang['js']['display_updatable']      = 'updatable';

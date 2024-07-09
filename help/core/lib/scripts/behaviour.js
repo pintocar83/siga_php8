@@ -1,37 +1,41 @@
 /**
  * Hides elements with a slide animation
  *
- * @param fn optional callback to run after hiding
+ * @param {function} fn optional callback to run after hiding
+ * @param {bool} noaria supress aria-expanded state setting
  * @author Adrian Lang <mail@adrianlang.de>
  */
-jQuery.fn.dw_hide = function(fn) {
-    this.attr('aria-expanded', 'false');
+jQuery.fn.dw_hide = function(fn, noaria) {
+    if(!noaria) this.attr('aria-expanded', 'false');
     return this.slideUp('fast', fn);
 };
 
 /**
  * Unhides elements with a slide animation
  *
- * @param fn optional callback to run after hiding
+ * @param {function} fn optional callback to run after hiding
+ * @param {bool} noaria supress aria-expanded state setting
  * @author Adrian Lang <mail@adrianlang.de>
  */
-jQuery.fn.dw_show = function(fn) {
-    this.attr('aria-expanded', 'true');
+jQuery.fn.dw_show = function(fn, noaria) {
+    if(!noaria) this.attr('aria-expanded', 'true');
     return this.slideDown('fast', fn);
 };
 
 /**
  * Toggles visibility of an element using a slide element
  *
- * @param bool the current state of the element (optional)
+ * @param {bool} state the current state of the element (optional)
+ * @param {function} fn callback after the state has been toggled
+ * @param {bool} noaria supress aria-expanded state setting
  */
-jQuery.fn.dw_toggle = function(bool, fn) {
+jQuery.fn.dw_toggle = function(state, fn, noaria) {
     return this.each(function() {
         var $this = jQuery(this);
-        if (typeof bool === 'undefined') {
-            bool = $this.is(':hidden');
+        if (typeof state === 'undefined') {
+            state = $this.is(':hidden');
         }
-        $this[bool ? "dw_show" : "dw_hide" ](fn);
+        $this[state ? "dw_show" : "dw_hide" ](fn, noaria);
     });
 };
 
@@ -51,11 +55,15 @@ var dw_behaviour = {
         dw_behaviour.quickSelect();
         dw_behaviour.checkWindowsShares();
         dw_behaviour.subscription();
+        dw_behaviour.pageRestoreConfirm();
+        dw_behaviour.securityCheck();
 
         dw_behaviour.revisionBoxHandler();
         jQuery(document).on('click','#page__revisions input[type=checkbox]',
             dw_behaviour.revisionBoxHandler
         );
+
+        jQuery('.bounce').effect('bounce', {times:10}, 2000 );
     },
 
     /**
@@ -64,26 +72,42 @@ var dw_behaviour = {
     scrollToMarker: function(){
         var $obj = jQuery('#scroll__here');
         if($obj.length) {
-            $obj[0].scrollIntoView();
+            if($obj.offset().top != 0) {
+                jQuery('html, body').animate({
+                    scrollTop: $obj.offset().top - 100
+                }, 500);
+            } else {
+                // hidden object have no offset but can still be scrolled into view
+                $obj[0].scrollIntoView();
+            }
         }
+    },
+
+    /**
+     * Display confirm dialog on page restore action
+     */
+    pageRestoreConfirm: function(){
+        jQuery('#dokuwiki__pagetools li.revert a').on('click',
+            function() {
+                return confirm(LANG.restore_confirm);
+            }
+        );
     },
 
     /**
      * Looks for an element with the ID focus__this at sets focus to it
      */
     focusMarker: function(){
-        jQuery('#focus__this').focus();
+        jQuery('#focus__this').trigger('focus');
     },
 
     /**
      * Remove all search highlighting when clicking on a highlighted term
-     *
-     * @FIXME would be nice to have it fade out
      */
     removeHighlightOnClick: function(){
-        jQuery('span.search_hit').click(
+        jQuery('span.search_hit').on('click',
             function(e){
-                jQuery(e.target).removeClass('search_hit');
+                jQuery(e.target).removeClass('search_hit', 1000);
             }
         );
     },
@@ -91,16 +115,19 @@ var dw_behaviour = {
     /**
      * Autosubmit quick select forms
      *
-     * When a <select> tag has the class "quickselect", this script will
+     * When a <select> or <input> tag has the class "quickselect", this script will
      * automatically submit its parent form when the select value changes.
      * It also hides the submit button of the form.
      *
+     * This includes a workaround a weird behaviour when the submit button has a name
+     *
+     * @link https://trackjs.com/blog/when-form-submit-is-not-a-function/
      * @author Andreas Gohr <andi@splitbrain.org>
      */
     quickSelect: function(){
-        jQuery('select.quickselect')
-            .change(function(e){ e.target.form.submit(); })
-            .closest('form').find('input[type=submit]').not('.show').hide();
+        jQuery('.quickselect')
+            .change(function(e){ HTMLFormElement.prototype.submit.call(e.target.form); })
+            .closest('form').find(':button').not('.show').hide();
     },
 
     /**
@@ -109,7 +136,7 @@ var dw_behaviour = {
      * @author Michael Klier <chi@chimeric.de>
      */
     checkWindowsShares: function() {
-        if(!LANG.nosmblinks || navigator.userAgent.match(/(Trident|MSIE)/)) {
+        if(!LANG.nosmblinks || navigator.userAgent.match(/(Trident|MSIE|Edge)/)) {
             // No warning requested or none necessary
             return;
         }
@@ -135,7 +162,7 @@ var dw_behaviour = {
         $digest = $form.find("input[name='sub_style'][value='digest']");
 
         $form.find("input[name='sub_target']")
-            .click(
+            .on('click',
                 function () {
                     var $this = jQuery(this), show_list;
                     if (!$this.prop('checked')) {
@@ -150,33 +177,65 @@ var dw_behaviour = {
                 }
             )
             .filter(':checked')
-            .click();
+            .trigger('click');
     },
 
     /**
      * disable multiple revisions checkboxes if two are checked
      *
      * @author Andreas Gohr <andi@splitbrain.org>
+     * @author Anika Henke <anika@selfthinker.org>
      */
-    revisionBoxHandler: function(){
-        var $checked = jQuery('#page__revisions input[type=checkbox]:checked');
-        var $all     = jQuery('#page__revisions input[type=checkbox]');
+    revisionBoxHandler: function() {
+        var $revisions = jQuery('#page__revisions');
+        var $all       = jQuery('input[type="checkbox"][name="rev2[]"]', $revisions);
+        var $checked   = $all.filter(':checked');
+        var $button    = jQuery('button', $revisions);
 
-        if($checked.length < 2){
-            $all.attr('disabled',false);
-            jQuery('#page__revisions input[type=submit]').attr('disabled',true);
-        }else{
-            $all.attr('disabled',true);
-            jQuery('#page__revisions input[type=submit]').attr('disabled',false);
-            for(var i=0; i<$checked.length; i++){
-                $checked[i].disabled = false;
-                if(i>1){
-                    $checked[i].checked = false;
+        if($checked.length < 2) {
+            $all.prop('disabled', false);
+            $button.prop('disabled', true);
+        } else {
+            $all.prop('disabled', true);
+            $button.prop('disabled', false);
+            $checked.each(function(i) {
+                jQuery(this).prop('disabled', false);
+                if(i>1) {
+                    jQuery(this).prop('checked', false);
                 }
-            }
+            });
         }
-    }
+    },
 
+    /**
+     * Check that access to the data directory is properly secured
+     *
+     * A successful check (a 403 error was returned when loading the image) is saved
+     * to session storage and not repeated again until the next browser session. This
+     * avoids overeager security bans (see #3363)
+     */
+    securityCheck: function () {
+        var $checkDiv = jQuery('#security__check');
+        if (!$checkDiv.length) return;
+        if (sessionStorage.getItem('dw-security-check:' + DOKU_BASE)) {
+            // check was already executed successfully
+            $checkDiv.remove();
+            return;
+        }
+
+        var img = new Image();
+        img.onerror = function () {
+            // successful check will not be repeated during session
+            $checkDiv.remove();
+            sessionStorage.setItem('dw-security-check:' + DOKU_BASE, true);
+        };
+        img.onload = function () {
+            // check failed, display a warning message
+            $checkDiv.html(LANG.data_insecure);
+            $checkDiv.addClass('error');
+        };
+        img.src = $checkDiv.data('src') + '?t=' + Date.now();
+    }
 };
 
 jQuery(dw_behaviour.init);

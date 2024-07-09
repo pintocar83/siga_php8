@@ -1,4 +1,5 @@
-__**Traspaso**__
+[[inicio|Inicio]]
+==== Traspaso ====
 
 Para ingresar al módulo traspaso debemos seleccionar la opción "Traspaso" en el menú principal del sistema.
 

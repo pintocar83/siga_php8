@@ -1,4 +1,5 @@
-__**Comprobantes**__
+[[inicio|Inicio]]
+==== Comprobantes ====
 
 Para ingresar al módulo de comprobante, debemos seleccionar la opción "Comprobante" desde el menú principal del sistema administrativo.
 

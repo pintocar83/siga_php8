@@ -1,4 +1,5 @@
-__**Registro de Pago**__
+[[inicio|Inicio]]
+==== Registro de Pago ====
 
 Para ingresar al módulo de orden de pago, debemos seleccionar la opción orden de pago desde el menú principal del sistema administrativo.
 

@@ -1,4 +1,5 @@
-__**Plan de Cuentas Contables**__
+[[inicio|Inicio]]
+==== Plan de Cuentas Contables ====
 
 Para ingresar al módulo plan de cuentas contables debemos seleccionar la opción "Plan de Cuentas Contables" en el menú principal del sistema.
 

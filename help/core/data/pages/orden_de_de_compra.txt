@@ -1,4 +1,5 @@
-__**Orden de Compra**__
+[[inicio|Inicio]]
+==== Orden de Compra ====
 
 Para ingresar al módulo de orden de compra, debemos seleccionar la opción Orden de Compra desde el menú principal del sistema administrativo.
 

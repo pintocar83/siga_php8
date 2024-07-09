@@ -1,4 +1,5 @@
-__**Disponibilidad Presupuestaria**__
+[[inicio|Inicio]]
+==== Disponibilidad Presupuestaria ====
 
 Para ingresar al módulo disponibilidad presupuestaria debemos seleccionar la opción "Disponibilidad Presupuestaria" en el menú principal del sistema.
 

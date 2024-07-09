@@ -1,4 +1,5 @@
-__**Crédito Adicional**__
+[[inicio|Inicio]]
+==== Crédito Adicional ====
 
 Para ingresar al módulo crédito adicional debemos seleccionar la opción "Crédito Adicional" en el menú principal del sistema.
 

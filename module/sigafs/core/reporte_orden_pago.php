@@ -39,16 +39,22 @@
 						<FORM id="FORMULARIO_IMPRIMIR_REPORTE_FIR" name="FORMULARIO_IMPRIMIR_REPORTE_FIR">
 							<table cellspacing='3px' align="center" width="90%">
 							<tbody>
-								<tr>
+                                <tr>
 									<td class='TextCampos'>
 										<INPUT type="radio" id="TIPO_REPORTE_FIR_1" name="TIPO_REPORTE_FIR" checked="true">
-										Ordenes de Pago con Afectación Presupuestaria - Listado Excel
+										Ordenes de Pago - Listado Excel
 									</td>
 								</tr>
 								<tr>
 									<td class='TextCampos'>
-										<INPUT type="radio" id="TIPO_REPORTE_FIR_2" name="TIPO_REPORTE_FIR">
-										Relación Traspasos, Credito Adicional y Reducciones Presupuestarias - Listado Excel
+										<INPUT type="radio" id="TIPO_REPORTE_FIR_2" name="TIPO_REPORTE_FIR" checked="false">
+										Ordenes de Pago con Afectación Presupuestaria - Listado Excel
+									</td>
+								</tr>
+								<tr style="display: none;">
+									<td class='TextCampos'>
+										<INPUT type="radio" id="TIPO_REPORTE_FIR_3" name="TIPO_REPORTE_FIR">
+										Relaci&oacute;n Traspasos, Credito Adicional y Reducciones Presupuestarias - Listado Excel
 									</td>
 								</tr>
 								<tr>
@@ -57,9 +63,9 @@
 									<br>
 									<DIV class='TitulosCampos' style="text-align : center;">
 										DEL&nbsp;
-										<INPUT id='FECHA_INICIO_FIR' class='TextoCampoInput' type='text' size='11' maxlength='10' value="<?php list($dia,$mes,$ano)=explode("/",date("d/m/").SIGA::data()); echo "01/$mes/$ano";?>" ondblclick="showCalendar('FECHA_INICIO_FIR','%d/%m/%Y')"><IMG id="IMG_FECHA_INICIO_FIR" class='BotonesParaCampos' src='../../image/icon/icon-calendar-sigafs.png' width='18' height='18' onclick="showCalendar('FECHA_INICIO_FIR','%d/%m/%Y')">
+										<INPUT id='FECHA_INICIO_FIR' class='TextoCampoInput' type='text' size='11' maxlength='10' value="<?php list($dia,$mes,$ano)=explode("/",date("d/m/Y")); echo "01/$mes/$ano";?>" ondblclick="showCalendar('FECHA_INICIO_FIR','%d/%m/%Y')"><IMG id="IMG_FECHA_INICIO_FIR" class='BotonesParaCampos' src='../../image/icon/icon-calendar-sigafs.png' width='18' height='18' onclick="showCalendar('FECHA_INICIO_FIR','%d/%m/%Y')">
 										AL&nbsp;
-										<INPUT id='FECHA_FIN_FIR' class='TextoCampoInput' type='text' size='11' maxlength='10' value="<?php echo date("d/m/").SIGA::data()?>" ondblclick="showCalendar('FECHA_FIN_FIR','%d/%m/%Y')"><IMG id="IMG_FECHA_FIN_FIR" class='BotonesParaCampos' src='../../image/icon/icon-calendar-sigafs.png' width='18' height='18' onclick="showCalendar('FECHA_FIN_FIR','%d/%m/%Y')">
+										<INPUT id='FECHA_FIN_FIR' class='TextoCampoInput' type='text' size='11' maxlength='10' value="<?php echo date("d/m/Y")?>" ondblclick="showCalendar('FECHA_FIN_FIR','%d/%m/%Y')"><IMG id="IMG_FECHA_FIN_FIR" class='BotonesParaCampos' src='../../image/icon/icon-calendar-sigafs.png' width='18' height='18' onclick="showCalendar('FECHA_FIN_FIR','%d/%m/%Y')">
 									</DIV>
 									</TD>
 								</tr>

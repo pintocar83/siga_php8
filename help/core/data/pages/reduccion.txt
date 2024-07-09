@@ -1,4 +1,5 @@
-__**Reducción**__
+[[inicio|Inicio]]
+==== Reducción ====
 
 Para ingresar al módulo Reducción debemos seleccionar la opción "Crédito Adicional" en el menú principal del sistema.
 

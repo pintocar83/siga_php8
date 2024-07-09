@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Authentication library
  *
@@ -9,16 +10,17 @@
  * @author     Andreas Gohr <andi@splitbrain.org>
  */
 
-if(!defined('DOKU_INC')) die('meh.');
-
-// some ACL level defines
-define('AUTH_NONE', 0);
-define('AUTH_READ', 1);
-define('AUTH_EDIT', 2);
-define('AUTH_CREATE', 4);
-define('AUTH_UPLOAD', 8);
-define('AUTH_DELETE', 16);
-define('AUTH_ADMIN', 255);
+use dokuwiki\ErrorHandler;
+use dokuwiki\JWT;
+use dokuwiki\Utf8\PhpString;
+use dokuwiki\Extension\AuthPlugin;
+use dokuwiki\Extension\Event;
+use dokuwiki\Extension\PluginController;
+use dokuwiki\PassHash;
+use dokuwiki\Subscriptions\RegistrationSubscriptionSender;
+use phpseclib3\Crypt\AES;
+use phpseclib3\Crypt\Common\SymmetricKey;
+use phpseclib3\Exception\BadDecryptionException;
 
 /**
  * Initialize the auth system.
@@ -32,41 +34,37 @@ define('AUTH_ADMIN', 255);
  * @triggers AUTH_LOGIN_CHECK
  * @return bool
  */
-function auth_setup() {
+function auth_setup()
+{
     global $conf;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
     global $AUTH_ACL;
     global $lang;
-    /* @var Doku_Plugin_Controller $plugin_controller */
+    /* @var PluginController $plugin_controller */
     global $plugin_controller;
-    $AUTH_ACL = array();
+    $AUTH_ACL = [];
 
-    if(!$conf['useacl']) return false;
+    if (!$conf['useacl']) return false;
 
     // try to load auth backend from plugins
     foreach ($plugin_controller->getList('auth') as $plugin) {
         if ($conf['authtype'] === $plugin) {
             $auth = $plugin_controller->load('auth', $plugin);
             break;
-        } elseif ('auth' . $conf['authtype'] === $plugin) {
-            // matches old auth backends (pre-Weatherwax)
-            $auth = $plugin_controller->load('auth', $plugin);
-            msg('Your authtype setting is deprecated. You must set $conf[\'authtype\'] = "auth' . $conf['authtype'] . '"'
-                 . ' in your configuration (see <a href="https://www.dokuwiki.org/auth">Authentication Backends</a>)',-1,'','',MSG_ADMINS_ONLY);
         }
     }
 
-    if(!isset($auth) || !$auth){
+    if (!$auth instanceof AuthPlugin) {
         msg($lang['authtempfail'], -1);
         return false;
     }
 
     if ($auth->success == false) {
         // degrade to unauthenticated user
-        unset($auth);
+        $auth = null;
         auth_logoff();
         msg($lang['authtempfail'], -1);
         return false;
@@ -74,24 +72,20 @@ function auth_setup() {
 
     // do the login either by cookie or provided credentials XXX
     $INPUT->set('http_credentials', false);
-    if(!$conf['rememberme']) $INPUT->set('r', false);
+    if (!$conf['rememberme']) $INPUT->set('r', false);
 
-    // handle renamed HTTP_AUTHORIZATION variable (can happen when a fix like
-    // the one presented at
-    // http://www.besthostratings.com/articles/http-auth-php-cgi.html is used
-    // for enabling HTTP authentication with CGI/SuExec)
-    if(isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
-        $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
-    // streamline HTTP auth credentials (IIS/rewrite -> mod_php)
-    if(isset($_SERVER['HTTP_AUTHORIZATION'])) {
-        list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) =
-            explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
+    // Populate Basic Auth user/password from Authorization header
+    // Note: with FastCGI, data is in REDIRECT_HTTP_AUTHORIZATION instead of HTTP_AUTHORIZATION
+    $header = $INPUT->server->str('HTTP_AUTHORIZATION') ?: $INPUT->server->str('REDIRECT_HTTP_AUTHORIZATION');
+    if (preg_match('~^Basic ([a-z\d/+]*={0,2})$~i', $header, $matches)) {
+        $userpass = explode(':', base64_decode($matches[1]));
+        [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']] = $userpass;
     }
 
     // if no credentials were given try to use HTTP auth (for SSO)
-    if(!$INPUT->str('u') && empty($_COOKIE[DOKU_COOKIE]) && !empty($_SERVER['PHP_AUTH_USER'])) {
-        $INPUT->set('u', $_SERVER['PHP_AUTH_USER']);
-        $INPUT->set('p', $_SERVER['PHP_AUTH_PW']);
+    if (!$INPUT->str('u') && empty($_COOKIE[DOKU_COOKIE]) && !empty($INPUT->server->str('PHP_AUTH_USER'))) {
+        $INPUT->set('u', $INPUT->server->str('PHP_AUTH_USER'));
+        $INPUT->set('p', $INPUT->server->str('PHP_AUTH_PW'));
         $INPUT->set('http_credentials', true);
     }
 
@@ -101,20 +95,24 @@ function auth_setup() {
         $INPUT->set('p', stripctl($INPUT->str('p')));
     }
 
-    if($INPUT->str('authtok')) {
-        // when an authentication token is given, trust the session
-        auth_validateToken($INPUT->str('authtok'));
-    } elseif(!is_null($auth) && $auth->canDo('external')) {
-        // external trust mechanism in place
-        $auth->trustExternal($INPUT->str('u'), $INPUT->str('p'), $INPUT->bool('r'));
-    } else {
-        $evdata = array(
-            'user'     => $INPUT->str('u'),
-            'password' => $INPUT->str('p'),
-            'sticky'   => $INPUT->bool('r'),
-            'silent'   => $INPUT->bool('http_credentials')
-        );
-        trigger_event('AUTH_LOGIN_CHECK', $evdata, 'auth_login_wrapper');
+    if (!auth_tokenlogin()) {
+        $ok = null;
+
+        if ($auth instanceof AuthPlugin && $auth->canDo('external')) {
+            $ok = $auth->trustExternal($INPUT->str('u'), $INPUT->str('p'), $INPUT->bool('r'));
+        }
+
+        if ($ok === null) {
+            // external trust mechanism not in place, or returns no result,
+            // then attempt auth_login
+            $evdata = [
+                'user' => $INPUT->str('u'),
+                'password' => $INPUT->str('p'),
+                'sticky' => $INPUT->bool('r'),
+                'silent' => $INPUT->bool('http_credentials')
+            ];
+            Event::createAndTrigger('AUTH_LOGIN_CHECK', $evdata, 'auth_login_wrapper');
+        }
     }
 
     //load ACL into a global array XXX
@@ -127,40 +125,44 @@ function auth_setup() {
  * Loads the ACL setup and handle user wildcards
  *
  * @author Andreas Gohr <andi@splitbrain.org>
+ *
  * @return array
  */
-function auth_loadACL() {
+function auth_loadACL()
+{
     global $config_cascade;
     global $USERINFO;
     /* @var Input $INPUT */
     global $INPUT;
 
-    if(!is_readable($config_cascade['acl']['default'])) return array();
+    if (!is_readable($config_cascade['acl']['default'])) return [];
 
     $acl = file($config_cascade['acl']['default']);
 
-    $out = array();
-    foreach($acl as $line) {
+    $out = [];
+    foreach ($acl as $line) {
         $line = trim($line);
-        if(empty($line) || ($line{0} == '#')) continue; // skip blank lines & comments
-        list($id,$rest) = preg_split('/[ \t]+/',$line,2);
+        if (empty($line) || ($line[0] == '#')) continue; // skip blank lines & comments
+        [$id, $rest] = preg_split('/[ \t]+/', $line, 2);
 
         // substitute user wildcard first (its 1:1)
-        if(strstr($line, '%USER%')){
+        if (strstr($line, '%USER%')) {
             // if user is not logged in, this ACL line is meaningless - skip it
             if (!$INPUT->server->has('REMOTE_USER')) continue;
 
-            $id   = str_replace('%USER%',cleanID($INPUT->server->str('REMOTE_USER')),$id);
-            $rest = str_replace('%USER%',auth_nameencode($INPUT->server->str('REMOTE_USER')),$rest);
+            $id   = str_replace('%USER%', cleanID($INPUT->server->str('REMOTE_USER')), $id);
+            $rest = str_replace('%USER%', auth_nameencode($INPUT->server->str('REMOTE_USER')), $rest);
         }
 
         // substitute group wildcard (its 1:m)
-        if(strstr($line, '%GROUP%')){
+        if (strstr($line, '%GROUP%')) {
             // if user is not logged in, grps is empty, no output will be added (i.e. skipped)
-            foreach((array) $USERINFO['grps'] as $grp){
-                $nid   = str_replace('%GROUP%',cleanID($grp),$id);
-                $nrest = str_replace('%GROUP%','@'.auth_nameencode($grp),$rest);
-                $out[] = "$nid\t$nrest";
+            if (isset($USERINFO['grps'])) {
+                foreach ((array) $USERINFO['grps'] as $grp) {
+                    $nid   = str_replace('%GROUP%', cleanID($grp), $id);
+                    $nrest = str_replace('%GROUP%', '@' . auth_nameencode($grp), $rest);
+                    $out[] = "$nid\t$nrest";
+                }
             }
         } else {
             $out[] = "$id\t$rest";
@@ -171,12 +173,62 @@ function auth_loadACL() {
 }
 
 /**
+ * Try a token login
+ *
+ * @return bool true if token login succeeded
+ */
+function auth_tokenlogin()
+{
+    global $USERINFO;
+    global $INPUT;
+    /** @var DokuWiki_Auth_Plugin $auth */
+    global $auth;
+    if (!$auth) return false;
+
+    // see if header has token
+    $header = '';
+    if (function_exists('getallheaders')) {
+        // Authorization headers are not in $_SERVER for mod_php
+        $headers = array_change_key_case(getallheaders());
+        if (isset($headers['authorization'])) $header = $headers['authorization'];
+    } else {
+        $header = $INPUT->server->str('HTTP_AUTHORIZATION');
+    }
+    if (!$header) return false;
+    [$type, $token] = sexplode(' ', $header, 2);
+    if ($type !== 'Bearer') return false;
+
+    // check token
+    try {
+        $authtoken = JWT::validate($token);
+    } catch (Exception $e) {
+        msg(hsc($e->getMessage()), -1);
+        return false;
+    }
+
+    // fetch user info from backend
+    $user = $authtoken->getUser();
+    $USERINFO = $auth->getUserData($user);
+    if (!$USERINFO) return false;
+
+    // the code is correct, set up user
+    $INPUT->server->set('REMOTE_USER', $user);
+    $_SESSION[DOKU_COOKIE]['auth']['user'] = $user;
+    $_SESSION[DOKU_COOKIE]['auth']['pass'] = 'nope';
+    $_SESSION[DOKU_COOKIE]['auth']['info'] = $USERINFO;
+
+    return true;
+}
+
+/**
  * Event hook callback for AUTH_LOGIN_CHECK
  *
- * @param $evdata
+ * @param array $evdata
  * @return bool
+ * @throws Exception
  */
-function auth_login_wrapper($evdata) {
+function auth_login_wrapper($evdata)
+{
     return auth_login(
         $evdata['user'],
         $evdata['password'],
@@ -206,30 +258,30 @@ function auth_login_wrapper($evdata) {
  * On a successful login $_SERVER[REMOTE_USER] and $USERINFO
  * are set.
  *
- * @author  Andreas Gohr <andi@splitbrain.org>
+ * @param string $user Username
+ * @param string $pass Cleartext Password
+ * @param bool $sticky Cookie should not expire
+ * @param bool $silent Don't show error on bad auth
+ * @return bool true on successful auth
+ * @throws Exception
  *
- * @param   string  $user    Username
- * @param   string  $pass    Cleartext Password
- * @param   bool    $sticky  Cookie should not expire
- * @param   bool    $silent  Don't show error on bad auth
- * @return  bool             true on successful auth
+ * @author  Andreas Gohr <andi@splitbrain.org>
  */
-function auth_login($user, $pass, $sticky = false, $silent = false) {
+function auth_login($user, $pass, $sticky = false, $silent = false)
+{
     global $USERINFO;
     global $conf;
     global $lang;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
 
-    $sticky ? $sticky = true : $sticky = false; //sanity check
+    if (!$auth instanceof AuthPlugin) return false;
 
-    if(!$auth) return false;
-
-    if(!empty($user)) {
+    if (!empty($user)) {
         //usual login
-        if(!empty($pass) && $auth->checkPass($user, $pass)) {
+        if (!empty($pass) && $auth->checkPass($user, $pass)) {
             // make logininfo globally available
             $INPUT->server->set('REMOTE_USER', $user);
             $secret                 = auth_cookiesalt(!$sticky, true); //bind non-sticky to session
@@ -237,30 +289,35 @@ function auth_login($user, $pass, $sticky = false, $silent = false) {
             return true;
         } else {
             //invalid credentials - log off
-            if(!$silent) msg($lang['badlogin'], -1);
+            if (!$silent) {
+                http_status(403, 'Login failed');
+                msg($lang['badlogin'], -1);
+            }
             auth_logoff();
             return false;
         }
     } else {
         // read cookie information
-        list($user, $sticky, $pass) = auth_getCookie();
-        if($user && $pass) {
+        [$user, $sticky, $pass] = auth_getCookie();
+        if ($user && $pass) {
             // we got a cookie - see if we can trust it
 
             // get session info
-            $session = $_SESSION[DOKU_COOKIE]['auth'];
-            if(isset($session) &&
-                $auth->useSessionCache($user) &&
-                ($session['time'] >= time() - $conf['auth_security_timeout']) &&
-                ($session['user'] == $user) &&
-                ($session['pass'] == sha1($pass)) && //still crypted
-                ($session['buid'] == auth_browseruid())
-            ) {
-
-                // he has session, cookie and browser right - let him in
-                $INPUT->server->set('REMOTE_USER', $user);
-                $USERINFO               = $session['info']; //FIXME move all references to session
-                return true;
+            if (isset($_SESSION[DOKU_COOKIE])) {
+                $session = $_SESSION[DOKU_COOKIE]['auth'];
+                if (
+                    isset($session) &&
+                    $auth->useSessionCache($user) &&
+                    ($session['time'] >= time() - $conf['auth_security_timeout']) &&
+                    ($session['user'] == $user) &&
+                    ($session['pass'] == sha1($pass)) && //still crypted
+                    ($session['buid'] == auth_browseruid())
+                ) {
+                    // he has session, cookie and browser right - let him in
+                    $INPUT->server->set('REMOTE_USER', $user);
+                    $USERINFO = $session['info']; //FIXME move all references to session
+                    return true;
+                }
             }
             // no we don't trust it yet - recheck pass but silent
             $secret = auth_cookiesalt(!$sticky, true); //bind non-sticky to session
@@ -274,50 +331,6 @@ function auth_login($user, $pass, $sticky = false, $silent = false) {
 }
 
 /**
- * Checks if a given authentication token was stored in the session
- *
- * Will setup authentication data using data from the session if the
- * token is correct. Will exit with a 401 Status if not.
- *
- * @author Andreas Gohr <andi@splitbrain.org>
- * @param  string $token The authentication token
- * @return boolean true (or will exit on failure)
- */
-function auth_validateToken($token) {
-    if(!$token || $token != $_SESSION[DOKU_COOKIE]['auth']['token']) {
-        // bad token
-        http_status(401);
-        print 'Invalid auth token - maybe the session timed out';
-        unset($_SESSION[DOKU_COOKIE]['auth']['token']); // no second chance
-        exit;
-    }
-    // still here? trust the session data
-    global $USERINFO;
-    /* @var Input $INPUT */
-    global $INPUT;
-
-    $INPUT->server->set('REMOTE_USER',$_SESSION[DOKU_COOKIE]['auth']['user']);
-    $USERINFO               = $_SESSION[DOKU_COOKIE]['auth']['info'];
-    return true;
-}
-
-/**
- * Create an auth token and store it in the session
- *
- * NOTE: this is completely unrelated to the getSecurityToken() function
- *
- * @author Andreas Gohr <andi@splitbrain.org>
- * @return string The auth token
- */
-function auth_createToken() {
-    $token = md5(auth_randombytes(16));
-    @session_start(); // reopen the session if needed
-    $_SESSION[DOKU_COOKIE]['auth']['token'] = $token;
-    session_write_close();
-    return $token;
-}
-
-/**
  * Builds a pseudo UID from browser and IP data
  *
  * This is neither unique nor unfakable - still it adds some
@@ -326,19 +339,23 @@ function auth_createToken() {
  *
  * @author  Andreas Gohr <andi@splitbrain.org>
  *
- * @return  string  a MD5 sum of various browser headers
+ * @return  string  a SHA256 sum of various browser headers
  */
-function auth_browseruid() {
+function auth_browseruid()
+{
     /* @var Input $INPUT */
     global $INPUT;
 
-    $ip  = clientIP(true);
-    $uid = '';
-    $uid .= $INPUT->server->str('HTTP_USER_AGENT');
-    $uid .= $INPUT->server->str('HTTP_ACCEPT_CHARSET');
-    $uid .= substr($ip, 0, strpos($ip, '.'));
-    $uid = strtolower($uid);
-    return md5($uid);
+    $ip = clientIP(true);
+    // convert IP string to packed binary representation
+    $pip = inet_pton($ip);
+
+    $uid = implode("\n", [
+        $INPUT->server->str('HTTP_USER_AGENT'),
+        $INPUT->server->str('HTTP_ACCEPT_LANGUAGE'),
+        substr($pip, 0, strlen($pip) / 2), // use half of the IP address (works for both IPv4 and IPv6)
+    ]);
+    return hash('sha256', $uid);
 }
 
 /**
@@ -349,120 +366,61 @@ function auth_browseruid() {
  * if no such file is found a random key is created and
  * and stored in this file.
  *
- * @author  Andreas Gohr <andi@splitbrain.org>
- * @param   bool $addsession if true, the sessionid is added to the salt
- * @param   bool $secure     if security is more important than keeping the old value
+ * @param bool $addsession if true, the sessionid is added to the salt
+ * @param bool $secure if security is more important than keeping the old value
  * @return  string
+ * @throws Exception
+ *
+ * @author  Andreas Gohr <andi@splitbrain.org>
  */
-function auth_cookiesalt($addsession = false, $secure = false) {
+function auth_cookiesalt($addsession = false, $secure = false)
+{
+    if (defined('SIMPLE_TEST')) {
+        return 'test';
+    }
     global $conf;
-    $file = $conf['metadir'].'/_htcookiesalt';
+    $file = $conf['metadir'] . '/_htcookiesalt';
     if ($secure || !file_exists($file)) {
-        $file = $conf['metadir'].'/_htcookiesalt2';
+        $file = $conf['metadir'] . '/_htcookiesalt2';
     }
     $salt = io_readFile($file);
-    if(empty($salt)) {
+    if (empty($salt)) {
         $salt = bin2hex(auth_randombytes(64));
         io_saveFile($file, $salt);
     }
-    if($addsession) {
+    if ($addsession) {
         $salt .= session_id();
     }
     return $salt;
 }
 
 /**
- * Return truly (pseudo) random bytes if available, otherwise fall back to mt_rand
+ * Return cryptographically secure random bytes.
  *
- * @author Mark Seecof
- * @author Michael Hamann <michael@content-space.de>
- * @link   http://www.php.net/manual/de/function.mt-rand.php#83655
- * @param int $length number of bytes to get
- * @return string binary random strings
+ * @param int $length number of bytes
+ * @return string cryptographically secure random bytes
+ * @throws Exception
+ *
+ * @author Niklas Keller <me@kelunik.com>
  */
-function auth_randombytes($length) {
-    $strong = false;
-    $rbytes = false;
-
-    if (function_exists('openssl_random_pseudo_bytes')
-        && (version_compare(PHP_VERSION, '5.3.4') >= 0
-            || strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
-    ) {
-        $rbytes = openssl_random_pseudo_bytes($length, $strong);
-    }
-
-    if (!$strong && function_exists('mcrypt_create_iv')
-        && (version_compare(PHP_VERSION, '5.3.7') >= 0
-            || strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN')
-    ) {
-        $rbytes = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
-        if ($rbytes !== false && strlen($rbytes) === $length) {
-            $strong = true;
-        }
-    }
-
-    // If no strong randoms available, try OS the specific ways
-    if(!$strong) {
-        // Unix/Linux platform
-        $fp = @fopen('/dev/urandom', 'rb');
-        if($fp !== false) {
-            $rbytes = fread($fp, $length);
-            fclose($fp);
-        }
-
-        // MS-Windows platform
-        if(class_exists('COM')) {
-            // http://msdn.microsoft.com/en-us/library/aa388176(VS.85).aspx
-            try {
-                $CAPI_Util = new COM('CAPICOM.Utilities.1');
-                $rbytes    = $CAPI_Util->GetRandom($length, 0);
-
-                // if we ask for binary data PHP munges it, so we
-                // request base64 return value.
-                if($rbytes) $rbytes = base64_decode($rbytes);
-            } catch(Exception $ex) {
-                // fail
-            }
-        }
-    }
-    if(strlen($rbytes) < $length) $rbytes = false;
-
-    // still no random bytes available - fall back to mt_rand()
-    if($rbytes === false) {
-        $rbytes = '';
-        for ($i = 0; $i < $length; ++$i) {
-            $rbytes .= chr(mt_rand(0, 255));
-        }
-    }
-
-    return $rbytes;
+function auth_randombytes($length)
+{
+    return random_bytes($length);
 }
 
 /**
- * Random number generator using the best available source
+ * Cryptographically secure random number generator.
  *
- * @author Michael Samuel
- * @author Michael Hamann <michael@content-space.de>
  * @param int $min
  * @param int $max
  * @return int
+ * @throws Exception
+ *
+ * @author Niklas Keller <me@kelunik.com>
  */
-function auth_random($min, $max) {
-    $abs_max = $max - $min;
-
-    $nbits = 0;
-    for ($n = $abs_max; $n > 0; $n >>= 1) {
-        ++$nbits;
-    }
-
-    $mask = (1 << $nbits) - 1;
-    do {
-        $bytes    = auth_randombytes(PHP_INT_SIZE);
-        $integers = unpack('Inum', $bytes);
-        $integer  = $integers["num"] & $mask;
-    } while ($integer > $abs_max);
-
-    return $min + $integer;
+function auth_random($min, $max)
+{
+    return random_int($min, $max);
 }
 
 /**
@@ -471,14 +429,17 @@ function auth_random($min, $max) {
  * The mode is CBC with a random initialization vector, the key is derived
  * using pbkdf2.
  *
- * @param string $data   The data that shall be encrypted
+ * @param string $data The data that shall be encrypted
  * @param string $secret The secret/password that shall be used
  * @return string The ciphertext
+ * @throws Exception
  */
-function auth_encrypt($data, $secret) {
+function auth_encrypt($data, $secret)
+{
     $iv     = auth_randombytes(16);
-    $cipher = new Crypt_AES();
-    $cipher->setPassword($secret);
+    $cipher = new AES('cbc');
+    $cipher->setPassword($secret, 'pbkdf2', 'sha1', 'phpseclib');
+    $cipher->setIV($iv);
 
     /*
     this uses the encrypted IV as IV as suggested in
@@ -486,7 +447,7 @@ function auth_encrypt($data, $secret) {
     for unique but necessarily random IVs. The resulting ciphertext is
     compatible to ciphertext that was created using a "normal" IV.
     */
-    return $cipher->encrypt($iv.$data);
+    return $cipher->encrypt($iv . $data);
 }
 
 /**
@@ -496,15 +457,21 @@ function auth_encrypt($data, $secret) {
  *
  * @param string $ciphertext The encrypted data
  * @param string $secret     The secret/password that shall be used
- * @return string The decrypted data
+ * @return string|null The decrypted data
  */
-function auth_decrypt($ciphertext, $secret) {
+function auth_decrypt($ciphertext, $secret)
+{
     $iv     = substr($ciphertext, 0, 16);
-    $cipher = new Crypt_AES();
-    $cipher->setPassword($secret);
+    $cipher = new AES('cbc');
+    $cipher->setPassword($secret, 'pbkdf2', 'sha1', 'phpseclib');
     $cipher->setIV($iv);
 
-    return $cipher->decrypt(substr($ciphertext, 16));
+    try {
+        return $cipher->decrypt(substr($ciphertext, 16));
+    } catch (BadDecryptionException $e) {
+        ErrorHandler::logException($e);
+        return null;
+    }
 }
 
 /**
@@ -514,12 +481,14 @@ function auth_decrypt($ciphertext, $secret) {
  * off. It also clears session data.
  *
  * @author  Andreas Gohr <andi@splitbrain.org>
+ *
  * @param bool $keepbc - when true, the breadcrumb data is not cleared
  */
-function auth_logoff($keepbc = false) {
+function auth_logoff($keepbc = false)
+{
     global $conf;
     global $USERINFO;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
@@ -527,21 +496,29 @@ function auth_logoff($keepbc = false) {
     // make sure the session is writable (it usually is)
     @session_start();
 
-    if(isset($_SESSION[DOKU_COOKIE]['auth']['user']))
+    if (isset($_SESSION[DOKU_COOKIE]['auth']['user']))
         unset($_SESSION[DOKU_COOKIE]['auth']['user']);
-    if(isset($_SESSION[DOKU_COOKIE]['auth']['pass']))
+    if (isset($_SESSION[DOKU_COOKIE]['auth']['pass']))
         unset($_SESSION[DOKU_COOKIE]['auth']['pass']);
-    if(isset($_SESSION[DOKU_COOKIE]['auth']['info']))
+    if (isset($_SESSION[DOKU_COOKIE]['auth']['info']))
         unset($_SESSION[DOKU_COOKIE]['auth']['info']);
-    if(!$keepbc && isset($_SESSION[DOKU_COOKIE]['bc']))
+    if (!$keepbc && isset($_SESSION[DOKU_COOKIE]['bc']))
         unset($_SESSION[DOKU_COOKIE]['bc']);
     $INPUT->server->remove('REMOTE_USER');
     $USERINFO = null; //FIXME
 
     $cookieDir = empty($conf['cookiedir']) ? DOKU_REL : $conf['cookiedir'];
-    setcookie(DOKU_COOKIE, '', time() - 600000, $cookieDir, '', ($conf['securecookie'] && is_ssl()), true);
+    setcookie(DOKU_COOKIE, '', [
+        'expires' => time() - 600000,
+        'path' => $cookieDir,
+        'secure' => ($conf['securecookie'] && is_ssl()),
+        'httponly' => true,
+        'samesite' => $conf['samesitecookie'] ?: null, // null means browser default
+    ]);
 
-    if($auth) $auth->logOff();
+    if ($auth instanceof AuthPlugin) {
+        $auth->logOff();
+    }
 }
 
 /**
@@ -552,41 +529,59 @@ function auth_logoff($keepbc = false) {
  *
  * The info is available through $INFO['ismanager'], too
  *
- * @author Andreas Gohr <andi@splitbrain.org>
- * @see    auth_isadmin
- * @param  string $user       Username
- * @param  array  $groups     List of groups the user is in
- * @param  bool   $adminonly  when true checks if user is admin
+ * @param string $user Username
+ * @param array $groups List of groups the user is in
+ * @param bool $adminonly when true checks if user is admin
+ * @param bool $recache set to true to refresh the cache
  * @return bool
+ * @see    auth_isadmin
+ *
+ * @author Andreas Gohr <andi@splitbrain.org>
  */
-function auth_ismanager($user = null, $groups = null, $adminonly = false) {
+function auth_ismanager($user = null, $groups = null, $adminonly = false, $recache = false)
+{
     global $conf;
     global $USERINFO;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
 
 
-    if(!$auth) return false;
-    if(is_null($user)) {
-        if(!$INPUT->server->has('REMOTE_USER')) {
+    if (!$auth instanceof AuthPlugin) return false;
+    if (is_null($user)) {
+        if (!$INPUT->server->has('REMOTE_USER')) {
             return false;
         } else {
             $user = $INPUT->server->str('REMOTE_USER');
         }
     }
-    if(is_null($groups)) {
-        $groups = (array) $USERINFO['grps'];
+    if (is_null($groups)) {
+        // checking the logged in user, or another one?
+        if ($USERINFO && $user === $INPUT->server->str('REMOTE_USER')) {
+            $groups =  (array) $USERINFO['grps'];
+        } else {
+            $groups = $auth->getUserData($user);
+            $groups = $groups ? $groups['grps'] : [];
+        }
     }
 
-    // check superuser match
-    if(auth_isMember($conf['superuser'], $user, $groups)) return true;
-    if($adminonly) return false;
-    // check managers
-    if(auth_isMember($conf['manager'], $user, $groups)) return true;
+    // prefer cached result
+    static $cache = [];
+    $cachekey = serialize([$user, $adminonly, $groups]);
+    if (!isset($cache[$cachekey]) || $recache) {
+        // check superuser match
+        $ok = auth_isMember($conf['superuser'], $user, $groups);
 
-    return false;
+        // check managers
+        if (!$ok && !$adminonly) {
+            $ok = auth_isMember($conf['manager'], $user, $groups);
+        }
+
+        $cache[$cachekey] = $ok;
+    }
+
+    return $cache[$cachekey];
 }
 
 /**
@@ -596,14 +591,17 @@ function auth_ismanager($user = null, $groups = null, $adminonly = false) {
  *
  * The info is available through $INFO['isadmin'], too
  *
+ * @param string $user Username
+ * @param array $groups List of groups the user is in
+ * @param bool $recache set to true to refresh the cache
+ * @return bool
  * @author Andreas Gohr <andi@splitbrain.org>
  * @see auth_ismanager()
- * @param  string $user       Username
- * @param  array  $groups     List of groups the user is in
- * @return bool
+ *
  */
-function auth_isadmin($user = null, $groups = null) {
-    return auth_ismanager($user, $groups, true);
+function auth_isadmin($user = null, $groups = null, $recache = false)
+{
+    return auth_ismanager($user, $groups, true, $recache);
 }
 
 /**
@@ -612,23 +610,24 @@ function auth_isadmin($user = null, $groups = null) {
  *
  * Note: all input should NOT be nameencoded.
  *
- * @param $memberlist string commaseparated list of allowed users and groups
- * @param $user       string user to match against
- * @param $groups     array  groups the user is member of
+ * @param string $memberlist commaseparated list of allowed users and groups
+ * @param string $user       user to match against
+ * @param array  $groups     groups the user is member of
  * @return bool       true for membership acknowledged
  */
-function auth_isMember($memberlist, $user, array $groups) {
-    /* @var DokuWiki_Auth_Plugin $auth */
+function auth_isMember($memberlist, $user, array $groups)
+{
+    /* @var AuthPlugin $auth */
     global $auth;
-    if(!$auth) return false;
+    if (!$auth instanceof AuthPlugin) return false;
 
     // clean user and groups
-    if(!$auth->isCaseSensitive()) {
-        $user   = utf8_strtolower($user);
-        $groups = array_map('utf8_strtolower', $groups);
+    if (!$auth->isCaseSensitive()) {
+        $user   = PhpString::strtolower($user);
+        $groups = array_map([PhpString::class, 'strtolower'], $groups);
     }
     $user   = $auth->cleanUser($user);
-    $groups = array_map(array($auth, 'cleanGroup'), $groups);
+    $groups = array_map([$auth, 'cleanGroup'], $groups);
 
     // extract the memberlist
     $members = explode(',', $memberlist);
@@ -637,15 +636,15 @@ function auth_isMember($memberlist, $user, array $groups) {
     $members = array_filter($members);
 
     // compare cleaned values
-    foreach($members as $member) {
-        if($member == '@ALL' ) return true;
-        if(!$auth->isCaseSensitive()) $member = utf8_strtolower($member);
-        if($member[0] == '@') {
+    foreach ($members as $member) {
+        if ($member == '@ALL') return true;
+        if (!$auth->isCaseSensitive()) $member = PhpString::strtolower($member);
+        if ($member[0] == '@') {
             $member = $auth->cleanGroup(substr($member, 1));
-            if(in_array($member, $groups)) return true;
+            if (in_array($member, $groups)) return true;
         } else {
             $member = $auth->cleanUser($member);
-            if($member == $user) return true;
+            if ($member == $user) return true;
         }
     }
 
@@ -663,34 +662,37 @@ function auth_isMember($memberlist, $user, array $groups) {
  * @param  string  $id  page ID (needs to be resolved and cleaned)
  * @return int          permission level
  */
-function auth_quickaclcheck($id) {
+function auth_quickaclcheck($id)
+{
     global $conf;
     global $USERINFO;
     /* @var Input $INPUT */
     global $INPUT;
     # if no ACL is used always return upload rights
-    if(!$conf['useacl']) return AUTH_UPLOAD;
-    return auth_aclcheck($id, $INPUT->server->str('REMOTE_USER'), $USERINFO['grps']);
+    if (!$conf['useacl']) return AUTH_UPLOAD;
+    return auth_aclcheck($id, $INPUT->server->str('REMOTE_USER'), is_array($USERINFO) ? $USERINFO['grps'] : []);
 }
 
 /**
  * Returns the maximum rights a user has for the given ID or its namespace
  *
  * @author  Andreas Gohr <andi@splitbrain.org>
+ *
  * @triggers AUTH_ACL_CHECK
  * @param  string       $id     page ID (needs to be resolved and cleaned)
  * @param  string       $user   Username
  * @param  array|null   $groups Array of groups the user is in
  * @return int             permission level
  */
-function auth_aclcheck($id, $user, $groups) {
-    $data = array(
-        'id'     => $id,
+function auth_aclcheck($id, $user, $groups)
+{
+    $data = [
+        'id'     => $id ?? '',
         'user'   => $user,
         'groups' => $groups
-    );
+    ];
 
-    return trigger_event('AUTH_ACL_CHECK', $data, 'auth_aclcheck_cb');
+    return Event::createAndTrigger('AUTH_ACL_CHECK', $data, 'auth_aclcheck_cb');
 }
 
 /**
@@ -699,115 +701,113 @@ function auth_aclcheck($id, $user, $groups) {
  * DO NOT CALL DIRECTLY, use auth_aclcheck() instead
  *
  * @author  Andreas Gohr <andi@splitbrain.org>
+ *
  * @param  array $data event data
  * @return int   permission level
  */
-function auth_aclcheck_cb($data) {
+function auth_aclcheck_cb($data)
+{
     $id     =& $data['id'];
     $user   =& $data['user'];
     $groups =& $data['groups'];
 
     global $conf;
     global $AUTH_ACL;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
 
     // if no ACL is used always return upload rights
-    if(!$conf['useacl']) return AUTH_UPLOAD;
-    if(!$auth) return AUTH_NONE;
+    if (!$conf['useacl']) return AUTH_UPLOAD;
+    if (!$auth instanceof AuthPlugin) return AUTH_NONE;
+    if (!is_array($AUTH_ACL)) return AUTH_NONE;
 
     //make sure groups is an array
-    if(!is_array($groups)) $groups = array();
+    if (!is_array($groups)) $groups = [];
 
     //if user is superuser or in superusergroup return 255 (acl_admin)
-    if(auth_isadmin($user, $groups)) {
+    if (auth_isadmin($user, $groups)) {
         return AUTH_ADMIN;
     }
 
-    if(!$auth->isCaseSensitive()) {
-        $user   = utf8_strtolower($user);
-        $groups = array_map('utf8_strtolower', $groups);
+    if (!$auth->isCaseSensitive()) {
+        $user   = PhpString::strtolower($user);
+        $groups = array_map([PhpString::class, 'strtolower'], $groups);
     }
-    $user   = $auth->cleanUser($user);
-    $groups = array_map(array($auth, 'cleanGroup'), (array) $groups);
-    $user   = auth_nameencode($user);
+    $user   = auth_nameencode($auth->cleanUser($user));
+    $groups = array_map([$auth, 'cleanGroup'], $groups);
 
     //prepend groups with @ and nameencode
-    $cnt = count($groups);
-    for($i = 0; $i < $cnt; $i++) {
-        $groups[$i] = '@'.auth_nameencode($groups[$i]);
+    foreach ($groups as &$group) {
+        $group = '@' . auth_nameencode($group);
     }
 
     $ns   = getNS($id);
     $perm = -1;
 
-    if($user || count($groups)) {
-        //add ALL group
-        $groups[] = '@ALL';
-        //add User
-        if($user) $groups[] = $user;
-    } else {
-        $groups[] = '@ALL';
-    }
+    //add ALL group
+    $groups[] = '@ALL';
+
+    //add User
+    if ($user) $groups[] = $user;
 
     //check exact match first
-    $matches = preg_grep('/^'.preg_quote($id, '/').'[ \t]+([^ \t]+)[ \t]+/', $AUTH_ACL);
-    if(count($matches)) {
-        foreach($matches as $match) {
+    $matches = preg_grep('/^' . preg_quote($id, '/') . '[ \t]+([^ \t]+)[ \t]+/', $AUTH_ACL);
+    if (count($matches)) {
+        foreach ($matches as $match) {
             $match = preg_replace('/#.*$/', '', $match); //ignore comments
             $acl   = preg_split('/[ \t]+/', $match);
-            if(!$auth->isCaseSensitive() && $acl[1] !== '@ALL') {
-                $acl[1] = utf8_strtolower($acl[1]);
+            if (!$auth->isCaseSensitive() && $acl[1] !== '@ALL') {
+                $acl[1] = PhpString::strtolower($acl[1]);
             }
-            if(!in_array($acl[1], $groups)) {
+            if (!in_array($acl[1], $groups)) {
                 continue;
             }
-            if($acl[2] > AUTH_DELETE) $acl[2] = AUTH_DELETE; //no admins in the ACL!
-            if($acl[2] > $perm) {
+            if ($acl[2] > AUTH_DELETE) $acl[2] = AUTH_DELETE; //no admins in the ACL!
+            if ($acl[2] > $perm) {
                 $perm = $acl[2];
             }
         }
-        if($perm > -1) {
+        if ($perm > -1) {
             //we had a match - return it
             return (int) $perm;
         }
     }
 
     //still here? do the namespace checks
-    if($ns) {
-        $path = $ns.':*';
+    if ($ns) {
+        $path = $ns . ':*';
     } else {
         $path = '*'; //root document
     }
 
     do {
-        $matches = preg_grep('/^'.preg_quote($path, '/').'[ \t]+([^ \t]+)[ \t]+/', $AUTH_ACL);
-        if(count($matches)) {
-            foreach($matches as $match) {
+        $matches = preg_grep('/^' . preg_quote($path, '/') . '[ \t]+([^ \t]+)[ \t]+/', $AUTH_ACL);
+        if (count($matches)) {
+            foreach ($matches as $match) {
                 $match = preg_replace('/#.*$/', '', $match); //ignore comments
                 $acl   = preg_split('/[ \t]+/', $match);
-                if(!$auth->isCaseSensitive() && $acl[1] !== '@ALL') {
-                    $acl[1] = utf8_strtolower($acl[1]);
+                if (!$auth->isCaseSensitive() && $acl[1] !== '@ALL') {
+                    $acl[1] = PhpString::strtolower($acl[1]);
                 }
-                if(!in_array($acl[1], $groups)) {
+                if (!in_array($acl[1], $groups)) {
                     continue;
                 }
-                if($acl[2] > AUTH_DELETE) $acl[2] = AUTH_DELETE; //no admins in the ACL!
-                if($acl[2] > $perm) {
+                if ($acl[2] > AUTH_DELETE) $acl[2] = AUTH_DELETE; //no admins in the ACL!
+                if ($acl[2] > $perm) {
                     $perm = $acl[2];
                 }
             }
             //we had a match - return it
-            if($perm != -1) {
+            if ($perm != -1) {
                 return (int) $perm;
             }
         }
         //get next higher namespace
         $ns = getNS($ns);
 
-        if($path != '*') {
-            $path = $ns.':*';
-            if($path == ':*') $path = '*';
+        if ($path != '*') {
+            $path = $ns . ':*';
+            if ($path == ':*') $path = '*';
         } else {
             //we did this already
             //looks like there is something wrong with the ACL
@@ -815,7 +815,7 @@ function auth_aclcheck_cb($data) {
             msg('No ACL setup yet! Denying access to everyone.');
             return AUTH_NONE;
         }
-    } while(1); //this should never loop endless
+    } while (1); //this should never loop endless
     return AUTH_NONE;
 }
 
@@ -831,26 +831,33 @@ function auth_aclcheck_cb($data) {
  *
  * @author Andreas Gohr <gohr@cosmocode.de>
  * @see rawurldecode()
+ *
+ * @param string $name
+ * @param bool $skip_group
+ * @return string
  */
-function auth_nameencode($name, $skip_group = false) {
+function auth_nameencode($name, $skip_group = false)
+{
     global $cache_authname;
     $cache =& $cache_authname;
     $name  = (string) $name;
 
     // never encode wildcard FS#1955
-    if($name == '%USER%') return $name;
-    if($name == '%GROUP%') return $name;
+    if ($name == '%USER%') return $name;
+    if ($name == '%GROUP%') return $name;
 
-    if(!isset($cache[$name][$skip_group])) {
-        if($skip_group && $name{0} == '@') {
-            $cache[$name][$skip_group] = '@'.preg_replace_callback(
+    if (!isset($cache[$name][$skip_group])) {
+        if ($skip_group && $name[0] == '@') {
+            $cache[$name][$skip_group] = '@' . preg_replace_callback(
                 '/([\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f])/',
-                'auth_nameencode_callback', substr($name, 1)
+                'auth_nameencode_callback',
+                substr($name, 1)
             );
         } else {
             $cache[$name][$skip_group] = preg_replace_callback(
                 '/([\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f])/',
-                'auth_nameencode_callback', $name
+                'auth_nameencode_callback',
+                $name
             );
         }
     }
@@ -864,8 +871,9 @@ function auth_nameencode($name, $skip_group = false) {
  * @param array $matches first complete match, next matching subpatterms
  * @return string
  */
-function auth_nameencode_callback($matches) {
-    return '%'.dechex(ord(substr($matches[1],-1)));
+function auth_nameencode_callback($matches)
+{
+    return '%' . dechex(ord(substr($matches[1], -1)));
 }
 
 /**
@@ -874,34 +882,37 @@ function auth_nameencode_callback($matches) {
  * The $foruser variable might be used by plugins to run additional password
  * policy checks, but is not used by the default implementation
  *
- * @author   Andreas Gohr <andi@splitbrain.org>
+ * @param string $foruser username for which the password is generated
+ * @return string  pronouncable password
+ * @throws Exception
+ *
  * @link     http://www.phpbuilder.com/annotate/message.php3?id=1014451
  * @triggers AUTH_PASSWORD_GENERATE
  *
- * @param  string $foruser username for which the password is generated
- * @return string  pronouncable password
+ * @author   Andreas Gohr <andi@splitbrain.org>
  */
-function auth_pwgen($foruser = '') {
-    $data = array(
+function auth_pwgen($foruser = '')
+{
+    $data = [
         'password' => '',
         'foruser'  => $foruser
-    );
+    ];
 
-    $evt = new Doku_Event('AUTH_PASSWORD_GENERATE', $data);
-    if($evt->advise_before(true)) {
+    $evt = new Event('AUTH_PASSWORD_GENERATE', $data);
+    if ($evt->advise_before(true)) {
         $c = 'bcdfghjklmnprstvwz'; //consonants except hard to speak ones
         $v = 'aeiou'; //vowels
-        $a = $c.$v; //both
+        $a = $c . $v; //both
         $s = '!$%&?+*~#-_:.;,'; // specials
 
         //use thre syllables...
-        for($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $data['password'] .= $c[auth_random(0, strlen($c) - 1)];
             $data['password'] .= $v[auth_random(0, strlen($v) - 1)];
             $data['password'] .= $a[auth_random(0, strlen($a) - 1)];
         }
         //... and add a nice number and special
-        $data['password'] .= auth_random(10, 99).$s[auth_random(0, strlen($s) - 1)];
+        $data['password'] .= $s[auth_random(0, strlen($s) - 1)] . auth_random(10, 99);
     }
     $evt->advise_after();
 
@@ -912,30 +923,32 @@ function auth_pwgen($foruser = '') {
  * Sends a password to the given user
  *
  * @author  Andreas Gohr <andi@splitbrain.org>
+ *
  * @param string $user Login name of the user
  * @param string $password The new password in clear text
  * @return bool  true on success
  */
-function auth_sendPassword($user, $password) {
+function auth_sendPassword($user, $password)
+{
     global $lang;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
-    if(!$auth) return false;
+    if (!$auth instanceof AuthPlugin) return false;
 
     $user     = $auth->cleanUser($user);
-    $userinfo = $auth->getUserData($user, $requireGroups = false);
+    $userinfo = $auth->getUserData($user, false);
 
-    if(!$userinfo['mail']) return false;
+    if (!$userinfo['mail']) return false;
 
     $text = rawLocale('password');
-    $trep = array(
+    $trep = [
         'FULLNAME' => $userinfo['name'],
         'LOGIN'    => $user,
         'PASSWORD' => $password
-    );
+    ];
 
     $mail = new Mailer();
-    $mail->to($userinfo['name'].' <'.$userinfo['mail'].'>');
+    $mail->to($mail->getCleanName($userinfo['name']) . ' <' . $userinfo['mail'] . '>');
     $mail->subject($lang['regpwmail']);
     $mail->setBody($text, $trep);
     return $mail->send();
@@ -946,18 +959,21 @@ function auth_sendPassword($user, $password) {
  *
  * This registers a new user - Data is read directly from $_POST
  *
- * @author  Andreas Gohr <andi@splitbrain.org>
  * @return bool  true on success, false on any error
+ * @throws Exception
+ *
+ * @author  Andreas Gohr <andi@splitbrain.org>
  */
-function register() {
+function register()
+{
     global $lang;
     global $conf;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     global $INPUT;
 
-    if(!$INPUT->post->bool('save')) return false;
-    if(!actionOK('register')) return false;
+    if (!$INPUT->post->bool('save')) return false;
+    if (!actionOK('register')) return false;
 
     // gather input
     $login    = trim($auth->cleanUser($INPUT->post->str('login')));
@@ -966,45 +982,45 @@ function register() {
     $pass     = $INPUT->post->str('pass');
     $passchk  = $INPUT->post->str('passchk');
 
-    if(empty($login) || empty($fullname) || empty($email)) {
+    if (empty($login) || empty($fullname) || empty($email)) {
         msg($lang['regmissing'], -1);
         return false;
     }
 
-    if($conf['autopasswd']) {
+    if ($conf['autopasswd']) {
         $pass = auth_pwgen($login); // automatically generate password
-    } elseif(empty($pass) || empty($passchk)) {
+    } elseif (empty($pass) || empty($passchk)) {
         msg($lang['regmissing'], -1); // complain about missing passwords
         return false;
-    } elseif($pass != $passchk) {
+    } elseif ($pass != $passchk) {
         msg($lang['regbadpass'], -1); // complain about misspelled passwords
         return false;
     }
 
     //check mail
-    if(!mail_isvalid($email)) {
+    if (!mail_isvalid($email)) {
         msg($lang['regbadmail'], -1);
         return false;
     }
 
     //okay try to create the user
-    if(!$auth->triggerUserMod('create', array($login, $pass, $fullname, $email))) {
-        msg($lang['reguexists'], -1);
+    if (!$auth->triggerUserMod('create', [$login, $pass, $fullname, $email])) {
+        msg($lang['regfail'], -1);
         return false;
     }
 
     // send notification about the new user
-    $subscription = new Subscription();
-    $subscription->send_register($login, $fullname, $email);
+    $subscription = new RegistrationSubscriptionSender();
+    $subscription->sendRegister($login, $fullname, $email);
 
     // are we done?
-    if(!$conf['autopasswd']) {
+    if (!$conf['autopasswd']) {
         msg($lang['regsuccess2'], 1);
         return true;
     }
 
     // autogenerated password? then send password to user
-    if(auth_sendPassword($login, $pass)) {
+    if (auth_sendPassword($login, $pass)) {
         msg($lang['regsuccess'], 1);
         return true;
     } else {
@@ -1016,31 +1032,34 @@ function register() {
 /**
  * Update user profile
  *
+ * @throws Exception
+ *
  * @author    Christopher Smith <chris@jalakai.co.uk>
  */
-function updateprofile() {
+function updateprofile()
+{
     global $conf;
     global $lang;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
 
-    if(!$INPUT->post->bool('save')) return false;
-    if(!checkSecurityToken()) return false;
+    if (!$INPUT->post->bool('save')) return false;
+    if (!checkSecurityToken()) return false;
 
-    if(!actionOK('profile')) {
+    if (!actionOK('profile')) {
         msg($lang['profna'], -1);
         return false;
     }
 
-    $changes         = array();
+    $changes         = [];
     $changes['pass'] = $INPUT->post->str('newpass');
     $changes['name'] = $INPUT->post->str('fullname');
     $changes['mail'] = $INPUT->post->str('email');
 
     // check misspelled passwords
-    if($changes['pass'] != $INPUT->post->str('passchk')) {
+    if ($changes['pass'] != $INPUT->post->str('passchk')) {
         msg($lang['regbadpass'], -1);
         return false;
     }
@@ -1050,13 +1069,14 @@ function updateprofile() {
     $changes['mail'] = trim(preg_replace('/[\x00-\x1f:<>&%,;]+/', '', $changes['mail']));
 
     // no empty name and email (except the backend doesn't support them)
-    if((empty($changes['name']) && $auth->canDo('modName')) ||
+    if (
+        (empty($changes['name']) && $auth->canDo('modName')) ||
         (empty($changes['mail']) && $auth->canDo('modMail'))
     ) {
         msg($lang['profnoempty'], -1);
         return false;
     }
-    if(!mail_isvalid($changes['mail']) && $auth->canDo('modMail')) {
+    if (!mail_isvalid($changes['mail']) && $auth->canDo('modMail')) {
         msg($lang['regbadmail'], -1);
         return false;
     }
@@ -1064,34 +1084,42 @@ function updateprofile() {
     $changes = array_filter($changes);
 
     // check for unavailable capabilities
-    if(!$auth->canDo('modName')) unset($changes['name']);
-    if(!$auth->canDo('modMail')) unset($changes['mail']);
-    if(!$auth->canDo('modPass')) unset($changes['pass']);
+    if (!$auth->canDo('modName')) unset($changes['name']);
+    if (!$auth->canDo('modMail')) unset($changes['mail']);
+    if (!$auth->canDo('modPass')) unset($changes['pass']);
 
     // anything to do?
-    if(!count($changes)) {
+    if ($changes === []) {
         msg($lang['profnochange'], -1);
         return false;
     }
 
-    if($conf['profileconfirm']) {
-        if(!$auth->checkPass($INPUT->server->str('REMOTE_USER'), $INPUT->post->str('oldpass'))) {
+    if ($conf['profileconfirm']) {
+        if (!$auth->checkPass($INPUT->server->str('REMOTE_USER'), $INPUT->post->str('oldpass'))) {
             msg($lang['badpassconfirm'], -1);
             return false;
         }
     }
 
-    if($result = $auth->triggerUserMod('modify', array($INPUT->server->str('REMOTE_USER'), &$changes))) {
-        // update cookie and session with the changed data
-        if($changes['pass']) {
-            list( /*user*/, $sticky, /*pass*/) = auth_getCookie();
-            $pass = auth_encrypt($changes['pass'], auth_cookiesalt(!$sticky, true));
-            auth_setCookie($INPUT->server->str('REMOTE_USER'), $pass, (bool) $sticky);
-        }
-        return true;
+    if (!$auth->triggerUserMod('modify', [$INPUT->server->str('REMOTE_USER'), &$changes])) {
+        msg($lang['proffail'], -1);
+        return false;
     }
 
-    return false;
+    if (array_key_exists('pass', $changes) && $changes['pass']) {
+        // update cookie and session with the changed data
+        [/* user */, $sticky, /* pass */] = auth_getCookie();
+        $pass = auth_encrypt($changes['pass'], auth_cookiesalt(!$sticky, true));
+        auth_setCookie($INPUT->server->str('REMOTE_USER'), $pass, (bool) $sticky);
+    } else {
+        // make sure the session is writable
+        @session_start();
+        // invalidate session cache
+        $_SESSION[DOKU_COOKIE]['auth']['time'] = 0;
+        session_write_close();
+    }
+
+    return true;
 }
 
 /**
@@ -1099,37 +1127,39 @@ function updateprofile() {
  *
  * @return bool true on success, false on any error
  */
-function auth_deleteprofile(){
+function auth_deleteprofile()
+{
     global $conf;
     global $lang;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
 
-    if(!$INPUT->post->bool('delete')) return false;
-    if(!checkSecurityToken()) return false;
+    if (!$INPUT->post->bool('delete')) return false;
+    if (!checkSecurityToken()) return false;
 
     // action prevented or auth module disallows
-    if(!actionOK('profile_delete') || !$auth->canDo('delUser')) {
+    if (!actionOK('profile_delete') || !$auth->canDo('delUser')) {
         msg($lang['profnodelete'], -1);
         return false;
     }
 
-    if(!$INPUT->post->bool('confirm_delete')){
+    if (!$INPUT->post->bool('confirm_delete')) {
         msg($lang['profconfdeletemissing'], -1);
         return false;
     }
 
-    if($conf['profileconfirm']) {
-        if(!$auth->checkPass($INPUT->server->str('REMOTE_USER'), $INPUT->post->str('oldpass'))) {
+    if ($conf['profileconfirm']) {
+        if (!$auth->checkPass($INPUT->server->str('REMOTE_USER'), $INPUT->post->str('oldpass'))) {
             msg($lang['badpassconfirm'], -1);
             return false;
         }
     }
 
+    $deleted = [];
     $deleted[] = $INPUT->server->str('REMOTE_USER');
-    if($auth->triggerUserMod('delete', array($deleted))) {
+    if ($auth->triggerUserMod('delete', [$deleted])) {
         // force and immediate logout including removing the sticky cookie
         auth_logoff();
         return true;
@@ -1146,38 +1176,40 @@ function auth_deleteprofile(){
  *   - handling the first request of password reset
  *   - validating the password reset auth token
  *
+ * @return bool true on success, false on any error
+ * @throws Exception
+ *
+ * @author Andreas Gohr <andi@splitbrain.org>
  * @author Benoit Chesneau <benoit@bchesneau.info>
  * @author Chris Smith <chris@jalakai.co.uk>
- * @author Andreas Gohr <andi@splitbrain.org>
- *
- * @return bool true on success, false on any error
  */
-function act_resendpwd() {
+function act_resendpwd()
+{
     global $lang;
     global $conf;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     /* @var Input $INPUT */
     global $INPUT;
 
-    if(!actionOK('resendpwd')) {
+    if (!actionOK('resendpwd')) {
         msg($lang['resendna'], -1);
         return false;
     }
 
     $token = preg_replace('/[^a-f0-9]+/', '', $INPUT->str('pwauth'));
 
-    if($token) {
+    if ($token) {
         // we're in token phase - get user info from token
 
-        $tfile = $conf['cachedir'].'/'.$token{0}.'/'.$token.'.pwauth';
-        if(!@file_exists($tfile)) {
+        $tfile = $conf['cachedir'] . '/' . $token[0] . '/' . $token . '.pwauth';
+        if (!file_exists($tfile)) {
             msg($lang['resendpwdbadauth'], -1);
             $INPUT->remove('pwauth');
             return false;
         }
         // token is only valid for 3 days
-        if((time() - filemtime($tfile)) > (3 * 60 * 60 * 24)) {
+        if ((time() - filemtime($tfile)) > (3 * 60 * 60 * 24)) {
             msg($lang['resendpwdbadauth'], -1);
             $INPUT->remove('pwauth');
             @unlink($tfile);
@@ -1185,37 +1217,35 @@ function act_resendpwd() {
         }
 
         $user     = io_readfile($tfile);
-        $userinfo = $auth->getUserData($user, $requireGroups = false);
-        if(!$userinfo['mail']) {
+        $userinfo = $auth->getUserData($user, false);
+        if (!$userinfo['mail']) {
             msg($lang['resendpwdnouser'], -1);
             return false;
         }
 
-        if(!$conf['autopasswd']) { // we let the user choose a password
+        if (!$conf['autopasswd']) { // we let the user choose a password
             $pass = $INPUT->str('pass');
 
             // password given correctly?
-            if(!$pass) return false;
-            if($pass != $INPUT->str('passchk')) {
+            if (!$pass) return false;
+            if ($pass != $INPUT->str('passchk')) {
                 msg($lang['regbadpass'], -1);
                 return false;
             }
 
             // change it
-            if(!$auth->triggerUserMod('modify', array($user, array('pass' => $pass)))) {
-                msg('error modifying user data', -1);
+            if (!$auth->triggerUserMod('modify', [$user, ['pass' => $pass]])) {
+                msg($lang['proffail'], -1);
                 return false;
             }
-
         } else { // autogenerate the password and send by mail
-
             $pass = auth_pwgen($user);
-            if(!$auth->triggerUserMod('modify', array($user, array('pass' => $pass)))) {
-                msg('error modifying user data', -1);
+            if (!$auth->triggerUserMod('modify', [$user, ['pass' => $pass]])) {
+                msg($lang['proffail'], -1);
                 return false;
             }
 
-            if(auth_sendPassword($user, $pass)) {
+            if (auth_sendPassword($user, $pass)) {
                 msg($lang['resendpwdsuccess'], 1);
             } else {
                 msg($lang['regmailfail'], -1);
@@ -1224,44 +1254,39 @@ function act_resendpwd() {
 
         @unlink($tfile);
         return true;
-
     } else {
         // we're in request phase
 
-        if(!$INPUT->post->bool('save')) return false;
+        if (!$INPUT->post->bool('save')) return false;
 
-        if(!$INPUT->post->str('login')) {
+        if (!$INPUT->post->str('login')) {
             msg($lang['resendpwdmissing'], -1);
             return false;
         } else {
             $user = trim($auth->cleanUser($INPUT->post->str('login')));
         }
 
-        $userinfo = $auth->getUserData($user, $requireGroups = false);
-        if(!$userinfo['mail']) {
+        $userinfo = $auth->getUserData($user, false);
+        if (!$userinfo['mail']) {
             msg($lang['resendpwdnouser'], -1);
             return false;
         }
 
         // generate auth token
         $token = md5(auth_randombytes(16)); // random secret
-        $tfile = $conf['cachedir'].'/'.$token{0}.'/'.$token.'.pwauth';
-        $url   = wl('', array('do'=> 'resendpwd', 'pwauth'=> $token), true, '&');
+        $tfile = $conf['cachedir'] . '/' . $token[0] . '/' . $token . '.pwauth';
+        $url   = wl('', ['do' => 'resendpwd', 'pwauth' => $token], true, '&');
 
         io_saveFile($tfile, $user);
 
         $text = rawLocale('pwconfirm');
-        $trep = array(
-            'FULLNAME' => $userinfo['name'],
-            'LOGIN'    => $user,
-            'CONFIRM'  => $url
-        );
+        $trep = ['FULLNAME' => $userinfo['name'], 'LOGIN'    => $user, 'CONFIRM'  => $url];
 
         $mail = new Mailer();
-        $mail->to($userinfo['name'].' <'.$userinfo['mail'].'>');
+        $mail->to($userinfo['name'] . ' <' . $userinfo['mail'] . '>');
         $mail->subject($lang['regpwmail']);
         $mail->setBody($text, $trep);
-        if($mail->send()) {
+        if ($mail->send()) {
             msg($lang['resendpwdconfirm'], 1);
         } else {
             msg($lang['regmailfail'], -1);
@@ -1278,19 +1303,21 @@ function act_resendpwd() {
  * is chosen.
  *
  * @author  Andreas Gohr <andi@splitbrain.org>
+ *
  * @param string $clear The clear text password
  * @param string $method The hashing method
  * @param string $salt A salt, null for random
  * @return  string  The crypted password
  */
-function auth_cryptPassword($clear, $method = '', $salt = null) {
+function auth_cryptPassword($clear, $method = '', $salt = null)
+{
     global $conf;
-    if(empty($method)) $method = $conf['passcrypt'];
+    if (empty($method)) $method = $conf['passcrypt'];
 
     $pass = new PassHash();
-    $call = 'hash_'.$method;
+    $call = 'hash_' . $method;
 
-    if(!method_exists($pass, $call)) {
+    if (!method_exists($pass, $call)) {
         msg("Unsupported crypt method $method", -1);
         return false;
     }
@@ -1301,12 +1328,15 @@ function auth_cryptPassword($clear, $method = '', $salt = null) {
 /**
  * Verifies a cleartext password against a crypted hash
  *
- * @author Andreas Gohr <andi@splitbrain.org>
- * @param  string $clear The clear text password
- * @param  string $crypt The hash to compare with
+ * @param string $clear The clear text password
+ * @param string $crypt The hash to compare with
  * @return bool true if both match
+ * @throws Exception
+ *
+ * @author Andreas Gohr <andi@splitbrain.org>
  */
-function auth_verifyPassword($clear, $crypt) {
+function auth_verifyPassword($clear, $crypt)
+{
     $pass = new PassHash();
     return $pass->verify_hash($clear, $crypt);
 }
@@ -1319,20 +1349,27 @@ function auth_verifyPassword($clear, $crypt) {
  * @param bool    $sticky     whether or not the cookie will last beyond the session
  * @return bool
  */
-function auth_setCookie($user, $pass, $sticky) {
+function auth_setCookie($user, $pass, $sticky)
+{
     global $conf;
-    /* @var DokuWiki_Auth_Plugin $auth */
+    /* @var AuthPlugin $auth */
     global $auth;
     global $USERINFO;
 
-    if(!$auth) return false;
+    if (!$auth instanceof AuthPlugin) return false;
     $USERINFO = $auth->getUserData($user);
 
     // set cookie
-    $cookie    = base64_encode($user).'|'.((int) $sticky).'|'.base64_encode($pass);
+    $cookie    = base64_encode($user) . '|' . ((int) $sticky) . '|' . base64_encode($pass);
     $cookieDir = empty($conf['cookiedir']) ? DOKU_REL : $conf['cookiedir'];
     $time      = $sticky ? (time() + 60 * 60 * 24 * 365) : 0; //one year
-    setcookie(DOKU_COOKIE, $cookie, $time, $cookieDir, '', ($conf['securecookie'] && is_ssl()), true);
+    setcookie(DOKU_COOKIE, $cookie, [
+        'expires' => $time,
+        'path' => $cookieDir,
+        'secure' => ($conf['securecookie'] && is_ssl()),
+        'httponly' => true,
+        'samesite' => $conf['samesitecookie'] ?: null, // null means browser default
+    ]);
 
     // set session
     $_SESSION[DOKU_COOKIE]['auth']['user'] = $user;
@@ -1349,15 +1386,16 @@ function auth_setCookie($user, $pass, $sticky) {
  *
  * @returns array
  */
-function auth_getCookie() {
-    if(!isset($_COOKIE[DOKU_COOKIE])) {
-        return array(null, null, null);
+function auth_getCookie()
+{
+    if (!isset($_COOKIE[DOKU_COOKIE])) {
+        return [null, null, null];
     }
-    list($user, $sticky, $pass) = explode('|', $_COOKIE[DOKU_COOKIE], 3);
+    [$user, $sticky, $pass] = sexplode('|', $_COOKIE[DOKU_COOKIE], 3, '');
     $sticky = (bool) $sticky;
     $pass   = base64_decode($pass);
     $user   = base64_decode($user);
-    return array($user, $sticky, $pass);
+    return [$user, $sticky, $pass];
 }
 
 //Setup VIM: ex: et ts=2 :

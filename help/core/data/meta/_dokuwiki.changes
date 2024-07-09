@@ -18,3 +18,67 @@
 1448999085	172.17.2.103	E	beneficiarios	root		
 1449001450	172.17.2.103	E	beneficiarios	root		
 1449001586	172.17.2.103	E	beneficiarios	root		
+1449065840	127.0.0.1	E	beneficiarios		external edit		2081
+1720485044	11.1.0.200	E	beneficiarios				-82
+1720485409	127.0.0.1	D	start		removed - external edit (Unknown date)		0
+1720485410	11.1.0.200	C	start		created		78
+1432297385	127.0.0.1	E	ingreso_a_la_aplicacion		external edit (Unknown date)		914
+1720485498	11.1.0.200	E	ingreso_a_la_aplicacion				-10
+1720485545	11.1.0.200	E	ingreso_a_la_aplicacion				4
+1449068566	127.0.0.1	E	materiales		external edit		2193
+1720485706	11.1.0.200	E	materiales				-81
+1449066114	127.0.0.1	E	bienes		external edit		2085
+1720485724	11.1.0.200	E	bienes				-81
+1449066874	127.0.0.1	E	servicios		external edit		2115
+1720485739	11.1.0.200	E	servicios				-81
+1449068712	127.0.0.1	E	facturas		external edit		1845
+1720485853	11.1.0.200	E	facturas				-81
+1449069720	127.0.0.1	E	proveedores		external edit		1984
+1720486013	11.1.0.200	E	proveedores				-81
+1720486089	11.1.0.200	E	beneficiarios				18
+1720486153	11.1.0.200	E	proveedores				18
+1720486168	11.1.0.200	E	materiales				18
+1720486185	11.1.0.200	E	bienes				18
+1720486196	11.1.0.200	E	servicios				18
+1432641134	127.0.0.1	E	movimiento_bancario		external edit (Unknown date)		2872
+1720486255	11.1.0.200	E	movimiento_bancario				18
+1720486277	11.1.0.200	E	movimiento_bancario				2
+1432803851	127.0.0.1	E	requisicion_externa		external edit (Unknown date)		2658
+1720486307	11.1.0.200	E	requisicion_externa				20
+1432723172	127.0.0.1	E	orden_de_de_compra		external edit (Unknown date)		2670
+1720486338	11.1.0.200	E	orden_de_de_compra				20
+1432723398	127.0.0.1	E	orden_de_servicio		external edit (Unknown date)		2685
+1720486390	11.1.0.200	E	orden_de_servicio				20
+1432723739	127.0.0.1	E	orden_de_pago		external edit (Unknown date)		2792
+1720486413	11.1.0.200	E	orden_de_pago				20
+1432724042	127.0.0.1	E	cheque_con_orden_de_pago		external edit (Unknown date)		2659
+1720486443	11.1.0.200	E	cheque_con_orden_de_pago				20
+1432724274	127.0.0.1	E	cheque_directo		external edit (Unknown date)		2794
+1720486467	11.1.0.200	E	cheque_directo				20
+1432724489	127.0.0.1	E	comprobante		external edit (Unknown date)		2862
+1720486488	11.1.0.200	E	comprobante				20
+1432719445	127.0.0.1	E	comprobantes_de_retencion		external edit (Unknown date)		1855
+1720486506	11.1.0.200	E	comprobantes_de_retencion				20
+1720486522	11.1.0.200	E	facturas				18
+1433319393	127.0.0.1	E	traspaso		external edit (Unknown date)		2138
+1720486543	11.1.0.200	E	traspaso				20
+1433319252	127.0.0.1	E	credito_adicional		external edit (Unknown date)		2234
+1720486563	11.1.0.200	E	credito_adicional				20
+1433319137	127.0.0.1	E	reduccion		external edit (Unknown date)		2159
+1720486584	11.1.0.200	E	reduccion				20
+1433235292	127.0.0.1	E	disponibilidad_presupuestaria		external edit (Unknown date)		789
+1720486603	11.1.0.200	E	disponibilidad_presupuestaria				20
+1433319966	127.0.0.1	E	cierre_de_meses		external edit (Unknown date)		430
+1720486625	11.1.0.200	E	cierre_de_meses				20
+1433492893	127.0.0.1	E	convertidor		external edit (Unknown date)		975
+1720486641	11.1.0.200	E	convertidor				20
+1449070130	127.0.0.1	E	plan_de_cuentas_presupuestarias		external edit		1923
+1720486653	11.1.0.200	E	plan_de_cuentas_presupuestarias				18
+1720486668	11.1.0.200	E	plan_de_cuentas_presupuestarias				-81
+1433501610	127.0.0.1	E	plan_de_cuentas_contables		external edit (Unknown date)		1739
+1720486693	11.1.0.200	E	plan_de_cuentas_contables				20
+1720486719	11.1.0.200	E	ingreso_a_la_aplicacion				20
+1433236915	127.0.0.1	E	formulacion		external edit (Unknown date)		1226
+1720487002	11.1.0.200	E	formulacion				20
+1433318574	127.0.0.1	E	estructura_presupuestaria		external edit (Unknown date)		1975
+1720487021	11.1.0.200	E	estructura_presupuestaria				20

@@ -7,8 +7,15 @@
 
 /**
  * Creates a toolbar button through the DOM
+ * Called for each entry of toolbar definition array (built by inc/toolbar.php and extended via js)
  *
  * Style the buttons through the toolbutton class
+ *
+ * @param {string} icon      image filename, relative to folder lib/images/toolbar/
+ * @param {string} label     title of button, show on mouseover
+ * @param {string} key       hint in title of button for access key
+ * @param {string} id        id of button, and '<id>_ico' of icon
+ * @param {string} classname for styling buttons
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  * @author Michal Rezler <m.rezler@centrum.cz>
@@ -57,10 +64,10 @@ function createToolButton(icon,label,key,id,classname){
  * class or the picker buttons with the pickerbutton class. Picker
  * windows are appended to the body and created invisible.
  *
- * @param  string id    the ID to assign to the picker
- * @param  array  props the properties for the picker
- * @param  string edid  the ID of the textarea
- * @rteurn DOMobject    the created picker
+ * @param  {string} id    the ID to assign to the picker
+ * @param  {Array}  props the properties for the picker
+ * @param  {string} edid  the ID of the textarea
+ * @return DOMobject    the created picker
  * @author Andreas Gohr <andi@splitbrain.org>
  */
 function createPicker(id,props,edid){
@@ -78,7 +85,7 @@ function createPicker(id,props,edid){
         var $btn = jQuery(document.createElement('button'))
             .addClass('pickerbutton').attr('title', title)
             .attr('aria-controls', edid)
-            .bind('click', bind(pickerInsert, title, edid))
+            .on('click', bind(pickerInsert, title, edid))
             .appendTo($picker);
         return $btn;
     }
@@ -96,6 +103,7 @@ function createPicker(id,props,edid){
             jQuery(document.createElement('img'))
                 .attr('src', item)
                 .attr('alt', '')
+                .css('height', '16')
                 .appendTo($makebutton(key));
         }else if (typeof item == 'string'){
             // a list of text -> treat as text picker
@@ -126,15 +134,15 @@ function pickerInsert(text,edid){
 /**
  * Add button action for signature button
  *
- * @param  DOMElement btn   Button element to add the action to
- * @param  array      props Associative array of button properties
- * @param  string     edid  ID of the editor textarea
- * @return boolean    If button should be appended
+ * @param  {jQuery} $btn   Button element to add the action to
+ * @param  {Array}  props  Associative array of button properties
+ * @param  {string} edid   ID of the editor textarea
+ * @return {string} picker id for aria-controls attribute
  * @author Gabriel Birke <birke@d-scribe.de>
  */
 function addBtnActionSignature($btn, props, edid) {
     if(typeof SIG != 'undefined' && SIG != ''){
-        $btn.bind('click', function (e) {
+        $btn.on('click', function (e) {
             insertAtCarret(edid,SIG);
             e.preventDefault();
         });
@@ -146,13 +154,15 @@ function addBtnActionSignature($btn, props, edid) {
 /**
  * Determine the current section level while editing
  *
+ * @param {string} textboxId   ID of the text field
+ *
  * @author Andreas Gohr <gohr@cosmocode.de>
  */
 function currentHeadlineLevel(textboxId){
     var field = jQuery('#' + textboxId)[0],
         s = false,
         opts = [field.value.substr(0,DWgetSelection(field).start)];
-    if (field.form.prefix) {
+    if (field.form && field.form.prefix) {
         // we need to look in prefix context
         opts.push(field.form.prefix.value);
     }
@@ -179,6 +189,10 @@ function currentHeadlineLevel(textboxId){
 window.textChanged = false;
 
 /**
+ * global var which stores original editor content
+ */
+window.doku_edit_text_content = '';
+/**
  * Delete the draft before leaving the page
  */
 function deleteDraft() {
@@ -196,7 +210,8 @@ function deleteDraft() {
     jQuery.post(DOKU_BASE + 'lib/exe/ajax.php',
         {
             call: 'draftdel',
-            id: $dwform.find('input[name=id]').val()
+            id: $dwform.find('input[name=id]').val(),
+            sectok: $dwform.find('input[name=sectok]').val()
         }
     );
 }
@@ -204,6 +219,7 @@ function deleteDraft() {
 /**
  * Activate "not saved" dialog, add draft deletion to page unload,
  * add handlers to monitor changes
+ * Note: textChanged could be set by e.g. html_edit() as well
  *
  * Sets focus to the editbox as well
  */
@@ -224,16 +240,19 @@ jQuery(function () {
         sel.start = 0;
         sel.end   = 0;
         DWsetSelection(sel);
-        $edit_text.focus();
+        $edit_text.trigger('focus');
+
+        doku_edit_text_content = $edit_text.val();
     }
 
-    var checkfunc = function() {
-        textChanged = true; //global var
-        summaryCheck();
+    var changeHandler = function() {
+        doku_hasTextBeenModified();
+
+        doku_summaryCheck();
     };
 
-    $editform.change(checkfunc);
-    $editform.keydown(checkfunc);
+    $editform.change(changeHandler);
+    $editform.keydown(changeHandler);
 
     window.onbeforeunload = function(){
         if(window.textChanged) {
@@ -243,13 +262,13 @@ jQuery(function () {
     window.onunload = deleteDraft;
 
     // reset change memory var on submit
-    jQuery('#edbtn__save').click(
+    jQuery('#edbtn__save').on('click',
         function() {
             window.onbeforeunload = '';
             textChanged = false;
         }
     );
-    jQuery('#edbtn__preview').click(
+    jQuery('#edbtn__preview').on('click',
         function() {
             window.onbeforeunload = '';
             textChanged = false;
@@ -258,18 +277,32 @@ jQuery(function () {
     );
 
     var $summary = jQuery('#edit__summary');
-    $summary.change(summaryCheck);
-    $summary.keyup(summaryCheck);
+    $summary.on('change keyup', doku_summaryCheck);
 
-    if (textChanged) summaryCheck();
+    if (textChanged) doku_summaryCheck();
 });
+
+/**
+ * Updates textChanged variable if content of the editor has been modified
+ */
+function doku_hasTextBeenModified() {
+    if (!textChanged) {
+        var $edit_text = jQuery('#wiki__text');
+
+        if ($edit_text.length > 0) {
+            textChanged = doku_edit_text_content != $edit_text.val();
+        } else {
+            textChanged = true;
+        }
+    }
+}
 
 /**
  * Checks if a summary was entered - if not the style is changed
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  */
-function summaryCheck(){
+function doku_summaryCheck(){
     var $sum = jQuery('#edit__summary'),
         missing = $sum.val() === '';
     $sum.toggleClass('missing', missing).toggleClass('edit', !missing);

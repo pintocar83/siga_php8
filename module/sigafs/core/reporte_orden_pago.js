@@ -28,6 +28,8 @@ function Form_IMPRIMIR_REPORTE_Imprimir(){
 	if(xGetElementById("TIPO_REPORTE_FIR_1").checked)
 		window.open("../../report/orden_pago_listado_xls.php?inicio="+xGetElementById("FECHA_INICIO_FIR").value+"&fin="+xGetElementById("FECHA_FIN_FIR").value);
 	else if(xGetElementById("TIPO_REPORTE_FIR_2").checked)
+		window.open("../../report/orden_pago_afectacion_presupuestaria_listado_xls.php?inicio="+xGetElementById("FECHA_INICIO_FIR").value+"&fin="+xGetElementById("FECHA_FIN_FIR").value);
+	else if(xGetElementById("TIPO_REPORTE_FIR_3").checked)
 		window.open("../../report/presupuesto_movimientos_listado_xls.php?inicio="+xGetElementById("FECHA_INICIO_FIR").value+"&fin="+xGetElementById("FECHA_FIN_FIR").value);
 	}
 

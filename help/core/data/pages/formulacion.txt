@@ -1,4 +1,5 @@
-__**Formulación**__
+[[inicio|Inicio]]
+==== Formulación ====
 
 Para ingresar al módulo de formulación del presupuesto de gastos debemos seleccionar la opción "Formulación" en el menú principal del sistema.
 

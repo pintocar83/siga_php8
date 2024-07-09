@@ -1,5 +1,5 @@
 <?php
-error_reporting(1);
+error_reporting(0);
 //error_reporting(E_ALL);
 ini_set('display_errors', 'Off');
 set_time_limit(-1);
@@ -13,7 +13,7 @@ include_once("../library/functions/column_hash.php");
 include_once("../library/phpexcel/PHPExcel.php");
 
 
-SIGA::$DBMode=PGSQL_ASSOC;
+//SIGA::$DBMode=PGSQL_ASSOC;
 $db=SIGA::DBController();
 
 $organismo=$db->Execute("SELECT P.identificacion_tipo||P.identificacion_numero as identificacion
@@ -83,24 +83,9 @@ for($i=0; $i<count($CONSULTA); $i++) {
   $total_retencion=$db->Execute($sql);
   $total_retencion=isset($total_retencion[0]["total"])?$total_retencion[0]["total"]:0;
 
-  $CONSULTA[$i]["total"] = $total_haber - $total_retencion;
+  $CONSULTA[$i]["total"] = $total_haber;
+  //$CONSULTA[$i]["total"] = $total_haber - $total_retencion;
   $CONSULTA[$i]["total_retencion"] = $total_retencion;
-
-
-  $CONSULTA[$i]["detalle_presupuestario"]=$db->Execute("SELECT
-                        _formatear_estructura_presupuestaria(DP.id_accion_subespecifica) as estructura_presupuestaria,
-                        _formatear_cuenta_presupuestaria(DP.id_cuenta_presupuestaria) as cuenta_presupuestaria,
-                        DP.monto, 
-                        CP.denominacion as denominacion_presupuestaria
-                      FROM
-                        modulo_base.detalle_presupuestario AS DP,
-                        modulo_base.cuenta_presupuestaria AS CP
-                      WHERE
-                        DP.id_comprobante='$id' AND
-                        DP.id_cuenta_presupuestaria=CP.id_cuenta_presupuestaria
-                      ORDER BY
-                        estructura_presupuestaria, DP.id_cuenta_presupuestaria");
-
 
 }
 
@@ -128,13 +113,9 @@ $activeSheet->setCellValueExplicit("A$ln","ORDEN PAGO",PHPExcel_Cell_DataType::T
 $activeSheet->setCellValueExplicit("B$ln","FECHA",PHPExcel_Cell_DataType::TYPE_STRING);
 $activeSheet->setCellValueExplicit("C$ln","RIF",PHPExcel_Cell_DataType::TYPE_STRING);
 $activeSheet->setCellValueExplicit("D$ln","BENEFICIARIO",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("E$ln","TOTAL",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("F$ln","CONCEPTO",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("G$ln","ACC/PRO",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("H$ln","CUENTA",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("I$ln","MONTO",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("J$ln","RETENCIÓN",PHPExcel_Cell_DataType::TYPE_STRING);
-$activeSheet->setCellValueExplicit("K$ln","ESTATUS",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("E$ln","CONCEPTO",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("F$ln","TOTAL",PHPExcel_Cell_DataType::TYPE_STRING);
+$activeSheet->setCellValueExplicit("G$ln","ESTATUS",PHPExcel_Cell_DataType::TYPE_STRING);
 $activeSheet->getStyle("A$ln:K$ln")->getFont()->setBold(true);
 
 $ln++;
@@ -144,26 +125,14 @@ for($i=0; $i<count($CONSULTA); $i++) {
   $activeSheet->setCellValueExplicit("B$ln",$CONSULTA[$i]["ffecha"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("C$ln",$CONSULTA[$i]["identificacion_tipo"].$CONSULTA[$i]["identificacion_numero"],PHPExcel_Cell_DataType::TYPE_STRING);
   $activeSheet->setCellValueExplicit("D$ln",$CONSULTA[$i]["beneficiario"],PHPExcel_Cell_DataType::TYPE_STRING);
-  $activeSheet->setCellValueExplicit("E$ln",$CONSULTA[$i]["total"],PHPExcel_Cell_DataType::TYPE_NUMERIC);
-  $activeSheet->setCellValueExplicit("F$ln",$CONSULTA[$i]["concepto"],PHPExcel_Cell_DataType::TYPE_STRING);
-  $activeSheet->setCellValueExplicit("J$ln",$CONSULTA[$i]["total_retencion"],PHPExcel_Cell_DataType::TYPE_NUMERIC);
-  $activeSheet->setCellValueExplicit("K$ln",$CONSULTA[$i]["estatus"],PHPExcel_Cell_DataType::TYPE_STRING);
+  $activeSheet->setCellValueExplicit("E$ln",$CONSULTA[$i]["concepto"],PHPExcel_Cell_DataType::TYPE_STRING);
+  $activeSheet->setCellValueExplicit("F$ln",$CONSULTA[$i]["total"],PHPExcel_Cell_DataType::TYPE_NUMERIC);
+  $activeSheet->setCellValueExplicit("G$ln",$CONSULTA[$i]["estatus"],PHPExcel_Cell_DataType::TYPE_STRING);
 
-
-  for($j=0; $j<count($CONSULTA[$i]["detalle_presupuestario"]) ; $j++) {
-    $activeSheet->setCellValueExplicit("G$ln",$CONSULTA[$i]["detalle_presupuestario"][$j]["estructura_presupuestaria"],PHPExcel_Cell_DataType::TYPE_STRING);
-    $activeSheet->setCellValueExplicit("H$ln",$CONSULTA[$i]["detalle_presupuestario"][$j]["cuenta_presupuestaria"],PHPExcel_Cell_DataType::TYPE_STRING);
-    $activeSheet->setCellValueExplicit("I$ln",$CONSULTA[$i]["detalle_presupuestario"][$j]["monto"],PHPExcel_Cell_DataType::TYPE_NUMERIC);
-    $ln++;
-  }
-  if(count($CONSULTA[$i]["detalle_presupuestario"])==0){
-    $ln++;
-  }
+   $ln++;
 }
 
-$activeSheet->getStyle("E2:E$ln")->getNumberFormat()->setFormatCode('#,##0.00');
-$activeSheet->getStyle("I2:I$ln")->getNumberFormat()->setFormatCode('#,##0.00');
-$activeSheet->getStyle("J2:J$ln")->getNumberFormat()->setFormatCode('#,##0.00');
+$activeSheet->getStyle("F2:F$ln")->getNumberFormat()->setFormatCode('#,##0.00');
 
 
 
@@ -172,8 +141,8 @@ $activeSheet->getColumnDimension("A")->setAutoSize(true);
 $activeSheet->getColumnDimension("B")->setAutoSize(true);
 $activeSheet->getColumnDimension("C")->setAutoSize(true);
 $activeSheet->getColumnDimension("D")->setWidth(30);
-$activeSheet->getColumnDimension("E")->setAutoSize(true);
-$activeSheet->getColumnDimension("F")->setWidth(50);
+$activeSheet->getColumnDimension("E")->setWidth(50);
+$activeSheet->getColumnDimension("F")->setAutoSize(true);
 $activeSheet->getColumnDimension("G")->setAutoSize(true);
 $activeSheet->getColumnDimension("H")->setAutoSize(true);
 $activeSheet->getColumnDimension("I")->setAutoSize(true);

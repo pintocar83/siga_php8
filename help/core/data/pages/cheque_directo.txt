@@ -1,4 +1,5 @@
-__**Cheque Directo**__
+[[inicio|Inicio]]
+==== Cheque Directo ====
 
 Para ingresar al módulo de Cheque Directo, debemos seleccionar la opción "Cheque Directo" desde el menú principal del sistema administrativo.
 

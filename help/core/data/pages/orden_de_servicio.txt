@@ -1,4 +1,5 @@
-__**Orden de Servicio**__
+[[inicio|Inicio]]
+==== Orden de Servicio ====
 
 Para ingresar al módulo de orden de servicio, debemos seleccionar la opción Orden de Servicio desde el menú principal del sistema administrativo.
 

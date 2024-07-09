@@ -1,4 +1,5 @@
-__**Movimiento Bancario**__
+[[inicio|Inicio]]
+==== Movimiento Bancario ====
 
 Para ingresar al módulo de movimiento bancario, debemos seleccionar la opción "Movimiento Bancario" desde el menú principal del sistema administrativo.
 

@@ -1,9 +1,11 @@
+[[inicio|Inicio]]
 ==== PLAN DE CUENTAS PRESUPUESTARIAS ====
 
 Para ingresar al módulo debemos seleccionar la opción "Plan de Cuentas Presupuestarias" desde el menú principal del sistema administrativo.
 
 **Menú Principal:** \\
-<html><object type='image/svg+xml' data='images/menu_principal_administrativo.svg' style='max-width: 100%;'></object></html> \\
+{{:sigafs_menu_principal.png?nolink&600|}} \\
+
 **Opción:** Plan de Cuentas Presupuestarias. \\
 {{:plan_de_cuentas_presupuestarias:opcion_menu.png?nolink|}} \\
 
