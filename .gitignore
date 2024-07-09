@@ -1,4 +1,5 @@
-library/siga.config.php
-cache/
-report/tmp/
+/library/siga.config.php
+/cache/
+/help/core/data/cache/
+/report/tmp/
 */error_log
