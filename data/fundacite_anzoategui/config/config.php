@@ -12,6 +12,7 @@ $siga_apps_common=array(
   //array("id"=>"http://copernico.fundacite-sucre.gob.ve:631/printers/#","icon"=>"image/menu/icon-impresoras.png","name"=>"Servidor de Impresión","public"=>true),
   //array("id"=>"http://sigafs.fundacite-sucre.gob.ve/#","icon"=>"image/menu/icon-sigafs.png","name"=>"SIGAFS<br>2009-2014","public"=>true),
   //array("id"=>"module/documentador/#","icon"=>"image/menu/icon-documentador.png","name"=>"Documentador de Sistemas","public"=>true),
+  array("id"=>"help/index.php?id=inicio#","icon"=>"image/menu/icon-documentador.png","name"=>"Documentación del Sistema","public"=>true),
   array("id"=>"lector_qr","icon"=>"image/menu/icon-lector_qr.png","name"=>"Lector QR","public"=>true),
   );
 
@@ -21,6 +22,7 @@ if(SIGA::user()):
                         //array("id"=>"module/administrador/phpmyadmin/#","icon"=>"image/menu/icon-phpmyadmin.png","name"=>"phpMyAdmin"),
                         //array("id"=>"modulo/administrador/codiad/#","icon"=>"image/menu/icon-codiad.png","name"=>"Codiad"),
                         //array("id"=>"servicio_tecnico","icon"=>"image/menu/icon-serviciotecnico.png","name"=>"Servicio Técnico"),
+                        array("id"=>"http://localhost/administrativo/help/core/doku.php?id=inicio#","icon"=>"help/core/lib/tpl/dokuwiki/images/logo.png","name"=>"DokuWiki","public"=>true),
                         array("id"=>"usuario","icon"=>"image/menu/icon-usuarios.png","name"=>"Usuarios y Permisología"),
                         );
   $siga_apps_admin=array();
