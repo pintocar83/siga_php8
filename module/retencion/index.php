@@ -17,7 +17,8 @@ class MODULO extends retencion{
         print json_encode(self::onList( SIGA::paramUpper("text"),
                                         SIGA::param("start"),
                                         SIGA::param("limit"),
-                                        SIGA::param("sort",false)));
+                                        SIGA::param("sort",false),
+                                        SIGA::param("by_tipo")));
         break;
       case "onSave":
       case "save":
@@ -26,6 +27,7 @@ class MODULO extends retencion{
                                       SIGA::param("id"),
                                       SIGA::param("id_retencion_tipo"),
                                       SIGA::param("denominacion"),
+                                      SIGA::param("formula_presentacion"),
                                       SIGA::paramUpper("formula"),
                                       SIGA::param("id_cuenta_contable")));
         break;

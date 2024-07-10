@@ -127,10 +127,13 @@ for($N=0;$N<count($ids);$N++):
               F.informacion_islr[1] as monto_base_islr,
               F.informacion_islr[2] as porcentaje_islr,
               F.informacion_islr[3] as monto_islr,
-              F.informacion_islr[4] as monto_retencion_islr
+              F.informacion_islr[4] as monto_retencion_islr,
+              F.id_retencion_islr,
+              R.formula_presentacion
             FROM
-              modulo_base.factura as F,
-              modulo_base.retencion_comprobante_tiene_factura as RCTF
+              modulo_base.retencion_comprobante_tiene_factura as RCTF,
+              modulo_base.factura as F
+                LEFT JOIN modulo_base.retencion as R on R.id=F.id_retencion_islr
             WHERE
               F.id=RCTF.id_factura AND RCTF.id_retencion_comprobante='$id'
             ORDER BY
@@ -215,7 +218,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->SetLineWidth(0.3);
   $pdf->SetFillColor(220,220,220);
   $pdf->SetXY($MARGEN_LEFT,$MARGEN_TOP+25+10+12+4+4);
-  $pdf->Cell(8+17*2+18+11*4+20+11+20*2,9,'','LRTB',1,'',1);
+  $pdf->Cell(8+17*2+18+11*4+20+18+20*2,9,'','LRTB',1,'',1);
   $pdf->SetXY($MARGEN_LEFT,$MARGEN_TOP+25+10+12+4+4);
   $pdf->SetFillColor(255,255,255);
   
@@ -237,7 +240,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(20,3,utf8_decode("TOTAL"),'LR',0,'C',0);
   //$pdf->Cell(15,3,"COMPRA SIN",'LR',0,'C',0);
   $pdf->Cell(20,3,utf8_decode("BASE"),'LR',0,'C',0);
-  $pdf->Cell(11,3,utf8_decode("%"),'LR',0,'C',0);
+  $pdf->Cell(18,3,utf8_decode("%"),'LR',0,'C',0);
   //$pdf->Cell(20,3,"IMPUESTO",'LR',0,'C',0);
   $pdf->Cell(20,3,utf8_decode("ISLR"),'',1,'C',0);
   
@@ -253,7 +256,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(20,3,utf8_decode("FACTURA"),'LR',0,'C',0);
   //$pdf->Cell(15,3,"DERECHO A",'LR',0,'C',0);
   $pdf->Cell(20,3,utf8_decode("IMPONIBLE"),'LR',0,'C',0);
-  $pdf->Cell(11,3,utf8_decode("RETENIDO"),'LR',0,'C',0);
+  $pdf->Cell(18,3,utf8_decode("RETENIDO"),'LR',0,'C',0);
   //$pdf->Cell(20,3,"IVA",'LR',0,'C',0);
   $pdf->Cell(20,3,utf8_decode("RETENIDO"),'',1,'C',0);
   
@@ -269,7 +272,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(20,3,"",'LR',0,'C',0);
   //$pdf->Cell(15,3,"CREDITO IVA",'LR',0,'C',0);
   $pdf->Cell(20,3,"",'LR',0,'C',0);
-  $pdf->Cell(11,3,"",'LR',0,'C',0);
+  $pdf->Cell(18,3,"",'LR',0,'C',0);
   //$pdf->Cell(20,3,"",'LR',0,'C',0);
   $pdf->Cell(20,3,"",'',1,'C',0);
   
@@ -286,7 +289,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(20,1,"",'LR',0,'C',0);
   //$pdf->Cell(15,1,"",'LR',0,'C',0);
   $pdf->Cell(20,1,"",'LR',0,'C',0);
-  $pdf->Cell(11,1,"",'LR',0,'C',0);
+  $pdf->Cell(18,1,"",'LR',0,'C',0);
   //$pdf->Cell(20,1,"",'LR',0,'C',0);
   $pdf->Cell(20,1,"",'',1,'C',0);
   
@@ -299,7 +302,7 @@ for($N=0;$N<count($ids);$N++):
   // $pdf->SetFillColor(255,255,255);
   
   $pdf->SetXY($MARGEN_LEFT,$MARGEN_TOP+25+10+12+4+4+9);
-  $pdf->Cell(8+17*2+18+11*4+20+11+20*2,15*3,'','LRTB',1,'',0);
+  $pdf->Cell(8+17*2+18+11*4+20+18+20*2,15*3,'','LRTB',1,'',0);
   $pdf->SetXY($MARGEN_LEFT,$MARGEN_TOP+25+10+12+4+4+9);
   $pdf->SetLineWidth(0.2);
   
@@ -322,7 +325,10 @@ for($N=0;$N<count($ids);$N++):
     $pdf->Cell(20,3,number_format($DOC[$k]["total"],2,",","."),'LR',0,'R',0);
     //$pdf->Cell(15,3,"",'LR',0,'C',0);
     $pdf->Cell(20,3,number_format($DOC[$k]["monto_base_islr"],2,",","."),'LR',0,'R',0);
-    $pdf->Cell(11,3,number_format($DOC[$k]["porcentaje_islr"],2,",","."),'LR',0,'C',0);
+    if($DOC[$k]["id_retencion_islr"])
+      $pdf->Cell(18,3,$DOC[$k]["formula_presentacion"],'LR',0,'C',0);
+    else
+      $pdf->Cell(18,3,number_format($DOC[$k]["porcentaje_islr"],2,",","."),'LR',0,'C',0);
     //$pdf->Cell(20,3,'','LR',0,'R',0);
     $pdf->Cell(20,3,number_format($DOC[$k]["monto_retencion_islr"],2,",","."),'',1,'R',0);
     $SUMA_TOTAL+=$DOC[$k]["total"];
@@ -344,7 +350,7 @@ for($N=0;$N<count($ids);$N++):
     $pdf->Cell(20,3,"",'LR',0,'C',0);
     //$pdf->Cell(15,3,"",'LR',0,'C',0);
     $pdf->Cell(20,3,"",'LR',0,'C',0);
-    $pdf->Cell(11,3,"",'LR',0,'C',0);
+    $pdf->Cell(18,3,"",'LR',0,'C',0);
     //$pdf->Cell(20,3,"",'LR',0,'C',0);
     $pdf->Cell(20,3,"",'',1,'C',0);
     }
@@ -354,7 +360,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->SetLineWidth(0.3);
   $pdf->SetFillColor(220,220,220);
   $pdf->SetXY($MARGEN_LEFT,$MARGEN_TOP+25+10+12+4+4+9+15*3);
-  $pdf->Cell(8+17*2+18+11*4+20+11+20*2,4,'','LRTB',1,'',1);
+  $pdf->Cell(8+17*2+18+11*4+20+18+20*2,4,'','LRTB',1,'',1);
   $pdf->SetXY($MARGEN_LEFT,$MARGEN_TOP+25+10+12+4+4+9+15*3);
   $pdf->SetLineWidth(0.2);
   
@@ -370,7 +376,7 @@ for($N=0;$N<count($ids);$N++):
   $pdf->Cell(20,4,utf8_decode(number_format($SUMA_TOTAL,2,",",".")),'LR',0,'R',0);
   //$pdf->Cell(15,4,"",'LR',0,'C',0);
   $pdf->Cell(20,4,utf8_decode(number_format($SUMA_BI,2,",",".")),'LR',0,'R',0);
-  $pdf->Cell(11,4,"",'LR',0,'C',0);
+  $pdf->Cell(18,4,"",'LR',0,'C',0);
   //$pdf->Cell(20,4,number_format($SUMA_IVA,2,",","."),'LR',0,'R',0);
   $pdf->Cell(20,4,utf8_decode(number_format($SUMA_IVA_RET,2,",",".")),'',1,'R',0);
   

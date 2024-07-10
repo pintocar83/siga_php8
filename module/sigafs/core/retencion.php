@@ -91,6 +91,12 @@
 									</td>
 								</tr>
 								<tr>
+									<td class='TitulosCampos'>Presentaci&oacute;n</td>
+									<td class='TextCampos'>
+										<INPUT id='FORMULA_PRESENTACION_FDD' class='TextoCampoInput' type='text' size='60' maxlength='100' value="" style='text-transform: none;'>
+									</td>
+								</tr>
+								<tr>
 									<td colspan="2" rowspan="1" class='TextCampos' style="text-align : center; vertical-align : top;">
 										<br>
 										<fieldset >
@@ -130,7 +136,8 @@
 							<tbody>
 								<tr class="CabeceraTablaEstilo">
 									<td width="5%">COD</td>
-									<td width="65%">DENOMINACI&Oacute;N</td>
+									<td width="45%">DENOMINACI&Oacute;N</td>
+									<td width="20%">PRESENTACI&Oacute;N</td>
 									<td width="20%">F&Oacute;RMULA</td>
 									<td width="10%">TIPO</td>
 								</tr>

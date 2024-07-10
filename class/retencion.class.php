@@ -6,8 +6,14 @@ class retencion{
     return $db->Execute($sql);
   }
   
-  public static function onList($text,$start,$limit,$sort){
-    $db=SIGA::DBController();    
+  public static function onList($text,$start,$limit,$sort, $by_tipo=''){
+    $db=SIGA::DBController();  
+
+    $add='';
+    if($by_tipo){
+      $add.="RT.denominacion ILIKE '$by_tipo' AND ";
+    }
+
     $sql="SELECT
             R.*,
             lpad(text(R.id),3,'0') as correlativo,
@@ -15,6 +21,7 @@ class retencion{
           FROM modulo_base.retencion as R
             LEFT JOIN modulo_base.retencion_tipo RT on RT.id=R.id_retencion_tipo
           WHERE
+            $add
             R.activo AND
             (
               R.denominacion ILIKE '%$text%' OR
@@ -32,6 +39,7 @@ class retencion{
     $id,
     $id_retencion_tipo,
     $denominacion,
+    $formula_presentacion,
     $formula,
     $id_cuenta_contable
     ){
@@ -44,6 +52,7 @@ class retencion{
 
     $data=array(
       "denominacion"             => "'$denominacion'",
+      "formula_presentacion"     => "'$formula_presentacion'",
       "formula"                  => "'$formula'",
       "id_retencion_tipo"        => "$id_retencion_tipo",
       "id_cuenta_contable"       => "'$id_cuenta_contable'"

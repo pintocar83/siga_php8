@@ -177,10 +177,16 @@
 										<FIELDSET>
 										<LEGEND><strong>Informaci&oacute;n ISLR</strong></LEGEND>
 										<TABLE align="center">
-											<TR><TD class='TitulosCampos'>Monto base</TD><TD class='TextCampos'><INPUT id='BASE_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'BASE_ISLR_FF')" style="text-align: right;"></TD></TR>
-											<TR><TD class='TitulosCampos'>% ISLR</TD><TD class='TextCampos'><INPUT id='PORCENTAJE_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'PORCENTAJE_ISLR_FF')" style="text-align: right;"></TD></TR>
-											<TR style='display: none;'><TD class='TitulosCampos'>ISLR</TD><TD class='TextCampos'><INPUT id='MONTO_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_ISLR_FF')" style="text-align: right;"></TD></TR>
-											<TR><TD class='TitulosCampos'>Retenci&oacute;n</TD><TD class='TextCampos'><INPUT id='RETENCION_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_ISLR_FF')" style="text-align: right;"></TD></TR>
+											<TR><TD class='TitulosCampos'>Monto base</TD><TD class='TextCampos'><INPUT id='BASE_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'BASE_ISLR_FF')" style="text-align: right; width: 150px;"></TD></TR>
+											<TR>
+												<TD class='TitulosCampos'>Formula</TD>
+												<TD class='TextCampos'>
+													<SELECT id="PRESENTACION_FORMULA_ISLR" class='TextoCampoInput' onchange="Form_FACTURA__ChangeFormulaISLR()" style="width: 150px;"></SELECT>
+												</TD>
+											</TR>
+											<TR id='ROW_PORCENTAJE_ISLR_FF'><TD class='TitulosCampos'>% ISLR</TD><TD class='TextCampos'><INPUT id='PORCENTAJE_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" autocomplete='off' onkeypress="return AcceptNum(event,'PORCENTAJE_ISLR_FF')" style="text-align: right; width: 150px;"></TD></TR>
+											<TR style='display: none;'><TD class='TitulosCampos'>ISLR</TD><TD class='TextCampos'><INPUT id='MONTO_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'MONTO_ISLR_FF')" style="text-align: right; width: 150px;"></TD></TR>
+											<TR><TD class='TitulosCampos'>Retenci&oacute;n</TD><TD class='TextCampos'><INPUT id='RETENCION_ISLR_FF' class='TextoCampoInput' type='text' size='10' value="" onkeypress="return AcceptNum(event,'RETENCION_ISLR_FF')" style="text-align: right; width: 150px;"></TD></TR>
 											<TR>
 												<td></td>
 												<td style="text-align: right;">
@@ -293,6 +299,7 @@
 <script>
 	Form_FACTURA__TabPane = new WebFXTabPane(xGetElementById("TABPANE_FF"), true);
 	window.onload=function(){
+		Form_FACTURA__CargarRetencionISLR();
 		Form_FACTURA__Nuevo();
 	}
 </script>

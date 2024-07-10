@@ -163,6 +163,7 @@ function Form_FACTURA__Nuevo(){
 	xGetElementById("FORMULARIO_FF").reset();
 	Form_FACTURA__BuscarListado();
 	Form_FACTURA__SetIVA();
+	Form_FACTURA__ChangeFormulaISLR();
 	}
 
 function Form_FACTURA__BotonProveedor(){
@@ -250,9 +251,11 @@ function Form_FACTURA__Guardar()
 	var informacion_iva_5	=	xGetElementById("RETENCION_PIVA_FF").value;
 	var informacion_iva_6	=	xGetElementById("EXENTO_FF").value;
 	var informacion_iva_7	=	xGetElementById("TOTAL_PAGO_FF").value;
+
+	var id_retencion_islr = xGetElementById("PRESENTACION_FORMULA_ISLR").value;
 	
 	var informacion_islr_1=	xGetElementById("BASE_ISLR_FF").value;
-	var informacion_islr_2=	xGetElementById("PORCENTAJE_ISLR_FF").value;
+	var informacion_islr_2=	!id_retencion_islr ? xGetElementById("PORCENTAJE_ISLR_FF").value : '0';
 	var informacion_islr_3=	xGetElementById("MONTO_ISLR_FF").value;
 	var informacion_islr_4=	xGetElementById("RETENCION_ISLR_FF").value;
 
@@ -355,7 +358,8 @@ function Form_FACTURA__Guardar()
 										'total': _total,										
 										'informacion_iva': _informacion_iva,
 										'informacion_islr': _informacion_islr,
-										'informacion_1x1000': _informacion_1x1000
+										'informacion_1x1000': _informacion_1x1000,
+										'id_retencion_islr': id_retencion_islr,
 										},
 							'onSuccess':Form_FACTURA__GuardarMensaje,
 							'url':'../factura/',
@@ -541,6 +545,8 @@ function Form_FACTURA__SeleccionarElementoTabla(IDSeleccion){
 								xGetElementById("BASE_ISLR_FF").value=resultado[0]["informacion_islr_1"];
 								xGetElementById("PORCENTAJE_ISLR_FF").value=resultado[0]["informacion_islr_2"];
 								xGetElementById("MONTO_ISLR_FF").value=resultado[0]["informacion_islr_3"];
+								xGetElementById("PRESENTACION_FORMULA_ISLR").value=resultado[0]["id_retencion_islr"];
+								Form_FACTURA__ChangeFormulaISLR();
 								xGetElementById("RETENCION_ISLR_FF").value=resultado[0]["informacion_islr_4"];
 
 								xGetElementById("BASE_1X1000_FF").value=resultado[0]["informacion_1x1000_1"];
@@ -587,9 +593,27 @@ function Form_FACTURA__SetIVA(){
 
 function Form_FACTURA__CalcularISLR(){
 	var base_calculo=xGetElementById("BASE_ISLR_FF").value;
-	var porcentaje=xGetElementById("PORCENTAJE_ISLR_FF").value;
-	var total=(base_calculo*porcentaje/100.00).toFixed(2);
-	xGetElementById("RETENCION_ISLR_FF").value=total;
+
+	var id_retencion = xGetElementById("PRESENTACION_FORMULA_ISLR").value;
+	var retencion = Form_FACTURA__BuscarRetencionISLR(id_retencion);
+	if(retencion){
+		xGetElementById("PORCENTAJE_ISLR_FF").value=retencion['formula_presentacion'];	
+		xGetElementById("RETENCION_ISLR_FF").value='ERROR'
+
+		var RESULTADO;
+		var MONTO = base_calculo;
+		var FORMULA = retencion['formula'];
+
+		var evaluar="RESULTADO=(" + xTrim(strtoupper(FORMULA)) + ");";
+		eval(evaluar);
+		if(!isNaN(RESULTADO))
+			xGetElementById("RETENCION_ISLR_FF").value=RESULTADO;
+	}	
+	else{
+		var porcentaje=xGetElementById("PORCENTAJE_ISLR_FF").value;
+		var total=(base_calculo*porcentaje/100.00).toFixed(2);
+		xGetElementById("RETENCION_ISLR_FF").value=total;
+	}	
 }
 
 function Form_FACTURA__Calcular1x1000(){
@@ -599,3 +623,67 @@ function Form_FACTURA__Calcular1x1000(){
 	xGetElementById("RETENCION_1X1000_FF").value=total;
 }
 
+
+function Form_FACTURA__CargarRetencionISLR(){
+	AjaxRequest.post({
+						'parameters':{
+									'action':"onList",
+									'by_tipo': "ISLR",
+									'text':'',
+									'start': '0',
+									'limit' : 'ALL',
+									'sort':'[{"property":"denominacion","direction":"ASC"}]'									
+									},
+						'onSuccess': Form_FACTURA__CargarSelectRetencionISLR,
+						'url':'../retencion/',
+						'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
+						});
+	}
+
+
+var Form_FACTURA__data_retencion_islr=[];
+function Form_FACTURA__CargarSelectRetencionISLR(req){
+	var respuesta = req.responseText;
+  var resultado = eval("(" + respuesta + ")");
+	resultado=resultado["result"];
+	Form_FACTURA__data_retencion_islr=resultado;
+
+	var select = xGetElementById("PRESENTACION_FORMULA_ISLR");
+	select.innerHTML="";
+
+	var tmp='';
+	tmp+= "<option value=''>N/A</option>";
+	for (var i = 0; i < resultado.length; i++) {
+		tmp+= "<option value='"+resultado[i]['id']+"' title='"+resultado[i]['formula_presentacion']+"'>"+resultado[i]['denominacion']+"</option>";
+	}
+
+	select.innerHTML=tmp;
+}
+
+function Form_FACTURA__BuscarRetencionISLR(id){
+	for(var i = 0; i < Form_FACTURA__data_retencion_islr.length; i++) {
+		if(Form_FACTURA__data_retencion_islr[i]['id']==id)
+			return Form_FACTURA__data_retencion_islr[i];
+	}
+
+	return "";
+}
+
+function Form_FACTURA__ChangeFormulaISLR(){
+	var id = xGetElementById("PRESENTACION_FORMULA_ISLR").value;
+
+	xGetElementById("PORCENTAJE_ISLR_FF").value='';
+	xGetElementById("RETENCION_ISLR_FF").value='';
+	var retencion = Form_FACTURA__BuscarRetencionISLR(id);
+	if(!retencion){
+		xGetElementById("PORCENTAJE_ISLR_FF").readOnly=false;
+		xGetElementById("PORCENTAJE_ISLR_FF").setAttribute('class','TextoCampoInput');
+		xGetElementById("ROW_PORCENTAJE_ISLR_FF").style.opacity='';
+	}
+	else{
+		xGetElementById("PORCENTAJE_ISLR_FF").readOnly=true;
+		xGetElementById("PORCENTAJE_ISLR_FF").setAttribute('class','TextoCampoInputDesactivado');
+		xGetElementById("ROW_PORCENTAJE_ISLR_FF").style.opacity='0.7';	
+		xGetElementById("PORCENTAJE_ISLR_FF").value=retencion['formula_presentacion'];	
+	}
+}

@@ -70,7 +70,8 @@ class factura{
                                 $total,
                                 $informacion_iva,
                                 $informacion_islr,
-                                $informacion_1x1000){
+                                $informacion_1x1000,
+                                $id_retencion_islr){
     $db=SIGA::DBController();
 
     //buscar si la factura se encuentra registrada
@@ -87,7 +88,8 @@ class factura{
                 "total"=>"'$total'",
                 "informacion_iva"=>"$informacion_iva",
                 "informacion_islr"=>"$informacion_islr",
-                "informacion_1x1000"=>"$informacion_1x1000"
+                "informacion_1x1000"=>"$informacion_1x1000",
+                "id_retencion_islr"=> $id_retencion_islr?"'$id_retencion_islr'":"NULL"
                 );
 
     

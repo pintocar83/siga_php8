@@ -57,12 +57,14 @@ function Form_DEFINICIONES_DEDUCCIONES__MensajeListado(MSG,color){
 */
 function Form_DEFINICIONES_DEDUCCIONES__ActivarFormulario(){
 	xGetElementById("DENOMINACION_FDD").readOnly=false;
+	xGetElementById("FORMULA_PRESENTACION_FDD").readOnly=false;
 	xGetElementById("CODIGO_CONTABLE_FDD").readOnly=false;
 	xGetElementById("RETENCION_TIPO_FDD").readOnly=false;
 	xGetElementById("RETENCION_TIPO_FDD").disabled=false;
 	xGetElementById("FORMULA_FDD").readOnly=false;
 
 	xGetElementById("DENOMINACION_FDD").setAttribute('class','TextoCampoInputObligatorios');
+	xGetElementById("FORMULA_PRESENTACION_FDD").setAttribute('class','TextoCampoInput');
 	xGetElementById("CODIGO_CONTABLE_FDD").setAttribute('class','TextoCampoInputObligatorios');
 	xGetElementById("RETENCION_TIPO_FDD").setAttribute('class','TextoCampoInput');
 	xGetElementById("FORMULA_FDD").setAttribute('class','TextoCampoInputObligatorios');
@@ -84,12 +86,14 @@ function Form_DEFINICIONES_DEDUCCIONES__ActivarFormulario(){
 */
 function Form_DEFINICIONES_DEDUCCIONES__DesactivarFormulario(){
 	xGetElementById("DENOMINACION_FDD").readOnly=true;
+	xGetElementById("FORMULA_PRESENTACION_FDD").readOnly=true;
 	xGetElementById("CODIGO_CONTABLE_FDD").readOnly=true;
 	xGetElementById("RETENCION_TIPO_FDD").readOnly=true;
 	xGetElementById("RETENCION_TIPO_FDD").disabled=true;
 	xGetElementById("FORMULA_FDD").readOnly=true;
 
 	xGetElementById("DENOMINACION_FDD").setAttribute('class','TextoCampoInputDesactivado');
+	xGetElementById("FORMULA_PRESENTACION_FDD").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("CODIGO_CONTABLE_FDD").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("RETENCION_TIPO_FDD").setAttribute('class','TextoCampoInputDesactivado');
 	xGetElementById("FORMULA_FDD").setAttribute('class','TextoCampoInputDesactivado');
@@ -229,6 +233,7 @@ function Form_DEFINICIONES_DEDUCCIONES__Nuevo(){
 function Form_DEFINICIONES_DEDUCCIONES__GuardarVerificar(){
 	Form_DEFINICIONES_DEDUCCIONES__TabPane.setSelectedIndex(0);
 	var denominacion = xTrim(strtoupper(xGetElementById("DENOMINACION_FDD").value));
+	var formula_presentacion = xTrim(xGetElementById("FORMULA_PRESENTACION_FDD").value);
 	var codigo_contable = xTrim(strtoupper(xGetElementById("CODIGO_CONTABLE_FDD").value));
 	var DescripcionCodigoContable 	= xTrim(strtoupper(xGetElementById("NOMBRE_CODIGO_CONTABLE_FDD").value));
 	//var deducible = xTrim(strtoupper(xGetElementById("DEDUCIBLE_FDD").value));
@@ -282,6 +287,7 @@ function Form_DEFINICIONES_DEDUCCIONES__Guardar(req){
 	//	}
 
 	var denominacion = xTrim(strtoupper(xGetElementById("DENOMINACION_FDD").value));
+	var formula_presentacion = xTrim(xGetElementById("FORMULA_PRESENTACION_FDD").value);
 	var codigo_contable = xTrim(strtoupper(xGetElementById("CODIGO_CONTABLE_FDD").value));
 	var id_retencion_tipo = xTrim(strtoupper(xGetElementById("RETENCION_TIPO_FDD").value));
 	var formula = xTrim(strtoupper(xGetElementById("FORMULA_FDD").value));
@@ -291,6 +297,7 @@ function Form_DEFINICIONES_DEDUCCIONES__Guardar(req){
 	if(Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista==-1){
 		AjaxRequest.post({'parameters':{ 'action':"onSave",
 						'denominacion':denominacion,
+						'formula_presentacion': formula_presentacion,
 						'id':'',
 	  					'id_cuenta_contable':codigo_contable,
 						'id_retencion_tipo':id_retencion_tipo,
@@ -309,6 +316,7 @@ function Form_DEFINICIONES_DEDUCCIONES__Guardar(req){
 		AjaxRequest.post({'parameters':{ 'action':"onSave",
 										'id':Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista,
 										'denominacion':denominacion,
+										'formula_presentacion': formula_presentacion,
 										'id_cuenta_contable':codigo_contable,
 										'id_retencion_tipo':id_retencion_tipo,
 										'formula':formula},
@@ -404,6 +412,7 @@ function Form_DEFINICIONES_DEDUCCIONES__MostrarListado(req){
 		FuncionOnclick="Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla('"
 					+resultado[i]['id']+"','"
 					+resultado[i]['denominacion']+"','"
+					+resultado[i]['formula_presentacion']+"','"
 					+resultado[i]['id_cuenta_contable']+"','"
 					+resultado[i]['id_retencion_tipo']+"','"
 					+resultado[i]['formula']+"')";
@@ -422,8 +431,10 @@ function Form_DEFINICIONES_DEDUCCIONES__MostrarListado(req){
 		CadAux1=str_replace(strtoupper(resultado[i]['denominacion']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
 		CadAux2=str_replace(strtoupper(resultado[i]['formula']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
 		CadAux3=str_replace(strtoupper(resultado[i]['retencion_tipo']),"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
+		CadAux4=str_replace(resultado[i]['formula_presentacion'],"<strong>"+TextoBuscar+"</strong>",TextoBuscar);
 
-		Contenido+="<TD width='65%' class='FilaEstilo'>"+CadAux1+"</TD>";
+		Contenido+="<TD width='45%' class='FilaEstilo'>"+CadAux1+"</TD>";
+		Contenido+="<TD width='20%' class='FilaEstilo'>"+CadAux4+"</TD>";
 		Contenido+="<TD width='20%' class='FilaEstilo'>"+CadAux2+"</TD>";
 		Contenido+="<TD width='10%' class='FilaEstilo' style='text-align:right;'>"+CadAux3+"</TD>";
 		Contenido+="</TR>";
@@ -446,7 +457,7 @@ function Form_DEFINICIONES_DEDUCCIONES__MostrarListado(req){
 * @param {String} CodigoContable Codigo contable asociado al proveedor seleccionado
 * @param {String} DenominacionCC Denominacion del codigo contable asociado al proveedor seleccionado
 */
-function Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla(IDSeleccion, Denominacion, IDCodigoContable, IDRetencionTipo, Formula){
+function Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla(IDSeleccion, Denominacion, Presentacion, IDCodigoContable, IDRetencionTipo, Formula){
 		if(Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista!=-1)
 			xGetElementById("FDD"+Form_DEFINICIONES_DEDUCCIONES__IDSeleccionActualLista).bgColor=colorFondoTabla;
         colorBase=colorSeleccionTabla;
@@ -457,6 +468,7 @@ function Form_DEFINICIONES_DEDUCCIONES__SeleccionarElementoTabla(IDSeleccion, De
 
 
 		xGetElementById("DENOMINACION_FDD").value=Denominacion;
+		xGetElementById("FORMULA_PRESENTACION_FDD").value=Presentacion;
 		xGetElementById("CODIGO_CONTABLE_FDD").value=IDCodigoContable;
 		xGetElementById("RETENCION_TIPO_FDD").value=IDRetencionTipo;
 		xGetElementById("FORMULA_FDD").value=Formula;
