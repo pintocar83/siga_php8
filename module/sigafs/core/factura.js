@@ -542,11 +542,20 @@ function Form_FACTURA__SeleccionarElementoTabla(IDSeleccion){
 								}
 
 
-								xGetElementById("BASE_ISLR_FF").value=resultado[0]["informacion_islr_1"];
-								xGetElementById("PORCENTAJE_ISLR_FF").value=resultado[0]["informacion_islr_2"];
+								xGetElementById("BASE_ISLR_FF").value=resultado[0]["informacion_islr_1"];																
 								xGetElementById("MONTO_ISLR_FF").value=resultado[0]["informacion_islr_3"];
-								xGetElementById("PRESENTACION_FORMULA_ISLR").value=resultado[0]["id_retencion_islr"];
-								Form_FACTURA__ChangeFormulaISLR();
+
+								if(resultado[0]["id_retencion_islr"]){
+									xGetElementById("PRESENTACION_FORMULA_ISLR").value=resultado[0]["id_retencion_islr"];
+									Form_FACTURA__ChangeFormulaISLR();
+								}
+								else{
+									xGetElementById("PRESENTACION_FORMULA_ISLR").value='';
+									Form_FACTURA__ChangeFormulaISLR();
+									xGetElementById("PORCENTAJE_ISLR_FF").value=resultado[0]["informacion_islr_2"];
+								}
+								
+								
 								xGetElementById("RETENCION_ISLR_FF").value=resultado[0]["informacion_islr_4"];
 
 								xGetElementById("BASE_1X1000_FF").value=resultado[0]["informacion_1x1000_1"];
