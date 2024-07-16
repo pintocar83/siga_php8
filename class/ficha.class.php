@@ -165,7 +165,7 @@ class ficha{
 
       $dias=0;
       for($i=0;$i<count($fecha_ingreso);$i++){
-        if(!isset($fecha_egreso[$i]) or $fecha_egreso[$i]=="") $fecha_egreso[$i]=$fecha_culminacion;
+        if(!isset($fecha_egreso[$i]) or $fecha_egreso[$i]=="" or $fecha_egreso[$i]>$fecha_culminacion) $fecha_egreso[$i]=$fecha_culminacion;
 
         $dt_inicio       = new DateTime($fecha_ingreso[$i]);
         $dt_culminacion  = new DateTime($fecha_egreso[$i]);
@@ -237,7 +237,7 @@ class ficha{
       
       $dias=0;
       for($i=0;$i<count($fecha_ingreso);$i++){
-        if(!isset($fecha_egreso[$i]) or $fecha_egreso[$i]=="") $fecha_egreso[$i]=$fecha_culminacion;      
+        if(!isset($fecha_egreso[$i]) or $fecha_egreso[$i]=="" or $fecha_egreso[$i]>$fecha_culminacion) $fecha_egreso[$i]=$fecha_culminacion;
         $dias+=floor((strtotime($fecha_egreso[$i])-strtotime($fecha_ingreso[$i]))/(60*60*24));
       }
       $return["antiguedad_dia"]=$dias%365;
