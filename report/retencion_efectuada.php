@@ -45,6 +45,7 @@ $CONSULTA=$db->Execute("select
                           C.fecha BETWEEN '".unformatDate($fecha_inicio)."' AND '".unformatDate($fecha_culminacion)."' AND
                           C.id=CTR.id_comprobante AND
                           CTR.id_retencion=R.id AND
+                          NOT (select count(*) from modulo_base.comprobante_previo as CP, modulo_base.comprobante as C2 where C.id=CP.id_comprobante_previo and CP.id_comprobante=C2.id and C2.tipo='CA')>0 AND --no anulado
                           R.id_retencion_tipo=$tipo
                           $add
                         order by

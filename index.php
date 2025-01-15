@@ -30,6 +30,7 @@ include_once(SIGA::databasePath()."/config/config.php");
         background-image: url(<?php print isset(SIGA::userPreferences()["background"])?SIGA::userPreferences()["background"]:"image/background/1.jpg"?>);
         background-position: center;
         background-repeat: no-repeat;
+        background-size: cover;
         position: fixed !important;
         width: 100%;
         height: 100%;

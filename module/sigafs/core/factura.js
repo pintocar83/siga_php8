@@ -616,7 +616,7 @@ function Form_FACTURA__CalcularISLR(){
 		var evaluar="RESULTADO=(" + xTrim(strtoupper(FORMULA)) + ");";
 		eval(evaluar);
 		if(!isNaN(RESULTADO))
-			xGetElementById("RETENCION_ISLR_FF").value=RESULTADO;
+			xGetElementById("RETENCION_ISLR_FF").value=(RESULTADO*1.00).toFixed(2);
 	}	
 	else{
 		var porcentaje=xGetElementById("PORCENTAJE_ISLR_FF").value;
