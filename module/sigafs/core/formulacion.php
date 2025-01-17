@@ -96,7 +96,7 @@ include_once("../../library/siga.class.php");
 									<BUTTON id="BOTON_REVERTIR_ASIGNAR_FFPDG" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top; white-space : nowrap;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__RevertirAsignar();" type="BUTTON" title="Revertir la asignación de presupuesto (se eliminará el comprobante de apertura de presupuesto). "><IMG id="IMG_REVERTIR_FFPDG" src='../../image/icon/icon-anular-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Revertir</BUTTON>
 								</td>
 								<td align="right">
-									<input class='BotonesParaCampos' type="button" value="txt" title="Ingresar detalles a través de texto plano." style="text-align : center; font-size: 9px;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__inputText()"/>
+									<input class='BotonesParaCampos' type="button" value="carga txt" title="Ingresar detalles a través de texto plano." style="text-align : center; font-size: 9px;" onclick="Form_FORMULACION_PRESUPUESTO_DE_GASTOS__inputText()"/>
 									<span>Comprobante de Asignación Generado: <span id="FFPDG_COMPROBANTE_GENERADO"></span></span>
 								</td>
 								</tr>

@@ -132,9 +132,11 @@ class PDF_P extends FPDF{
 		//$this->Image("../../images/plantilla.jpg",0,0,215);
 		$this->Image(SIGA::databasePath()."/config/plantilla_vertical.jpg",0,0,215);
 
-		//$this->SetFont('helvetica','',8);
-		//$this->Cell($this->ANCHO,10,utf8_decode('Página: '.$this->PageNo().' de {nb}'),'',1,'R');
+		$this->SetXY($this->lMargin,260);
+		$this->SetFont('helvetica','',9);
+		$this->Cell($this->ANCHO,10,utf8_decode(''.$this->PageNo().'/{nb}'),'',1,'C');
 
+		$this->SetXY($this->lMargin,$this->tMargin);
 
 		$this->Ln(13);
 		$this->SetFont('helvetica','B',18);
@@ -803,7 +805,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$pdf->SetY($MAX_Y);
 
 
-		Footer();
+		//Footer();
 		}
 }
 
