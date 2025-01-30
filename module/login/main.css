@@ -20,6 +20,11 @@
 
 .login-input-base input{
   padding-left: 24px;
+  text-transform: none !important;
+}
+
+.login-input-data-year input{
+  text-transform: none !important;
 }
 
 .login-input-base .x-form-text-wrap {

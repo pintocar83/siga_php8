@@ -9,7 +9,14 @@ class usuario{
     $return[0]["clave_type"]=$return[0][2]=$clave["type"];
 
     //buscar los años y perfiles para el usuario
-    $sql="SELECT * FROM modulo_base.usuario_perfil WHERE id_usuario='$id' ORDER BY anio";
+    $sql="
+      SELECT 
+        *, 
+        case when anio ILIKE 'default' then 0 else 1 end prioridad
+      FROM modulo_base.usuario_perfil
+      WHERE id_usuario='$id'
+      ORDER BY prioridad, anio
+    ";
     $perfil=$db->Execute($sql);
 
     $nodos=array();

@@ -87,8 +87,8 @@ class login{
     $db=SIGA::DBController($database);
     $result_login=false;
     //exit;
-    //Buscar el usuario en la tabla usuario
-    $sql=" 
+    function sql_usuario($_user, $_data){
+      return "
         select
           *
         from
@@ -97,13 +97,24 @@ class login{
           modulo_base.usuario_perfil as up                              
         where
           p.id=u.id_persona_responsable and
-          u.usuario='$user' and
+          u.usuario='$_user' and
           u.activo and
           u.id=up.id_usuario and
-          up.anio='$data' and                              
+          up.anio='$_data' and                              
           up.activo
-    ";
+        ";
+      }
+
+    //Buscar el usuario en la tabla usuario por anio=$data
+    $sql=sql_usuario($user, $data);
     $usuario=$db->Execute($sql);
+
+    //Si no existe, buscar el usuario por anio default
+    if(!isset($usuario[0])){
+      $sql=sql_usuario($user, 'default');
+      $usuario=$db->Execute($sql);
+    }
+
     //print $sql;
     //print_r($usuario);
     if($usuario and count($usuario)>0){

@@ -189,7 +189,10 @@ siga.define('usuario', {
                     fieldCls: 'login-input-base login-input-data',
                     store: {
                       fields: ['id', 'nombre'],
-                      data : siga.value("datos")
+                      data : [
+                        {id: 'default', nombre: 'Por Defecto'},
+                        ...siga.value("datos")
+                      ]
                     },
                     displayField: 'nombre',
                     valueField: 'id',

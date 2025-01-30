@@ -152,6 +152,7 @@ siga.define('login', {
                     {
                         xtype: 'combobox',
                         id: me._('data'),
+                        cls: 'login-input-data-year',
                         width: 85,
                         editable: false,
                         displayField: 'nombre',

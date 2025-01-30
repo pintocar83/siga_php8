@@ -519,6 +519,51 @@ siga.database.open=function(ev){
       }
     });
 
+    if(data_disponible.length>0 && siga.value("user")==='admin'){
+      var ultima_data_disponible=data_disponible[data_disponible.length-1];
+      var anio_agregar = Number(ultima_data_disponible.id)+1;
+      items.push({
+        text: 'Crear '+anio_agregar,
+        handler: function(){
+          Ext.Msg.show({
+            title:'Año de Trabajo',
+            message: 'El año de '+anio_agregar+' no existe.<br>¿Desea crearlo?',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+              if (btn === 'yes') {
+                var msgWait=Ext.Msg.wait('Seleccionando año de trabajo '+anio_agregar+'. Por favor espere...', "Año de Trabajo",{text:''});
+                msgWait.setAlwaysOnTop(true);
+                Ext.Ajax.request({
+                  method: 'POST',
+                  url:'module/anio_trabajo/',
+                  params:{
+                    action: 'onChange',
+                    data: anio_agregar,
+                    crear: true
+                  },
+                  success:function(request){
+                    var result=Ext.JSON.decode(request.responseText);
+                    if(result.success){
+                      window.location.reload();
+                    }
+                    else{
+                      msgWait.close();
+                      alert(result.message);
+                    }
+                  },
+                  failure:function(request){
+                    msgWait.close();
+                    var result=Ext.JSON.decode(request.responseText);
+                  }
+                });
+              }
+            }
+          });
+        }
+      });
+    }
+
     items.push({
       xtype: 'menuseparator'
     });
@@ -534,7 +579,12 @@ siga.database.open=function(ev){
       renderTo: Ext.getBody(),
       floating: true,
       ignoreParentClicks: true,
-      items: items
+      items: items,
+      listeners: {
+        show: () => {
+          siga.database.el.alignTo("siga-infodatabase",'tr-br?',[0,5]);
+        }
+      }
     });
     siga.database.el.alignTo("siga-infodatabase",'tr-br?',[0,5]);
   }

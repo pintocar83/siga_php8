@@ -172,10 +172,11 @@ include_once(SIGA::databasePath()."/config/config.php");
   siga.value("title_login","<?php print $siga_title_login;?>");
   siga.value("title_logout","<?php print $siga_title_logout;?>");
   siga.value("folder","<?php print SIGA::databasePath(false)."/config";?>");
-  siga.value("datos",<?php print json_encode(SIGA::$data);?>);
+  siga.value("datos",<?php print json_encode(SIGA::dataAvailable());?>);
   siga.value("data_disponible",<?php print json_encode(SIGA::dataAvailable());?>);
   siga.value("anio","<?php print (SIGA::data()?SIGA::data():date("Y"));?>");
   siga.value("sesion_abierta",<?php print SIGA::user()?'true':'false';?>);
+  siga.value("user","<?php print SIGA::user()?>");
   siga.value("meses",<?php print json_encode(meses());?>);
   siga.value("mes_actual","<?php print date("m");?>");
 

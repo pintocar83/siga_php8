@@ -1,6 +1,6 @@
 <?php
 class SIGA_CONFIG {
-
+  /*
   public static $data= array(
                               array("id"=>"2007","nombre"=>"Año 2007"),
                               array("id"=>"2008","nombre"=>"Año 2008"),
@@ -19,7 +19,8 @@ class SIGA_CONFIG {
                               array("id"=>"2021","nombre"=>"Año 2021"),
                               array("id"=>"2022","nombre"=>"Año 2022")
                             );
-
+  */
+  public static $data=[];
 
   public static $database_default=NULL;
 
@@ -27,10 +28,10 @@ class SIGA_CONFIG {
     "fundacite_sucre"=> array(//identificador de la base de datos
           "display"=>"t",
           "description"=>"Fundacite Sucre", //descripcion de la base de datos
-          "data"=>array("2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2018","2019","2020","2021","2022"), //años disponibles para la base de datos
+          //"data"=>array("2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2018","2019","2020","2021","2022"), //años disponibles para la base de datos
           "driver"=>"postgres", //driver
-          "server"=>"localhost", //servidor
-          "name"=>"siga_fundacitesucre", //nombre de la base de datos
+          "server"=> $_SERVER['DATABASE_HOST'] ?? "localhost", //servidor
+          "name"=>"siga_fundacite_sucre", //nombre de la base de datos
           "user"=>"siga", //usuario
           "password"=>"siga", //contraseña
           "port"=>"5432"
@@ -38,7 +39,7 @@ class SIGA_CONFIG {
     "siga_online"=> array(//identificador de la base de datos
           "display"=>"f",
           "description"=>"FUNDACITE Sucre (para consulta pública)", //descripcion de la base de datos
-          "data"=>array("2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2018"), //años disponibles para la base de datos
+          //"data"=>array("2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2018"), //años disponibles para la base de datos
           "driver"=>"postgres", //driver
           "server"=>"localhost", //servidor
           "name"=>"siga", //nombre de la base de datos
@@ -48,7 +49,7 @@ class SIGA_CONFIG {
     "base"=> array(//identificador de la base de datos
           "display"=>"f",
           "description"=>"Base de datos del Registro Público - CNE", //descripcion de la base de datos
-          "data"=>array(), //años disponibles para la base de datos
+          //"data"=>array(), //años disponibles para la base de datos
           "driver"=>"sqlite3", //driver
           "server"=>"", //servidor
           )

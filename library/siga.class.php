@@ -57,6 +57,7 @@ class SIGA extends SIGA_CONFIG {
     if($value===NULL) return self::session_value("SIGA::data");
     self::session_value("SIGA::data",$value);
 
+    self::$data = self::dataAvailable();
     for($i=0;$i<count(self::$data);$i++)
       if(self::$data[$i]["id"]=="$value"){
         self::dataName(self::$data[$i]["nombre"]);
@@ -99,12 +100,9 @@ class SIGA extends SIGA_CONFIG {
     }
 
     $data=[];
-    for($i=0;$i<count($tmp);$i++)
-      for($j=0;$j<count(self::$data);$j++)
-        if($tmp[$i]==self::$data[$j]["id"]){
-          $data[]=self::$data[$j];
-          break;
-        }
+    for($i=0;$i<count($tmp);$i++){
+      $data[]=["id"=>$tmp[$i],"nombre"=>"Año ".$tmp[$i]];
+    }
 
     return $data;
   }

@@ -437,8 +437,9 @@ $lista_personal=$db->Execute("SELECT
           <b>Datos</b>
           <select class="select" id="s_anio" onchange="onchange_anio(value)">
             <?php
-            for($i=0;$i<count(SIGA::$data);$i++)
-              echo "<option value='".SIGA::$data[$i]["id"]."' ".($anio==SIGA::$data[$i]["id"]?"selected":"").">".SIGA::$data[$i]["nombre"]."</option>";
+            $data=SIGA::dataAvailable();
+            for($i=0;$i<count($data);$i++)
+              echo "<option value='".$data[$i]["id"]."' ".($anio==$data[$i]["id"]?"selected":"").">".$data[$i]["nombre"]."</option>";
             ?>
           </select>
 
