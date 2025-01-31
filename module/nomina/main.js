@@ -1180,6 +1180,14 @@ siga.define('nomina', {
             }
           },
           {
+            text: 'Administrar Cargos',
+            listeners: {
+              click: function(){
+                siga.open("nomina_cargo");
+              }
+            }
+          },
+          {
             text: 'Administrar Escala Salarial',
             listeners: {
               click: function(){
