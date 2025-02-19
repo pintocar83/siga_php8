@@ -48,7 +48,7 @@
 			<td valign="top" class="formulario">
 				<div class="tab-pane" id="TABPANE_OC">
 					<!-- ******************** ******************** Primera Pestaña ****************** *********************-->
-					<div class="tab-page"  style="height : 410px;">
+					<div class="tab-page"  style="height : 430px;">
 						<h2 id="TAB_0_FOC" class="tab">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entrada de datos&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</h2>
@@ -84,7 +84,18 @@
 									</td>									
 								</tr>
 								<tr>
-									<td class='TitulosCampos'>Proveedor</td>
+									<td></td>
+									<td>
+										<BUTTON id="BOTON_PROVEEDOR_OC" class="BotonesParaCampos" style="font-size : 11px; vertical-align : top;" type="BUTTON" onclick="Form_ORDEN_COMPRA__BotonProveedor()">
+											Proveedor
+										</BUTTON>
+										<BUTTON id="BOTON_BENEFICIARIO_OC" class="BotonesParaCampos" style="font-size : 11px; vertical-align : top;" type="BUTTON" onclick="Form_ORDEN_COMPRA__BotonBeneficiario()">
+											Beneficiario
+										</BUTTON>
+									</td>
+								</tr>
+								<tr>
+									<td class='TitulosCampos' id="TIPO_PERSONA_OC">Proveedor</td>
 									<td class='TextCampos'>
 										<INPUT id='RIF_PROVEEDOR_OC' class='TextoCampoInputDesactivado' type='text' size='20' maxlength='15' value="" readonly="true"><INPUT id='NOMBRE_PROVEEDOR_OC' class='TextoCampoInputDesactivado' readonly="true" type='text' size='50' value=""><IMG id="IMG_BUSCAR_PROVEEDOR_OC" class='BotonesParaCampos' src='../../image/icon/icon-find-sigafs.png' width='18' height='18'>
 										<INPUT id='ID_PROVEEDOR_OC' type="hidden" value="">
@@ -177,7 +188,7 @@
 					</div>
 					<!-- ************************ ******************** fin ******************* *************************-->
 					<!-- ******************** ******************** Segunda Pestaña ****************** *********************-->
-					<div class="tab-page" style="height : 410px;">
+					<div class="tab-page" style="height : 430px;">
 						<h2 class="tab">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lista&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						</h2>

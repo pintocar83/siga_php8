@@ -1,11 +1,36 @@
 
-var reportes_retencion={
+var reporte_retencion={
   onChange_Persona: function(checked){
     xGetElementById("DIV_PB").style.visibility=(checked==true?"":"hidden");
   },
 
   onPersona: function(){
-    sigafs.onPersona({id:'ID_PERSONA_RR', identificacion:'IDENTIFICACION_PERSONA_RR', denominacion:'DENOMINACION_PERSONA_RR'});
+    //sigafs.onPersona({id:'ID_PERSONA_RR', identificacion:'IDENTIFICACION_PERSONA_RR', denominacion:'DENOMINACION_PERSONA_RR'});
+    const me=this;
+    if(me.persona_tipo=='J')
+      Form_LISTA_PROVEEDOR__Abrir('ID_PERSONA_RR','IDENTIFICACION_PERSONA_RR','DENOMINACION_PERSONA_RR');
+    else
+      Form_LISTA_BENEFICIARIO__Abrir('ID_PERSONA_RR','IDENTIFICACION_PERSONA_RR','DENOMINACION_PERSONA_RR');
+  },
+
+  persona_tipo: '',
+  onChange_TipoPersona: function(){
+    const me=this;
+    me.onClear_Persona();
+
+    if(xGetElementById("RADIO_TIPO_PERSONA_TODOS").checked){
+      xGetElementById("DIV_PB").style.visibility="hidden";
+      me.persona_tipo='';
+    }
+    else{
+      xGetElementById("DIV_PB").style.visibility="";
+      if(xGetElementById("RADIO_TIPO_PERSONA_PROVEEDOR").checked){
+        me.persona_tipo='J';
+      }
+      else{
+        me.persona_tipo='N';
+      }
+    }
   },
 
   onClear_Persona: function(){
@@ -14,7 +39,7 @@ var reportes_retencion={
 
   onDisplay: function(){
     var id_persona="";
-    if(xGetElementById("CHECK_PERSONA").checked==true)
+    if(xGetElementById("RADIO_TIPO_PERSONA_TODOS").checked==false)
       id_persona=xGetElementById("ID_PERSONA_RR").value;
     var tipo=xGetElementById("TIPO_RR").value;
     var fecha_inicio=xGetElementById("FECHA_INICIO_RR").value;

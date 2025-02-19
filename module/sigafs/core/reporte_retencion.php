@@ -46,10 +46,12 @@
 							</tr>
 							<tr>
 								<td style="padding-left: 50px; padding-top: 10px;">
-									<input id="CHECK_PERSONA" type="checkbox"  class="TextoCampoInput" onchange="reportes_retencion.onChange_Persona(checked)"/> Especificar Proveedor/Beneficiario.
+									<input name="RADIO_TIPO_PERSONA" id="RADIO_TIPO_PERSONA_TODOS" type="radio"  class="TextoCampoInput" onchange="reporte_retencion.onChange_TipoPersona()" checked /> Todos
+									<input name="RADIO_TIPO_PERSONA" id="RADIO_TIPO_PERSONA_PROVEEDOR" type="radio"  class="TextoCampoInput" onchange="reporte_retencion.onChange_TipoPersona()"/> Proveedor
+									<input name="RADIO_TIPO_PERSONA" id="RADIO_TIPO_PERSONA_BENEFICIARIO" type="radio"  class="TextoCampoInput" onchange="reporte_retencion.onChange_TipoPersona()"/> Beneficiario
 									<br>
 									<div id="DIV_PB" style="visibility: hidden;">
-										<INPUT id='IDENTIFICACION_PERSONA_RR' class='TextoCampoInputDesactivado' type='text' size='12' value="" readonly="true"><INPUT id='DENOMINACION_PERSONA_RR' class='TextoCampoInputDesactivado' readonly="true" type='text' size='25' value=""><IMG id="IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_RR" class='BotonesParaCampos' src='../../image/icon/icon-find-sigafs.png' width='18' height='18' onclick="reportes_retencion.onPersona()" /><IMG id="IMG_LIMPIAR_BP_RR" class='BotonesParaCampos' src='../../image/icon/icon-clear-sigafs.png' width='18' height='18' onclick='reportes_retencion.onClear_Persona()'/>
+										<INPUT id='IDENTIFICACION_PERSONA_RR' class='TextoCampoInputDesactivado' type='text' size='12' value="" readonly="true"><INPUT id='DENOMINACION_PERSONA_RR' class='TextoCampoInputDesactivado' readonly="true" type='text' size='25' value=""><IMG id="IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_RR" class='BotonesParaCampos' src='../../image/icon/icon-find-sigafs.png' width='18' height='18' onclick="reporte_retencion.onPersona()" /><IMG id="IMG_LIMPIAR_BP_RR" class='BotonesParaCampos' src='../../image/icon/icon-clear-sigafs.png' width='18' height='18' onclick='reporte_retencion.onClear_Persona()'/>
 										<INPUT type="hidden" id="ID_PERSONA_RR" value="">
 									</div>
 								</td>
@@ -68,7 +70,7 @@
 							<br>
 							<br>
 
-							<BUTTON id="BOTON_ACEPTAR_RR" class="BotonesParaCampos" style="font-size : 14px; vertical-align : middle;"   onclick="reportes_retencion.onDisplay()">
+							<BUTTON id="BOTON_ACEPTAR_RR" class="BotonesParaCampos" style="font-size : 14px; vertical-align : middle;"   onclick="reporte_retencion.onDisplay()">
 								<IMG id="IMG_ACEPTAR_RR" src='../../image/icon/icon-display.png' width='22' height='22' style="vertical-align : middle;">&nbsp;Visualizar&nbsp;
 							</BUTTON>
 						</DIV>
@@ -82,6 +84,6 @@
 <script>
 	Form_REPORTE_RETENCION__TabPane = new WebFXTabPane(xGetElementById("TABPANE_RR"), true);
 	window.onload=function(){
-		reportes_retencion.onChange_Persona(false);
+		reporte_retencion.onChange_TipoPersona();
 	}
 </script>

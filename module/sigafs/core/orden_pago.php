@@ -26,7 +26,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%" align="center">
 	<body>
 		<tr>
-			<TD  class="acciones">
+			<TD  class="acciones" id="Form_ORDEN_PAGO__ACCIONES">
 				<BUTTON class="BotonesVentana" onclick="Form_ORDEN_PAGO__Nuevo();">
 					<IMG src="../../image/icon/icon-new.png" width="22" height="22" border="0" id="IMG_NUEVO_FOP"><br>Nuevo
 				</BUTTON>
@@ -154,7 +154,7 @@
 							<!-- ******************** ******************** Primera SUBPestaña ****************** *********************-->
 							<div class="tab-page"  style="height : 170px;">
 								<h2 class="tab" id="SUB_TABPANE_FOP_DP">
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Detalles presupuestarios&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Detalle Presupuestario&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								</h2>
 								<table border="0" cellspacing="0" cellpadding="0" width="100%">
 									<tbody>
@@ -198,7 +198,7 @@
 							<!-- ******************** ******************** Segunda SUBPestaña ****************** *********************-->
 							<div class="tab-page" style="height : 170px;">
 								<h2 class="tab" id="SUB_TABPANE_FOP_DC">
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Detalles contables&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Detalle Contable&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 								</h2>
 								<table border="0" cellspacing="0" cellpadding="0" width="100%">
 									<tbody>
@@ -312,11 +312,51 @@
 											<input class='BotonesParaCampos' type="button" value="I.V.A." style="text-align : center; width:60px; font-size: 10px;" onclick="Form_ORDEN_PAGO__MontoBaseIVA()"/>
 											<input class='BotonesParaCampos' type="button" value="I.S.L.R." style="text-align : center; width:60px; font-size: 10px;" onclick="Form_ORDEN_PAGO__MontoBaseISLR()"/>
 											<input class='BotonesParaCampos' type="button" value="1x1000" style="text-align : center; width:60px; font-size: 10px;" onclick="Form_ORDEN_PAGO__MontoBase1x1000()"/>
+											<input class='BotonesParaCampos' type="button" value="NEGRO P." title="RETENCIÓN FONDO NEGRO PRIMERO" style="text-align : center; width:60px; font-size: 10px;" onclick="Form_ORDEN_PAGO__MontoBaseNegroPrimero()"/>
 										</td>
 										<td align="right">
 											
 											<INPUT id='TOTAL_FOP_DR' class='TextoCampoInputDesactivado' readonly="true" type='text' value="" style="text-align : right; width:115px;">
 											
+										</td>
+									</tr>
+								</tbody>
+								</table>
+							</div>
+							<!-- ************************************ fin ****************** ********************* ***************-->
+
+							<!-- ******************** ******************** Forma de Pago SUBPestaña ****************** *********************-->
+							<div class="tab-page" style="height : 170px;">
+								<h2 class="tab" id="SUB_TABPANE_FOP_DFP">
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Forma de Pago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								</h2>
+								<table border="0" cellspacing="0" cellpadding="0" width="100%">
+									<tbody>
+										<tr class="CabeceraTablaEstilo" style="font-size : 11px;">
+											<td width="30%">CUENTA ORIGEN</td>
+											<td width="30%">CUENTA DESTINO</td>
+											<td>FORMA DE PAGO</td>
+											<td width="15%">MONTO</td>
+										</tr>
+									</tbody>
+								</table>
+								<DIV class="AreaTablaListado" style="height : 130px;  overflow-x: hidden;">
+									<table id="TABLA_LISTA_FOP_DFP" border="0" cellspacing="0" cellpadding="0" width="100%">
+									</table>
+								</DIV>
+								<table border="0" cellpadding="1" cellspacing="0" width="100%">
+								<tbody>
+									<tr class="CabeceraTablaEstilo">
+										<td align="left" id="BOTONES_AGREGAR_QUITAR_FOP_DFP">
+											<BUTTON id="BOTON_AGREGAR_FOP_DFP" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" type="BUTTON" onclick="Form_ORDEN_PAGO__AgregarDFP()">
+												<IMG id="IMG_AGREGAR_FOP_DFP" src='../../image/icon/icon-listadd-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Agregar
+											</BUTTON>
+											<BUTTON id="BOTON_QUITAR_FOP_DFP" class="BotonesParaCampos" style="font-size : 14px; vertical-align : top;" type="BUTTON" onclick="Form_ORDEN_PAGO__QuitarDFP()">
+												<IMG id="IMG_QUITAR_FOP_DFP" src='../../image/icon/icon-listremove-sigafs.png' width='18' height='18' style="vertical-align : middle;">&nbsp;Quitar&nbsp;&nbsp;
+											</BUTTON>
+										</td>
+										<td align="right">
+											<INPUT id='TOTAL_FOP_DFP' class='TextoCampoInputDesactivado' readonly="true" type='text' value="" style="text-align : right; width:115px;">
 										</td>
 									</tr>
 								</tbody>
@@ -427,6 +467,7 @@
 	Form_ORDEN_PAGO__TabPane = new WebFXTabPane(xGetElementById("TABPANE_FOP"), true);
 	Form_ORDEN_PAGO__TabPaneSUBTAB = new WebFXTabPane(xGetElementById("SUB_TABPANE_FOP"), true);
 	window.onload=function(){
+		Form_ORDEN_PAGO__Init();
 		Form_ORDEN_PAGO__CargarAC();
 		Form_ORDEN_PAGO__Nuevo();
 	}

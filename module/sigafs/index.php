@@ -35,12 +35,12 @@ else{
     <script type="text/javascript" src="library/manipularDom.js"></script>
     <script type="text/javascript" src="library/AjaxRequest.js"></script>
     <script type="text/javascript" src="library/funciones_generales.js?ver=2022.9"></script>
-    <script type="text/javascript" src="library/sigafs.js?ver=2022.9"></script>
-    <script type='text/javascript' src="<?php print "$file?ver=2022.9";?>"></script>
+    <script type="text/javascript" src="library/sigafs.js?ver=2025.2"></script>
+    <script type='text/javascript' src="<?php print "$file?ver=2025.2";?>"></script>
   </head>
   <body>
     <input type="hidden" id="FECHA_ACTUAL_SIGAFS" value="<?php print date('d/m/Y');?>" />
     <?php include("core/$q.php");?>
   </body>
 </html>
-<script type="text/javascript" src="library/sigafs_postform.js?ver=2022.9"></script>
+<script type="text/javascript" src="library/sigafs_postform.js?ver=2025.2"></script>

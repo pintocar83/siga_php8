@@ -261,6 +261,54 @@ $files_history[]=[
   "class/comprobante.class.php"
 ];
 
+//Hasta 2024-07-11
+$files_history[]=[
+  "class/factura.class.php",
+  "class/retencion.class.php",
+  "database/20240710_retencion_add_presentacion.sql",
+  "module/factura/index.php",
+  "module/retencion/index.php",
+  "module/sigafs/core/factura.js",
+  "module/sigafs/core/factura.php",
+  "module/sigafs/core/retencion.js",
+  "module/sigafs/core/retencion.php",
+  "report/comprobante_retencion_islr.php",
+];
+
+//Hasta 2024-07-12
+$files_history[]=[
+  "module/sigafs/core/factura.js",
+];
+
+//Hasta 2025-02-04
+$files_history[]=[
+  "module/sigafs/core/reporte_retencion.js",
+  "module/sigafs/core/reporte_retencion.php",
+  "report/orden_pago.php",
+  "report/orden_pago_alcaldia_mejia.php",
+  "report/retencion_efectuada.php",
+];
+
+//Hasta 2025-02-18
+$files_history[]=[
+  "class/comprobante.class.php",
+  "class/persona.class.php",
+  "module/orden_compra/main.js",
+  "module/orden_servicio/main.js",
+  "module/pago/form.php",
+  "module/pago/main.js",
+  "module/sigafs/index.php",
+  "module/sigafs/core/orden_compra.js",
+  "module/sigafs/core/orden_compra.php",
+  "module/sigafs/core/orden_pago.js",
+  "module/sigafs/core/orden_pago.php",
+  "module/orden_pago/forma_pago/index.php",
+  "module/orden_pago/forma_pago/main.css",
+  "module/orden_pago/forma_pago/main.js",
+  "report/orden_pago.php",
+  "report/orden_pago_alcaldia_mejia.php",
+];
+
 $files=array_values(array_unique($files_history[count($files_history)-1], SORT_REGULAR));
 
 $path=".";

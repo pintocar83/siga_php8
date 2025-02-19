@@ -31,7 +31,7 @@
 					<tr>
 						<td class='TitulosCampos' id="PERSONA_TIPO"></td>
 						<td class='TextCampos' colspan="2" style="display: flex;">
-							<INPUT id='PERSONA_IDENTIFICACION' class='TextoCampoInputDesactivado' type='text' size='22' maxlength='15' value="" readonly="true"  style="width: 150px;"><INPUT id='PERSONA_DENOMINACION' class='TextoCampoInputDesactivado' readonly="true" type='text' size='65' value=""  style="width: 450px; flex: 1;"><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_PERSONA"><IMG src='image/icon/icon-find.png' /></button>
+							<INPUT id='PERSONA_IDENTIFICACION' class='TextoCampoInputDesactivado' type='text' size='22' maxlength='15' value="" readonly="true"  style="width: 150px;"><INPUT id='PERSONA_DENOMINACION' class='TextoCampoInputDesactivado' readonly="true" type='text' size='65' value=""  style="width: 450px; flex: 1;"><button type="button" class="boton_campo centro" id="BOTON_SELECCIONAR_PERSONA" title="Solo con Ordenes Pendiente"><IMG src='image/icon/icon-find-all.png' /></button><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_PERSONA2" title="Listar todos"><IMG src='image/icon/icon-find.png' /></button>
 							<INPUT type="hidden" id="PERSONA_ID" value="">
 						</td>
 					</tr>
@@ -39,7 +39,7 @@
 						<td class='TitulosCampos'>Cuenta</td>
 						<td class='TextCampos' colspan="2" style="display: flex;">
 							<INPUT id="ID_CTA" class='TextoCampoInputDesactivado' type="hidden" value="" size="4" readonly="true">
-							<INPUT id="NCTA" class='TextoCampoInputDesactivado' type='text' size='22' value="" readonly="true"  style="width: 150px;"><INPUT id="DESCRIPCION_NCTA" class='TextoCampoInputDesactivado' type='text' size='65' value="" readonly="true"  style="width: 450px; flex:1;"><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_BANCARIA"><IMG src='image/icon/icon-find.png' /></button>
+							<INPUT id="NCTA" class='TextoCampoInputDesactivado' type='text' size='22' value="" readonly="true"  style="width: 150px;"><INPUT id="DESCRIPCION_NCTA" class='TextoCampoInputDesactivado' type='text' size='65' value="" readonly="true"  style="width: 450px; flex:1;"><button type="button" class="boton_campo centro" id="BOTON_LIMPIAR_CUENTA"><IMG src='image/icon/icon-clear.png' /></button><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_BANCARIA"><IMG src='image/icon/icon-find.png' /></button>
 							<INPUT type="hidden" value="" id="CTA_CODIGO_CONTABLE">
 							<INPUT type="hidden" value="" id="CUENTA_CONTABLE">
 							<INPUT type="hidden" value="" id="CTA_DENOMINACION_CONTABLE">
@@ -75,7 +75,7 @@
 					<tr>
 						<td class='TitulosCampos'>Cuenta&nbsp;Destino</td>
 						<td colspan="2" style="display: flex;">
-							<INPUT id='CUENTA_DESTINO' class='TextoCampoInput' type='text' size='100' value="" style='width: 450px; flex: 1;'><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_DESTINO"><IMG src='image/icon/icon-find.png' /></button>
+							<INPUT id='CUENTA_DESTINO' class='TextoCampoInput' type='text' size='100' value="" style='width: 450px; flex: 1;'><button type="button" class="boton_campo centro" id="BOTON_LIMPIAR_CUENTA_DESTINO"><IMG src='image/icon/icon-clear.png' /></button><button type="button" class="boton_campo" id="BOTON_SELECCIONAR_CUENTA_DESTINO"><IMG src='image/icon/icon-find.png' /></button>
 						</td>
 					</tr>
 					<tr>

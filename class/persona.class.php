@@ -405,10 +405,9 @@ class persona{
                   FROM
                     modulo_base.comprobante as C
                   WHERE
-                    --EXTRACT(YEAR FROM C.fecha)=".SIGA::data()." AND
-                    --EXTRACT(YEAR FROM C.fecha) in (".SIGA::data().",".(SIGA::data()-1).") AND
                     C.tipo='OP' AND
                     C.contabilizado AND
+                    NOT (select count(*) from modulo_base.comprobante_datos as CD where CD.id_comprobante=C.id AND CD.dato = 'pagado' AND CD.valor = 'true')>0 AND
                     NOT (select count(*) from modulo_base.comprobante_previo as CP, modulo_base.comprobante as C2 where C.id=CP.id_comprobante_previo and CP.id_comprobante=C2.id and C2.tipo='CA')>0
                 )
               select distinct

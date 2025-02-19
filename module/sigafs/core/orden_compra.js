@@ -76,6 +76,8 @@ function Form_ORDEN_COMPRA__ActivarFormulario(){
 	xGetElementById("CONCEPTO_OC").readOnly=false;
 	xGetElementById("PORCENTAJE_DESCUENTO_OC").readOnly=false;
 	xGetElementById("DESCUENTO_OC").readOnly=false;
+	xGetElementById("BOTON_PROVEEDOR_OC").disabled=false;
+	xGetElementById("BOTON_BENEFICIARIO_OC").disabled=false;
 
 	if(Form_ORDEN_COMPRA__IDSeleccionActualLista==-1)
 		xGetElementById("CHECK_REQUISICION_OC").disabled=false;
@@ -97,7 +99,8 @@ function Form_ORDEN_COMPRA__ActivarFormulario(){
 	ActivarBoton("IMG_FECHA_OC","IMG_FECHA_OC",'calendario');
 
 	xGetElementById("RIF_PROVEEDOR_OC").setAttribute('ondblclick',"Form_LISTA_PROVEEDOR__Abrir('ID_PROVEEDOR_OC','RIF_PROVEEDOR_OC','NOMBRE_PROVEEDOR_OC');");
-	xGetElementById("IMG_BUSCAR_PROVEEDOR_OC").setAttribute('onclick',"Form_LISTA_PROVEEDOR__Abrir('ID_PROVEEDOR_OC','RIF_PROVEEDOR_OC','NOMBRE_PROVEEDOR_OC');");
+	xGetElementById("IMG_BUSCAR_PROVEEDOR_OC").setAttribute('onclick',"Form_ORDEN_COMPRA__SeleccionarPersona()");
+	//xGetElementById("IMG_BUSCAR_PROVEEDOR_OC").setAttribute('onclick',"Form_LISTA_PROVEEDOR__Abrir('ID_PROVEEDOR_OC','RIF_PROVEEDOR_OC','NOMBRE_PROVEEDOR_OC');");
 	ActivarBoton("IMG_BUSCAR_PROVEEDOR_OC","IMG_BUSCAR_PROVEEDOR_OC",'buscar');
 
 	xGetElementById("CHECK_REQUISICION_OC").setAttribute('onchange',"Form_ORDEN_COMPRA__CambioCheck();");
@@ -135,6 +138,8 @@ function Form_ORDEN_COMPRA__DesactivarFormulario(){
 	xGetElementById("CONCEPTO_OC").readOnly=true;
 	xGetElementById("PORCENTAJE_DESCUENTO_OC").readOnly=true;
 	xGetElementById("DESCUENTO_OC").readOnly=true;
+	xGetElementById("BOTON_PROVEEDOR_OC").disabled=true;
+	xGetElementById("BOTON_BENEFICIARIO_OC").disabled=true;
 	xGetElementById("CHECK_REQUISICION_OC").disabled=true;
 	xGetElementById("CHECK_DESCUENTO_OC").disabled=true;
 
@@ -175,6 +180,39 @@ function Form_ORDEN_COMPRA__DesactivarFormulario(){
 
 	Form_ORDEN_COMPRA__MostrarTablaArticulos(true);
 	}
+
+var Form_ORDEN_COMPRA__SW_PERSONA="P";
+function Form_ORDEN_COMPRA__BotonProveedor(bloquear){
+	xGetElementById("TIPO_PERSONA_OC").innerHTML="Proveedor";
+	xGetElementById("IMG_BUSCAR_PROVEEDOR_OC").setAttribute('onclick',bloquear==true?"":"Form_ORDEN_COMPRA__SeleccionarPersona()");
+	xGetElementById("ID_PROVEEDOR_OC").value="";
+	xGetElementById("RIF_PROVEEDOR_OC").value="";
+	xGetElementById("NOMBRE_PROVEEDOR_OC").value="";
+	Form_ORDEN_COMPRA__SW_PERSONA="P";
+	}
+
+function Form_ORDEN_COMPRA__BotonBeneficiario(bloquear){
+	xGetElementById("TIPO_PERSONA_OC").innerHTML="Beneficiario";
+	xGetElementById("IMG_BUSCAR_PROVEEDOR_OC").setAttribute('onclick',bloquear==true?"":"Form_ORDEN_COMPRA__SeleccionarPersona()");
+	xGetElementById("ID_PROVEEDOR_OC").value="";
+	xGetElementById("RIF_PROVEEDOR_OC").value="";
+	xGetElementById("NOMBRE_PROVEEDOR_OC").value="";
+	Form_ORDEN_COMPRA__SW_PERSONA="B";
+	}
+
+
+function Form_ORDEN_COMPRA__SeleccionarPersona(){
+	siga.onPersona({
+    tipo: Form_ORDEN_COMPRA__SW_PERSONA === 'P' ? 'J' : 'N',
+    //onList: 'onList',
+    onAccept: function(result){
+    	xGetElementById("ID_PROVEEDOR_OC").value=result[0]["id"];
+			xGetElementById("RIF_PROVEEDOR_OC").value=result[0]["identificacion"];
+			xGetElementById("NOMBRE_PROVEEDOR_OC").value=result[0]["denominacion"];
+    }
+  });
+}
+
 
 //Form_LISTA_CARGOS_MONTO__Abrir
 function Form_ORDEN_COMPRA__BaseImponibleIVA(){
@@ -403,6 +441,7 @@ var Form_ORDEN_COMPRA__IDSeleccionActualLista=-1;
 */
 function Form_ORDEN_COMPRA__Nuevo(){
 	//busco el n de la orden y lo coloco en el input text
+	Form_ORDEN_COMPRA__BotonProveedor();
 	AjaxRequest.post({
 						'parameters':{
 											'action':"onGet_Correlativo",
@@ -816,6 +855,22 @@ function Form_ORDEN_COMPRA__SeleccionarElementoTabla(IDSeleccion,estado){
 								
 								xGetElementById("CODIGO_OC").value=resultado[0]["correlativo"];
 								xGetElementById("FECHA_OC").value=resultado[0]["fecha"];
+								Form_ORDEN_COMPRA__BotonProveedor();
+								if(resultado[0]["detalle_persona"]){
+									switch(resultado[0]["detalle_persona"][0]["tipo"]){
+										case "N":
+											Form_ORDEN_COMPRA__SW_PERSONA="B";
+											Form_ORDEN_COMPRA__BotonBeneficiario(true);
+											break;
+										case "J":
+										default:
+											Form_ORDEN_COMPRA__SW_PERSONA="P";
+											Form_ORDEN_COMPRA__BotonProveedor(true);
+											break;
+									}
+								}
+
+
 								xGetElementById("ID_PROVEEDOR_OC").value=resultado[0]["detalle_persona"][0]["id"];
 								xGetElementById("RIF_PROVEEDOR_OC").value=resultado[0]["detalle_persona"][0]["identificacion"];
 								xGetElementById("NOMBRE_PROVEEDOR_OC").value=resultado[0]["detalle_persona"][0]["denominacion"];

@@ -2,7 +2,7 @@ siga.define('orden_servicio', {
     extend: 'siga.windowFrame',
     title: 'Orden de Servicio',
     width: 850,
-    height: 570,
+    height: 590,
     
     initComponent: function(){
         var me = this;

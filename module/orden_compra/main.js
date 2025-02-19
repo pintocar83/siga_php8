@@ -2,7 +2,7 @@ siga.define('orden_compra', {
     extend: 'siga.windowFrame',
     title: 'Orden de Compra',
     width: 850,
-    height: 570,
+    height: 590,
     
     initComponent: function(){
         var me = this;

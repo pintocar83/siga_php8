@@ -427,13 +427,11 @@ class comprobante{
               ) as monto_pagado_acumulado
             FROM
               modulo_base.comprobante as C
-                LEFT JOIN modulo_base.comprobante_datos as CD on CD.id_comprobante=C.id
             WHERE
               C.id_persona=$id_persona AND
-              --EXTRACT(YEAR FROM C.fecha)=".SIGA::data()." AND
               C.tipo='OP' AND
               C.contabilizado AND
-              NOT (CD.dato = 'pagado' AND CD.valor = 'true') AND
+              NOT (select count(*) from modulo_base.comprobante_datos as CD where CD.id_comprobante=C.id AND CD.dato = 'pagado' AND CD.valor = 'true')>0 AND
               NOT (select count(*) from modulo_base.comprobante_previo as CP, modulo_base.comprobante as C2 where C.id=CP.id_comprobante_previo and CP.id_comprobante=C2.id and C2.tipo='CA')>0 --AND --no anulado
             )
           select

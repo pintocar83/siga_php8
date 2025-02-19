@@ -95,9 +95,11 @@ function Form_ORDEN_PAGO__ActivarFormulario(){
 	ActivarBoton("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP","IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP",'buscar');
 
 	if(Form_ORDEN_PAGO__SW_PERSONA=="P")
-		xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute( 'onclick',"Form_LISTA_PROVEEDOR__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
+		xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute( 'onclick',"Form_ORDEN_PAGO__SeleccionarPersona()");
+		//xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute( 'onclick',"Form_LISTA_PROVEEDOR__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
 	else
-		xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute( 'onclick',"Form_LISTA_BENEFICIARIO__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
+		xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute( 'onclick',"Form_ORDEN_PAGO__SeleccionarPersona()");
+		//xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute( 'onclick',"Form_LISTA_BENEFICIARIO__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
 
 	xGetElementById("IMG_LIMPIAR_PB_FOP").setAttribute('onclick',"xGetElementById('ID_BoP_FOP').value=''; xGetElementById('ID_BENEFICIARIO_PROVEEDOR_FOP').value=''; xGetElementById('NOMBRE_BENEFICIARIO_PROVEEDOR_FOP').value='';");
 	ActivarBoton("IMG_LIMPIAR_PB_FOP","IMG_LIMPIAR_PB_FOP",'limpiar');
@@ -189,8 +191,13 @@ var Form_ORDEN_PAGO__IDBancoSeleccionActualLista=-1;
 */
 var Form_ORDEN_PAGO__BuscarListado_CadenaBuscar="";
 var Form_ORDEN_PAGO__SW_PERSONA="";
+var Form_ORDEN_PAGO__MenuVisualizar="";
 
-
+/**
+* Inicializador
+*/
+function Form_ORDEN_PAGO__Init(){
+}
 
 /**
 * Nueva definicion
@@ -222,12 +229,14 @@ function Form_ORDEN_PAGO__Nuevo(){
 
 function Form_ORDEN_PAGO__BotonProveedor(bloquear){
 	xGetElementById("TIPO_PERSONA_FOP").innerHTML="Proveedor";
-	xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute('onclick',bloquear==true?"":"Form_LISTA_PROVEEDOR__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
+	//xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute('onclick',bloquear==true?"":"Form_LISTA_PROVEEDOR__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
+	xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute('onclick',bloquear==true?"":"Form_ORDEN_PAGO__SeleccionarPersona()");
 	xGetElementById("ID_BoP_FOP").value="";
 	xGetElementById("ID_BENEFICIARIO_PROVEEDOR_FOP").value="";
 	xGetElementById("NOMBRE_BENEFICIARIO_PROVEEDOR_FOP").value="";
 	xGetElementById("CUENTA_CONTABLE_PB_FOP").value="";
 	Form_ORDEN_PAGO__SW_PERSONA="P";
+	Form_ORDEN_PAGO__PERSONA_cuenta_destino=[];
 	
 	if(xGetElementById("TIPO_DOCUMENTO_FOP").value=="GC")
 		Form_ORDEN_PAGO__RestablecerDetalles();
@@ -235,19 +244,37 @@ function Form_ORDEN_PAGO__BotonProveedor(bloquear){
 
 function Form_ORDEN_PAGO__BotonBeneficiario(bloquear){
 	xGetElementById("TIPO_PERSONA_FOP").innerHTML="Beneficiario";
-	xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute('onclick',bloquear==true?"":"Form_LISTA_BENEFICIARIO__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
+	//xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute('onclick',bloquear==true?"":"Form_LISTA_BENEFICIARIO__Abrir('ID_BoP_FOP','ID_BENEFICIARIO_PROVEEDOR_FOP','NOMBRE_BENEFICIARIO_PROVEEDOR_FOP','','CUENTA_CONTABLE_PB_FOP')");
+	xGetElementById("IMG_BUSCAR_BENEFICIARIO_PROVEEDOR_FOP").setAttribute('onclick',bloquear==true?"":"Form_ORDEN_PAGO__SeleccionarPersona()");
 	xGetElementById("ID_BoP_FOP").value="";
 	xGetElementById("ID_BENEFICIARIO_PROVEEDOR_FOP").value="";
 	xGetElementById("NOMBRE_BENEFICIARIO_PROVEEDOR_FOP").value="";
 	xGetElementById("CUENTA_CONTABLE_PB_FOP").value="";
 	Form_ORDEN_PAGO__SW_PERSONA="B";
+	Form_ORDEN_PAGO__PERSONA_cuenta_destino=[];
 	
 	if(xGetElementById("TIPO_DOCUMENTO_FOP").value=="GC")
 		Form_ORDEN_PAGO__RestablecerDetalles();
 	}
 
 
+function Form_ORDEN_PAGO__SeleccionarPersona(){
+	siga.onPersona({
+    tipo: Form_ORDEN_PAGO__SW_PERSONA === 'P' ? 'J' : 'N',
+    //onList: 'onList',
+    onAccept: function(result){
+    	xGetElementById("ID_BoP_FOP").value=result[0]["id"];
+			xGetElementById("ID_BENEFICIARIO_PROVEEDOR_FOP").value=result[0]["identificacion"];
+			xGetElementById("NOMBRE_BENEFICIARIO_PROVEEDOR_FOP").value=result[0]["denominacion"];
+			xGetElementById("CUENTA_CONTABLE_PB_FOP").value=result[0]['id_cuenta_contable'];
 
+      Form_ORDEN_PAGO__PERSONA_cuenta_destino=[
+        result[0]["cuenta_bancaria_principal"],
+        result[0]["cuenta_bancaria_secundaria"]
+      ].filter(Boolean);
+    }
+  });
+}
 
 
 
@@ -345,7 +372,8 @@ function Form_ORDEN_PAGO__Guardar(){
 	}
 	
 	_detalle.extra={
-		tipo: _tipo
+		tipo: _tipo,
+		forma_pago: siga.base64.encode(JSON.stringify(Form_ORDEN_PAGO__ArregloDetalleFormaPago)),
 	};
 	
 	_detalle.comprobante_previo=[];
@@ -596,12 +624,14 @@ function Form_ORDEN_PAGO__SeleccionarElementoTabla(IDSeleccion,estado){
 	Form_ORDEN_PAGO__DesactivarFormulario();
 	//Form_ORDEN_PAGO__ActivarBotonModificar();
 	//Form_ORDEN_PAGO__ActivarBotonEliminar();
+	Form_ORDEN_PAGO__DesactivarBotonModificar();
 	Form_ORDEN_PAGO__DesactivarBotonGuardar();
 	Form_ORDEN_PAGO__Mensaje("");
 	Form_ORDEN_PAGO__MensajeListado("");
 	Form_ORDEN_PAGO__SW_PERSONA="";
 	Form_ORDEN_PAGO__OcultarBotones();
-	
+	Form_ORDEN_PAGO__PERSONA_cuenta_destino=[];
+	Form_ORDEN_PAGO__ModificarTabla=false;
 	
 	AjaxRequest.post({
 						'parameters':{
@@ -616,10 +646,20 @@ function Form_ORDEN_PAGO__SeleccionarElementoTabla(IDSeleccion,estado){
 								//console.log(resultado);
 								
 								//cargar informacion extra (tipo de orden de pago)
+								DetalleFormaPago=[];
 								if(resultado[0]["detalle_extra"]){
 									for(var i=0;i<resultado[0]["detalle_extra"].length;i++){
 										if(resultado[0]["detalle_extra"][i]["dato"]=="tipo")
 											xGetElementById("TIPO_DOCUMENTO_FOP").value=resultado[0]["detalle_extra"][i]["valor"];
+										if(resultado[0]["detalle_extra"][i]["dato"]=="forma_pago"){
+											if(resultado[0]["detalle_extra"][i]["valor"]){
+												try {
+													DetalleFormaPago=JSON.parse(siga.base64.decode(resultado[0]["detalle_extra"][i]["valor"]));
+												} catch (e) {
+													DetalleFormaPago=[];
+												}
+											}
+										}
 									}
 								}
 								Form_ORDEN_PAGO__CambioTipoDocumento();
@@ -654,7 +694,11 @@ function Form_ORDEN_PAGO__SeleccionarElementoTabla(IDSeleccion,estado){
 									xGetElementById("ID_BENEFICIARIO_PROVEEDOR_FOP").value=resultado[0]["detalle_persona"][0]["identificacion"];
 									xGetElementById("NOMBRE_BENEFICIARIO_PROVEEDOR_FOP").value=resultado[0]["detalle_persona"][0]["denominacion"];
 									xGetElementById("CUENTA_CONTABLE_PB_FOP").value=resultado[0]["detalle_persona"][0]["id_cuenta_contable"];
-									}
+									Form_ORDEN_PAGO__PERSONA_cuenta_destino=[
+										resultado[0]["detalle_persona"][0]["cuenta_bancaria_principal"],
+				            resultado[0]["detalle_persona"][0]["cuenta_bancaria_secundaria"]
+				          ].filter(Boolean);
+								}
 									
 								
 								//cargar detalle presupuestarios								
@@ -720,7 +764,10 @@ function Form_ORDEN_PAGO__SeleccionarElementoTabla(IDSeleccion,estado){
 										}
 									Form_ORDEN_PAGO__MostrarTablaDR();
 									}
-								
+
+
+								Form_ORDEN_PAGO__ArregloDetalleFormaPago=DetalleFormaPago;
+								Form_ORDEN_PAGO__MostrarTablaFormaPago();
 								
 								
 								
@@ -811,6 +858,7 @@ function Form_ORDEN_PAGO__Modificar(){
 	Form_ORDEN_PAGO__MostrarTablaDC();
 	Form_ORDEN_PAGO__MostrarTablaDR();
 	Form_ORDEN_PAGO__MostrarTablaDCG();
+	Form_ORDEN_PAGO__MostrarTablaFormaPago();
 	Form_ORDEN_PAGO__ActivarFormulario();
 	Form_ORDEN_PAGO__ActivarBotonGuardar();
 	Form_ORDEN_PAGO__DesactivarBotonModificar();
@@ -1297,11 +1345,13 @@ function Form_ORDEN_PAGO__RestablecerDetalles(){
   Form_ORDEN_PAGO__ArregloDetallesContables=[];
 	Form_ORDEN_PAGO__ArregloDetallesRetenciones=[];
 	Form_ORDEN_PAGO__ArregloDetallesCargos=[];
+	Form_ORDEN_PAGO__ArregloDetalleFormaPago=[];
   
 	Form_ORDEN_PAGO__MostrarTablaDP();
 	Form_ORDEN_PAGO__MostrarTablaDC();
 	Form_ORDEN_PAGO__MostrarTablaDR();
 	Form_ORDEN_PAGO__MostrarTablaDCG();
+	Form_ORDEN_PAGO__MostrarTablaFormaPago();
 }
 
 
@@ -2180,4 +2230,141 @@ function Form_ORDEN_PAGO__MontoBase1x1000(){
 		_monto_base+=RESULTADO*1;
 	}*/
 	Form_ORDEN_PAGO__MontoBaseISLR();
+}
+
+function Form_ORDEN_PAGO__MontoBaseNegroPrimero(){
+	//buscar cuentas por pagar proveedores
+	var _monto_cxp=0;
+	for(var i=0;i<Form_ORDEN_PAGO__TamanoArregloDetallesContables;i++)
+		if(xGetElementById("CUENTA_CONTABLE_PB_FOP").value==Form_ORDEN_PAGO__ArregloDetallesContables[i][0] && Form_ORDEN_PAGO__ArregloDetallesContables[i][3]=='H') {
+			_monto_cxp=numberFormat(Form_ORDEN_PAGO__ArregloDetallesContables[i][4],2)*1;
+			break;
+		}
+	xGetElementById("TOTAL_BC_FOP_DR").value=numberFormat(_monto_cxp,2);
+}
+
+//Agregar Detalle Forma de Pago
+function Form_ORDEN_PAGO__AgregarDFP(){
+	var total_cxp = 0;
+	var total_retenciones=0;
+	for(var i=0;i<Form_ORDEN_PAGO__TamanoArregloDetallesContables;i++)
+		if(xGetElementById("CUENTA_CONTABLE_PB_FOP").value==Form_ORDEN_PAGO__ArregloDetallesContables[i][0] && Form_ORDEN_PAGO__ArregloDetallesContables[i][3]=='H') {
+			total_cxp=numberFormat(Form_ORDEN_PAGO__ArregloDetallesContables[i][4],2)*1;
+			break;
+		}
+	var total_retenciones = 0;
+	for (var i = 0; i < Form_ORDEN_PAGO__TamanoArregloDetallesRetenciones; i++) {
+		total_retenciones+=Form_ORDEN_PAGO__ArregloDetallesRetenciones[i]['monto']*1.00;
+	}
+	var total = (total_cxp-total_retenciones).toFixed(2);
+
+	siga.open("orden_pago/forma_pago", {
+		cuenta_destino: Form_ORDEN_PAGO__PERSONA_cuenta_destino,
+		monto: total,
+		onAccept: function(data){
+			console.log("Forma Pago", data)
+			Form_ORDEN_PAGO__AgregarFormaPago(data);
+		}
+	});
+}
+
+var Form_ORDEN_PAGO__ArregloDetalleFormaPago=[];
+function Form_ORDEN_PAGO__AgregarFormaPago(data){
+	Form_ORDEN_PAGO__ArregloDetalleFormaPago.push(data);
+	Form_ORDEN_PAGO__MostrarTablaFormaPago();
+}
+
+var Form_MOV_FP__iSeleccionActual=-1;
+function Form_ORDEN_PAGO__MostrarTablaFormaPago() {
+	Form_MOV_DFP__iSeleccionActual=-1;
+	var Contenido="";
+	var FuncionOnclick="";
+	var FuncionOnDblclick="";
+	var FuncionOnDblclickMONTO="";
+	var FuncionOnMouseOver="";
+	var FuncionOnMouseOut="";
+	var CadAux1, CadAux2, CadAux3, CadAux4;
+	var TOTAL=0;
+
+	var sw;
+	sw=Form_ORDEN_PAGO__ModificarTabla;
+	if(Form_ORDEN_PAGO__IDSeleccionActualLista==-1)
+		sw=true;
+
+
+	if(sw){
+		ActivarBoton("BOTON_AGREGAR_FOP_DFP","IMG_AGREGAR_FOP_DFP",'agregar');
+		ActivarBoton("BOTON_QUITAR_FOP_DFP","IMG_QUITAR_FOP_DFP",'quitar');
+		}
+	else{
+		DesactivarBoton("BOTON_AGREGAR_FOP_DFP","IMG_AGREGAR_FOP_DFP",'agregar');
+		DesactivarBoton("BOTON_QUITAR_FOP_DFP","IMG_QUITAR_FOP_DFP",'quitar');
+		}
+
+	for(var i=0;i<Form_ORDEN_PAGO__ArregloDetalleFormaPago.length;i++){
+		if(sw){
+ 			FuncionOnclick="Form_MOV_DFP__SeleccionarElementoTabla('"+i+"')";
+ 			FuncionOnDblclick="Form_MOV_DFP__EditarElementoTabla('"+i+"')";
+		}
+
+
+		TOTAL+=Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["monto"]*1.0;
+
+		Contenido+="<TR class='FilaListado' id='FOP_DFP"+i+"' onclick=\""+FuncionOnclick+"\" ondblclick=\""+FuncionOnDblclick+"\" onmouseover='"+FuncionOnMouseOver+"' onmouseout='"+FuncionOnMouseOut+"'>";
+
+		//Contenido+="<TD width='10%' align='center'>"+FormatearFecha(Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["fecha"])+"</TD>";
+		Contenido+="<TD width='30%' class=''>"+Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["cuenta_origen"]['numero']+"<br/>"+Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["cuenta_origen"]['banco']+"</TD>";
+		Contenido+="<TD width='30%' class=''>"+Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["cuenta_destino"]['numero']+"<br/>"+Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["cuenta_destino"]['banco']+"</TD>";
+		Contenido+="<TD class='CeldaContinua' align='center'>"+Form_ORDEN_PAGO__DenominacionFormaPago(Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["forma_pago"])+"</TD>";
+		Contenido+="<TD width='15%' align='right' id='TD_FOP_DR_"+i+"'>"+FormatearNumero(Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]["monto"])+"</TD>";
+
+
+		Contenido+="</TR>";
+		}
+	xGetElementById("TABLA_LISTA_FOP_DFP").innerHTML=Contenido;
+	xGetElementById("TOTAL_FOP_DFP").value=FormatearNumero(TOTAL);
+	}
+
+function Form_ORDEN_PAGO__DenominacionFormaPago(forma_pago){
+	switch(forma_pago){
+		case 'cheque': return "CHEQUE";
+		case 'transferencia': return "TRANSFERENCIA";
+		case 'deposito': return "DEPOSITO";
+		case 'pago_movil': return "PAGO MOVIL";
+		case 'efectivo': return "EFECTIVO";
+	}
+	return 'N/A';
+}
+
+function Form_MOV_DFP__SeleccionarElementoTabla(i){
+	if(Form_MOV_DFP__iSeleccionActual!=-1)
+		xGetElementById("FOP_DFP"+Form_MOV_DFP__iSeleccionActual).style.background="";
+	xGetElementById("FOP_DFP"+i).style.background=colorSeleccionTabla;
+	Form_MOV_DFP__iSeleccionActual=i;
+}
+
+function Form_MOV_DFP__EditarElementoTabla(i){
+	var data = Form_ORDEN_PAGO__ArregloDetalleFormaPago[i];
+
+	siga.open("orden_pago/forma_pago", {
+		cuenta_origen_id: data['cuenta_origen']['id'],
+		cuenta_destino_numero: data['cuenta_destino']['numero'],
+		forma_pago: data['forma_pago'],
+		monto: data['monto'],
+		onAccept: function(data){
+			console.log("Forma Pago", data)
+			Form_ORDEN_PAGO__ArregloDetalleFormaPago[i]=data;
+			Form_ORDEN_PAGO__MostrarTablaFormaPago();
+		}
+	});
+
+
+}
+
+function Form_ORDEN_PAGO__QuitarDFP(){
+	if(Form_MOV_DFP__iSeleccionActual==-1)
+		return;
+
+	Form_ORDEN_PAGO__ArregloDetalleFormaPago.splice(Form_MOV_DFP__iSeleccionActual, 1);
+	Form_ORDEN_PAGO__MostrarTablaFormaPago();
 }

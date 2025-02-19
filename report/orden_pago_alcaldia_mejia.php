@@ -4,25 +4,8 @@ ini_set('display_errors', 'On');
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
-
-
-// Si existe un reporte personalizado para la institucion abrirlo en vez del default
-// Por Ejemplo: Base de datos "alcaldia_mejia" segun key en siga.config.php
-// Forma 1: report/orden_pago_alcaldia_mejia.php
-// Forma 2: report/alcaldia_mejia/orden_pago.php
-$database = SIGA::database();
-$report="orden_pago_$database.php";
-if(file_exists($report)){
-	header("Location: $report?".$_SERVER['QUERY_STRING']);
-}
-
-$report="$database/orden_pago.php";
-if(file_exists($report)){
-	header("Location: $report?".$_SERVER['QUERY_STRING']);
-}
-
-
 include_once("../library/functions/letra_numero.php");
+
 include_once("../library/fpdf/1.84/fpdf.php");
 include_once("../class/comprobante.class.php");
 
@@ -76,56 +59,30 @@ function CabeceraDC(){
 
 function Footer(){
 	global $pdf, $tam_ancho, $tam_firma;
-	$database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
-	//CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
-  if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
-  	$pdf->Cell($tam_ancho,4,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
-		$pdf->SetFont('helvetica','',8);
-		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
-		$pdf->SetFont('helvetica','B',7);
-	
-		$pdf->Cell($tam_firma,4,utf8_decode("ALCALDE"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-                $pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("BENEFICIARIO"),'LRTB',1,'C',1);
-	
-		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',1,'L',1);
-	
-		$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',0,'C',1);
-		$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',0,'C',1);
-		$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',0,'C',1);
-		$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',1,'C',1);
-	
-		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
-		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
-		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
-		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',1,'C',1);
-  }
-  else{
-  	$pdf->Cell($tam_ancho,5,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
-		$pdf->SetFont('helvetica','',8);
-		$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
-		$pdf->SetFont('helvetica','B',7);
+	$pdf->Cell($tam_ancho,4,utf8_decode("OBSERVACIONES:"),'LRT',1,'L',1);
+	$pdf->SetFont('helvetica','',8);
+	$pdf->MultiCell($tam_ancho,4,"",'LRB','L',1);
+	$pdf->SetFont('helvetica','B',7);
 
-		$pdf->Cell($tam_firma,4,utf8_decode("ELABORADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("REVISADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("VERIFICADO POR:"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("AUTORIZADO POR:"),'LRTB',1,'C',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("ALCALDE"),'LRTB',0,'C',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
+              $pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("BENEFICIARIO"),'LRTB',1,'C',1);
 
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,24,utf8_decode(""),'LRTB',1,'C',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',0,'L',1);
+	$pdf->Cell($tam_firma,4,utf8_decode("FECHA:          /        /"),'LRTB',1,'L',1);
 
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("PRESUPUESTO"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("ADMINISTRACIÓN"),'LRTB',0,'C',1);
-		$pdf->Cell($tam_firma,4,utf8_decode("PRESIDENCIA"),'LRTB',1,'C',1);
-  }
+	$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',0,'C',1);
+	$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',0,'C',1);
+	$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',0,'C',1);
+	$pdf->Cell($tam_firma,15,utf8_decode(""),'LRT',1,'C',1);
 
+	$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
+	$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
+	$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
+	$pdf->Cell($tam_firma,4,"FIRMA",'LRB',1,'C',1);
 }
 
 class PDF_P extends FPDF{
@@ -174,14 +131,9 @@ class PDF_P extends FPDF{
 
 		$this->Ln(3);
 
-		$database_name=isset(SIGA::$database[SIGA::database()]["name"])?SIGA::$database[SIGA::database()]["name"]:"";
-		//CASO ESPECIFICO PARA LA ALCALDIA DE MEJIA
-    if($database_name && preg_grep("/siga_alcaldia_mejia*/i",[$database_name])){
-    	$this->SetFont('helvetica','B',8);
-			$this->MultiCell(180-27,3,utf8_decode("CIUDADANO: TESORERO(A) MUNICIPAL\nSIRVASE A EFECTUAR EL SIGUIENTE PAGO A:"),'','L',1);
-			$this->Ln(3);
-    }
-
+  	$this->SetFont('helvetica','B',8);
+		$this->MultiCell(180-27,3,utf8_decode("CIUDADANO: TESORERO(A) MUNICIPAL\nSIRVASE A EFECTUAR EL SIGUIENTE PAGO A:"),'','L',1);
+		$this->Ln(3);
 
 		if($PERSONA_TIPO=="N" or $PERSONA_TIPO=="J"){
 				$this->SetFont('helvetica','B',9);
@@ -245,13 +197,13 @@ $t_debe_mc=20;
 $t_haber_mc=20;
 $t_denom_mc=180-($t_cuenta_mc+$t_debe_mc+$t_haber_mc);
 
-$t_fecha_p=13;
-$t_beneficiario_p=40;
-$t_operacion_p=25;
-$t_referencia_p=15;
+$t_fecha_p=15;
+$t_operacion_p=27;
+$t_referencia_p=0;
 $t_monto_p=18;
 $t_cuenta_origen_p=32;
-$t_cuenta_destino_p=180-($t_fecha_p+$t_cuenta_origen_p+$t_beneficiario_p+$t_operacion_p+$t_referencia_p+$t_monto_p);
+$t_cuenta_destino_p=32;
+$t_beneficiario_p=180-($t_fecha_p+$t_cuenta_origen_p+$t_cuenta_destino_p+$t_operacion_p+$t_referencia_p+$t_monto_p);
 
 
 $MAX_Y=225;
@@ -403,7 +355,6 @@ for($i=0;$i<count($IDComprobante);$i++){
 		}
 
 		$MONTO_TOTAL=$TOTAL_H-$TOTAL_R;
-
 
 		$sql="SELECT valor FROM modulo_base.comprobante_datos	WHERE id_comprobante='$_id' AND dato='forma_pago'";
 		$FORMA_PAGO=$db->Execute($sql);
@@ -617,7 +568,6 @@ for($i=0;$i<count($IDComprobante);$i++){
 //print_r($SUMA_RETENCION);
 	//buscar los movimientos P
 
-
 	if(count($MP)>0 and $MP){
 		$pdf->Ln(3);
 		$sw=false;
@@ -666,7 +616,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 }
 
 
-
+//$pdf->Ln(18);
 	//buscar los MC
 
 
@@ -729,7 +679,6 @@ for($i=0;$i<count($IDComprobante);$i++){
 		}
 
 
-
 		$tam_ancho=180;
 		$tam_firma=$tam_ancho/4;
 
@@ -749,7 +698,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 			$pdf->SetFont('helvetica','B',8);
 			$pdf->Cell($t_cuenta_origen_p+$t_fecha_p/2,4,utf8_decode('CUENTA ORIGEN'),'LB',0,'L',1);
 			$pdf->Cell($t_cuenta_destino_p+$t_fecha_p/2,4,utf8_decode('CUENTA DESTINO'),'B',0,'L',1);
-			$pdf->Cell($t_beneficiario_p+$t_referencia_p,4,utf8_decode('BENEFICIARIO'),'B',0,'L',1);
+			$pdf->Cell($t_beneficiario_p,4,utf8_decode('BENEFICIARIO'),'B',0,'L',1);
 			$pdf->Cell($t_operacion_p,4,utf8_decode('FORMA DE PAGO'),'B',0,'L',1);
 			$pdf->Cell($t_monto_p,4,utf8_decode('MONTO'),'RB',1,'C',1);
 
@@ -761,7 +710,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 
 				$pdf->Cell($t_cuenta_origen_p+$t_fecha_p/2,4,utf8_decode($FORMA_PAGO[$m]['cuenta_origen']['numero']),'LT',0,'L',1);
 				$pdf->Cell($t_cuenta_destino_p+$t_fecha_p/2,4,utf8_decode($FORMA_PAGO[$m]['cuenta_destino']['numero']),'T',0,'L',1);
-				$pdf->Cell($t_beneficiario_p+$t_referencia_p,4,utf8_decode($PERSONA_ID),'T',0,'L',1);
+				$pdf->Cell($t_beneficiario_p,4,utf8_decode($PERSONA_ID),'T',0,'L',1);
 				$pdf->Cell($t_operacion_p,4,utf8_decode($forma_pago),'T',0,'L',1);
 				$pdf->Cell($t_monto_p,4,utf8_decode(number_format($FORMA_PAGO[$m]['monto'],2,",",".")),'RT',0,'R',1);
 				$pdf->Cell(100,4,utf8_decode(''),'L',1,'',1);
@@ -769,12 +718,14 @@ for($i=0;$i<count($IDComprobante);$i++){
 
 				$pdf->Cell($t_cuenta_origen_p+$t_fecha_p/2,4,utf8_decode($FORMA_PAGO[$m]['cuenta_origen']['banco']),'LB',0,'L',1);
 				$pdf->Cell($t_cuenta_destino_p+$t_fecha_p/2,4,utf8_decode($FORMA_PAGO[$m]['cuenta_destino']['banco']),'B',0,'L',1);
-				$pdf->Cell($t_beneficiario_p+$t_referencia_p,4,utf8_decode($PERSONA_DENOMINACION),'B',0,'L',1);
+				$pdf->Cell($t_beneficiario_p,4,utf8_decode($PERSONA_DENOMINACION),'B',0,'L',1);
 				$pdf->Cell($t_operacion_p,4,utf8_decode(''),'B',0,'C',1);
 				$pdf->Cell($t_monto_p,4,utf8_decode(''),'RB',0,'C',1);
 				$pdf->Cell(100,4,utf8_decode(''),'L',1,'',1);
 			}
 		}
+
+
 
 
 		/*
@@ -804,15 +755,15 @@ for($i=0;$i<count($IDComprobante);$i++){
 		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
 		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',0,'C',1);
 		$pdf->Cell($tam_firma,4,"FIRMA",'LRB',1,'C',1);*/
+
+
 		//zona de firmas
 		$tam_ancho=180;
 		$tam_firma=$tam_ancho/4;
 		$pdf->SetY($MAX_Y);
-
-
 		Footer();
 
-		if($COMPROBANTE_POSTERIOR && count($COMPROBANTE_POSTERIOR)>0){
+		if(false && $COMPROBANTE_POSTERIOR && count($COMPROBANTE_POSTERIOR)>0){
 			$pdf->AddPage();
 			$pdf->Ln(5);
 
@@ -825,8 +776,8 @@ for($i=0;$i<count($IDComprobante);$i++){
 			$pdf->Cell($t_cuenta_origen_p,4,utf8_decode('CUENTA ORIGEN'),'B',0,'L',1);
 			$pdf->Cell($t_cuenta_destino_p,4,utf8_decode('CUENTA DESTINO'),'B',0,'L',1);
 			$pdf->Cell($t_beneficiario_p,4,utf8_decode('BENEFICIARIO'),'B',0,'L',1);
-			$pdf->Cell($t_operacion_p,4,utf8_decode('FORMA DE PAGO'),'B',0,'C',1);
-			$pdf->Cell($t_referencia_p,4,utf8_decode('REF.'),'B',0,'C',1);
+			$pdf->Cell($t_operacion_p,4,utf8_decode('FORMA DE PAGO'),'B',0,'L',1);
+			//$pdf->Cell($t_referencia_p,4,utf8_decode('REF.'),'B',0,'C',1);
 			$pdf->Cell($t_monto_p,4,utf8_decode('MONTO'),'RB',1,'C',1);
 
 			$pdf->SetFont('helvetica','',7.5);
@@ -867,26 +818,28 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$pdf->Cell($t_cuenta_origen_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['banco']),'T',0,'L',1);
 				$pdf->Cell($t_cuenta_destino_p,4,utf8_decode($banco_destino),'T',0,'L',1);
 				$pdf->Cell($t_beneficiario_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_persona'][0]['denominacion']),'T',0,'L',1);
-				$pdf->Cell($t_operacion_p,4,utf8_decode($forma_pago),'T',0,'C',1);
-				$pdf->Cell($t_referencia_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['numero']),'T',0,'C',1);
-				$pdf->Cell($t_monto_p,4,utf8_decode(number_format($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['monto'],2,",",".")),'RT',1,'R',1);
+				$pdf->Cell($t_operacion_p,4,utf8_decode($forma_pago),'T',0,'L',1);
+				//$pdf->Cell($t_referencia_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['numero']),'T',0,'C',1);
+				$pdf->Cell($t_monto_p,4,utf8_decode(number_format($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['monto'],2,",",".")),'RT',0,'R',1);
+				$pdf->Cell(100,4,utf8_decode(''),'L',1,'',1);
 
 				$pdf->Cell($t_fecha_p,4,utf8_decode(''),'LB',0,'C',1);
 				$pdf->Cell($t_cuenta_origen_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['numero_cuenta']),'B',0,'L',1);
 				$pdf->Cell($t_cuenta_destino_p,4,utf8_decode($cuenta_destino),'B',0,'L',1);
 				$pdf->Cell($t_beneficiario_p,4,utf8_decode(''),'B',0,'L',1);
 				$pdf->Cell($t_operacion_p,4,utf8_decode(''),'B',0,'C',1);
-				$pdf->Cell($t_referencia_p,4,utf8_decode(''),'B',0,'C',1);
+				//$pdf->Cell($t_referencia_p,4,utf8_decode(''),'B',0,'C',1);
 				$pdf->Cell($t_monto_p,4,utf8_decode(''),'RB',1,'C',1);
+				
 
 
 			}
-
-		$pdf->SetY($MAX_Y);
-
-
-		//Footer();
 		}
+
+		//zona de firmas
+		
+		$pdf->SetY($MAX_Y);
+		//Footer();
 }
 
 

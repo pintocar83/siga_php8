@@ -119,11 +119,30 @@ siga.define('pago', {
       me.$$("BOTON_CONTABLIZAR").on("click", function(){me.onContabilizar();});
       me.$$("BOTON_REVERSAR").on("click", function(){me.onReversar();});
       me.$$("BOTON_ANULAR").on("click", function(){me.onAnular();});
+      me.$$("BOTON_LIMPIAR_CUENTA").on("click", function(){me.onLimpiarCta();});
+      me.$$("BOTON_LIMPIAR_CUENTA_DESTINO").on("click", function(){me.onLimpiarCtaDestino();});
 
       me.$$("BOTON_SELECCIONAR_PERSONA").on("click", function(){
         siga.onPersona({
           tipo: me.SW_PERSONA,
           onList: 'onList_OP_pendiente',
+          onAccept: function(result){
+            me.$("PERSONA_ID").value=result[0]["id"];
+            me.$("PERSONA_IDENTIFICACION").value=result[0]["identificacion"];
+            me.$("PERSONA_DENOMINACION").value=result[0]["denominacion"];
+            me.internal.cuenta_destino=[
+              result[0]["cuenta_bancaria_principal"],
+              result[0]["cuenta_bancaria_secundaria"]
+            ].filter(Boolean);
+            me.internal.cuenta_destino_menu=null;
+            me.CargarSolicitudes();
+          }
+        });
+      });
+
+      me.$$("BOTON_SELECCIONAR_PERSONA2").on("click", function(){
+        siga.onPersona({
+          tipo: me.SW_PERSONA,
           onAccept: function(result){
             me.$("PERSONA_ID").value=result[0]["id"];
             me.$("PERSONA_IDENTIFICACION").value=result[0]["identificacion"];
@@ -335,6 +354,7 @@ siga.define('pago', {
       me.$("BOTON_PROVEEDOR").disabled=v;
       me.$("BOTON_BENEFICIARIO").disabled=v;
       me.$("BOTON_SELECCIONAR_PERSONA").disabled=v;
+      me.$("BOTON_SELECCIONAR_PERSONA2").disabled=v;
       me.$("BOTON_SELECCIONAR_CUENTA_BANCARIA").disabled=(sw==1?false:true);
       me.$("BOTON_CALENDARIO").disabled=false;
       me.$("BOTON_ARCHIVO_BORRAR").disabled=false;
@@ -364,6 +384,7 @@ siga.define('pago', {
       me.$("BOTON_PROVEEDOR").disabled=true;
       me.$("BOTON_BENEFICIARIO").disabled=true;
       me.$("BOTON_SELECCIONAR_PERSONA").disabled=true;
+      me.$("BOTON_SELECCIONAR_PERSONA2").disabled=true;
       me.$("BOTON_SELECCIONAR_CUENTA_BANCARIA").disabled=true;
       me.$("BOTON_CALENDARIO").disabled=true;
       me.$("BOTON_ARCHIVO_BORRAR").disabled=true;
@@ -699,6 +720,7 @@ siga.define('pago', {
         me.$("MONTO").value="Calculando...";
         //buscar inf contables solicitud
         me.onGetDetallesOP(me.Arreglo[i][1]);
+        me.onSetFormaPagoODP();
         me.CalcularMonto();
         }
       else
@@ -852,6 +874,44 @@ siga.define('pago', {
       window.open("report/orden_pago.php?id="+ids.join());
     },
 
+    onSetFormaPagoODP: function(){
+      const me=this;
+
+      if(!(me.forma_pago_odp && me.forma_pago_odp.length>0)){
+        return;
+      }
+
+
+      if(!Ext.String.trim(me.$("CUENTA_DESTINO").value)){
+        me.$("CUENTA_DESTINO").value = Ext.String.trim(me.forma_pago_odp[0]['cuenta_destino']['numero']);
+        me.$("FORMA_PAGO").value = me.forma_pago_odp[0]['forma_pago'];
+
+        if(me.forma_pago_odp[0]['cuenta_origen']['id']){
+          var _tmp=Ext.Ajax.request({
+            async: false,
+            url:"module/banco_cuenta/",
+            params:{
+              'action':"onGet",
+              'id': me.forma_pago_odp[0]['cuenta_origen']['id']
+            }
+          });
+          if(_tmp.statusText=="OK"){
+            var resultado=Ext.decode(_tmp.responseText);
+            if(resultado && resultado.length>0){
+              me.$("ID_CTA").value=resultado[0]["id"];
+              me.$("NCTA").value=resultado[0]["numero_cuenta"];
+              me.$("DESCRIPCION_NCTA").value=resultado[0]["denominacion"];
+
+              me.$("CTA_CODIGO_CONTABLE").value=resultado[0]["id_cuenta_contable"];
+              me.$("CUENTA_CONTABLE").value=resultado[0]["cuenta_contable"];
+              me.$("CTA_DENOMINACION_CONTABLE").value=resultado[0]["denominacion_contable"];
+              me.CambioSelectDetalles();
+            }
+          }
+        }
+      }
+    },
+
     onGetDetallesOP: function(_id){
       var me = this;
       var _tmp=Ext.Ajax.request({
@@ -864,6 +924,21 @@ siga.define('pago', {
       });
       if(_tmp.statusText=="OK"){
         var resultado=Ext.decode(_tmp.responseText);
+
+        me.forma_pago_odp=null;
+        if(resultado[0]["detalle_extra"]){
+          for(var i=0;i<resultado[0]["detalle_extra"].length;i++){
+            if(resultado[0]["detalle_extra"][i]["dato"]=="forma_pago"){
+              if(resultado[0]["detalle_extra"][i]["valor"]){
+                try {
+                  me.forma_pago_odp=JSON.parse(siga.base64.decode(resultado[0]["detalle_extra"][i]["valor"]));
+                } catch (e) {
+                  me.forma_pago_odp=null;
+                }
+              }
+            }
+          }
+        }
 
         me.ArregloDetalles[resultado[0]["id"]]=[];
         var anio_op=resultado[0]["fecha"].split("/")[2];
@@ -1933,6 +2008,25 @@ siga.define('pago', {
       if(me.IDSeleccionActualLista==-1)
         return;
       window.open("report/pago.php?id="+me.IDSeleccionActualLista);
+    },
+
+    onLimpiarCta: function(){
+      const me=this;
+
+      me.$("ID_CTA").value="";
+      me.$("NCTA").value="";
+      me.$("DESCRIPCION_NCTA").value="";
+
+      me.$("CTA_CODIGO_CONTABLE").value="";
+      me.$("CUENTA_CONTABLE").value="";
+      me.$("CTA_DENOMINACION_CONTABLE").value="";
+      me.CambioSelectDetalles();
+    },
+
+    onLimpiarCtaDestino: function(){
+      const me=this;
+
+      me.$("CUENTA_DESTINO").value="";
     },
 
 });
