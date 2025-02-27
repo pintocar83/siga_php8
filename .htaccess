@@ -1,0 +1,4 @@
+<Files "pg_data/*">
+    Order Allow,Deny
+    Deny from all
+</Files>
