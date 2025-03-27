@@ -1,0 +1,75 @@
+[[inicio|Inicio]]
+===== NÓMINA =====
+
+Para ingresar al módulo de nómina, debemos seleccionar la opción Nómina desde la sección procesos en el menú principal del sistema administrativo.\\
+{{::nomina_icono.jpg?nolink&600|}}
+
+A continuación se despliega la ventana referente al módulo.\\
+{{::nomina_modulo.jpg?nolink&600|}}\\
+\\
+\\
+
+=== PARTES DEL MODULO ===
+{{::nomina_modulo_partes.jpg?nolink&600|}}\\
+(1) Barra de acciones.\\
+(2) Filtro de búsqueda.\\
+(3) Área de trabajo.\\
+(4) Información del periodo y nóminas seleccionadas.\\
+(5) Paginación.\\
+\\
+\\
+
+=== BARRA DE ACCIONES ===
+(1) **Seleccionar.**\\
+{{::nomina_accion_seleccionar_nomina.jpg?nolink|}}\\
+Permite seleccionar el periodo y las nóminas a trabajar.
+Pj. Periodo: 1era Quincena de Enero. Nóminas: Empleados Fijos, Empleados Contratados, Obreros Fijos, Obreros Contratados, Personal de Alto Nivel y Dirección.
+
+(2) **Persona.**\\
+{{:nomina_accion_persona.jpg?nolink|}}\\
+Menú desplegable con acciones asociadas a las personas en la nómina:
+  * **Agregar:** Agrega personas a la nómina seleccionada.\\
+  * **Quitar:** Quita la persona actualmente seleccionada en el area de trabajo.\\
+  * **Cambiar Cargo:** Cambia el cargo de la persona seleccionada (en el area de trabajo) para el periodo actual.\\
+  * **Cambiar Estructura Presupuestaria:** Cambia el proyecto o accion centralizada de la persona seleccionada (en el area de trabajo), por el cual va a salir el gasto de personal al contabilizar la nómina.\\
+  * **Personal Inactivo:**\\
+    * **Quitar de las nominas actuales:** Quita al personal con estatus inactivo de las nominas y periodo seleccioando.\\
+    * **Cambiar a la nómina:** Permite cambiar o mover el personal con estatus inactivo a una nomina especifica. Pj. Nómina de Personal Inactivo.\\
+  * **Administrar Fichas:** Abre el modulo para crear, modificar o eliminar las personas.\\
+  * **Administrar Cargos:** Abre el modulo para crear, modificar o eliminar cargos del personal.\\
+  * **Administrar Escala Salarial:** Abre el modulo para crear, modificar o eliminar la escala salarial.\\
+
+(3) **Concepto.**\\
+{{::nomina_accion_concepto.jpg?nolink|}}\\
+Menú desplegable con acciones asociados a los conceptos en la nómina: 
+  * **Agregar:** Agrega conceptos a la nómina seleccionada.\\
+  * **Quitar:** Quita de la nómina el concepto seleccionado en el area de trabajo.\\
+  * **Importar desde Excel:** Permite realizar: (a) carga masiva de los valores conceptos-personas. (b) descargar excel con los conceptos-personas, este puede ser utilizado como plantilla para edición y carga o simplemente para respaldo.\\
+  * **[[nomina_concepto_administrar|Administrar]]:** Abre el modulo para crear, modificar o eliminar los conceptos.\\
+
+(4) **Recargar.**\\
+{{::nomina_accion_recargar.jpg?nolink|}}\\
+Actualiza o recarga la información en el area de trabajo, en caso de realizar cambios desde otra estación de trabajo o modificado algun concepto.
+
+
+(5) **Notas.**\\
+{{::nomina_accion_notas.jpg?nolink|}}\\
+Permite agregar anotaciones u observaciones a las nóminas.
+
+(6) **Periodo.**\\
+{{::nomina_accion_periodo.jpg?nolink|}}\\
+  * **Cerrar:** Cierra el periodo actualmente seleccionado y abre uno nuevo con los datos actuales (nominas-personas-conceptos).\\
+  * **Administrar:** Abre el modulo para crear, modificar, eliminar, abrir o cerrar periodos.\\
+
+(7) **Contabilizar.**\\
+{{::nomina_accion_contabilizar.jpg?nolink|}}\\
+Genera los comprobantes presupuestario/contable de la nomina actualmente seleccionada.
+  * **Generar Comprometido/Causado/Pagado:** Genera un comprobante presupuestariamente con la operación CCP y contablemente afectando a gastos de personal contra banco.\\
+  * **Generar Comprometido/Causado:** Genera un comprobante presupuestariamente con la operación CC y contablemente afectando a gastos de personal contra la cuenta salarios por pagar.\\
+  * **Generar Pagado - Banco:** Genera un comprobante presupuestariamente con la operación P y contablemente afectando la cuenta salarios por pagar contra banco.\\
+  * **Generar Pagado - CxC:** Genera un comprobante presupuestariamente con la operación P y contablemente afectando la cuenta salarios por pagar contra cuentas por cobrar.\\
+  * **Generar Comprometido/Causado/Pagado [Sin Aportes Patronales]:** Genera un comprobante presupuestariamente con la operación CCP y contablemente afectando a gastos de personal contra banco (sin tomar los calculos asociados a los aportes patronales).\\
+  * **Generar Comprometido/Causado/Pagado [Sin Aportes Patronales]:** Genera un comprobante presupuestariamente con la operación CCP y contablemente afectando a gastos de personal contra banco (solamente tomando los calculos asociados a los aportes patronales).\\
+
+(8) **Visualizar.**\\
+{{::nomina_accion_visualizar.jpg?nolink|}}\\

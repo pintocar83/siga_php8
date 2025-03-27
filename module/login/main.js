@@ -271,5 +271,9 @@ siga.define('login', {
         me.getCmp('username').setValue("");
         me.getCmp('password').setValue("");
         me.getCmp('username').focus();
+    },
+
+    onHelp: function(){
+        siga.help("help/?id=inicio");
     }
 });

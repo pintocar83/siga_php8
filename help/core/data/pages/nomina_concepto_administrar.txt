@@ -1,0 +1,289 @@
+[[inicio|Inicio]] - [[nomina|Nómina]]
+==== NÓMINA - ADMINISTRAR CONCEPTOS ====
+
+Los conceptos son aquellos valores (calculados o fijos) que son asignados a las personas en la nomina. Pj: Asignaciones como el Sueldo, Primas, Bonificaciones y Deducciones como Caja de Ahorro, Fondo de Vivienda, Fondo de Jubilaciones y Fondo de Seguridad Social, son considerados conceptos y estos pueden estar compuestos por formulas o valores ingresados manualmente.\\
+Las formulas se definen y se pueden vincular con otros conceptos a partir del campo identificador, y se pueden realizar calculos utilizando los operadores aritmeticos, lógicos, ternarios y de comparacion.
+
+Para ingresar al módulo debemos seleccionar la subopción "Administrar" desde el menu "Conceptos" en nómina.
+
+**Ventana referente al módulo**:\\
+{{::nomina_concepto_administrar.jpg?600|}}\\
+\\
+=== Vision General: ===
+
+Para registrar nuevos Conceptos, primero que nada debemos conocer la naturaleza del valor o calculo que necesitamos agregar.
+Conocer si es una asignacion, deduccion y aporte patronal (osea el tipo de concepto).\\
+
+**Tipos de Concepto**:\\
+  * Asignación <sup>[A]</sup>: Valor visible que suma a la columna total asignaciones de la nómina seleccionada.
+  * Deducción <sup>[D]</sup>: Valor visible que suma a la columna total deducciones de la nomina seleccionada.
+  * Aporte Patronal <sup>[AP]</sup>: Mismo comportamiento que la deducción, pero agrega una columna extra en la sección Aportes Patronales con la porción o aporte correspondiente a la organización/empresa.
+  * Reintegro Asignación <sup>[RA]</sup>: El comportamiento es similar a una deducción, puede ser utilizado para deducir alguna asignación aplicada por error en algun periodo anterior.
+  * Reintegro Deducción <sup>[RD]</sup>: El comportamiento es similar a una asignación, puede ser utilizado para reintegrarle al trabajor algun concepto deducido por error en algun periodo anterior.
+  * Ninguno: No se agrega en ninguna de las secciones principales [A, D o AP] y es utilizado para calcular o asignar valores que no seran mostrados en los recibos de pago y nomina generada.
+  * Ninguno (Visible): Mismo comportamiento que el anterior, solo que es visible en los recibos de pago y nomina como una referencia impresa (Pj. puede ser utilizado para que el trabajador vea horas extras, antiguedad, ...).
+
+**Referente al identificador**:\\
+Es importante destacar que el identificador debe ser unico en una nomina de trabajo seleccionada ((Se pueden crear conceptos con el mismo identificador, pero no deben agregarse en simultaneo a una misma nomina de trabajo)) y el nombre definido no puede estar inmerso en el identificador de otro concepto.
+Ejemplo de identificador definido de forma incorrecta:\\
+^ # ^ Concepto         ^ Incorrecto      ^ Correcto           ^
+^ 1 ^ Sueldo Básico    | SUELDO          | SUELDO_BASICO      |
+^ 2 ^ Sueldo Normal    | SUELDO_NORMAL   | SUELDO_NORMAL      |
+
+En este caso habra un conflicto entre ambos conceptos, debido a que SUELDO_NORMAL tiene inmerso el identificador del concepto 1. La forma correcta seria definir el Concepto 1 con SUELDO_BASICO.\\
+
+Identificadores definidos internamente en el sistema y pueden ser utilizados en las formulas:
+
+
+^ Identificador         ^ Descripción           ^
+^ ANTIGUEDAD          | Tiempo de antiguedad de la persona (en años), este valor viene a partir de la fecha de ingreso cargada en el modulo 'Persona - Administrar Fichas' |
+^ NUM_LUNES_PERIODO \\ N_LUNES_PERIODO \\ NUMERO_LUNES_PERIODO  | Cantidad de lunes del periodo seleccionado en la nómina de trabajo actual |
+^ NUM_LUNES_MES \\ N_LUNES_MES \\ NUMERO_LUNES_MES  | Cantidad de lunes de los meses del periodo actual |
+^ NUM_DIAS_PERIODO  | Cantidad de dias del periodo actual |
+
+**Definición de la formula**:\\
+La formula se puede definir como un valor numerico ((Puede ser editado desde la hoja de trabajo)) o como una operación entre varios conceptos ((Valor calculado resultante de la operación)).\\
+
+Operadores que pueden ser utilizados en las formulas:
+  * Aritmeticos: suma [+], resta [-], multiplicación [*], división [/] y modulo ó residuo [%]. 
+  * Lógicos: and [&&], or [||], not [!]
+  * Comparación: igual [==], distinto [!=], menor que [<], menor o igual que [%%<=%%], mayor que [>], mayor o igual que [>=]
+  * Desición: solo el ternario, de la forma [A == B ? A : C]
+\\
+Se pueden utilizar los parentesis para agrupar y priorizar operaciones dentro de la formula (en caso de requerirlo).\\
+
+
+**Afectación presupuestaria / contable**:\\
+Permite asociar los conceptos a las partidas de presupuesto (generalmente a gastos de personal y aportes  patronales), asi como la cuenta de banco donde saldrá el pago de la nómina.\\
+
+El módulo de nomina al contabilizar desde alguna de las opciones disponibles en la barra de acciones, totaliza las porciones correspondientes a cada persona segun la cuenta vinculada aca, generando el comprobante presupuestario / contable de la nómina.
+
+
+=== Proceso de creación de conceptos: ===
+
+(A) Debemos llenar los campos que se presentan: Concepto (nombre del concepto), identificador, seleccionar el tipo e ingresar el orden (valor númerico para ordenar los conceptos en la nomina).\\
+Procedemos a guardar, para posteriormente agregar la afectación presupuestaria/contable y la formula.
+\\
+
+Acontinuación estaremos creando el concepto Sueldo Básico:\\
+**Concepto:** SUELDO_BASICO\\
+**Identificador:** SUELDO_BASICO\\
+**Tipo:** ASIGNACIÓN\\
+**Orden:** 1\\
+{{::nomina_concepto_administrar_crear_nuevo_p1.jpg?600|}}\\
+Cargamos los datos en el formulario y pulsamos el boton guardar.
+Una vez guardado lo ubicamos en la lista, para añadirle la afectacion presupuestaria/contable y formula.
+
+{{::nomina_concepto_administrar_crear_nuevo_p2.jpg?600|}}\\
+Seleccionamos [Listado], lo ubicamos en la lista y hacemos doble click sobre el registro para mostrarlo en la [Entrada de Datos].
+
+{{::nomina_concepto_administrar_crear_nuevo_p3.jpg?600|}}\\
+(B) Afectación Presupuestaria/Contable:\\
+Un vez en [Entrada de Datos], seleccionamos la pestaña [Afectación Presupuestaria/Contable], luego pulsamos el boton [Agregar]. Esto desplegará el modal para cargar la informacion la cuenta presupuestaria.\\
+__Nómina:__ nomina a la cual vamos a vincular la cuenta presupuestaria.\\
+__Fecha:__ indica la fecha desde cuando comenzará aplicar la cuenta presuestaria ((Al contabilizar un periodo se cotejará la fecha de afectación contra la fecha de inicio del periodo, para ubicar la cuenta presupuestaria correspondiente al periodo a contabilizar)).\\
+__Cuenta Presupuestaria:__ seleccionamos la cuenta presupuestaria desde el listado de cuentas en uso o el listado general de todas la cuentas.\\
+\\
+Nota: el registro por fecha permite mantener un historio, en caso que la cuenta por donde se viene generando el gasto cambie, y asi no afectar los periodos anteriores.\\
+\\
+Pulsamos el boton [aceptar], se mostrará el registro creado.\\
+{{::nomina_concepto_administrar_crear_nuevo_p4.jpg?600|}}\\
+\\
+A continuación, repetimos el procedimiento para cada nómina.\\
+{{::nomina_concepto_administrar_crear_nuevo_p5.jpg?600|}}\\
+\\
+\\
+(C) Formula:\\
+Seleccionamos la pestaña [Formula], luego pulsamos el boton [Agregar]. Esto desplegará el modal para cargar la formula.\\
+\\
+{{::nomina_concepto_administrar_crear_nuevo_p6.jpg?600|}}\\
+Cargamos los siguientes datos:\\
+__Fecha:__ indica la fecha desde cuando comenzará aplicar la formula ((Al seleccionar un periodo se buscará la formula correspodiente a dicha fecha)).\\
+__Formula:__ ingresamos la formula correspondiente al concepto. Para este caso el valor cero indica que el usuario podrá asignarle un valor desde la hoja de trabajo de la nomina.\\
+__Formula Aporte Patronal:__ la dejamos vacio, solo aplica para los conceptos de tipo aporte patronal.\\
+\\
+Nota: el registro por fecha permite mantener un historio, en caso que la formula cambie apartir de un periodo determinado, de esta forma no afectamos los calculos para periodos anteriores.\\
+\\
+{{::nomina_concepto_administrar_crear_nuevo_p7.jpg?600|}}\\
+Pulsamos el boton [aceptar], se mostrará el registro creado.\\
+{{::nomina_concepto_administrar_crear_nuevo_p8.jpg?600|}}\\
+\\
+\\
+**Observaciones:**
+  * Las modificaciones sobre las pestañas [Afectacion Prespuestaria/Contable] y [Formula], se realizán directamente en la base de datos, por lo que no es necesario pulsar el boton [guardar].\\
+  * Para editar registros en [Afectacion Prespuestaria/Contable] y [Formula], se debe hacer doble click sobre el registro a modificar.\\
+  * Al editar la fecha de alguno de los registro en [Afectacion Prespuestaria/Contable] ó [Formula], se creará un registro nuevo, manteniendo el registro original. Se debe utilizar la opción quitar para eliminarlo.
+\\
+\\
+
+=== Ejemplo de Conceptos: ===
+**SUELDO BÁSICO:**
+<code>
+-Tipo: ASIGNACIÓN
+-Identificador: SUELDO_BASICO
+-Formula:
+0
+</code>
+
+**% PROFESIONALIZACIÓN:**
+<code>
+-Tipo: NINGUNO
+-Identificador: PROFESIONALIZACION_PROCENTAJE
+-Formula:
+0
+</code>
+
+**PRIMA DE PROFESIONALIZACIÓN:**
+<code>
+-Tipo: ASIGNACIÓN
+-Identificador: PROFESIONALIZACION_PRIMA
+-Formula:
+SUELDO_BASICO*PROFESIONALIZACION_PORCENTAJE/100
+</code>
+
+**Nº DE HIJOS:**
+<code>
+-Tipo: NINGUNO
+-Identificador: HIJOS_CANTIDAD
+-Formula:
+0
+</code>
+
+**PRIMA POR HIJOS:**
+<code>
+-Tipo: ASIGNACIÓN
+-Identificador: HIJOS_PRIMA
+-Formula:
+HIJOS_CANTIDAD*80
+</code>
+
+**TIEMPO DE SERVICIO - OTRAS INSTITUCIONES:**
+<code>
+-Tipo: NINGUNO
+-Identificador: TIEMPO_SERVICIO_OTROS
+-Formula:
+0
+</code>
+
+**TIEMPO DE SERVICIO - APN:**\\
+<code>
+-Tipo: NINGUNO
+-Identificador: TIEMPO_SERVICIO_APN
+-Formula:
+ANTIGUEDAD+TIEMPO_SERVICIO_OTROS
+</code>
+
+**PRIMA DE ANTIGUEDAD:**\\
+<code>
+-Tipo: ASIGNACIÓN
+-Identificador:PRIMA_ANTIGUEDAD
+-Formula:
+(
+TIEMPO_SERVICIO_APN==1?0.01:(
+TIEMPO_SERVICIO_APN==2?0.02:(
+TIEMPO_SERVICIO_APN==3?0.03:(
+TIEMPO_SERVICIO_APN==4?0.04:(
+TIEMPO_SERVICIO_APN==5?0.05:(
+TIEMPO_SERVICIO_APN==6?0.062:(
+TIEMPO_SERVICIO_APN==7?0.074:(
+TIEMPO_SERVICIO_APN==8?0.086:(
+TIEMPO_SERVICIO_APN==9?0.098:(
+TIEMPO_SERVICIO_APN==10?0.11:(
+TIEMPO_SERVICIO_APN==11?0.124:(
+TIEMPO_SERVICIO_APN==12?0.138:(
+TIEMPO_SERVICIO_APN==13?0.152:(
+TIEMPO_SERVICIO_APN==14?0.166:(
+TIEMPO_SERVICIO_APN==15?0.18:(
+TIEMPO_SERVICIO_APN==16?0.196:(
+TIEMPO_SERVICIO_APN==17?0.212:(
+TIEMPO_SERVICIO_APN==18?0.228:(
+TIEMPO_SERVICIO_APN==19?0.244:(
+TIEMPO_SERVICIO_APN==20?0.26:(
+TIEMPO_SERVICIO_APN==21?0.278:(
+TIEMPO_SERVICIO_APN==22?0.296:(
+TIEMPO_SERVICIO_APN>=23?0.3:(
+0
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)
+)*SUELDO_BASICO
+</code>
+
+**SUELDO NORMAL:**
+<code>
+-Tipo: NINGUNO
+-Identificador: SUELDO_NORMAL
+-Formula:
+SUELDO_BASICO+PROFESIONALIZACION_PRIMA+HIJOS_PRIMA+PRIMA_ANTIGUEDAD
+</code>
+
+**CAJA DE AHORRO:**
+<code>
+-Tipo: APORTE PATRONAL
+-Identificador: CAJA_AHORRO
+-Formula:
+SUELDO_NORMAL*0.10
+-Formula Patrono:
+SUELDO_NORMAL*0.20
+</code>
+
+**CAJA DE AHORRO:**
+<code>
+-Tipo: APORTE PATRONAL
+-Identificador: CAJA_AHORRO
+-Formula:
+SUELDO_NORMAL*0.10
+-Formula Patrono:
+SUELDO_NORMAL*0.20
+</code>
+
+**FONDO DE JUBILACIONES Y PENSIONES:**
+<code>
+-Tipo: APORTE PATRONAL
+-Identificador: FJP
+-Formula:
+SUELDO_NORMAL*0.03
+-Formula Patrono:
+SUELDO_NORMAL*0.03
+</code>
+
+**LEY DE POLITICA HABITACIONAL:**
+<code>
+-Tipo: APORTE PATRONAL
+-Identificador: LPH
+-Formula:
+SUELDO_NORMAL*0.01
+-Formula Patrono:
+SUELDO_NORMAL*0.02
+</code>
+
+**SEGURO SOCIAL OBLIGATORIO:**
+<code>
+-Tipo: APORTE PATRONAL
+-Identificador: SSO
+-Formula:
+SUELDO_NORMAL*12/52*0.04*NUM_LUNES_PERIODO
+-Formula Patrono:
+SUELDO_NORMAL*12/52*0.09*NUM_LUNES_PERIODO
+</code>
+
