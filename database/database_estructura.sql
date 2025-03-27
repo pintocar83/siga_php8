@@ -5728,3 +5728,106 @@ ALTER TABLE ONLY tarea
 
 
 
+
+
+
+-- CAMBIOS / ACTUALIZACIONES
+
+-- 202310_create_tables_nomina_extension_rrhh.sql
+CREATE TABLE modulo_nomina.extension_rrhh_hoja (
+    id SERIAL,
+    codigo character varying(10),
+    descripcion character varying(200),
+    tipo character varying(1),
+    id_periodo integer[],
+    id_nomina integer[],
+    activo boolean DEFAULT true,
+    id_hoja_plantilla integer,
+    PRIMARY KEY (id),
+    FOREIGN KEY (tipo) REFERENCES modulo_nomina.periodo_tipo (tipo)
+);
+
+CREATE TABLE modulo_nomina.extension_rrhh_hoja_columna
+(
+    id SERIAL,
+    nombre character varying(200),
+    cls character varying(50),
+    tipo character varying(20),
+    operacion character varying(10),
+    valor text,
+    orden integer DEFAULT 1,
+    ag_grid_state text,
+    format character varying(20),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE modulo_nomina.extension_rrhh_hoja_fila
+(
+    id SERIAL,
+    id_hoja integer NOT NULL,
+    id_nomina integer NOT NULL,
+    id_ficha integer NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_ficha) REFERENCES modulo_nomina.ficha (id),
+    FOREIGN KEY (id_hoja) REFERENCES modulo_nomina.extension_rrhh_hoja (id),
+    FOREIGN KEY (id_nomina) REFERENCES modulo_nomina.nomina (id)
+);
+
+
+CREATE TABLE modulo_nomina.extension_rrhh_hoja_valor
+(
+    id SERIAL,
+    id_hoja integer NOT NULL,
+    id_nomina integer NOT NULL,
+    id_ficha integer,
+    id_columna integer,
+    valor character varying(200),
+    PRIMARY KEY (id),
+    FOREIGN KEY (id_columna) REFERENCES modulo_nomina.extension_rrhh_hoja_columna (id),
+    FOREIGN KEY (id_ficha) REFERENCES modulo_nomina.ficha (id),
+    FOREIGN KEY (id_hoja) REFERENCES modulo_nomina.extension_rrhh_hoja (id),
+    FOREIGN KEY (id_nomina) REFERENCES modulo_nomina.nomina (id)
+);
+
+
+CREATE INDEX extension_rrhh_hoja_valor_ficha
+    ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_ficha);
+
+CREATE INDEX extension_rrhh_hoja_valor_hoja
+    ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_hoja);
+
+CREATE INDEX extension_rrhh_hoja_valor_hoja_nomina
+    ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_hoja, id_nomina);
+
+CREATE INDEX extension_rrhh_hoja_valor_hoja_nomina_ficha
+    ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_hoja, id_nomina, id_ficha);
+
+CREATE INDEX extension_rrhh_hoja_valor_nomina
+    ON modulo_nomina.extension_rrhh_hoja_valor USING btree (id_nomina);
+
+
+-- 20230105_all_create_index_nomina.sql
+CREATE INDEX ficha_concepto_periodo_nomina ON modulo_nomina.ficha_concepto(id_periodo,id_nomina);
+CREATE INDEX ficha_concepto_periodo_nomina_ficha ON modulo_nomina.ficha_concepto(id_periodo,id_nomina,id_ficha);
+
+
+-- 20240122_add_cuenta_bancaria_persona.sql
+ALTER TABLE modulo_base.persona ADD cuenta_bancaria VARCHAR(50)[];
+
+
+-- 20240317_factura_add_1x1000.sql
+ALTER TABLE modulo_base.factura ADD informacion_1x1000 NUMERIC(20,2)[];
+
+
+-- 20240317_factura_num_20.sql
+ALTER TABLE modulo_base.factura ALTER COLUMN numero_factura TYPE varchar(20);
+ALTER TABLE modulo_base.factura ALTER COLUMN numero_control TYPE varchar(20);
+
+
+-- 20240710_retencion_add_preentacion.sql
+ALTER TABLE modulo_base.retencion ADD formula_presentacion VARCHAR(100) DEFAULT '';
+ALTER TABLE modulo_base.factura ADD id_retencion_islr integer DEFAULT NULL;
+ALTER TABLE modulo_base.factura ADD FOREIGN KEY (id_retencion_islr) REFERENCES modulo_base.retencion(id);
+
+-- 20250124_ALTER_TABLE_usuario_perfil_type_varchar.sql
+ALTER TABLE modulo_base.usuario_perfil ALTER COLUMN anio TYPE varchar(10);

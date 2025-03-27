@@ -1,0 +1,26 @@
+name: siga-php8
+
+services:
+  web:
+    image: webdevops/php-apache:8.1
+    ports:
+      - 8080:80
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - ./php.ini:/opt/docker/etc/php/php.ini
+    environment:
+      DATABASE_HOST: ${DATABASE_HOST}
+      PHP_DISMOD: ${PHP_DISMOD}
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14-bullseye
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - ./docker-database-init.sh:/docker-entrypoint-initdb.d/init-user-db.sh
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
