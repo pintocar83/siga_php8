@@ -14,7 +14,7 @@ remote: Compressing objects: 100% (3277/3277), done.\
 remote: Total 11407 (delta 1455), reused 4199 (delta 1288), pack-reused 6755 (from 1)\
 Recibiendo objetos: 100% (11407/11407), 77.89 MiB | 22.93 MiB/s, listo.\
 Resolviendo deltas: 100% (2519/2519), listo.\
-Actualizando archivos: 100% (9189/9189), listo.\
+Actualizando archivos: 100% (9189/9189), listo.
 
 5. Ingresar a la carpeta docker-siga-php8\
 `cd docker-siga-php8`
