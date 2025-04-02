@@ -31,7 +31,7 @@ Actualizando archivos: 100% (9189/9189), listo.\
 
 	Consultar la documentación de docker para mas información.
 
-10. Restaurar la estructura de la base de datos e información inicial. Ingresar al phpPgAdmin que se encuentra en el sistema:\
+10. Restaurar la estructura de la base de datos e información inicial. Ingresar al phpPgAdmin que se encuentra en el sistema:
 http://localhost:8080/module/administrador/phppgadmin/ \
 Ingresamos con:\
 **Usuario:** siga\
