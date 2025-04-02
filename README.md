@@ -37,7 +37,7 @@ Ingresamos con:\
 **Usuario:** siga\
 **Contraseña:** siga
 
-	Seleccionamos la base de datos: **siga_fundacite_sucre** y restauramos los `scripts database_estructura.sql` y `database_data_inicial.sql`, ambos ubicados en la carpeta `database/` del sistema.\
+	Seleccionamos la base de datos: **siga_fundacite_sucre** y restauramos los `scripts database_estructura.sql` y `database_data_inicial.sql`, ambos ubicados en la carpeta `database/` del sistema.
 
 11. Ya podemos ingresar al sistema desde:\
 http://localhost:8080/ \
