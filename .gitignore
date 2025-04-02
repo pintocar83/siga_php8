@@ -1,5 +1,8 @@
 /library/siga.config.php
+/data/registro_civil_ve.csv
+/data/registro_civil_ve.sqlite
 /cache/
 /help/core/data/cache/
+/help/core/data/meta/
 /report/tmp/
 */error_log
