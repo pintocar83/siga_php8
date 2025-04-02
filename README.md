@@ -26,7 +26,7 @@ Actualizando archivos: 100% (9189/9189), listo.
 9. Levantar los contenedores\
 `docker compose up`
 
-	La primera vez que se ejecute este comando, se descargará desde dockerhub las imágenes necesarios para ejecutar el sistema. Este comando levantaran 2 servicios: web y database. Para consultar el estatus de estos, ejecutamos:\
+	La primera vez que se ejecute este comando, se descargará desde dockerhub las imágenes necesarias para ejecutar el sistema. Este comando levantaran 2 servicios: web y database. Para consultar el estatus de estos, ejecutamos:\
 	`docker compose ps`
 
 	Consultar la documentación de docker para mas información.
