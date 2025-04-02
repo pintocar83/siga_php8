@@ -29,9 +29,9 @@ class SIGA_CONFIG {
           ),
     "base"=> array(//identificador de la base de datos
           "display"=>"f",
-          "description"=>"Base de datos del Registro Público - CNE", //descripcion de la base de datos
+          "description"=>"Registro Civil - Página CNE", //descripcion de la base de datos
           "driver"=>"sqlite3", //driver
-          "server"=>"", //servidor
+          "server"=>"../../data/registro_civil_ve.sqlite", //archivo sqlite
           )
   );
 

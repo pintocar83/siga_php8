@@ -40,20 +40,25 @@ class persona{
     $return["primer_apellido"]="";
     $return["segundo_apellido"]="";
     $return["fecha_nacimiento"]="";
-    $return["genero"]="";
+    $return["genero"]="M";
     $return["correo"]="";
     $return["telefono"]="";
 
+    if(!(isset(SIGA::$database["base"]["server"]) && SIGA::$database["base"]["server"]))
+      return [$return]; 
+
     $db=SIGA::DBController("base");
-    $persona=$db->Execute("
-      SELECT
-        p.*
-      FROM
-        persona as p
-      WHERE
-        p.nacionalidad='$identificacion_tipo' and
-        p.cedula='$identificacion_numero'
-    ");
+    if($db){
+      $persona=$db->Execute("
+        SELECT
+          p.*
+        FROM
+          persona as p
+        WHERE
+          p.nacionalidad='$identificacion_tipo' and
+          p.cedula='$identificacion_numero'
+      ");      
+    }
 
     if(isset($persona[0])){
       $return["nacionalidad"]=$persona[0]["nacionalidad"];
