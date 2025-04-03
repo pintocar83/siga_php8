@@ -76,10 +76,10 @@ navegador arroja timeout al superar los 10min.
 docker compose exec web /bin/bash
 ```
 
-4. Una vez dentro del contenedor, ingresamos a la carpeta `data/` para ejecutar la rutina `regsitro_civil_ve.php`
+4. Una vez dentro del contenedor, ingresamos a la carpeta `data/` para ejecutar la rutina `registro_civil_ve.php`
 ```
 cd /app/data/
-php registro_civil.ve.php
+php registro_civil_ve.php
 ```
 
 5. Una vez culminado el proceso, mostrará:
