@@ -91,7 +91,7 @@ php registro_civil.ve.php
 [Tiempo de ejecución 830 segundos]
 ```
 
-Por ultima verificamos la creacion del archivo `registro_civil_ve.sqlite` con tamaño aproximado a 1.1Gb
+Por ultimo verificamos la creacion del archivo `registro_civil_ve.sqlite` (tamaño aproximado: 1.1Gb).
 
 Ingresamos al sistema y podemos verificar la funcionalidad desde cualquiera de los modulos (ficha o beneficiarios), ingresamos la cedula y pulsamos buscar.
 
