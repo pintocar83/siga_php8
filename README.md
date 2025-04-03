@@ -56,7 +56,7 @@ http://localhost:8080/help/
 <br>
 <br>
 
-### Creación de la Base de Datos `registros_civil_ve.sql` (opcional)
+### Creación de la Base de Datos `registro_civil_ve.sql` (opcional)
 Esta base de datos contiene información básica de la persona:
 - [x] Cedula
 - [x] Nombres
