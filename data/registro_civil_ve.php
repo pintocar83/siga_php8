@@ -22,7 +22,7 @@ php registro_civil.ve.php
 
 
 El proceso de creación/importación en un 'Intel(R) Core(TM) i7-6700T CPU @ 2.80GHz' con 16Gb de Ram duró aproximadamente 14min.
-
+Registros insertados: 18.903.143
 */
 
 
@@ -55,6 +55,7 @@ $db->exec("CREATE TABLE persona (
     segundo_apellido VARCHAR (50),
     primer_nombre    VARCHAR (50),
     segundo_nombre   VARCHAR (50),
+    fecha_nacimiento DATE,
     PRIMARY KEY (
         nacionalidad,
         cedula
@@ -66,18 +67,32 @@ $f=@fopen($file_csv, "r");
 
 $n=1;
 $block="";
-while(($line=fgets($f)) !== false) {
-    $line=explode(";",trim($line));
+while(($line=fgets($f)) !== false) {    
     $line=str_replace(["' ", "'"], " ", $line);
     $line=str_replace('"', "", $line);
-    $block.="(\"".$line[0]."\",".$line[1].",\"".$line[2]."\",\"".$line[3]."\",\"".$line[4]."\",\"".$line[5]."\"),";
+    $line=explode(";",trim($line));
+    for($l=0; $l<count($line); $l++) { 
+        $line[$l]=trim($line[$l]);
+    }
+
+    $block.="('".
+        $line[0]."',".
+        $line[1].",'".
+        $db->EscapeString($line[2])."','".
+        $db->EscapeString($line[3])."','".
+        $db->EscapeString($line[4])."','".
+        $db->EscapeString($line[5])."',".
+        (isset($line[6]) && $line[6] ? "'".$line[6]."'" : 'NULL').
+    "),";
+
+    //Insertar en bloques de 10000 registros.
     if($n%10000==0){
-        $db->exec(SQLite3::escapeString("INSERT INTO persona VALUES ".substr($block, 0, -1)));
+        $db->exec("INSERT INTO persona VALUES ".substr($block, 0, -1));
         $block="";
     }
     $n++;
 }
-$db->exec(SQLite3::escapeString("INSERT INTO persona VALUES ".substr($block, 0, -1)));
+$db->exec("INSERT INTO persona VALUES ".substr($block, 0, -1));
 $block="";
 //18903143 Registros
 fclose($f);
@@ -87,6 +102,8 @@ $db->close();
 $time_end = microtime(true);
 $time = round($time_end - $time_start, 0);
 print "\n-Finalizo";
+$n--;
+print "\n-Restaurados $n registros";
 print "\n[Tiempo de ejecución $time segundos]";
 print "\n";
 ?>
