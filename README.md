@@ -49,3 +49,49 @@ http://localhost:8080/help/
 
 	El manual se encuentra realizado con dokuwiki y podemos entrar en modo edición desde la siguiente ruta:\
 	http://localhost:8080/help/core/
+
+
+
+<br>
+<br>
+<br>
+
+### Creación de la Base de Datos `registros_civil_ve.sql` (opcional)
+Esta base de datos contiene información básica de la persona:
+- [x] Cedula
+- [x] Nombres
+- [x] Apellidos
+- [ ] Fecha de nacimiento (información disponible pero pendiente de adjuntar al csv)
+
+Esta base de datos es usada por los modulos ficha y beneficiarios a la hora de registrar nuevas personas,
+al ingresar la cedula la información restante es precargada. La configurada se encuentra en `library/siga.config.php` en `"base"`.
+
+El proceso de restauracion es lento y debe ejecutarse en un terminal. La ejecucion desde el
+navegador arroja timeout al superar los 10min.
+
+1. Extrar en la carpeta actual `registro_civil_ve.part01.rar`. Esto arrojará `registro_civil_ve.csv` (este archivo es una compilación de una serie de csv publicados en la página del CNE).
+
+2. Entramos en la consola del contenedor web:
+```
+docker compose exec web /bin/bash
+```
+
+4. Una vez dentro del contenedor, ingresamos a la carpeta `data/` para ejecutar la rutina `regsitro_civil_ve.php`
+```
+cd /app/data/
+php registro_civil.ve.php
+```
+
+5. Una vez culminado el proceso, mostrará:
+```
+-Creando tabla
+-Importando...
+-Finalizo
+-Restaurados 18903143 registros
+[Tiempo de ejecución 830 segundos]
+```
+
+Por ultima verificamos la creacion del archivo `registro_civil_ve.sqlite` con tamaño aproximado a 1.1Gb
+
+Ingresamos al sistema y podemos verificar la funcionalidad desde cualquiera de los modulos (ficha o beneficiarios), ingresamos la cedula y pulsamos buscar.
+
