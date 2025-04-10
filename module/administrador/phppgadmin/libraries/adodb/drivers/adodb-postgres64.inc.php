@@ -164,7 +164,7 @@ class ADODB_postgres64 extends ADOConnection{
 	 */
 	protected function _insertID($table = '', $column = '')
 	{
-		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
+		//if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
 		$oid = pg_last_oid($this->_resultid);
 		// to really return the id, we need the table and column-name, else we can only return the oid != id
 		return empty($table) || empty($column) ? $oid : $this->GetOne("SELECT $column FROM $table WHERE oid=".(int)$oid);
@@ -172,7 +172,7 @@ class ADODB_postgres64 extends ADOConnection{
 
 	function _affectedrows()
 	{
-		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
+		//if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
 		return pg_affected_rows($this->_resultid);
 	}
 
