@@ -3035,7 +3035,7 @@ INSERT INTO comprobante_tipo VALUES ('MP', 'MOVIMIENTO DE PRODUCTOS');
 INSERT INTO usuario VALUES (1, 'admin', '{"type": "plain", "value":"admin"}', '{"background":"image\/background\/1.jpg"}', 1, true);
 SELECT pg_catalog.setval('usuario_id_seq', 78, true);
 
-INSERT INTO usuario_perfil VALUES (current_setting('global_siga.anio')::int, 1, 'administrador', true);
+INSERT INTO usuario_perfil VALUES ('default', 1, 'administrador', true);
 
 INSERT INTO item_tipo VALUES (1, 'MATERIALES Y SUMINISTROS', true);
 INSERT INTO item_tipo VALUES (2, 'BIENES', true);

@@ -21,10 +21,19 @@ class MODULO {
     $db=SIGA::DBController();
 
     if($crear){
-      if(SIGA::$database[$database]["data"]){
+      if(isset(SIGA::$database[$database]["data"])){
         return ["success"=>false, "message"=>"La configuración de años se encuentra estática, elimine 'data' en el array de configuración: siga.config.php"];
       }
+      //PROCESO DE APERTURA DE NUEVO AÑO
+      //Agregar el año a crear
       $db->Insert("modulo_base.anio_detalle",["anio"=>$data]);
+
+      //Crear asiento de apertura de contabilidad
+      $sql="INSERT INTO modulo_base.comprobante(tipo, correlativo, fecha, concepto, contabilizado, id_persona, usuario)
+            VALUES('AC', 1, '$data-01-01', 'SALDOS AL 31/12/".($data-1)."', true, NULL, '".SIGA::user()."')";
+      $db->Execute($sql);
+
+      //FIN PROCESO DE APERTURA
     }
 
     function sql_usuario($_user, $_data){
