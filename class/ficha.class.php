@@ -156,11 +156,11 @@ class ficha{
     $return["antiguedad"]=["y"=>0,"m"=>0,"d"=>0, "days"=>0];
 
     if(isset($result[0]["fecha_ingreso"])){
-      $fecha_ingreso=str_replace("}","",str_replace("{","",$result[0]["fecha_ingreso"]));
+      $fecha_ingreso=str_replace("}","",str_replace("{","","{$result[0]["fecha_ingreso"]}"));
       $fecha_ingreso=explode(",",$fecha_ingreso);
       $fecha_egreso="";
       if(isset($result[0]["fecha_egreso"]) and $result[0]["fecha_egreso"])
-        $fecha_egreso=str_replace("}","",str_replace("{","",$result[0]["fecha_egreso"]));
+        $fecha_egreso=str_replace("}","",str_replace("{","","{$result[0]["fecha_egreso"]}"));
       $fecha_egreso=explode(",",$fecha_egreso);
 
       $dias=0;
