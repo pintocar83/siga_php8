@@ -209,8 +209,8 @@ function buscar_valor($i_nomina,$id_periodo,$id_ficha,$id_concepto){
 		
 					if(!isset($f[$j]["concepto"][$k]["valor_final_ap"])) $f[$j]["concepto"][$k]["valor_final_ap"]=0;
 					
-					$suma+=$f[$j]["concepto"][$k]["valor_final"];
-					$suma_ap+=$f[$j]["concepto"][$k]["valor_final_ap"];
+					$suma+=floatval($f[$j]["concepto"][$k]["valor_final"]);
+					$suma_ap+=floatval($f[$j]["concepto"][$k]["valor_final_ap"]);
 					
 					
 					$cuenta_contable=$db->Execute("SELECT id_cuenta_contable, id_cuenta_contable_ap
@@ -221,10 +221,10 @@ function buscar_valor($i_nomina,$id_periodo,$id_ficha,$id_concepto){
 					if(!isset($cuenta_contable[0])) continue;
 					
 					if(!isset($detalle[$cuenta_contable[0]["id_cuenta_contable"]])) $detalle[$cuenta_contable[0]["id_cuenta_contable"]]=0;
-					$detalle[$cuenta_contable[0]["id_cuenta_contable"]]+=$f[$j]["concepto"][$k]["valor_final"];
+					$detalle[$cuenta_contable[0]["id_cuenta_contable"]]+=floatval($f[$j]["concepto"][$k]["valor_final"]);
 					
 					if(!isset($detalle[$cuenta_contable[0]["id_cuenta_contable_ap"]])) $detalle[$cuenta_contable[0]["id_cuenta_contable_ap"]]=0;
-					$detalle[$cuenta_contable[0]["id_cuenta_contable_ap"]]+=$f[$j]["concepto"][$k]["valor_final_ap"];
+					$detalle[$cuenta_contable[0]["id_cuenta_contable_ap"]]+=floatval($f[$j]["concepto"][$k]["valor_final_ap"]);
 					
 				}
 				

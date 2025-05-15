@@ -1,6 +1,8 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
+error_reporting(0);
+ini_set('display_errors', 'Off');
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
@@ -76,7 +78,7 @@ $ln++;
 for($i=0; $i<$c; $i++) { 
 	$activeSheet->setCellValueExplicit("A$ln","2006",PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("B$ln",str_pad(number_format($data[$i]["total_neto"],2,"",""),12,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
-	$activeSheet->setCellValueExplicit("C$ln",str_pad($data[$i]["cuenta_nomina"],20,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
+	$activeSheet->setCellValueExplicit("C$ln",str_pad($data[$i]["cuenta_nomina"]?$data[$i]["cuenta_nomina"]:"",20,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("D$ln",str_pad($data[$i]["cedula"],10,"0",STR_PAD_LEFT),PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("E$ln","00000",PHPExcel_Cell_DataType::TYPE_STRING);
 	$activeSheet->setCellValueExplicit("F$ln","0",PHPExcel_Cell_DataType::TYPE_STRING);
