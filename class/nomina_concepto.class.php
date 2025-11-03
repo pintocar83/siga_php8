@@ -224,7 +224,7 @@ class nomina_concepto{
   public static function onDelete_Formula($access,
                                           $id_concepto,
                                           $fecha,
-                                          $formula_tipo,
+                                          $formula_tipo
                                           ){
     $db=SIGA::DBController();
     if(!($access=="rw"))//solo el acceso 'rw' es permitido
