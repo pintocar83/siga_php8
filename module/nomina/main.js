@@ -82,7 +82,7 @@ siga.define('nomina', {
           xtype:'combobox',
           id: me._('tipoVentanaSeleccionarNomina'),
           name: 'tipoVentanaSeleccionarNomina',
-          fieldLabel: 'Tipo de Nómina/Periodo',
+          fieldLabel: 'Tipo de Periodo',
           labelAlign: 'top',
           labelSeparator: '',
           labelStyle: 'font-weight: bold;',
@@ -111,6 +111,9 @@ siga.define('nomina', {
               me.getCmp('id_nomina').getStore().setData(data_nomina);
               if(data_nomina.length>0){
                 me.getCmp("id_nomina").setValue(data_nomina[0]["id"]);
+              }
+              else{
+                me.getCmp("id_nomina").setValue([]);
               }
             }
           }
@@ -383,7 +386,7 @@ siga.define('nomina', {
           xtype:'combobox',
           id: me._('tipo'),
           name: 'tipo',
-          fieldLabel: 'Tipo de Nómina/Periodo',
+          fieldLabel: 'Tipo de Periodo',
           anchor: '100%',
           queryMode: "local",
           store: {
@@ -682,7 +685,7 @@ siga.define('nomina', {
               xtype:'combobox',
               id: me._('tipo_nomina_concepto_importar'),
               name: 'tipo_nomina_concepto_importar',
-              fieldLabel: 'Tipo de Nómina/Periodo',
+              fieldLabel: 'Tipo de Periodo',
               labelAlign: 'top',
               labelSeparator: '',
               labelStyle: 'font-weight: bold;',
@@ -1389,7 +1392,7 @@ siga.define('nomina', {
         xtype: 'button',
         id: me._('btnContabilizar'),
         height: 45,
-        width: 65,
+        width: 70,
         text: 'Contabilizar',
         cls: 'siga-btn-base',
         iconCls: 'siga-btn-base-icon icon-contabilizar',
@@ -1462,6 +1465,76 @@ siga.define('nomina', {
               }
             }
           },
+        ]
+      },
+      {
+        xtype: 'button',
+        height: 45,
+        width: 70,
+        text: 'Administrar',
+        tooltip: 'Administrar',
+        cls: 'siga-btn-base',
+        iconCls: 'siga-btn-base-icon icon-nomina-administrar',
+        iconAlign: 'top',
+        hidden: true,
+        menu: [
+          {
+            text: 'Tipos de Nóminas / Periodos',
+            listeners: {
+              click: function(){
+                siga.open('nomina_periodo_tipo');
+              }
+            }
+          },
+          {
+            text: 'Nóminas',
+            listeners: {
+              click: function(){
+                siga.open("nomina_admin")
+              }
+            }
+          },
+          {
+            text: 'Fichas',
+            listeners: {
+              click: function(){
+                siga.open("ficha");
+              }
+            }
+          },
+          {
+            text: 'Cargos',
+            listeners: {
+              click: function(){
+                siga.open("nomina_cargo");
+              }
+            }
+          },
+          {
+            text: 'Escala Salarial',
+            listeners: {
+              click: function(){
+                siga.open("nomina_escala_salarial");
+              }
+            }
+          },
+          {
+            text: 'Conceptos',
+            listeners: {
+              click: function(){
+                siga.open("nomina_concepto");
+              }
+            }
+          },
+          {
+            text: 'Periodos',
+            listeners: {
+              click: function(){
+                siga.open("nomina_periodo");
+              }
+            }
+          }
+
         ]
       },
       {
@@ -3471,7 +3544,7 @@ siga.define('nomina', {
     if(o.tipo){
       var tmp=[];
       for(var i = 0; i<me.internal.data.preload["nomina"].length; i++)
-        if(me.internal.data.preload["nomina"][i]["tipo"]==o.tipo)
+        if(me.internal.data.preload["nomina"][i]["tipo"]==o.tipo || !me.internal.data.preload["nomina"][i]["tipo"])
           tmp.push(me.internal.data.preload["nomina"][i]);
       return tmp;
     }

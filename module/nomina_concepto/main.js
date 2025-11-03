@@ -28,14 +28,59 @@ siga.define("nomina_concepto",{
       scrollable: true,
       items: [
         {
-          xtype:'datefield',
-          id: me._('ventana_formula_fecha'),
-          fieldLabel: 'Fecha',
-          submitFormat: 'Y-m-d',
-          value: '',
-          anchor: "30%",
-          margin: '15 40 0 40'
+          xtype: "container",
+          //margin: "30 0 0 0",
+          margin: '15 40 0 40',
+          layout: "hbox",
+          items: [
+            {
+              xtype:'datefield',
+              id: me._('ventana_formula_fecha'),
+              fieldLabel: 'Fecha',
+              labelAlign: 'top',
+              labelSeparator: '',
+              labelStyle: 'font-weight: bold;',
+              submitFormat: 'Y-m-d',
+              value: '',
+              width: 150,
+              //margin: '15 40 0 40',
+            },
+            {
+                xtype:'tbspacer',
+                flex:1
+            },
+            {
+              xtype:'combobox',
+              id: me._('ventana_formula_tipo'),
+              name: 'tipo',
+              fieldLabel: 'Tipo de Periodo',
+              labelAlign: 'top',
+              labelSeparator: '',
+              labelStyle: 'font-weight: bold;',
+              width: 250,
+              queryMode: "local",
+              store: {
+                fields: ['tipo','denominacion'],
+                data: [],
+              },
+              displayField: 'denominacion',
+              valueField: 'tipo',
+              allowBlank: false,
+              forceSelection: true,
+              editable: false,
+              value: '',
+              listeners: {
+                afterrender: function(e, eOpts ){
+                  e.setValue("Q");
+                },
+                change: function(e, The, eOpts ){
+                  
+                }
+              }
+            },
+          ]
         },
+
         {
           xtype:'textarea',
           id: me._('ventana_formula_definicion'),
@@ -87,6 +132,7 @@ siga.define("nomina_concepto",{
                       action: 'onSave_Formula',
                       id_concepto: me.internal.windowFormula.internal.id_concepto,
                       fecha: fecha,
+                      formula_tipo: me.getCmp("ventana_formula_tipo").getValue(),
                       definicion: me.getCmp("ventana_formula_definicion").getValue(),
                       definicion_ap: me.getCmp("ventana_formula_definicion_ap").getValue()
                     }
@@ -967,12 +1013,18 @@ siga.define("nomina_concepto",{
             viewConfig: {
               markDirty: false
             },
+            features:[{
+                ftype: 'grouping',
+                groupHeaderTpl: 'TIPO: {name}',
+                collapsible : false,
+            }],            
             listeners: {
               itemdblclick: function(dataview, record, item, index, e){                
                 if(!me.getCmp("id").getValue()) return;
                 me.internal.windowFormula.internal.id_concepto=record.get("id_concepto");
                 me.internal.windowFormula.onLimpiar();
                 me.getCmp('ventana_formula_fecha').setValue(record.get("fecha"));                
+                me.getCmp('ventana_formula_tipo').setValue(record.get("formula_tipo") ?? '');                
                 me.getCmp('ventana_formula_definicion').setValue(record.get("definicion"));
                 me.getCmp('ventana_formula_definicion_ap').setValue(record.get("definicion_ap"));
                 me.internal.windowFormula.show();
@@ -1008,6 +1060,7 @@ siga.define("nomina_concepto",{
 
                   var id_concepto=seleccion[0].data["id_concepto"];
                   var fecha=seleccion[0].data["fecha"];                  
+                  var formula_tipo=seleccion[0].data["formula_tipo"];                  
 
                   Ext.MessageBox.confirm('Eliminar',
                     '<b>\u00BFEst\u00e1 seguro de eliminar el registro?<br><b>Fecha: </b>'+formatDate(fecha)+".",
@@ -1019,7 +1072,8 @@ siga.define("nomina_concepto",{
                           params: {
                             action: 'onDelete_Formula',
                             id_concepto: id_concepto,
-                            fecha: fecha
+                            fecha: fecha,
+                            formula_tipo: formula_tipo,
                           }
                         });
                         if(resp.statusText=="OK"){
@@ -1039,10 +1093,11 @@ siga.define("nomina_concepto",{
               { text: '<small><b>Formula (AP)</b></small>', dataIndex: 'definicion_ap', menuDisabled: true, sortable: false, width: "43%" }              
             ],
             store: {
-              fields: ['id_concepto','fecha','fecha_formateada','definicion','definicion_ap'],
+              fields: ['id_concepto','fecha','fecha_formateada','definicion','definicion_ap','formula_tipo','formula_tipo_denominacion'],
               autoLoad: false,
               remoteSort: true,              
               sorters: [{property: 'fecha', direction: 'DESC'}],
+              groupField: 'formula_tipo_denominacion',
               proxy: {
                 type:'ajax',
                 url: 'module/nomina_concepto/',
@@ -1173,12 +1228,37 @@ siga.define("nomina_concepto",{
   
   init: function(){
     var me=this;
+
+    Ext.Ajax.request({
+      method: 'POST',
+      url:'module/nomina_periodo_tipo/',
+      params:{
+        action: 'onList_Activo',
+        sort: '[{"property": "denominacion", "direction": "ASC"}]',
+        limit: 'ALL',
+        start: '0',
+      },
+      success: function(request){
+        var result=Ext.JSON.decode(request.responseText);
+
+        const tipos = [
+          {
+            tipo: '',
+            denominacion: 'NO APLICA'
+          },
+          ...(result?.result ?? [])
+        ]
+
+        me.getCmp('ventana_formula_tipo').getStore().setData(tipos);
+        me.getCmp("ventana_formula_tipo").setValue("");
+      },
+      failure:function(request){
+        var result=Ext.JSON.decode(request.responseText);
+      }
+    });
+
     
-    me.onNew();
-    
-    
-    
-    
+    me.onNew();     
   },
     
   onNew: function(){

@@ -72,6 +72,7 @@ class MODULO extends nomina_concepto{
         print json_encode(self::onSave_Formula($access,
                                                   SIGA::param("id_concepto"),
                                                   SIGA::param("fecha"),
+                                                  SIGA::paramUpper("formula_tipo"),
                                                   SIGA::paramUpper("definicion"),
                                                   SIGA::paramUpper("definicion_ap")
                                                   ));
@@ -89,7 +90,8 @@ class MODULO extends nomina_concepto{
         header('Content-Type: text/plain; charset=utf-8');
         print json_encode(self::onDelete_Formula( $access,
                                                   SIGA::param("id_concepto"),
-                                                  SIGA::param("fecha")
+                                                  SIGA::param("fecha"),
+                                                  SIGA::paramUpper("formula_tipo")
                                                   ));
         break;
       

@@ -79,10 +79,11 @@ class nomina_concepto{
   public static function onList_Formula($id_concepto,$start,$limit,$sort){
     $db=SIGA::DBController();
     $sql="SELECT
-            *,
-            to_char(fecha,'DD/MM/YYYY') as fecha_formateada
+            F.*,
+            to_char(F.fecha,'DD/MM/YYYY') as fecha_formateada,
+            COALESCE(PT.denominacion, 'NO APLICA') formula_tipo_denominacion
           FROM
-            modulo_nomina.concepto_formula
+            modulo_nomina.concepto_formula F LEFT JOIN modulo_nomina.periodo_tipo PT ON PT.tipo=F.formula_tipo
           WHERE
             id_concepto=$id_concepto
             ";
@@ -181,6 +182,7 @@ class nomina_concepto{
   public static function onSave_Formula($access,
                                         $id_concepto,
                                         $fecha,
+                                        $formula_tipo,
                                         $definicion,
                                         $definicion_ap
                                         ){
@@ -188,11 +190,12 @@ class nomina_concepto{
     if(!($access=="rw"))//solo el acceso 'rw' es permitido
       return array("success"=>false,"message"=>"Error. El usuario no tiene permiso para guardar datos.");
     
-    $db->Delete("modulo_nomina.concepto_formula","id_concepto='$id_concepto' AND fecha='$fecha'");
+    $db->Delete("modulo_nomina.concepto_formula","id_concepto='$id_concepto' AND fecha='$fecha' and formula_tipo ILIKE '$formula_tipo'");
     
     $result=$db->Insert("modulo_nomina.concepto_formula",array(
                                                                 "id_concepto"=>"'".$id_concepto."'",
                                                                 "fecha"=>"'$fecha'",
+                                                                "formula_tipo"=>"'$formula_tipo'",
                                                                 "definicion"=>"'$definicion'",
                                                                 "definicion_ap"=>"'$definicion_ap'"
                                                                 ));
@@ -220,13 +223,14 @@ class nomina_concepto{
   
   public static function onDelete_Formula($access,
                                           $id_concepto,
-                                          $fecha
+                                          $fecha,
+                                          $formula_tipo,
                                           ){
     $db=SIGA::DBController();
     if(!($access=="rw"))//solo el acceso 'rw' es permitido
       return array("success"=>false,"message"=>"Error. El usuario no tiene permiso para eliminar datos.");
     
-    $result=$db->Delete("modulo_nomina.concepto_formula","id_concepto='$id_concepto' AND fecha='$fecha'");
+    $result=$db->Delete("modulo_nomina.concepto_formula","id_concepto='$id_concepto' AND fecha='$fecha' and formula_tipo ILIKE '$formula_tipo'");
 
     if(!$result)      
       return array("success"=>false,"message"=>"Error al guardar en la tabla: 'modulo_nomina.concepto_formula'");

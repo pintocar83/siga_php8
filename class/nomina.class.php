@@ -254,9 +254,10 @@ class nomina{
   public static function ficha_concepto($id_nomina,$id_periodo,$id_ficha){
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion, tipo FROM modulo_nomina.periodo WHERE id=$id_periodo");
     $fecha_inicio=$periodo[0]["fecha_inicio"];
     $fecha_culminacion=$periodo[0]["fecha_culminacion"];
+    $periodo_tipo=$periodo[0]["tipo"];
     //AGREGAS LAS DEFINICIONES DEL SISTEMA (NUMERO_LUNES)
     $definida=array();
     $definida=self::constante_sistema($fecha_inicio,$fecha_culminacion);
@@ -267,7 +268,7 @@ class nomina{
     $definida["ANTIGUEDAD"]=$ficha_antiguedad["antiguedad_anio"];
 
     //buscar conceptos ficha
-    $ficha_concepto=$db->Execute("SELECT *
+    /*$ficha_concepto=$db->Execute("SELECT *
                                   FROM modulo_nomina.ficha_concepto as FC, modulo_nomina.concepto AS C, modulo_nomina.concepto_formula as CF
                                   WHERE
                                     C.id=FC.id_concepto and
@@ -276,10 +277,42 @@ class nomina{
                                     FC.id_periodo=$id_periodo AND
                                     FC.id_ficha=$id_ficha AND
                                     CF.fecha = (SELECT fecha FROM modulo_nomina.concepto_formula WHERE fecha<='$fecha_culminacion' AND id_concepto=C.id ORDER BY fecha DESC LIMIT 1)
-                                  ORDER BY C.orden, C.codigo");
+                                  ORDER BY C.orden, C.codigo");*/
+    $sql="
+      SELECT *
+      FROM modulo_nomina.ficha_concepto as FC
+      WHERE
+        FC.id_nomina=$id_nomina AND
+        FC.id_periodo=$id_periodo AND
+        FC.id_ficha=$id_ficha
+    ";
+    $ficha_concepto_tmp=$db->Execute($sql);
+    $ficha_concepto=[];
 
-
-    
+    //buscar datos del concepto FC.id_concepto para el periodo actual
+    for($i=0;$i<count($ficha_concepto_tmp);$i++){
+      $sql="
+        SELECT 
+          *
+        FROM
+          modulo_nomina.concepto AS C,
+          modulo_nomina.concepto_formula AS F
+        WHERE
+          COALESCE(F.formula_tipo,'') IN ('','$periodo_tipo') AND
+          F.fecha<='$fecha_culminacion' AND
+          C.id=F.id_concepto AND          
+          C.id='".$ficha_concepto_tmp[$i]["id_concepto"]."'
+        ORDER BY
+          F.fecha DESC,
+          F.formula_tipo ASC
+        LIMIT 1
+      ";
+      //print_r($sql);
+      $concepto_formula_tmp=$db->Execute($sql);
+      if(isset($concepto_formula_tmp[0])){
+        $ficha_concepto[]=array_merge($ficha_concepto_tmp[$i],$concepto_formula_tmp[0]);
+      }
+    }
 
     for($i=0;$i<count($ficha_concepto);$i++){
       if(self::es_formula($ficha_concepto[$i]["definicion"])){
@@ -349,106 +382,14 @@ class nomina{
 
   public static function fichas($id_nomina,$id_periodo,$filtro_busqueda=NULL){
     return self::onListFichaPeriodo($id_nomina,$id_periodo,0,"ALL",$filtro_busqueda)["result"];
-
-
-    /*
-
-    $db=SIGA::DBController();
-
-    $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion FROM modulo_nomina.periodo WHERE id=$id_periodo");
-    $fecha_inicio=$periodo[0]["fecha_inicio"];
-    $fecha_culminacion=$periodo[0]["fecha_culminacion"];
-
-    $ficha=$db->Execute("SELECT
-                            F.id,
-                            F.id as id_ficha,
-                            P.identificacion_tipo as nacionalidad,
-                            P.identificacion_numero as cedula,
-                            split_part(P.denominacion,';',1) || ' ' || split_part(P.denominacion,';',3) as nombre_apellido,
-                            replace(P.denominacion,';',' ') as nombres_apellidos
-                          FROM
-                            modulo_nomina.ficha AS F,
-                            modulo_base.persona as P
-                          WHERE
-                            F.id_persona=P.id AND
-                            F.id in (select distinct id_ficha from modulo_nomina.ficha_concepto where id_periodo=$id_periodo and id_nomina=$id_nomina)
-
-                          ");
-
-    for($i=0;$i<count($ficha);$i++){
-      $id_ficha=$ficha[$i]["id"];
-      //BUSCAR CARGO DE LA FICHA PARA EL PERIODO ACTUAL
-      $ficha_cargo=$db->Execute("SELECT
-                                    cargo,
-                                    denominacion as cargo_denominacion,
-                                    orden
-                                  FROM modulo_nomina.cargo
-                                  WHERE id = ( select id_cargo
-                                               from modulo_nomina.ficha_cargo
-                                               where id_ficha=$id_ficha and fecha <= '$fecha_culminacion'
-                                               order by fecha desc
-                                               limit 1)");
-
-      if(isset($ficha_cargo[0]))
-        $ficha_cargo=array("cargo"=>$ficha_cargo[0]["cargo"],"cargo_denominacion"=>$ficha_cargo[0]["cargo_denominacion"],"orden"=>(int)$ficha_cargo[0]["orden"]);
-      else
-        $ficha_cargo=array("cargo"=>"","cargo_denominacion"=>"","orden"=>0);
-
-      $ficha[$i]+=$ficha_cargo;
-      //FIN BUSCAR CARGO
-
-      $ficha_concepto=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
-      $ficha[$i]+=$ficha_concepto;
-    }
-    usort($ficha, array(__CLASS__,'ficha_ordenar'));
-    return $ficha;*/
   }
 
   public static function onGet($access,$id_nomina,$id_periodo){
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion, cerrado, contabilizado FROM modulo_nomina.periodo WHERE id=$id_periodo");
-    $fecha_inicio=$periodo[0]["fecha_inicio"];
-    $fecha_culminacion=$periodo[0]["fecha_culminacion"];
-    //print_r($periodo);
-    $return=array();
-    $return["concepto"]=$db->Execute("SELECT
-                                          *
-                                        FROM
-                                          modulo_nomina.concepto AS C,
-                                          modulo_nomina.concepto_formula as CF,
-                                          modulo_nomina.concepto_periodo as CP
-                                        WHERE
-                                          C.id=CF.id_concepto AND
-                                          CF.fecha = (SELECT fecha
-                                                      FROM modulo_nomina.concepto_formula
-                                                      WHERE fecha<='$fecha_culminacion' AND id_concepto=C.id
-                                                      ORDER BY fecha DESC
-                                                      LIMIT 1) AND
-                                          C.id=CP.id_concepto AND
-                                          CP.id_periodo=$id_periodo AND CP.id_nomina=$id_nomina
-                                        ORDER BY C.orden, C.codigo");
-    //print_r($return["concepto"]);
-    $k=0;
-    $conceptos_identificador=array();
-    $conceptos_identificador_sistema=self::constante_sistema($fecha_inicio,$fecha_culminacion);
-
-    foreach($conceptos_identificador_sistema as $d => $valor_formula){
-      $conceptos_identificador[$k]=$d;
-      $k++;
-      }
-
-    for($i=0;$i<count($return["concepto"]);$i++,$k++)
-      $conceptos_identificador[$k]=$return["concepto"][$i]["identificador"];
-
-    for($i=0;$i<count($return["concepto"]);$i++){
-      $return["concepto"][$i]["es_formula"]=self::es_formula($return["concepto"][$i]["definicion"]);
-      $return["concepto"][$i]["indefinido"]=self::formula_tokens_indefinidos($conceptos_identificador,$return["concepto"][$i]["definicion"]);
-    }
-
+    $return=selt::onListConceptoPeriodo($access,$id_nomina,$id_periodo);  
     $return["ficha"]=self::fichas($id_nomina,$id_periodo);
-    $return["cerrado"]=$periodo[0]["cerrado"];
-    $return["contabilizado"]=$periodo[0]["contabilizado"];
+
     return $return;
   }
 
@@ -485,14 +426,15 @@ class nomina{
   public static function onAdd($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto){
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT fecha_culminacion, cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    $periodo=$db->Execute("SELECT fecha_culminacion, cerrado, tipo FROM modulo_nomina.periodo WHERE id=$id_periodo");
     if($periodo[0]["cerrado"]==='t'){
       exit;
     }
     $fecha_culminacion=$periodo[0]["fecha_culminacion"];
+    $periodo_tipo=$periodo[0]["tipo"];
 
     //buscar el concepto a agregar
-    $concepto=$db->Execute("SELECT
+    /*$concepto=$db->Execute("SELECT
                               definicion
                             FROM
                               modulo_nomina.concepto AS C,
@@ -504,9 +446,27 @@ class nomina{
                                           FROM modulo_nomina.concepto_formula
                                           WHERE fecha<='$fecha_culminacion' AND id_concepto=C.id
                                           ORDER BY fecha DESC
-                                          LIMIT 1)");
+                                          LIMIT 1)");*/
 
-    $valor=$concepto[0]["definicion"];
+
+    $sql="
+      SELECT 
+        F.definicion
+      FROM
+        modulo_nomina.concepto_formula AS F
+      WHERE
+        COALESCE(F.formula_tipo,'') IN ('','$periodo_tipo') AND
+        F.fecha<='$fecha_culminacion' AND
+        F.id_concepto='$id_concepto'
+      ORDER BY
+        F.fecha DESC,
+        F.formula_tipo ASC
+      LIMIT 1
+    ";
+    $concepto=$db->Execute($sql);
+
+
+    $valor=isset($concepto[0]["definicion"]) ? $concepto[0]["definicion"] : "0";
     if(self::es_formula($valor)) $valor="0";
 
     if(count($ids_ficha)===1 and $ids_ficha[0]==='*'){
@@ -612,11 +572,12 @@ class nomina{
   public static function onAddValorFicha($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto){
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT fecha_culminacion, cerrado FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    $periodo=$db->Execute("SELECT fecha_culminacion, cerrado, tipo FROM modulo_nomina.periodo WHERE id=$id_periodo");
     if($periodo[0]["cerrado"]==='t')
       return [];
 
     $fecha_culminacion=$periodo[0]["fecha_culminacion"];
+    $periodo_tipo=$periodo[0]["tipo"];
 
     //buscar el identificador del concepto
     $concepto=$db->Execute("SELECT
@@ -685,37 +646,7 @@ class nomina{
 
     //cuando no es ficha valor, usar el agregar normal
     if($ficha_valor_sw==false){
-      //buscar definicion del concepto
-      $sql="SELECT definicion
-            FROM modulo_nomina.concepto_formula
-            WHERE id_concepto=$id_concepto AND fecha<='$fecha_culminacion'
-            ORDER BY fecha DESC
-            LIMIT 1";
-      $concepto=$db->Execute($sql);
-
-      $valor=0;
-      if(isset($concepto[0]["definicion"]))
-        $valor=$concepto[0]["definicion"];
-      if(self::es_formula($valor))
-        $valor=0;
-
-      for($i=0;$i<count($ids_ficha);$i++){
-        $id_ficha=$ids_ficha[$i];
-        //si es agregar a todos, verificar si existe valor del concepto para la ficha, si existe valor saltar.
-        $valor_actual=$db->Execute("SELECT valor FROM modulo_nomina.ficha_concepto WHERE id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
-        if(isset($valor_actual[0]["valor"]))
-          if($valor_actual[0]["valor"]>0) continue;
-
-        //borrar registros existentes
-        $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
-
-        $db->Insert("modulo_nomina.ficha_concepto",array(
-                                          "id_nomina"=>"$id_nomina",
-                                          "id_periodo"=>"$id_periodo",
-                                          "id_ficha"=>"$id_ficha",
-                                          "id_concepto"=>"$id_concepto",
-                                           "valor"=>"$valor"));
-      }
+      return self::onAdd($access,$id_nomina,$id_periodo,$ids_ficha,$id_concepto);      
     }
 
     $return=[];
@@ -854,11 +785,12 @@ class nomina{
     SIGA::$DBMode=PGSQL_ASSOC;
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT cerrado, fecha_culminacion FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    $periodo=$db->Execute("SELECT cerrado, fecha_culminacion, tipo FROM modulo_nomina.periodo WHERE id=$id_periodo");
     if($periodo[0]["cerrado"]==='t')
       return ["success"=>false, "message"=>"El periodo se encuentra cerrado."];
 
     $fecha_culminacion = $periodo[0]["fecha_culminacion"];
+    $periodo_tipo = $periodo[0]["tipo"];
 
     $carpeta_base=SIGA::databasePath()."/nomina/importar_concepto/";
     if(!file_exists($carpeta_base))
@@ -958,8 +890,11 @@ class nomina{
               $sql="
                 SELECT id_concepto, definicion
                 FROM modulo_nomina.concepto_formula
-                WHERE fecha<='{$fecha_culminacion}' AND definicion LIKE '%{$concepto_identificador}%'
-                ORDER BY fecha DESC
+                WHERE
+                  COALESCE(formula_tipo,'') IN ('','$periodo_tipo') AND
+                  fecha<='{$fecha_culminacion}' AND
+                  definicion LIKE '%{$concepto_identificador}%'
+                ORDER BY fecha DESC, formula_tipo ASC
                 LIMIT 1
               ";
               //print $sql;
@@ -1281,7 +1216,28 @@ class nomina{
         $fecha_i="$anio-$mes-$dia";
         $fecha_c="$anio-$mes-".$dm[intval($mes)-1];
         break;
-      case "S"://semestral
+      case "6"://semestral
+        $fecha=explode("-",$periodo[0]['fecha_inicio']);
+        $tipo="S";
+        if($fecha[1]=="01"){//si es el 1er semestre
+          $codigo="002";
+          $anio=$fecha[0];
+          $fecha_i="$anio-07-01";
+          $fecha_c="$anio-12-31";
+        }
+        else if($fecha[1]=="07"){//si es el 2do semestre
+          $codigo="001";
+          $anio=intval($fecha[0])+1;
+          $fecha_i="$anio-01-01";
+          $fecha_c="$anio-06-30";
+        }
+        else{
+          //error, no debería cumplirse
+          return array("success"=>false, "message"=>"Error en los parametros para la creación del siguiente periodo. Tipo: '6'. ");
+          exit;
+        }
+        break;
+      /*case "S"://Semanal
         $fecha=explode("-",$periodo[0]['fecha_inicio']);
         $tipo="S";
         if($fecha[1]=="01"){//si es el 1er semestre
@@ -1301,7 +1257,7 @@ class nomina{
           return array("success"=>false, "message"=>"Error en los parametros para la creación del siguiente periodo. Tipo: 'S'. ");
           exit;
         }
-        break;
+        break;*/
       default:
         //leer estos valores de la interfaz
         $codigo="002";
@@ -2207,12 +2163,12 @@ class nomina{
     if($id_periodo){
       $sql="SELECT N.*, N.codigo||' '||N.nomina as codigo_nomina
             FROM modulo_nomina.nomina as N
-            WHERE N.activo AND UPPER(N.nomina) LIKE UPPER('%$text%') AND N.tipo=(select tipo from modulo_nomina.periodo where id=$id_periodo)";
+            WHERE N.activo AND UPPER(N.nomina) LIKE UPPER('%$text%') AND (N.tipo LIKE '' OR N.tipo IS NULL OR N.tipo=(select tipo from modulo_nomina.periodo where id=$id_periodo))";
     }
     if($tipo){
       $sql="SELECT N.*, N.codigo||' '||N.nomina as codigo_nomina
             FROM modulo_nomina.nomina as N
-            WHERE N.activo AND UPPER(N.nomina) LIKE UPPER('%$text%') AND N.tipo='$tipo'";
+            WHERE N.activo AND UPPER(N.nomina) LIKE UPPER('%$text%') AND (N.tipo LIKE '' OR N.tipo IS NULL OR N.tipo='$tipo')";
     }
 
     //$return["result"]=$db->Execute($sql);
@@ -2732,35 +2688,52 @@ class nomina{
   public static function onListConceptoPeriodo($access,$id_nomina,$id_periodo){
     $db=SIGA::DBController();
 
-    $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion, cerrado, contabilizado FROM modulo_nomina.periodo WHERE id=$id_periodo");
+    $periodo=$db->Execute("SELECT fecha_inicio, fecha_culminacion, cerrado, contabilizado, tipo FROM modulo_nomina.periodo WHERE id=$id_periodo");
     $fecha_inicio=$periodo[0]["fecha_inicio"];
     $fecha_culminacion=$periodo[0]["fecha_culminacion"];
+    $periodo_tipo=$periodo[0]["tipo"];
     //print_r($periodo);
-    $return=array();
-    $return["concepto"]=$db->Execute("SELECT DISTINCT
-                                          C.id,
-                                          C.orden,
-                                          C.codigo,
-                                          C.tipo,
-                                          C.identificador,
-                                          C.concepto,
-                                          CF.definicion,
-                                          CF.definicion_ap,
-                                          CP.id_concepto
-                                        FROM
-                                          modulo_nomina.concepto AS C,
-                                          modulo_nomina.concepto_formula as CF,
-                                          modulo_nomina.concepto_periodo as CP
-                                        WHERE
-                                          C.id=CF.id_concepto AND
-                                          CF.fecha = (SELECT fecha
-                                                      FROM modulo_nomina.concepto_formula
-                                                      WHERE fecha<='$fecha_culminacion' AND id_concepto=C.id
-                                                      ORDER BY fecha DESC
-                                                      LIMIT 1) AND
-                                          C.id=CP.id_concepto AND
-                                          CP.id_periodo=$id_periodo AND CP.id_nomina IN ($id_nomina)
-                                        ORDER BY C.orden, C.codigo");
+    $return=[];
+    $return["concepto"]=[];
+    $concepto_tmp=$db->Execute("SELECT DISTINCT
+                          C.id,
+                          C.orden,
+                          C.codigo,
+                          C.tipo,
+                          C.identificador,
+                          C.concepto,
+                          CP.id_concepto
+                        FROM
+                          modulo_nomina.concepto AS C,
+                          modulo_nomina.concepto_periodo as CP
+                        WHERE
+                          C.id=CP.id_concepto AND
+                          CP.id_periodo=$id_periodo AND CP.id_nomina IN ($id_nomina)
+                        ORDER BY C.orden, C.codigo");
+    //buscar la formula
+    for($i=0;$i<count($concepto_tmp);$i++){
+      $sql="
+        SELECT 
+          F.definicion,
+          F.definicion_ap,
+          F.fecha,
+          F.formula_tipo
+        FROM
+          modulo_nomina.concepto_formula AS F
+        WHERE
+          COALESCE(F.formula_tipo,'') IN ('','$periodo_tipo') AND
+          F.fecha<='$fecha_culminacion' AND
+          F.id_concepto='".$concepto_tmp[$i]["id_concepto"]."'
+        ORDER BY
+          F.fecha DESC,
+          F.formula_tipo ASC
+        LIMIT 1
+      ";
+      $formula_tmp=$db->Execute($sql);
+      if(isset($formula_tmp[0])){
+        $return["concepto"][]=array_merge($concepto_tmp[$i],$formula_tmp[0]);
+      }      
+    }
 
 
     $k=0;
@@ -2770,7 +2743,7 @@ class nomina{
     foreach($conceptos_identificador_sistema as $d => $valor_formula){
       $conceptos_identificador[$k]=$d;
       $k++;
-      }
+    }
 
     for($i=0;$i<count($return["concepto"]);$i++,$k++)
       $conceptos_identificador[$k]=$return["concepto"][$i]["identificador"];

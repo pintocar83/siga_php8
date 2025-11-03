@@ -23,6 +23,10 @@
     background-image: url(image/icon-persona_buscar.svg);
 }
 
+.icon-nomina-administrar {
+    background-image: url(image/icon-administrar.png);
+}
+
 /*.icon-nomina_agregar_persona{
     background-image: url(image/icon-agregar.png);
 }
