@@ -3264,7 +3264,8 @@ siga.define('nomina', {
                 }//FIN for(var j=0;j<concepto_id.length;j++)
 
                 if(records[i].get("mensaje")){
-                  records[i].set("mensaje","<b>La persona tiene los siguientes conceptos, lo cuales no se encuentran asociados a la nómina actual:<br></b><p>"+records[i].get("mensaje")+"</p>");
+                  records[i].set("mensaje","<b>La persona tiene los siguientes conceptos (no estan agregados a la nómina actual):<br></b><p>"+records[i].get("mensaje")+"</p>");
+                  me.getCmp('gridList').getView().refreshNode(i);
                 }
 
               }//FIN for(var i=0;i<records.length;i++)

@@ -478,6 +478,10 @@ class nomina{
       for($i=0;$i<count($F);$i++)
         $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
+    $sw_return_fichas=false;
+    if(count($ids_ficha)===1 and $ids_ficha[0]!=='*'){
+      $sw_return_fichas=true;
+    }
 
     $return=array();
     for($i=0;$i<count($ids_ficha);$i++){
@@ -496,9 +500,10 @@ class nomina{
                                         "id_ficha"=>"$id_ficha",
                                         "id_concepto"=>"$id_concepto",
                                          "valor"=>"$valor"));
-
-      $return[$i]["id_ficha"]=$id_ficha;
-      $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
+      if($sw_return_fichas){
+        $return[$i]["id_ficha"]=$id_ficha;
+        $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);        
+      }
     }
     return $return;
   }
@@ -601,6 +606,10 @@ class nomina{
       for($i=0;$i<count($F);$i++)
         $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
+    $sw_return_fichas=false;
+    if(count($ids_ficha)===1 and $ids_ficha[0]!=='*'){
+      $sw_return_fichas=true;
+    }
 
     //buscar la configuracion de los conceptos ficha:%
     $config=$db->Execute("SELECT
@@ -650,7 +659,7 @@ class nomina{
     }
 
     $return=[];
-    for($i=0;$i<count($ids_ficha);$i++){
+    for($i=0;$i<count($ids_ficha) && $sw_return_fichas;$i++){
       $id_ficha=$ids_ficha[$i];
       $return[$i]["id_ficha"]=$id_ficha;
       $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
@@ -1128,12 +1137,20 @@ class nomina{
         $ids_ficha[$i]=$F[$i]["id_ficha"];
     }
 
+    $sw_return_fichas=false;
+    if(count($ids_ficha)===1 and $ids_ficha[0]!=='*'){
+      $sw_return_fichas=true;
+    }
+
     $return=array();
     for($i=0;$i<count($ids_ficha);$i++){
       $id_ficha=$ids_ficha[$i];
       $db->Delete("modulo_nomina.ficha_concepto","id_nomina=$id_nomina and id_periodo=$id_periodo and id_ficha=$id_ficha and id_concepto=$id_concepto");
-      $return[$i]["id_ficha"]=$id_ficha;
-      $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);
+
+      if($sw_return_fichas){
+        $return[$i]["id_ficha"]=$id_ficha;
+        $return[$i]+=self::ficha_concepto($id_nomina,$id_periodo,$id_ficha);        
+      }
     }
     return $return;
   }

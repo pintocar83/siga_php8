@@ -859,69 +859,130 @@ siga.define('ficha', {
                     allowNegative: false
                   }
                 ]
-              },
-
-
-
+              },   
               {
-                xtype: 'combobox',
-                id: me._('id_periodo'),
-                name: 'id_periodo',
+                xtype: 'fieldcontainer',
                 anchor: '100%',
                 margin: {bottom: '0px'},
-                fieldLabel: 'Periodo - Nóminas <small style="color:gray;">(Indica en que nóminas se encuentra la persona en un periodo específico)</small>',
+                fieldLabel: 'Periodo - Nóminas <small style="color:gray;"> / Nóminas donde se encuentra, según el periodo específicado.</small>',
                 labelAlign: 'top',
                 labelSeparator: '',
                 labelStyle: 'font-weight: bold;',
-                editable: false,
-                queryMode: "local",
-                displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
-                tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
-                store: {
-                  fields: ['id','periodo'],
-                  autoLoad: true,
-                  pageSize: 1000,
-                  proxy: {
-                    type:'ajax',
-                    url: 'module/nomina_periodo/',
-                    actionMethods: {read: "POST"},//actionMethods:'POST',
-                    timeout: 3600000,
-                    reader: {
-                      type: 'json',
-                      rootProperty: 'result',
-                      totalProperty:'total'
+                layout: 'hbox',
+                items:[
+                  {
+                    xtype:'combobox',
+                    id: me._('tipo_periodo'),
+                    name: 'tipo_periodo',                    
+                    //anchor: '100%',
+                    width: 250,
+                    queryMode: "local",
+                    store: {
+                      fields: ['tipo','denominacion'],
+                      autoLoad: true,
+                      pageSize: 1000,
+                      proxy: {
+                        type:'ajax',
+                        url: 'module/nomina_periodo_tipo/',
+                        actionMethods: {read: "POST"},
+                        timeout: 3600000,
+                        reader: {
+                          type: 'json',
+                          rootProperty: 'result',
+                          totalProperty:'total'
+                        },
+                        extraParams: {
+                          action: 'onList_Activo',
+                          text: '',
+                          sort: '[{"property": "denominacion", "direction": "ASC"}]'
+                        }
+                      },
+                      listeners: {
+                        load: function(store, records, successful){
+                          if(records.length>0)
+                            me.getCmp("tipo_periodo").setValue(records[0].get("tipo"));
+                        },
+                        beforeload: function(store,operation,eOpts){
+                        }
+                      }
                     },
-                    extraParams: {
-                      action: 'onList',
-                      text: '',
-                      id: '',
-                      sort: '[{"property": "codigo", "direction": "ASC"}]'
+                    displayField: 'denominacion',
+                    valueField: 'tipo',
+                    allowBlank: false,
+                    forceSelection: true,
+                    editable: false,
+                    value: '',
+                    listeners: {
+                      afterrender: function(e, eOpts ){
+                        e.setValue("Q");
+                      },
+                      change: function(e, The, eOpts ){
+                        me.getCmp('id_periodo').getStore().load();
+                      }
                     }
                   },
-                  listeners: {
-                    load: function(store, records, successful){
-                      me.getCmp("id_periodo").reset();
-                      me.id_periodo_default="";
-                      if(records.length>0){
-                        me.id_periodo_default=records[records.length-1].get("id");
-                        me.getCmp("id_periodo").setValue(me.id_periodo_default);
-                      }
+                  {
+                    xtype: 'combobox',
+                    id: me._('id_periodo'),
+                    name: 'id_periodo',
+                    //anchor: '100%',
+                    flex: 1,
+                    //margin: {bottom: '0px'},
+                    //fieldLabel: 'Periodo - Nóminas <small style="color:gray;">(Indica en que nóminas se encuentra la persona en un periodo específico)</small>',
+                    //labelAlign: 'top',
+                    //labelSeparator: '',
+                    //labelStyle: 'font-weight: bold;',
+                    editable: false,
+                    queryMode: "local",
+                    displayTpl: '<tpl for=".">{codigo} {descripcion}</tpl>',
+                    tpl: '<ul class="x-list-plain"><tpl for="."><li role="option" class="x-boundlist-item"><b>{codigo}</b> {descripcion} <small>({fecha})</small></li></tpl></ul>',
+                    store: {
+                      fields: ['id','periodo'],
+                      autoLoad: false,
+                      pageSize: 1000,
+                      proxy: {
+                        type:'ajax',
+                        url: 'module/nomina_periodo/',
+                        actionMethods: {read: "POST"},//actionMethods:'POST',
+                        timeout: 3600000,
+                        reader: {
+                          type: 'json',
+                          rootProperty: 'result',
+                          totalProperty:'total'
+                        },
+                        extraParams: {
+                          action: 'onList',
+                          text: '',
+                          id: '',
+                          sort: '[{"property": "codigo", "direction": "ASC"}]'
+                        }
+                      },
+                      listeners: {
+                        load: function(store, records, successful){
+                          me.getCmp("id_periodo").reset();
+                          me.id_periodo_default="";
+                          if(records.length>0){
+                            me.id_periodo_default=records[records.length-1].get("id");
+                            me.getCmp("id_periodo").setValue(me.id_periodo_default);
+                          }
 
+                        },
+                        beforeload: function(store,operation,eOpts){
+                          store.proxy.extraParams.tipo=me.getCmp("tipo_periodo").getValue();
+                        }
+                      }
                     },
-                    beforeload: function(store,operation,eOpts){
-                      store.proxy.extraParams.tipo='Q';
-                    }
-                  }
-                },
-                listeners: {
-                  change: function(){
-                    me.changePeriodo();
-                  }
-                },
-                displayField: 'periodo',
-                valueField: 'id',
-                allowBlank: false,
-                forceSelection: true,
+                    listeners: {
+                      change: function(){
+                        me.changePeriodo();
+                      }
+                    },
+                    displayField: 'periodo',
+                    valueField: 'id',
+                    allowBlank: false,
+                    forceSelection: true,
+                  },
+                ]
               },
               {
                 xtype: 'container',
@@ -1276,7 +1337,14 @@ siga.define('ficha', {
     me.getCmp("gridCargaFamiliar").getStore().removeAll();
     me.onAddFechaIngresoEgreso(0);
     me.getCmp('tabs').setActiveTab(0);
-    me.getCmp('tab_data').getForm().reset();
+    //me.getCmp('tab_data').getForm().reset();
+    var fields = me.getCmp('tab_data').getForm().getFields();
+    fields.each(function(field) {
+      if (field.name !== 'id_periodo' && field.name !== 'tipo_periodo') {
+        field.reset();
+      }
+    });
+
     me.getCmp("foto").setSrc("image/photo-default.png");
     me.getCmp('archivos').setRootNode({expanded: true, children: []});
     me.getCmp('archivos').expandAll();
