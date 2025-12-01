@@ -127,7 +127,7 @@ class PDF_P extends FPDF{
 
 		$this->SetX($this->lMargin+100);
 		$this->Cell(20,6,utf8_decode("Monto:"),'',0,'L',0);
-		$this->Cell(50,6,utf8_decode(number_format($MONTO_TOTAL,2,",",".")),'',1,'C',0);
+		$this->Cell(50,6,utf8_decode("Bs. ".number_format($MONTO_TOTAL,2,",",".")),'',1,'C',0);
 
 		$this->Ln(3);
 
@@ -159,7 +159,7 @@ class PDF_P extends FPDF{
 		$this->Cell(27,4,utf8_decode('MONTO'),'',0,'L');
 		$this->Cell(2,4,utf8_decode(':'),'',0,'C');
 		$this->SetFont('helvetica','',9);
-		$this->MultiCell(180-27,4,utf8_decode(strtoupper(letra_numero($MONTO_TOTAL,true))),'','L',1);
+		$this->MultiCell(180-27,4,utf8_decode(strtoupper(letra_numero($MONTO_TOTAL,true)." BOLÍVARES")),'','L',1);
 
 		}
 	}

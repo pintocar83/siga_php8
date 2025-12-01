@@ -1595,3 +1595,8 @@ function Form_ORDEN_COMPRA__Anular(){
 				'onError':function(req){alert('Error!\nStatusText='+req.statusText+'\nContents='+req.responseText);}
 				});
 }
+
+
+function Form_ORDEN_COMPRA__Reportes(){
+	siga.open("reporte_orden_compra",{modal: true})
+	}

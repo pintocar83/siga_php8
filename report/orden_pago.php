@@ -866,7 +866,7 @@ for($i=0;$i<count($IDComprobante);$i++){
 				$pdf->Cell($t_fecha_p,4,utf8_decode($COMPROBANTE_PAGO['fecha']),'LT',0,'C',1);
 				$pdf->Cell($t_cuenta_origen_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['banco']),'T',0,'L',1);
 				$pdf->Cell($t_cuenta_destino_p,4,utf8_decode($banco_destino),'T',0,'L',1);
-				$pdf->Cell($t_beneficiario_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_persona'][0]['denominacion']),'T',0,'L',1);
+				$pdf->Cell($t_beneficiario_p,4,isset($COMPROBANTE_PAGO['detalle_persona'][0]['denominacion']) ? utf8_decode($COMPROBANTE_PAGO['detalle_persona'][0]['denominacion']):"",'T',0,'L',1);
 				$pdf->Cell($t_operacion_p,4,utf8_decode($forma_pago),'T',0,'C',1);
 				$pdf->Cell($t_referencia_p,4,utf8_decode($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['numero']),'T',0,'C',1);
 				$pdf->Cell($t_monto_p,4,utf8_decode(number_format($COMPROBANTE_PAGO['detalle_comprobante_bancario'][0]['monto'],2,",",".")),'RT',1,'R',1);

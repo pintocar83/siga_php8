@@ -42,6 +42,9 @@
 				<BUTTON id="BOTON_IMPRIMIR_OC" class="BotonesVentana" onclick="Form_ORDEN_COMPRA__Imprimir();">
 					<IMG src="../../image/icon/icon-display.png" width="22" height="22" border="0" id="IMG_IMPRIMIR_OC"><br>Visualizar
 				</BUTTON>
+				<BUTTON id="BOTON_IMPRIMIR_XLS_OC" class="BotonesVentana" onclick="Form_ORDEN_COMPRA__Reportes();">
+					<IMG src="../../image/icon/icon-display.png" width="22" height="22" border="0" id="IMG_IMPRIMIR_XLS_OC"><br>Reportes
+				</BUTTON>
 			</TD>
 		</tr>
 		<tr>
