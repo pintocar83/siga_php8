@@ -1,6 +1,6 @@
 <?php
 class DBController{
-  private $Driver;
+  private $DBDriver;
   private $Result;
   private $MsgError;
 	public $Connection;

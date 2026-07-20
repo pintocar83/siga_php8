@@ -8,6 +8,8 @@ Se agrega el filtro que se encuentra activo en pantalla y las columnas: Genero y
 error_reporting(0);
 ini_set('display_errors', 'Off');
 set_time_limit(-1);
+ini_set('memory_limit', '1024M');
+
 
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
@@ -22,6 +24,11 @@ include_once("../library/phpexcel/PHPExcel.php");
 //include_once("../class/nomina_v2.class.php");
 include_once("../class/nomina.class.php");
 
+
+$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+$cacheSettings = array('memoryCacheSize' => '1024MB');
+
+PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
 
 $db=SIGA::DBController();
 

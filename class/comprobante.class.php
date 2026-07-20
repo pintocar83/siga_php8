@@ -961,6 +961,8 @@ class comprobante{
           $db->Execute("ROLLBACK WORK");
           return array("success"=>false, "message"=>"$mensajeDB", "messageDB"=>"$mensajeDB");
         }
+        //si el monto pagado es igual al monto del comprobante previo, marcar el comprobante previo como pagado (comprobante_datos)
+        //$monto_comprobante_previo=$db->Execute("SELECT sum(monto) FROM modulo_base.detalle_contable WHERE id_comprobante='".str_clear($detalle["comprobante_previo_monto_pagado"][$i]["id_comprobante"])."' AND operacion='H'");  
       }
     }
     //ASOCIACIÓN DEL COMPROBANTE CHEQUE CON ORDEN DE PAGO (comprobante_previo_monto_pagado)
