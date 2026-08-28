@@ -6,6 +6,12 @@ Ext.apply(Ext.form.field.VTypes, {
   phoneText: 'Número telefónico invalido.\nFormato: (0999)999.99.99'
 });
 
+Ext.Ajax.on('requestcomplete', function(conn, response, options) {
+  if (response.status === 200 && !response.statusText) {
+    response.statusText = 'OK';
+  }
+});
+
 function getData(url,json){
   json = (typeof json === "undefined")?true:json;//valor por defecto true
   var request = ((window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"));
