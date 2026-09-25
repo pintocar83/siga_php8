@@ -63,8 +63,8 @@ class nomina{
   }
 
   public static function formula_tokens($formula){
-    //preg_match_all("/[A-Z_]+[0-9]*/", $formula, $token);
-    preg_match_all("/[A-Z_]+[0-9]*|{[A-Z_]+[0-9]*}|{[A-Z_]+[0-9]*,\d{4}-\d{3}}/", $formula, $token);
+    preg_match_all("/[A-Z_]+[0-9]*/", $formula, $token);
+    //preg_match_all("/[A-Z_]+[0-9]*|{[A-Z_]+[0-9]*}|{[A-Z_]+[0-9]*,\d{4}-\d{3}}/", $formula, $token);
     $token=$token[0];
     $token_final=array();
     $k=0;
@@ -143,7 +143,10 @@ class nomina{
             $sw=false;
             break;
             }
-          $definida[$d]=str_replace($variables_formula[$i],"nf(".trim($definida[$variables_formula[$i]],"'").")",$definida[$d]);
+          //$definida[$d]=str_replace($variables_formula[$i],"nf(".trim($definida[$variables_formula[$i]],"'").")",$definida[$d]);
+          $patron = '/\b' . preg_quote($variables_formula[$i], '/') . '\b/';
+          $reemplazo = "nf(" . trim($definida[$variables_formula[$i]], "'") . ")";
+          $definida[$d] = preg_replace($patron, $reemplazo, $definida[$d]);
           }
 
         $definida_contar[$d]++;
