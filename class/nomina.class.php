@@ -175,71 +175,7 @@ class nomina{
     //print_r($retorno);
     return $retorno;
   }
-
-
-  public static function formula_resolver_original($definida){
-    $retorno["msj"]="";
-    $x=0;
-    $sw=true;
-    $definida_contar=array();
-    foreach($definida as $d => $valor_formula)
-      $definida_contar[$d]=0;
-
-    while($sw){
-      //si x es igual a la cantidad de variables
-      //salir, pq ya no hay nada que reemplazar en las formulas
-      if($x==count($definida)) break;
-      $x=0;
-
-      //para cada formula
-      foreach($definida as $d => $valor_formula){
-        //buscar las variables de la formula
-        $variables_formula=self::formula_tokens($valor_formula);
-        //si no existe variables en la formula, incrementar x
-        if(count($variables_formula)==0)
-          $x++;
-        //para cada variable de la formula
-        for($i=0;$i<count($variables_formula);$i++){
-          //si no existe la variable, cerrar por variable indefinida
-          if(!isset($definida[$variables_formula[$i]])){
-            //buscar si existe en el listado de conceptos
-            $definida[$variables_formula[$i]]="0.00";
-            $definida_contar[$variables_formula[$i]]=0;
-            //$retorno["msj"]= "\"".$variables_formula[0][$i]."\" ES INDEFINIDA.";
-            //$sw=false;
-            //break;
-            }
-          //buscar si existe $d en $definida[$d]
-          //si existe cerrar por redundancia ciclica
-          if(substr_count($definida[$d],$d)>0){
-            $retorno["msj"]= "Redundancia ciclida ".$d."";
-            $sw=false;
-            break;
-            }
-          $definida[$d]=str_replace($variables_formula[$i],"(".trim($definida[$variables_formula[$i]],"'").")",$definida[$d]);
-          }
-
-        $definida_contar[$d]++;
-        if($definida_contar[$d]>50)
-          $sw=false;
-        }
-      }
-    if(!$retorno["msj"])
-      $retorno["msj"]="OK";
-
-      foreach($definida as $d => $valor_formula){
-        if($retorno["msj"]=="OK"){
-          //print($valor_formula."|");
-          eval("\$tmp=($valor_formula);");
-          $retorno["retorno"][$d]=number_format($tmp,2,'.','');
-          }
-        else
-          $retorno["retorno"][$d]='';
-      }
-    //print_r($retorno);
-    return $retorno;
-  }
-
+  
   public static function constante_sistema($fecha_inicio,$fecha_culminacion){
     //NUMERO_LUNES | N_LUNES | NUM_LUNES
     $lunes_periodo=self::contar_lunes($fecha_inicio,$fecha_culminacion);
