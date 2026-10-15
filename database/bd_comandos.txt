@@ -1,2 +1,12 @@
 -Restaurar BD generada desde phppgadmin
 .\psql.exe -U siga -d siga_alcaldia_mejia -f "C:\Users\pinto\Downloads\siga_alcaldia_mejia_20231018.sql"
+
+-Respaldar BD desde el contenedor database
+docker compose exec database bash
+cd /app
+pg_dump -U siga -h localhost -d siga_alcaldia_mejia -F c -b -v -f siga_alcaldia_mejia_20261015.dump
+
+-Restaurar BD generada con el comando anterior, previamente crear una BD vacia.
+docker compose exec database bash
+cd /app
+pg_restore -U siga -h localhost -d siga_alcaldia_mejia -v siga_alcaldia_mejia_20261015.dump
