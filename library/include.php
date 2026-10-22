@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL);//error_reporting(E_ALL|E_STRICT);
-ini_set("display_errors","On");
+//error_reporting(E_ALL);//error_reporting(E_ALL|E_STRICT);
+//ini_set("display_errors","On");
 
 
 include_once("db.controller.php");

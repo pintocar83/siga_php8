@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
 
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
@@ -259,14 +259,14 @@ switch($formato){
         $antiguedad="";
         if(isset($detalle_ficha[0]["antiguedad_simple"]) and $detalle_ficha[0]["antiguedad_simple"])
             $antiguedad=$detalle_ficha[0]["antiguedad_simple"];
-        $texto= "Quien suscribe, Lcdo. Carlos Julio Velasquez, Director de Personal de la Alcadía Bolivariana del Municipio Mejía del Estado Sucre, ".
+        $texto= "Quien suscribe, María Fernanda Aguilarte López, Directora de Personal de la Alcadía Bolivariana del Municipio Mejía del Estado Sucre, ".
                 "por medio de la presente hace constar que $persona: <negrita>$nombres_apellidos,</negrita> titular de la cédula de identidad <negrita>Nº ".$nacionalidad."-".number_format($cedula,0,"",".").",</negrita> ".
                 "ingreso a la institución desempeñando el cargo de $cargo desde el $ingreso, devengando un sueldo mensual de ".letra_numero($sueldo_normal,true)." Céntimos (Bs ".number_format($sueldo_normal,2,",",".").").";
     break;
     case "A":
     default:
-        $texto= "Quien suscribe Lcdo. Carlos Julio Velasquez, titular de la cédula de identidad ".
-                "Nº 18.581.526, Director de Personal de la Alcadía Bolivariana del Municipio Mejía, ".
+        $texto= "Quien suscribe María Fernanda Aguilarte López, titular de la cédula de identidad ".
+                "Nº 28.017.380, Directora de Personal de la Alcadía Bolivariana del Municipio Mejía, ".
                 "por medio de la presente hace constar que la persona: <negrita>$nombres_apellidos</negrita>, titular de la cédula de identidad <negrita>Nº ".$nacionalidad."-".number_format($cedula,0,"",".")."</negrita>, ".
                 "labora en esta institución desempeñando el cargo de $cargo y devenga una remuneración mensual de ".letra_numero($sueldo_normal,true)." Céntimos (Bs ".number_format($sueldo_normal,2,",",".").").";
 }
@@ -280,11 +280,15 @@ $pdf->WriteTag(170,9,utf8_decode(
 
 $pdf->SetFont('helvetica','BI',13);
 $pdf->SetXY(22,200);
-$pdf->MultiCell(170,6,utf8_decode("Lcdo. Carlos Julio Velasquez"),'','C');
+$pdf->MultiCell(170,6,utf8_decode("María Fernanda Aguilarte López"),'','C');
 
 $pdf->SetFont('helvetica','',12);
 $pdf->SetXY(22,200+6);
-$pdf->MultiCell(170,6,utf8_decode("C.I: 18.581.526\nDirector de Personal\nSegún Resolución 019/2025\nDe fecha 28/08/2025"),'','C');
+$pdf->MultiCell(170,6,utf8_decode("C.I: 28.017.380\nDirectora de Personal"),'','C');
+
+$pdf->SetFont('helvetica','',10);
+$pdf->SetXY(22,200+6*3);
+$pdf->MultiCell(170,6,utf8_decode("Según Resolución 095 / Gaceta: 043 de fecha 19/10/2026."),'','C');
 
 $pdf->SetFont('helvetica','',10);
 $pdf->SetXY(22,224+6*2);

@@ -2,7 +2,7 @@ name: siga-php8
 
 services:
   web:
-    image: webdevops/php-apache:8.1
+    image: webdevops/php-apache:8.2
     ports:
       - 8080:80
     working_dir: /app

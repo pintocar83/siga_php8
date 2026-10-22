@@ -2,8 +2,8 @@
 set_time_limit(-1);
 //error_reporting(E_ALL);
 //ini_set('display_errors', 'On');
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
+//error_reporting(E_ALL);
+//ini_set('display_errors', 'On');
 include_once("../library/db.controller.php");
 include_once("../library/siga.config.php");
 include_once("../library/siga.class.php");
